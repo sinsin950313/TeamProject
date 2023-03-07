@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{40f16626-0914-46ac-adb9-0ad2ddb86081}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DX/Window">
+      <UniqueIdentifier>{e8dddefb-465b-4396-a726-ba6de7c0d9f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FMOD">
+      <UniqueIdentifier>{20062703-6e9d-4cdb-ae4d-9149a00cb8b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{129b331e-6d23-4342-aa81-7d07a32b2a50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{40a55af7-dfef-4a9d-8cb2-d5422596afab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{db984348-adca-4a0f-8fcc-a983dd9d0ffc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource">
+      <UniqueIdentifier>{d2f3d299-d43e-4f98-ac45-7373aa165167}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="std.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CArcBall.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CCameraDebug.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CFrustum.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="DXDevice.h">
+      <Filter>DX/Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DXState.h">
+      <Filter>DX/Window</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCore.h">
+      <Filter>DX/Window</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>DX/Window</Filter>
+    </ClInclude>
+    <ClInclude Include="MyWindows.h">
+      <Filter>DX/Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundMgr.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Writer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="TMath.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMgr.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureMgr.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CArcBall.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CCameraDebug.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CFrustum.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="DXDevice.cpp">
+      <Filter>DX/Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DXState.cpp">
+      <Filter>DX/Window</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCore.cpp">
+      <Filter>DX/Window</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>DX/Window</Filter>
+    </ClCompile>
+    <ClCompile Include="MyWindows.cpp">
+      <Filter>DX/Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>FMOD</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMgr.cpp">
+      <Filter>FMOD</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Writer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="TMath.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMgr.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureMgr.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
