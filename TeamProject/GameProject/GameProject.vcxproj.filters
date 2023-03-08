@@ -54,6 +54,9 @@
     <ClInclude Include="SerializeableDataType.h">
       <Filter>Ch</Filter>
     </ClInclude>
+    <ClInclude Include="ModelTest.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Serializeable.cpp">
       <Filter>Ch</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelTest.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #pragma once
 #include "GameCore.h"
 #include "CCameraDebug.h"
-#include "Model.h"
+#include "ModelTest.h"
 
 class MyMain :
     public GameCore
@@ -14,6 +14,7 @@ public:
 
 public:
     CCamera* m_pMainCamera = nullptr;
-    SSB::Model* m_pModel = nullptr;
+
+    ModelTest* m_pModelTest = nullptr;
 };
 

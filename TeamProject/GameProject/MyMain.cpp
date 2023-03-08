@@ -15,10 +15,14 @@ bool    MyMain::Init()
     SSB::ObjectScriptIO io;
     std::string str = io.Read("ModelWriteTest_Box");
 
-    m_pModel = new SSB::Model();
-    m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
-    m_pModel->Deserialize(str);
-    m_pModel->Init();
+    m_pModelTest = new ModelTest();
+    m_pModelTest->SetDevice(m_pd3dDevice, m_pImmediateContext);
+    m_pModelTest->Init();
+    
+    m_pModelTest->m_pModel = new SSB::Model();
+    m_pModelTest->m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
+    m_pModelTest->m_pModel->Deserialize(str);
+    m_pModelTest->m_pModel->Init();
 
     return true;
 }
@@ -32,13 +36,17 @@ bool    MyMain::Frame()
     {
         m_pMainCamera->Frame();
     }
+
+    TMatrix matWorld = TMatrix::Identity;
+    m_pModelTest->SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pModelTest->Frame();
     return true;
 }
 
 bool    MyMain::Render()
 {
     //setcameramatrix(view proj);
-    m_pModel->Render();
+    m_pModelTest->Render();
 
     return true;
 }
@@ -50,10 +58,11 @@ bool    MyMain::Release()
         m_pMainCamera->Release();
         delete m_pMainCamera;
     }
-    if (m_pModel)
+    
+    if (m_pModelTest)
     {
-        m_pModel->Release();
-        delete m_pModel;
+        m_pModelTest->Release();
+        delete m_pModelTest;
     }
 
     return true;
