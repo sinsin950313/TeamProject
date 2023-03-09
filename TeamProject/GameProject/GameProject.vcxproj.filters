@@ -57,6 +57,9 @@
     <ClInclude Include="ModelTest.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="DebugBox.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -81,6 +84,9 @@
       <Filter>Ch</Filter>
     </ClCompile>
     <ClCompile Include="ModelTest.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugBox.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

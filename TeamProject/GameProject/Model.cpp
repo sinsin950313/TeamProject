@@ -105,7 +105,7 @@ namespace SSB
 	{
 		_currentAnimation->Render();
 
-		_ps->Render();
+		m_pImmediateContext->PSSetShader(_ps->m_pPS, NULL, 0);
 
 		for (auto material : _materials)
 		{
@@ -275,7 +275,7 @@ namespace SSB
 			offset = serialedString.find(_pixelShaderStr, offset);
 			auto atomicData = GetUnitElement(serialedString, offset);
 			std::string atomic = atomicData.str;
-			I_Shader.GetInstance().PSLoad(kShaderPath + mtw(GetUnitAtomic(atomic, 0).str), L"PS", &_ps);
+			I_Shader.PSLoad(kShaderPath + mtw(GetUnitAtomic(atomic, 0).str), L"PS", &_ps);
 		}
 	}
 }

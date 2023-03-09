@@ -13,7 +13,7 @@ bool    MyMain::Init()
 
 
     SSB::ObjectScriptIO io;
-    std::string str = io.Read("ModelWriteTest_Box");
+    std::string str = io.Read("ModelWriteTest_Man");
 
     m_pModelTest = new ModelTest();
     m_pModelTest->SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -23,6 +23,10 @@ bool    MyMain::Init()
     m_pModelTest->m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
     m_pModelTest->m_pModel->Deserialize(str);
     m_pModelTest->m_pModel->Init();
+    m_pModelTest->m_pModel->SetCurrentAnimation("Take 001");
+
+    m_pDebugBox = new DebugBox;
+    m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
     return true;
 }
@@ -35,18 +39,30 @@ bool    MyMain::Frame()
     if (m_pMainCamera)
     {
         m_pMainCamera->Frame();
+
+        m_pModelTest->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     }
 
-    TMatrix matWorld = TMatrix::Identity;
-    m_pModelTest->SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     m_pModelTest->Frame();
     return true;
 }
 
 bool    MyMain::Render()
 {
-    //setcameramatrix(view proj);
+    //TMatrix matWorld = TMatrix::Identity;
+    //m_pModelTest->SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    //m_pModelTest->Frame();
     m_pModelTest->Render();
+
+    if (m_pDebugBox)
+    {
+		TVector3 size(0.5, 0.5, 0.5);
+		m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, size * 2);
+		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+        m_pDebugBox->SetColor(TColor(0, 0, 1, 1));
+		m_pDebugBox->UpdateBuffer();
+		m_pDebugBox->Render();
+    }
 
     return true;
 }
@@ -63,6 +79,12 @@ bool    MyMain::Release()
     {
         m_pModelTest->Release();
         delete m_pModelTest;
+    }
+
+    if (m_pDebugBox)
+    {
+        m_pDebugBox->Release();
+        delete m_pDebugBox;
     }
 
     return true;

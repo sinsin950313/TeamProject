@@ -1,6 +1,6 @@
 #include "Material.h"
 #include "TextureMgr.h"
-
+#include "CommonPath.h"
 namespace SSB
 {
 	Material::Material() : _materialIndex(0)
@@ -69,7 +69,7 @@ namespace SSB
 			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			I_Tex.Load(mtw(GetUnitAtomic(data.str, 0).str), &_textureArray[i]);
+			I_Tex.Load(kTextureResourcePath + mtw(GetUnitAtomic(data.str, 0).str), &_textureArray[i]);
 		}
 	}
 }

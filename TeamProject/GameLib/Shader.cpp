@@ -12,8 +12,6 @@ bool	Shader::Frame()
 
 bool	Shader::Render()
 {
-	m_pImmediateContext->VSSetShader(m_pVS, NULL, 0);
-	m_pImmediateContext->PSSetShader(m_pPS, NULL, 0);
 	return true;
 }
 

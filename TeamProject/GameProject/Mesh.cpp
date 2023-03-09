@@ -28,7 +28,7 @@ namespace SSB
 	void Mesh_Vertex_PC::InitialShader()
 	{
 		Shader* pShader;
-		I_Shader.GetInstance().VSLoad(kShaderPath + L"Default3DVertexShader_PC.hlsl", L"VS", &pShader);
+		I_Shader.VSLoad(kShaderPath + L"Default3DVertexShader_PC.hlsl", L"VS", &pShader);
 		SetShader(pShader);
 	}
 

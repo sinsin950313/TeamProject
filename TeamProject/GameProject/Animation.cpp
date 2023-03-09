@@ -51,6 +51,7 @@ namespace SSB
 	}
 	void Animation::UpdateFrameInfo()
 	{
+		asdf;
 		float animationElapseTime = (float)(g_fSecondPerFrame / 1000.0f);
 		int beforeIndex = animationElapseTime * _framePerSecond;
 		int afterIndex = beforeIndex + 1;
@@ -130,7 +131,11 @@ namespace SSB
 		}
 		_data.clear();
 
-		if(_animatedFrameBuffer) _animatedFrameBuffer->Release();
+		if (_animatedFrameBuffer)
+		{
+			_animatedFrameBuffer->Release();
+			_animatedFrameBuffer = nullptr;
+		}
 
 		return true;
 	}
