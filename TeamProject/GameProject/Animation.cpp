@@ -51,36 +51,46 @@ namespace SSB
 	}
 	void Animation::UpdateFrameInfo()
 	{
-		asdf;
-		float animationElapseTime = (float)(g_fSecondPerFrame / 1000.0f);
-		int beforeIndex = animationElapseTime * _framePerSecond;
-		int afterIndex = beforeIndex + 1;
-		if (afterIndex == _data.size())
+		m_fAnimTime += g_fSecondPerFrame * _framePerSecond;
+		while (m_fAnimTime > _data.size() - 1)
 		{
-			afterIndex = beforeIndex;
+			m_fAnimTime -= _data.size() - 1;
 		}
-		else if (_data.size() <= beforeIndex)
-		{
-			beforeIndex = beforeIndex % _data.size();
-			afterIndex = afterIndex % _data.size();
-		}
+		int prevIndex = m_fAnimTime;
+		int nextIndex = prevIndex + 1;
+		float t = m_fAnimTime - prevIndex;
 
-		float beforeTime = beforeIndex / _framePerSecond;
-		float afterTime = afterIndex / _framePerSecond;
-		float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
-		if (afterTime - beforeTime < 0.001f)
-		{
-			t = 0;
-		}
+		/*
+			float animationElapseTime = (float)(g_fSecondPerFrame / 1000.0f);
+			int beforeIndex = animationElapseTime * _framePerSecond;
+			int afterIndex = beforeIndex + 1;
+			if (afterIndex == _data.size())
+			{
+				afterIndex = beforeIndex;
+			}
+			else if (_data.size() <= beforeIndex)
+			{
+				beforeIndex = beforeIndex % _data.size();
+				afterIndex = afterIndex % _data.size();
+			}
+
+			float beforeTime = beforeIndex / _framePerSecond;
+			float afterTime = afterIndex / _framePerSecond;
+			float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
+			if (afterTime - beforeTime < 0.001f)
+			{
+				t = 0;
+			}
+		*/
 
 		for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
 		{
-			_frameMatrixInfo.BoneMatrix[i] = GetInterpolate(_data[beforeIndex]->BoneAnimationUnit[i], _data[afterIndex]->BoneAnimationUnit[i], t);
+			_frameMatrixInfo.BoneMatrix[i] = GetInterpolate(_data[prevIndex]->BoneAnimationUnit[i], _data[nextIndex]->BoneAnimationUnit[i], t);
 			_frameMatrixInfo.BoneMatrix[i] = _frameMatrixInfo.BoneMatrix[i].Transpose();
 		}
 		for (int i = 0; i < _meshAnimationUnitMaxCount; ++i)
 		{
-			_frameMatrixInfo.MeshMatrix[i] = GetInterpolate(_data[beforeIndex]->MeshAnimationUnit[i], _data[afterIndex]->MeshAnimationUnit[i], t);
+			_frameMatrixInfo.MeshMatrix[i] = GetInterpolate(_data[prevIndex]->MeshAnimationUnit[i], _data[nextIndex]->MeshAnimationUnit[i], t);
 			_frameMatrixInfo.MeshMatrix[i] = _frameMatrixInfo.MeshMatrix[i].Transpose();
 		}
 	}

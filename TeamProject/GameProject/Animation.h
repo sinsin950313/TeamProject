@@ -36,6 +36,7 @@ namespace SSB
 			TMatrix MeshMatrix[255];
 		};
 	private:
+		float	m_fAnimTime = 0.0f;
 		float _framePerSecond = 30;
 
 		int _boneAnimationUnitMaxCount = 0;
