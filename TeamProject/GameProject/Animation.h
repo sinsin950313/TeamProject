@@ -72,4 +72,4 @@ namespace SSB
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
 	};
-}
+};

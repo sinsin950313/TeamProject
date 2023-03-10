@@ -3,10 +3,19 @@
 #include "SoundMgr.h"
 #include "FileIOObject.h"
 
+int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (m_pMainCamera)
+    {
+        m_pMainCamera->WndProc(hWnd, msg, wParam, lParam);
+    }
+    return -1;
+}
 
 bool    MyMain::Init()
 {
     m_pMainCamera = new CCameraDebug;
+    //m_pMainCamera = new CCamera;
     m_pMainCamera->CreateViewMatrix(TVector3(0, 0, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
     m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f
         , (float)g_rcClient.right / (float)g_rcClient.bottom);
@@ -56,8 +65,7 @@ bool    MyMain::Render()
 
     if (m_pDebugBox)
     {
-		TVector3 size(0.5, 0.5, 0.5);
-		m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, size * 2);
+		m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
 		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         m_pDebugBox->SetColor(TColor(0, 0, 1, 1));
 		m_pDebugBox->UpdateBuffer();

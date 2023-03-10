@@ -14,6 +14,9 @@ public:
     bool    Release();
 
 public:
+    virtual int		WndProc(HWND, UINT, WPARAM, LPARAM);
+
+public:
     CCamera* m_pMainCamera = nullptr;
 
     ModelTest* m_pModelTest = nullptr;

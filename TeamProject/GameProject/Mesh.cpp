@@ -235,6 +235,21 @@ namespace SSB
 		}
 	}
 
+	void Mesh_Vertex_PCNT_Skinning::SetMeshAnimationWeight(float weight)
+	{
+		_boneSpaceTransformData.MeshWeight = weight;
+	}
+
+	void Mesh_Vertex_PCNT_Skinning::Initialize_SetMaxBoneCount(int maxBoneCount)
+	{
+		_maxBoneCount = maxBoneCount;
+	}
+
+	void Mesh_Vertex_PCNT_Skinning::Initialize_SetMeshData(int index)
+	{
+		_boneSpaceTransformData.MeshIndex = index;
+	}
+
 	bool Mesh_Vertex_PCNT_Skinning::Init()
 	{
 		Mesh<Vertex_PCNT_Skinning>::Init();
@@ -261,8 +276,26 @@ namespace SSB
 		ret += "[\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += _meshIndexStr;
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshIndex);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += _meshWeightStr;
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshWeight);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += _maxBoneCountStr;
+		ret += "{\"";
+		ret += std::to_string(_maxBoneCount);
+		ret += "\"}\n";
+
+		ret += GetTabbedString(tabCount + 1);
 		ret += _meshToBoneSpaceTransformDataStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData);
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData, _maxBoneCount);
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
@@ -283,7 +316,28 @@ namespace SSB
 			auto data = GetUnitElement(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData);
+			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshIndex);
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshWeight);
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _maxBoneCount);
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _boneSpaceTransformData, _maxBoneCount);
 		}
 
 		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
@@ -517,6 +571,21 @@ namespace SSB
 		}
 	}
 
+	void Mesh_Vertex_PCNTs_Skinning::Initialize_SetMaxBoneCount(int maxBoneCount)
+	{
+		_maxBoneCount = maxBoneCount;
+	}
+
+	void Mesh_Vertex_PCNTs_Skinning::Initialize_SetMeshData(int index)
+	{
+		_boneSpaceTransformData.MeshIndex = index;
+	}
+
+	void Mesh_Vertex_PCNTs_Skinning::SetMeshAnimationWeight(float weight)
+	{
+		_boneSpaceTransformData.MeshWeight = weight;
+	}
+
 	bool Mesh_Vertex_PCNTs_Skinning::Init()
 	{
 		Mesh<Vertex_PCNTs_Skinning>::Init();
@@ -558,8 +627,26 @@ namespace SSB
 		ret += "[\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += _meshIndexStr;
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshIndex);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += _meshWeightStr;
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshWeight);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += _maxBoneCountStr;
+		ret += "{\"";
+		ret += std::to_string(_maxBoneCount);
+		ret += "\"}\n";
+
+		ret += GetTabbedString(tabCount + 1);
 		ret += _meshToBoneSpaceTransformDataStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData);
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData, _maxBoneCount);
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
@@ -581,7 +668,28 @@ namespace SSB
 			auto data = GetUnitElement(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData);
+			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshIndex);
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshWeight);
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _maxBoneCount);
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _boneSpaceTransformData, _maxBoneCount);
 		}
 
 		serialedString = std::string(serialedString.begin() + offset, serialedString.end());

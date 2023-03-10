@@ -225,7 +225,7 @@ namespace SSB
 				auto data = GetUnitElement(serialedString, offset);
 				offset = data.offset;
 				AnimationFrameInfo* frameInfo = new AnimationFrameInfo;
-				Serializeable::Deserialize(data.str, *frameInfo);
+				Serializeable::Deserialize(data.str, *frameInfo, _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
 				_data[i] = frameInfo;
 			}
 		}

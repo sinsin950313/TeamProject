@@ -159,6 +159,7 @@ namespace SSB
 	private:
 		MeshToBoneSpaceTransformData _boneSpaceTransformData;
 		ID3D11Buffer* _boneSpaceTransformBuffer = nullptr;
+		int _maxBoneCount;
 
 	private:
 		std::string GetVertexType() override;
@@ -173,6 +174,9 @@ namespace SSB
 
 	public:
 		void SetMeshData(MeshToBoneSpaceTransformData data);
+		void SetMeshAnimationWeight(float weight);
+		void Initialize_SetMaxBoneCount(int maxBoneCount);
+		void Initialize_SetMeshData(int index);
 
 	public:
 		bool Init() override;
@@ -228,6 +232,7 @@ namespace SSB
 	private:
 		MeshToBoneSpaceTransformData _boneSpaceTransformData;
 		ID3D11Buffer* _boneSpaceTransformBuffer = nullptr;
+		int _maxBoneCount;
 
 	private:
 		std::string GetVertexType() override;
@@ -242,6 +247,9 @@ namespace SSB
 
 	public:
 		void SetMeshData(MeshToBoneSpaceTransformData data);
+		void Initialize_SetMaxBoneCount(int maxBoneCount);
+		void Initialize_SetMeshData(int index);
+		void SetMeshAnimationWeight(float weight);
 
 	public:
 		bool Init() override;
