@@ -16,43 +16,16 @@
     <Filter Include="Ch">
       <UniqueIdentifier>{7eee2a4e-09ee-4dbf-9418-54e1a13d4cc4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ch\Sub">
+      <UniqueIdentifier>{e8cd28a2-9020-4e3c-96f6-ff0e4b20fda0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{dcdd967e-21a4-4ea4-9eca-4aaf8a0eb35f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyMain.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="CommonPath.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="CommonUtility.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="FileIOObject.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.hpp">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="Serializeable.h">
-      <Filter>Ch</Filter>
-    </ClInclude>
-    <ClInclude Include="SerializeableDataType.h">
-      <Filter>Ch</Filter>
     </ClInclude>
     <ClInclude Include="ModelTest.h">
       <Filter>헤더 파일</Filter>
@@ -60,34 +33,100 @@
     <ClInclude Include="DebugBox.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonPath.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonUtility.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="FileIOObject.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.hpp">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializeable.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializeableDataType.h">
+      <Filter>Ch\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FNode.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="FQuadTree.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshMap.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Ch</Filter>
-    </ClCompile>
-    <ClCompile Include="FileIOObject.cpp">
-      <Filter>Ch</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Ch</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Ch</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Ch</Filter>
-    </ClCompile>
-    <ClCompile Include="Serializeable.cpp">
-      <Filter>Ch</Filter>
     </ClCompile>
     <ClCompile Include="ModelTest.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DebugBox.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Ch\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="FileIOObject.cpp">
+      <Filter>Ch\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Ch\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Ch\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Ch\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="Serializeable.cpp">
+      <Filter>Ch\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FNode.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="FQuadTree.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshMap.cpp">
+      <Filter>Map</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

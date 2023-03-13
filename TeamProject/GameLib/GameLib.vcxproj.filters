@@ -39,16 +39,16 @@
     <ClInclude Include="std.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CArcBall.h">
+    <ClInclude Include="ArcBall.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="CCamera.h">
+    <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="CCameraDebug.h">
+    <ClInclude Include="CameraDebug.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="CFrustum.h">
+    <ClInclude Include="Frustum.h">
       <Filter>Camera</Filter>
     </ClInclude>
     <ClInclude Include="DXDevice.h">
@@ -99,18 +99,21 @@
     <ClInclude Include="BaseObject.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="CameraTPS.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CArcBall.cpp">
+    <ClCompile Include="ArcBall.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="CCamera.cpp">
+    <ClCompile Include="Camera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="CCameraDebug.cpp">
+    <ClCompile Include="CameraDebug.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="CFrustum.cpp">
+    <ClCompile Include="Frustum.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
     <ClCompile Include="DXDevice.cpp">
@@ -160,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="BaseObject.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraTPS.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

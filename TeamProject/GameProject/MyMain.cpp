@@ -14,7 +14,8 @@ int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 bool    MyMain::Init()
 {
-    m_pMainCamera = new CCameraDebug;
+    m_pMainCamera = new CameraTPS;
+    //m_pMainCamera = new CameraDebug;
     //m_pMainCamera = new CCamera;
     m_pMainCamera->CreateViewMatrix(TVector3(0, 0, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
     m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f
@@ -24,7 +25,7 @@ bool    MyMain::Init()
     SSB::ObjectScriptIO io;
     std::string str = io.Read("ModelWriteTest_Man");
 
-    m_pModelTest = new ModelTest();
+    m_pModelTest = new Character();
     m_pModelTest->SetDevice(m_pd3dDevice, m_pImmediateContext);
     m_pModelTest->Init();
     

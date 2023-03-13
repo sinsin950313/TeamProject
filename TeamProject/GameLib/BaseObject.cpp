@@ -24,6 +24,32 @@ namespace DX
 			&pVB);
 		return pVB;
 	}
+	ID3D11Buffer* CreateConstantBuffer(ID3D11Device* pd3dDevice,
+		void* pDataAddress,
+		UINT iDataSize)
+	{
+		ID3D11Buffer* pVB = nullptr;
+
+		D3D11_BUFFER_DESC bd = {};
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.ByteWidth = iDataSize;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA  sd;
+		ZeroMemory(&sd, sizeof(sd));
+		sd.pSysMem = pDataAddress;
+		HRESULT hr = pd3dDevice->CreateBuffer(
+			&bd, // 버퍼 할당
+			&sd, // 초기 할당된 버퍼를 체우는 CPU메모리 주소
+			&pVB);
+
+		if (SUCCEEDED(hr))
+			return pVB;
+		else
+			return nullptr;
+	}
 	bool	BaseObject::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, std::wstring shaderPath, std::wstring texPath,
 		std::wstring VSname, std::wstring PSname)
 	{

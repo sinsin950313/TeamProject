@@ -110,13 +110,14 @@ copy "*.lib" "..\\..\\lib"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CArcBall.h" />
+    <ClInclude Include="ArcBall.h" />
     <ClInclude Include="BaseObject.h" />
-    <ClInclude Include="CCamera.h" />
-    <ClInclude Include="CCameraDebug.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraDebug.h" />
+    <ClInclude Include="CameraTPS.h" />
     <ClInclude Include="DXDevice.h" />
     <ClInclude Include="DXState.h" />
-    <ClInclude Include="CFrustum.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameCore.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="RenderTarget.h" />
@@ -133,13 +134,14 @@ copy "*.lib" "..\\..\\lib"</Command>
     <ClInclude Include="TMath.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CArcBall.cpp" />
+    <ClCompile Include="ArcBall.cpp" />
     <ClCompile Include="BaseObject.cpp" />
-    <ClCompile Include="CCamera.cpp" />
-    <ClCompile Include="CCameraDebug.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraDebug.cpp" />
+    <ClCompile Include="CameraTPS.cpp" />
     <ClCompile Include="DXDevice.cpp" />
     <ClCompile Include="DXState.cpp" />
-    <ClCompile Include="CFrustum.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameCore.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="RenderTarget.cpp" />

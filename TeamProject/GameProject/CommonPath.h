@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-const static std::wstring kShaderPath = L"../../data/Shader/";
+const static std::wstring kShaderPath = L"../../data/Shader/SSB/";
 const static std::wstring kSoundPath = L"../../data/Resource/Sound/";
 const static std::wstring kTextureResourcePath = L"../../data/Resource/Texture/TextureResource/";
 const static std::wstring kSpritePath = L"../../data/Resource/Texture/Data/Sprite/";

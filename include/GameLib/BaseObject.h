@@ -28,6 +28,11 @@ namespace DX
 		void* pDataAddress,
 		UINT iNumVertex,
 		UINT iVertexSize);
+
+	ID3D11Buffer* CreateConstantBuffer(ID3D11Device* pd3dDevice,
+		void* pDataAddress,
+		UINT iDataSize);
+
 	class BaseObject
 	{
 	public:

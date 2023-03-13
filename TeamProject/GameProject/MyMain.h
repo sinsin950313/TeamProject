@@ -1,7 +1,9 @@
 #pragma once
 #include "GameCore.h"
-#include "CCameraDebug.h"
+#include "CameraDebug.h"
+#include "CameraTPS.h"
 #include "ModelTest.h"
+#include "Character.h"
 #include "DebugBox.h"
 
 class MyMain :
@@ -17,9 +19,9 @@ public:
     virtual int		WndProc(HWND, UINT, WPARAM, LPARAM);
 
 public:
-    CCamera* m_pMainCamera = nullptr;
+    Camera* m_pMainCamera = nullptr;
 
-    ModelTest* m_pModelTest = nullptr;
+    Character* m_pModelTest = nullptr;
     DebugBox* m_pDebugBox = nullptr;
 };
 
