@@ -243,21 +243,21 @@ FNode* FQuadTree::VisibleNode(FNode* pNode)
 
 void	FQuadTree::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
 {
-    m_constantDataMap.matWorld;
+    //m_constantDataMap.matWorld;
     if (matWorld)
     {
-        XMMATRIX world = XMLoadFloat4x4(&(*matWorld));
-        m_constantDataMap.matWorld = XMMatrixTranspose(world);
+        m_constantDataMap.matWorld = XMLoadFloat4x4(&(*matWorld));
+        //m_constantDataMap.matWorld = XMMatrixTranspose(world);
     }
     if (matView)
     {
-        XMMATRIX view = XMLoadFloat4x4(&(*matView));
-        m_constantDataMap.matView = XMMatrixTranspose(view);
+        m_constantDataMap.matView = XMLoadFloat4x4(&(*matView));
+        //m_constantDataMap.matView = XMMatrixTranspose(view);
     }
     if (matProj)
     {
-        XMMATRIX proj = XMLoadFloat4x4(&(*matProj));
-        m_constantDataMap.matProj = XMMatrixTranspose(proj);
+        m_constantDataMap.matProj = XMLoadFloat4x4(&(*matProj));
+        //m_constantDataMap.matProj = XMMatrixTranspose(proj);
     }
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, NULL, NULL, &m_constantDataMap, NULL, NULL);
 }

@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "SoundMgr.h"
 #include "FileIOObject.h"
+#include "Player.h"
 
 int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -25,9 +26,11 @@ bool    MyMain::Init()
     SSB::ObjectScriptIO io;
     std::string str = io.Read("ModelWriteTest_Man");
 
-    m_pModelTest = new Character();
+    m_pModelTest = new Player();
     m_pModelTest->SetDevice(m_pd3dDevice, m_pImmediateContext);
+    ((Player*)m_pModelTest)->m_pMainCamera = m_pMainCamera;
     m_pModelTest->Init();
+    ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &m_pModelTest->m_vPos;
     
     m_pModelTest->m_pModel = new SSB::Model();
     m_pModelTest->m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);

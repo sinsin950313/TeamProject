@@ -13,7 +13,9 @@ bool CameraTPS::Frame()
 
 	// Third Person Camera
 	// Set the cameras target to be looking at the character.
-	m_vTarget = { 0, 0, 0 };//charPosition;
+	//m_vTarget = { 0, 0, 0 };//charPosition;
+	if(m_vFollowPos)
+		m_vTarget = *m_vFollowPos;
 
 	// This line is because this lessons model was set to stand on the point (0,0,0) (my bad), and we
 	// don't want to just be looking at the models feet, so we move the camera's target vector up 5 units
