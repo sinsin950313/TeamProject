@@ -1,0 +1,37 @@
+m_ListTextureSplatting:
+m_iMaxDepth:2
+m_pMap:
+m_dwNumRows:5
+m_dwNumColumns:5
+m_fCellDistance:1
+m_ListVertex:
+vertex:pos:-2 0 2, tex:0 0, normal:0 1 0, color:1 1 1 1
+vertex:pos:-1 0 2, tex:0.25 0, normal:0 1 0, color:1 1 1 1
+vertex:pos:0 0 2, tex:0.5 0, normal:0 1 0, color:1 1 1 1
+vertex:pos:1 0 2, tex:0.75 0, normal:0 1 0, color:1 1 1 1
+vertex:pos:2 0 2, tex:1 0, normal:0 1 0, color:1 1 1 1
+vertex:pos:-2 0 1, tex:0 0.25, normal:0 1 0, color:1 1 1 1
+vertex:pos:-1 0 1, tex:0.25 0.25, normal:0 1 0, color:1 1 1 1
+vertex:pos:0 0 1, tex:0.5 0.25, normal:0 1 0, color:1 1 1 1
+vertex:pos:1 0 1, tex:0.75 0.25, normal:0 1 0, color:1 1 1 1
+vertex:pos:2 0 1, tex:1 0.25, normal:0 1 0, color:1 1 1 1
+vertex:pos:-2 0 0, tex:0 0.5, normal:0 1 0, color:1 1 1 1
+vertex:pos:-1 0 0, tex:0.25 0.5, normal:0 1 0, color:1 1 1 1
+vertex:pos:0 0 0, tex:0.5 0.5, normal:0 1 0, color:1 1 1 1
+vertex:pos:1 0 0, tex:0.75 0.5, normal:0 1 0, color:1 1 1 1
+vertex:pos:2 0 0, tex:1 0.5, normal:0 1 0, color:1 1 1 1
+vertex:pos:-2 0 -1, tex:0 0.75, normal:0 1 0, color:1 1 1 1
+vertex:pos:-1 0 -1, tex:0.25 0.75, normal:0 1 0, color:1 1 1 1
+vertex:pos:0 0 -1, tex:0.5 0.75, normal:0 1 0, color:1 1 1 1
+vertex:pos:1 0 -1, tex:0.75 0.75, normal:0 1 0, color:1 1 1 1
+vertex:pos:2 0 -1, tex:1 0.75, normal:0 1 0, color:1 1 1 1
+vertex:pos:-2 0 -2, tex:0 1, normal:0 1 0, color:1 1 1 1
+vertex:pos:-1 0 -2, tex:0.25 1, normal:0 1 0, color:1 1 1 1
+vertex:pos:0 0 -2, tex:0.5 1, normal:0 1 0, color:1 1 1 1
+vertex:pos:1 0 -2, tex:0.75 1, normal:0 1 0, color:1 1 1 1
+vertex:pos:2 0 -2, tex:1 1, normal:0 1 0, color:1 1 1 1
+
+m_pTexture:D:\sylProject\Project41\Assets\Textures\brick.png
+m_Transform:position:0 0 0, rotation:0 0 0, scale:1 1 1
+m_szVSName:MapVertexShader.hlsl
+m_szPSName:MapPixelShader.hlsl

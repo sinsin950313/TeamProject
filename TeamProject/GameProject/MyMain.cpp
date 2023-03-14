@@ -38,6 +38,8 @@ bool    MyMain::Init()
     m_pDebugBox = new DebugBox;
     m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
+    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
+
     return true;
 }
 
@@ -53,12 +55,16 @@ bool    MyMain::Frame()
         m_pModelTest->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     }
 
+    m_pQuadTree->Update();
     m_pModelTest->Frame();
     return true;
 }
 
 bool    MyMain::Render()
 {
+    m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pQuadTree->Render();
+
     //TMatrix matWorld = TMatrix::Identity;
     //m_pModelTest->SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     //m_pModelTest->Frame();
@@ -78,6 +84,13 @@ bool    MyMain::Render()
 
 bool    MyMain::Release()
 {
+    if (m_pQuadTree)
+    {
+        m_pQuadTree->Release();
+        delete m_pQuadTree;
+        m_pQuadTree = nullptr;
+    }
+
     if (m_pMainCamera)
     {
         m_pMainCamera->Release();

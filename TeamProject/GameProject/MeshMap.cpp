@@ -2,6 +2,12 @@
 #include "TextureMgr.h"
 #include "ShaderMgr.h"
 
+void	MeshMap::SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+    m_pd3dDevice = pDevice;
+    m_pImmediateContext = pContext;
+}
+
 std::vector<PTNC>& MeshMap::GetListVertex()
 {
     return m_ListVertex;
@@ -16,7 +22,6 @@ float MeshMap::GetHeightmap(int row, int col)
     return m_ListVertex[row * m_dwNumRows+ col].pos.y;
 }
 
-using namespace MAPLOAD;
 float MeshMap::GetHeight(float fPosX, float fPosZ)
 {
     // fPosX/fPosZ의 위치에 해당하는 높이맵셀을 찾는다.
@@ -194,8 +199,18 @@ MeshMap::MeshMap()
 
 MeshMap::~MeshMap()
 {
-    if(m_pVertexBuffer) delete m_pVertexBuffer;
-    if(m_pIndexBuffer) delete m_pIndexBuffer;
+    if (m_pVertexBuffer)
+    {
+        m_pVertexBuffer->Release();
+    }
+    if (m_pVertexInputLayout)
+    {
+        m_pVertexInputLayout->Release();
+    }
+    if (m_pIndexBuffer)
+    {
+        m_pIndexBuffer->Release();
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const MeshMap* pMap)
@@ -204,13 +219,13 @@ std::ostream& operator<<(std::ostream& os, const MeshMap* pMap)
     os << "m_dwNumRows:" << pMap->m_dwNumRows << std::endl;
     os << "m_dwNumColumns:" << pMap->m_dwNumColumns << std::endl;
     os << "m_fCellDistance:" << pMap->m_fCellDistance << std::endl;
-    os << "m_ListVertex:"<<std::endl;
+    os << "m_ListVertex:" << std::endl;
     for (const auto& vertex : pMap->m_ListVertex)
     {
         os << "vertex:" << vertex << std::endl;
     }
     return os;
-}
+};
 
 std::ifstream& operator>>(std::ifstream& is, MeshMap* pMap)
 {
@@ -278,176 +293,4 @@ std::ifstream& operator>>(std::ifstream& is, MeshMap* pMap)
     pMap->GenerateVertexNormal();
     is.seekg(prevPos);
     return is;
-}
-
-void MAPLOAD::OpenFile(std::wstring szFullPath)
-{
-    Texture* pTexture = nullptr;
-    Transform mapTransform = {};
-    UINT iMaxDepth = 0;
-    std::wstring szVSPath;
-    std::wstring szPSPath;
-    void* shader_byte_code_vs = nullptr;
-    void* shader_byte_code_ps = nullptr;
-    size_t size_shader_vs = 0;
-    size_t size_shader_ps = 0;
-    MeshMap* pMapMesh = new MeshMap();
-    //std::unordered_set<Object*> allObjectList;
-    BYTE* fAlphaData = nullptr;
-    std::ifstream is(szFullPath);
-    std::string line;
-    while (std::getline(is, line))
-    {
-        std::istringstream iss(line);
-        std::string fieldName;
-        if (std::getline(iss, fieldName, ':'))
-        {
-            if (fieldName == "m_pTexture")
-            {
-                std::string textureName;
-                iss >> textureName;
-                I_Tex.Load(to_mw(textureName), &pTexture);
-            }
-            else if (fieldName == "m_ListTextureSplatting")
-            {
-                std::string texturesStr;
-                std::getline(iss, texturesStr);
-                std::stringstream texturesStream(texturesStr);
-                std::string texturePath;
-                while (std::getline(texturesStream, texturePath, ','))
-                {
-                    if (texturePath.size() > 1)
-                    {
-                        texturePath.erase(std::remove(texturePath.begin(), texturePath.end(), ' '), texturePath.end());
-                        auto texture = _EngineSystem.GetTextureSystem()->CreateTextureFromFile(_tomw(texturePath));
-                        m_ListTextureSplatting.insert(texture->GetTextureName());
-                    }
-                }
-            }
-            else if (fieldName == "m_Transform")
-            {
-                iss >> mapTransform;
-            }
-            else if (fieldName == "m_iMaxDepth")
-            {
-                iss >> iMaxDepth;
-            }
-            else if (fieldName == "m_szVSName")
-            {
-                std::string str;
-                std::getline(iss, str);
-                szVSPath = _tomw(str);
-            }
-            else if (fieldName == "m_szPSName")
-            {
-                std::string str;
-                std::getline(iss, str);
-                szPSPath = _tomw(str);
-            }
-            else if (fieldName == "m_pMap")
-            {
-                is >> pMapMesh;
-            }
-            else if (fieldName == "m_pAllObjectList")
-            {
-                std::streampos prevPos = is.tellg();
-                std::string str;
-                while (std::getline(is, str))
-                {
-                    if (str.find("m_fAlphaData:") != std::string::npos)
-                        break;
-                    std::stringstream texturesStream(str);
-                    std::string strName;
-                    std::getline(texturesStream, strName, ',');
-
-                    CULL_MODE cullMode;
-                    texturesStream >> cullMode;
-
-                    DRAW_MODE drawMode;
-                    texturesStream >> drawMode;
-
-                    INTERACTIVE_MODE interactiveMode;
-                    texturesStream >> interactiveMode;
-
-                    OBJECT_SPECIFY specifyMode;
-                    texturesStream >> specifyMode;
-
-                    Transform transform;
-                    texturesStream >> transform;
-
-                    float length;
-
-                    if (specifyMode == OBJECT_SPECIFY::OBJECT_SIMPLE)
-                    {
-                        // pos 값을 추출합니다.
-                        size_t pos_start = texturesStream.str().find("m_fLength:") + strlen("m_fLength:");
-                        size_t pos_end = texturesStream.str().find(",", pos_start);
-                        std::string pos_str = texturesStream.str().substr(pos_start, pos_end - pos_start);
-                        std::istringstream pos_stream(pos_str);
-                        pos_stream >> length;
-                    }
-
-                    Object* pObject = nullptr;
-                    if (specifyMode == OBJECT_SPECIFY::OBJECT_SIMPLE)
-                        pObject = CreateSimpleBox(length, transform.position, transform.rotation, transform.scale);
-                    else if (specifyMode == OBJECT_SPECIFY::OBJECT_STATIC)
-                        pObject = CreateFbxObject(_tomw(strName), transform.position, transform.rotation, transform.scale);
-                    else if (specifyMode == OBJECT_SPECIFY::OBJECT_SKELETON)
-                        pObject = CreateFbxObject(_tomw(str), transform.position, transform.rotation, transform.scale);
-
-                    allObjectList.insert(pObject);
-                    prevPos = is.tellg();
-                }
-                is.seekg(prevPos);
-            }
-            else if (fieldName == "m_fAlphaData")
-            {
-                fAlphaData = new BYTE[pMapMesh->m_dwNumRows * pMapMesh->m_dwNumColumns * 4];
-                for (int idx = 0; idx < pMapMesh->m_dwNumRows * pMapMesh->m_dwNumColumns * 4; idx++)
-                {
-                    int rgba = 0;
-                    iss >> rgba;
-                    fAlphaData[idx] = static_cast<uint8_t>(rgba);
-                }
-            }
-        }
-    }
-
-    is.close();
-
-    constant_map cc;
-    cc.matWorld = XMMatrixIdentity();
-    cc.matView = m_pCamera->m_matCamera;
-    cc.matProj = m_pCamera->m_matProj;
-
-    _EngineSystem.GetMeshSystem()->AddResource(L"MapMesh", pMapMesh);
-
-    _EngineSystem.GetRenderSystem()->CompileVertexShader(szVSPath.c_str(), "vsmain", "vs_5_0", &shader_byte_code_vs, &size_shader_vs);
-    VertexShader* pVertexShader = _EngineSystem.GetRenderSystem()->CreateVertexShader(shader_byte_code_vs, size_shader_vs);
-    _EngineSystem.GetRenderSystem()->CompilePixelShader(szPSPath.c_str(), "psmain", "ps_5_0", &shader_byte_code_ps, &size_shader_ps);
-    PixelShader* pPixelShader = _EngineSystem.GetRenderSystem()->CreatePixelShader(shader_byte_code_ps, size_shader_ps);
-
-    VertexBuffer* pVertexBuffer = _EngineSystem.GetRenderSystem()->CreateVertexBuffer(&pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size(), shader_byte_code_vs, size_shader_vs);
-    IndexBuffer* pIndexBuffer = _EngineSystem.GetRenderSystem()->CreateIndexBuffer(&pMapMesh->GetListIndex()[0], pMapMesh->GetListIndex().size());
-
-    _EngineSystem.GetRenderSystem()->ReleaseBlob();
-
-    pMapMesh->m_pVertexBuffer = pVertexBuffer;
-    pMapMesh->m_pIndexBuffer = pIndexBuffer;
-
-    m_pQuadTree = new FQuadTree(m_pCamera, pMapMesh, iMaxDepth, fAlphaData);
-    m_pQuadTree->SetConstantData(cc);
-    m_pQuadTree->SetTransform({ mapTransform.position, mapTransform.rotation, mapTransform.scale });
-    m_pQuadTree->SetTexture(pTexture);
-    for (const auto& texture : m_ListTextureSplatting)
-        m_pQuadTree->SetSplattingTexture(_EngineSystem.GetTextureSystem()->GetTexture(texture));
-    m_pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
-    m_pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
-
-    for (const auto& obj : allObjectList)
-    {
-        if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
-            m_ListFbx.insert(obj->GetObjectName());
-        m_pQuadTree->AddObject(obj);
-    }
-}
+};

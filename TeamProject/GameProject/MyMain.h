@@ -5,7 +5,7 @@
 #include "ModelTest.h"
 #include "Character.h"
 #include "DebugBox.h"
-
+#include "FQuadTree.h"
 class MyMain :
     public GameCore
 {
@@ -23,5 +23,7 @@ public:
 
     Character* m_pModelTest = nullptr;
     DebugBox* m_pDebugBox = nullptr;
+
+    FQuadTree* m_pQuadTree = nullptr;
 };
 

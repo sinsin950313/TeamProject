@@ -24,6 +24,30 @@ namespace DX
 			&pVB);
 		return pVB;
 	}
+	ID3D11Buffer* CreateIndexBuffer(ID3D11Device* pd3dDevice,
+		void* pDataAddress,
+		UINT iDataNum,
+		UINT iDataSize)
+	{
+		HRESULT hr;
+		ID3D11Buffer* pVB = nullptr;
+
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.ByteWidth = iDataSize * iDataNum;
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(sd));
+		sd.pSysMem = pDataAddress;
+		hr = pd3dDevice->CreateBuffer(
+			&bd,
+			&sd,
+			&pVB);
+
+		return pVB;
+	}
 	ID3D11Buffer* CreateConstantBuffer(ID3D11Device* pd3dDevice,
 		void* pDataAddress,
 		UINT iDataSize)

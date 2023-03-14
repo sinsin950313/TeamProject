@@ -8,6 +8,11 @@ static std::ostream& operator<<(std::ostream& os, const std::wstring& str) {
 	return os << std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>{}.to_bytes(str);
 }
 
+static float	Lerp(float fStart, float fEnd, float fTangent)
+{
+	return fStart - (fStart * fTangent) + (fEnd * fTangent);
+}
+
 struct Transform
 {
 	XMVECTOR position;

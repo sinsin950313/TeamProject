@@ -3,7 +3,6 @@
 #include "MeshMap.h"
 #include "TextureMgr.h"
 #include "ShaderMgr.h"
-#include "CameraTPS.h"
 #include "std.h"
 
 class Object;
@@ -16,12 +15,12 @@ public:
 
 public:
 	void	SetSplattingTexture(Texture* pTexture);
-
+	void	SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj);
 	void	SetTransform(Transform transform);
 	void	SetTexture(Texture* pTexture);
 	void	SetShader(std::wstring vsPath, Shader* pVertexShader, std::wstring psPath, Shader* pPixelShader);
 	void	SetConstantData(constant_map cc);
-	UINT	SelectVertexList(T_BOX& box, std::vector<FNode*>& selectNodeList);
+	//UINT	SelectVertexList(T_BOX& box, std::vector<FNode*>& selectNodeList);
 	BOOL	AddObject(Object* pObj);
 	BOOL	DeleteObject(Object* pObj);
 	void	BuildTree(FNode* pNode, MeshMap* pMap);
@@ -32,6 +31,7 @@ public:
 	void	Update();
 	void	PreRender();
 	void	Render();
+	void	Release();
 
 public:
 	BYTE* m_fAlphaData;
@@ -41,7 +41,7 @@ public:
 
 public:
 
-	FQuadTree(Camera* pCamera, MeshMap* pMap, int iMaxDepth = 2, BYTE* fAlphaData = 0);
+	FQuadTree(MeshMap* pMap, ID3D11Device* pDevice, ID3D11DeviceContext* pContext, int iMaxDepth = 2, BYTE* fAlphaData = 0);
 	~FQuadTree();
 
 public:
@@ -80,10 +80,16 @@ public:
 	std::wstring m_szPSPath;
 	Shader* m_pPixelShader;
 
-	Camera* m_pCamera = nullptr;
 	//std::unordered_set<Object*> m_pAllObjectList;
 	std::vector<FNode*> m_pLeafNodeList;
 	std::vector<FNode*> m_pDrawLeafNodeList;
 
 };
 
+
+namespace MAPLOAD
+{
+	FQuadTree* OpenMap(std::wstring szFullPath, ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
+	void	PathChanger(std::string& str);
+};
+using namespace MAPLOAD;

@@ -1,0 +1,44 @@
+//////////////////////////////////////
+Texture2D	g_txTexA		: register(t0);
+SamplerState g_SampleWrap	: register(s0);
+
+
+// 상수버퍼는 레지스터 단위로만 저장된다.
+// 레지스터란 float4 = TVector4 = 레지스터
+cbuffer cb_data : register(b0)
+{
+	matrix g_matWorld : packoffset(c0);
+	matrix g_matView : packoffset(c4);
+	matrix g_matProj : packoffset(c8);
+	matrix g_matComb : packoffset(c12);
+	matrix g_matNormal : packoffset(c16);
+	float3 g_vTemp : packoffset(c20);
+	float g_fTimer : packoffset(c20.w); //<< 이런식으로 부분씩 나눠서 대입 가능 순서는 xyzw
+};
+
+cbuffer cb_light : register(b1)
+{
+	float4 g_vLightPos[MAXLIGHTNUM];
+	float4 g_vLightDir[MAXLIGHTNUM];
+	float4 g_vLightColor[MAXLIGHTNUM];
+	float4 g_vEyePos;
+	float4 g_vEyeDir;
+	float3 g_vTempData[MAXLIGHTNUM];
+	int g_iLightType[MAXLIGHTNUM];
+};
+
+float4 ComputePointDiffuseLight(float3 vVertexPos, float3 vVertexNormal, int LightNum)
+{
+	float4 vPointLightColor = float4(0, 0, 0, 1);
+	float4 vLightColor = g_vLightColor[LightNum];
+
+	float4 vLight;
+	vLight.xyz = normalize(vVertexPos - g_vLightPos[LightNum].xyz);
+	vLight.w = distance(vVertexPos, g_vLightPos[LightNum].xyz);
+
+	float fLuminace = smoothstep(vLight.w-5.0f, vLight.w, g_vLightPos[LightNum].w);
+	float fIntensity = saturate(dot(vVertexNormal, -vLight.xyz));
+	vPointLightColor += float4(vLightColor.rgb * fLuminace* fIntensity, 1.0f);
+
+	return vPointLightColor;
+};

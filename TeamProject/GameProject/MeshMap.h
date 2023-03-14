@@ -12,17 +12,15 @@ struct vertex_info
 	XMVECTOR vNormal;
 };
 
-namespace MAPLOAD
-{
-	void OpenFile(std::wstring szFullPath);
-	float	Lerp(float fStart, float fEnd, float fTangent)
-	{
-		return fStart - (fStart * fTangent) + (fEnd * fTangent);
-	}
-};
+
 
 class MeshMap
 {
+public:
+	ID3D11Device* m_pd3dDevice = nullptr;
+	ID3D11DeviceContext* m_pImmediateContext = nullptr;
+	void	SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+
 public:
 	std::vector<PTNC>& GetListVertex();
 	std::vector<DWORD>& GetListIndex();
@@ -32,6 +30,7 @@ public:
 	XMVECTOR ComputeFaceNormal(UINT i0, UINT i1, UINT i2);
 	void	ComputeVertexNormal(UINT iVertex);
 	friend std::ostream& operator<<(std::ostream& os, const MeshMap* pMap);
+	friend std::ifstream& operator>>(std::ifstream& is, MeshMap* pMap);
 
 public:
 	MeshMap();

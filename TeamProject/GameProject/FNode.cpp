@@ -7,7 +7,7 @@ void FNode::CreateChildNode(FNode* pParent, MeshMap* pMap)
 	// 10 11  12  13  14
 	// 15 16  17  18  19
 	// 20  21 22  23  24
-	TRect rt = pParent->m_rt;
+	//TRect rt = pParent->m_rt;
 	DWORD dwLT = pParent->m_dwCorner[0];
 	DWORD dwRT = pParent->m_dwCorner[1];
 	DWORD dwLB = pParent->m_dwCorner[2];
@@ -40,12 +40,12 @@ void FNode::CreateIndexData(MeshMap* pMap)
 	m_IndexList.resize(dwNumCells * 2 * 3); //mesh * 2 * 3(vertex)
 	int iIndex = 0;
 
-	m_Box.vMin.x = pMap->GetListVertex()[dwLB].pos.x;
-	m_Box.vMin.y = 100000.0f;
-	m_Box.vMin.z = pMap->GetListVertex()[dwLB].pos.z;
-	m_Box.vMax.x = pMap->GetListVertex()[dwRT].pos.x;
-	m_Box.vMax.y = -100000.0f;
-	m_Box.vMax.z = pMap->GetListVertex()[dwRT].pos.z;
+	//m_Box.vMin.x = pMap->GetListVertex()[dwLB].pos.x;
+	//m_Box.vMin.y = 100000.0f;
+	//m_Box.vMin.z = pMap->GetListVertex()[dwLB].pos.z;
+	//m_Box.vMax.x = pMap->GetListVertex()[dwRT].pos.x;
+	//m_Box.vMax.y = -100000.0f;
+	//m_Box.vMax.z = pMap->GetListVertex()[dwRT].pos.z;
 
 	for (int dwRow = 0; dwRow < dwNumRowCell; dwRow++)
 	{
@@ -60,26 +60,26 @@ void FNode::CreateIndexData(MeshMap* pMap)
 
 			for (DWORD dwVertex = 0; dwVertex < 6; dwVertex++)
 			{
-				if (m_Box.vMin.y > pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y)
-				{
-					m_Box.vMin.y = pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y;
-				}
-				if (m_Box.vMax.y < pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y)
-				{
-					m_Box.vMax.y = pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y;
-				}
+				//if (m_Box.vMin.y > pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y)
+				//{
+				//	m_Box.vMin.y = pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y;
+				//}
+				//if (m_Box.vMax.y < pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y)
+				//{
+				//	m_Box.vMax.y = pMap->GetListVertex()[m_IndexList[iIndex + dwVertex]].pos.y;
+				//}
 			}
 			iIndex += 6;
 		}
 	}
 	m_dwFace = m_IndexList.size() / 3;
-	m_Box.vCenter = (m_Box.vMax + m_Box.vMin) * 0.5f;
-	m_Box.vAxis[0] = { 1,0,0 };
-	m_Box.vAxis[1] = { 0,1,0 };
-	m_Box.vAxis[2] = { 0,0,1 };
-	m_Box.fExtent[0] = m_Box.vMax.x - m_Box.vCenter.x;
-	m_Box.fExtent[1] = m_Box.vMax.y - m_Box.vCenter.y;
-	m_Box.fExtent[2] = m_Box.vMax.z - m_Box.vCenter.z;
+	//m_Box.vCenter = (m_Box.vMax + m_Box.vMin) * 0.5f;
+	//m_Box.vAxis[0] = { 1,0,0 };
+	//m_Box.vAxis[1] = { 0,1,0 };
+	//m_Box.vAxis[2] = { 0,0,1 };
+	//m_Box.fExtent[0] = m_Box.vMax.x - m_Box.vCenter.x;
+	//m_Box.fExtent[1] = m_Box.vMax.y - m_Box.vCenter.y;
+	//m_Box.fExtent[2] = m_Box.vMax.z - m_Box.vCenter.z;
 }
 
 HRESULT FNode::CreateIndexBuffer(MeshMap* pMap)
@@ -96,7 +96,7 @@ HRESULT FNode::CreateIndexBuffer(MeshMap* pMap)
 	D3D11_SUBRESOURCE_DATA  sd;
 	ZeroMemory(&sd, sizeof(sd));
 	sd.pSysMem = &m_IndexList.at(0);
-	hr = g_pDevice->CreateBuffer(
+	hr = pMap->m_pd3dDevice->CreateBuffer(
 		&bd, // 버퍼 할당
 		&sd, // 초기 할당된 버퍼를 체우는 CPU메모리 주소
 		&m_pIndexBuffer);

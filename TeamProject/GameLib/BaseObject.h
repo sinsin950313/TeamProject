@@ -29,6 +29,11 @@ namespace DX
 		UINT iNumVertex,
 		UINT iVertexSize);
 
+	ID3D11Buffer* CreateIndexBuffer(ID3D11Device* pd3dDevice,
+		void* pDataAddress,
+		UINT iDataNum,
+		UINT iDataSize);
+
 	ID3D11Buffer* CreateConstantBuffer(ID3D11Device* pd3dDevice,
 		void* pDataAddress,
 		UINT iDataSize);

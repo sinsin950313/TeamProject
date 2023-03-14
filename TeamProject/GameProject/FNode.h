@@ -1,17 +1,18 @@
 #pragma once
 #include "MeshMap.h"
-#include "TCollision.h"
-#include "Object.h"
+//#include "TCollision.h"
+//#include "Object.h"
 
+class Object;
 class FNode
 {
 public:
 	int m_iDepth;
 	BOOL m_bLeaf;
 	DWORD m_dwCorner[4];
-	TRect m_rt;
+	//TRect m_rt;
 	DWORD m_dwFace;
-	T_BOX m_Box;
+	//T_BOX m_Box;
 	std::vector<DWORD> m_IndexList;
 	ID3D11Buffer* m_pIndexBuffer;
 	std::vector<FNode*> m_pChild;
