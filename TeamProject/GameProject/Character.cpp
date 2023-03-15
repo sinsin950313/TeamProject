@@ -53,6 +53,32 @@ void	Character::UpdateBuffer()
 	m_pImmediateContext->UpdateSubresource(_toViewSpaceTransformBuffer, 0, nullptr, &_toViewSpaceTransformData, 0, 0);
 }
 
+SSB::OBBData Character::GetBoundingVolume()
+{
+	SSB::OBBData data = m_pModel->GetBoundingVolume();
+
+	auto worldMatFloat44 = m_matWorld.operator DirectX::XMFLOAT4X4();
+	FXMMATRIX worldMat = XMLoadFloat4x4(&worldMatFloat44);
+	{
+		auto result = XMVector3Transform(data.Position, worldMat);
+
+		XMFLOAT4 tmp;
+		XMStoreFloat4(&tmp, result);
+		data.Position = { tmp.x, tmp.y, tmp.z };
+	}
+
+	{
+		XMFLOAT4X4 tmp = data.Rotation;
+		FXMMATRIX rotMat = XMLoadFloat4x4(&tmp);
+		auto result = XMMatrixMultiply(worldMat, rotMat);
+
+		XMStoreFloat4x4(&tmp, result);
+		data.Rotation = tmp;
+	}
+
+	return data;
+}
+
 bool	Character::Init()
 {
 	return true;

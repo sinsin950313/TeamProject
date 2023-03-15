@@ -48,6 +48,10 @@ namespace SSB
 	{
 		_animations.insert(std::make_pair(name, animation));
 	}
+	void Model::Initialize_SetBoundingVolume(OBBData data)
+	{
+		_boundingVolume = data;
+	}
 	void Model::SetCurrentAnimation(AnimationName name)
 	{
 		if (_animations.find(name) != _animations.end())
@@ -69,6 +73,10 @@ namespace SSB
 	void Model::SetPixelShader(Shader* shader)
 	{
 		_ps = shader;
+	}
+	OBBData Model::GetBoundingVolume()
+	{
+		return _boundingVolume;
 	}
 	bool Model::Init()
 	{
@@ -170,6 +178,45 @@ namespace SSB
 			XMFLOAT3 tmp;
 			Serializeable::Deserialize(data.str, tmp);
 			_maxVertex = tmp;
+		}
+
+		offset = serialedString.find(_boundingVolumeStr);
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			XMFLOAT3 pos;
+			Serializeable::Deserialize(data.str, pos);
+
+			_boundingVolume.Position = pos;
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			XMFLOAT3X3 rot;
+			Serializeable::Deserialize(data.str, rot);
+
+			_boundingVolume.Rotation = rot;
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			XMFLOAT3 scale;
+			Serializeable::Deserialize(data.str, scale);
+
+			_boundingVolume.Scale = scale;
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			XMFLOAT3 tmp;
+			Serializeable::Deserialize(data.str, tmp);
+
+			_boundingVolume.Width = tmp.x;
+			_boundingVolume.Height = tmp.y;
+			_boundingVolume.Depth = tmp.z;
 		}
 
 		while (serialedString.find(_materialIndexStr, offset) != std::string::npos)

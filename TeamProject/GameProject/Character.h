@@ -35,6 +35,7 @@ public:
 
 	void	CreateBuffer();
 	void	UpdateBuffer();
+	SSB::OBBData GetBoundingVolume();
 
 public:
 	SSB::Model* m_pModel = nullptr;

@@ -75,7 +75,9 @@ bool    MyMain::Render()
 
     if (m_pDebugBox)
     {
-		m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
+		//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
+        auto obbData = m_pModelTest->GetBoundingVolume();
+		m_pDebugBox->SetBox(obbData.Position, TVector3::Zero, obbData.Scale);
 		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         m_pDebugBox->SetColor(TColor(0, 0, 1, 1));
 		m_pDebugBox->UpdateBuffer();

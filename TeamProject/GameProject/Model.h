@@ -8,9 +8,21 @@
 #include "Shader.h"
 #include "Serializeable.h"
 #include "Animation.h"
+#include "TMath.h"
 
 namespace SSB
 {
+	struct OBBData
+	{
+		TVector3 Position;
+		TMatrix Rotation;
+		TVector3 Scale;
+
+		float Width;
+		float Height;
+		float Depth;
+	};
+
 	typedef std::string AnimationName;
 
 	class Model : public Common, public Serializeable
@@ -31,6 +43,8 @@ namespace SSB
 
 		Shader* _ps;
 
+		OBBData _boundingVolume;
+
 	public:
 		Model();
 		virtual ~Model();
@@ -42,11 +56,13 @@ namespace SSB
 		void Initialize_RegisterMaterial(MaterialIndex index, Material* material);
 		void Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh);
 		void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
+		void Initialize_SetBoundingVolume(OBBData data);
 
 	public:
 		void SetCurrentAnimation(AnimationName name);
 		void SetVertexShader(Shader* shader);
 		void SetPixelShader(Shader* shader);
+		OBBData GetBoundingVolume();
 
 	public:
 		bool Init() override;
