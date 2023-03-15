@@ -2,7 +2,6 @@
 #include "GameCore.h"
 #include "CameraDebug.h"
 #include "CameraTPS.h"
-#include "ModelTest.h"
 #include "Character.h"
 #include "DebugBox.h"
 #include "FQuadTree.h"
