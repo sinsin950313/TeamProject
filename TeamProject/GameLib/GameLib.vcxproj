@@ -125,10 +125,12 @@ copy "*.lib" "..\\..\\lib"</Command>
     <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundMgr.h" />
+    <ClInclude Include="TCollision.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMgr.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="MyWindows.h" />
+    <ClInclude Include="TSelect.h" />
     <ClInclude Include="Writer.h" />
     <ClInclude Include="std.h" />
     <ClInclude Include="TMath.h" />
@@ -149,10 +151,12 @@ copy "*.lib" "..\\..\\lib"</Command>
     <ClCompile Include="ShaderMgr.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundMgr.cpp" />
+    <ClCompile Include="TCollision.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="MyWindows.cpp" />
+    <ClCompile Include="TSelect.cpp" />
     <ClCompile Include="Writer.cpp" />
     <ClCompile Include="TMath.cpp" />
   </ItemGroup>

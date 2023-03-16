@@ -20,9 +20,11 @@ namespace SSB
 
 	private:
 		std::vector<TVector3> _meshElementMinMaxVertexList;
+	public:
 		TVector3 _minVertex;
 		TVector3 _maxVertex;
 
+	private:
 		std::map<MaterialIndex, Material*> _materials;
 		std::map<MeshIndex, MeshInterface*> _meshes;
 
@@ -35,7 +37,7 @@ namespace SSB
 		Model();
 		virtual ~Model();
 
-	private:
+	public:
 		void SizeCheck();
 
 	public:

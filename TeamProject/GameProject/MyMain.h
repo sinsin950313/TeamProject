@@ -21,7 +21,11 @@ public:
     Camera* m_pMainCamera = nullptr;
 
     Character* m_pModelTest = nullptr;
+    T_BOX        modelBox;
+    T_BOX       testBox;
+
     DebugBox* m_pDebugBox = nullptr;
+    std::vector<T_BOX*> m_debugBoxList;
 
     FQuadTree* m_pQuadTree = nullptr;
 };

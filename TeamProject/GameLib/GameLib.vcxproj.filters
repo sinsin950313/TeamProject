@@ -102,6 +102,12 @@
     <ClInclude Include="CameraTPS.h">
       <Filter>Camera</Filter>
     </ClInclude>
+    <ClInclude Include="TCollision.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TSelect.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArcBall.cpp">
@@ -166,6 +172,12 @@
     </ClCompile>
     <ClCompile Include="CameraTPS.cpp">
       <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="TCollision.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="TSelect.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

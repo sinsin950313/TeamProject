@@ -58,7 +58,7 @@ HRESULT DebugBox::CreateConstantBuffer()
 	m_cbBox.vXAxis = TVector4::UnitX;
 	m_cbBox.vYAxis = TVector4::UnitY;
 	m_cbBox.vZAxis = TVector4::UnitZ;
-	m_cbBox.vSize = TVector4::One;
+	m_cbBox.vHalfSize = TVector4::One;
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -162,7 +162,7 @@ HRESULT	DebugBox::CreateGS(std::wstring filename)
 	return hr;
 }
 
-void	DebugBox::SetBox(TVector3 pos, TVector3 rot, TVector3 size)
+void	DebugBox::SetBox(TVector3 pos, TVector3 rot, TVector3 halfSize)
 {
 	m_vPos = pos;
 
@@ -177,7 +177,7 @@ void	DebugBox::SetBox(TVector3 pos, TVector3 rot, TVector3 size)
 
 	for (int i = 0; i < 3; i++)
 	{
-		m_fExtent[i] = size[i] * 0.5f;
+		m_fExtent[i] = halfSize[i];
 	}
 
 	m_Vertex.p = m_vPos;
@@ -188,8 +188,30 @@ void	DebugBox::SetBox(TVector3 pos, TVector3 rot, TVector3 size)
 	m_cbBox.vYAxis.w = 1.0f;
 	m_cbBox.vZAxis.w = 1.0f;
 
-	m_cbBox.vSize = TVector4(m_fExtent);
-	m_cbBox.vSize.w = 1.0f;
+	m_cbBox.vHalfSize = TVector4(m_fExtent);
+	m_cbBox.vHalfSize.w = 1.0f;
+}
+
+void	DebugBox::SetBox(T_BOX box)
+{
+	m_vPos = box.vCenter;
+
+	for (int i = 0; i < 3; i++)
+	{
+		m_vAxis[i] = box.vAxis[i];
+		m_fExtent[i] = box.fExtent[i];
+	}
+
+	m_Vertex.p = m_vPos;
+	XMStoreFloat4(&m_cbBox.vXAxis, m_vAxis[0]);
+	XMStoreFloat4(&m_cbBox.vYAxis, m_vAxis[1]);
+	XMStoreFloat4(&m_cbBox.vZAxis, m_vAxis[2]);
+	m_cbBox.vXAxis.w = 1.0f;
+	m_cbBox.vYAxis.w = 1.0f;
+	m_cbBox.vZAxis.w = 1.0f;
+
+	m_cbBox.vHalfSize = TVector4(m_fExtent);
+	m_cbBox.vHalfSize.w = 1.0f;
 }
 
 void	DebugBox::SetColor(TColor color)
