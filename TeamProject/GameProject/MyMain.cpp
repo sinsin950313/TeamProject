@@ -44,7 +44,7 @@ bool    MyMain::Init()
     modelBox.CreateOBBBox(1, 2, 1);
     m_debugBoxList.push_back(&modelBox);
 
-    testBox.CreateOBBBox(4);
+    testBox.CreateOBBBox(40, 4, 4);
     m_debugBoxList.push_back(&testBox);
 
     m_pDebugBox = new DebugBox;
@@ -91,6 +91,40 @@ bool    MyMain::Render()
         if (TCollision::ChkOBBToOBB(modelBox, testBox))
         {
             color = TColor(1, 0, 0, 1);
+
+            TVector3 l = modelBox.vCenter - testBox.vCenter;
+            l.Normalize();
+            float min = D3D11_FLOAT32_MAX;
+            TVector3 n;
+            for (int i = 0; i < 3; i++)
+            {
+                float dot = D3DXVec3Dot(&l, &testBox.vAxis[i]);
+                TVector3 md = (-testBox.vAxis[i]);
+                float mdot = D3DXVec3Dot(&l, &md);
+                if (dot > 0)
+                {
+                    if (fabs(1 - dot) < min)
+                    {
+                        min = fabs(1 - dot);
+                        n = testBox.vAxis[i];
+                    }
+                }
+                if (mdot > 0)
+                {
+                    if (fabs(1 - mdot) < min)
+                    {
+                        min = fabs(1 - mdot);
+                        n = -testBox.vAxis[i];
+                    }
+                }
+            }
+            n = TVector3(0, 0, 1);
+            TVector3 L = -((Player*)m_pModelTest)->m_vDirection;
+            TVector3 refl = 2 * (D3DXVec3Dot(&n, &L) * n) - L;
+            m_pModelTest->m_vPos += refl * 15.0f * g_fSecondPerFrame;
+            m_pModelTest->UpdateMatrix();
+            m_pModelTest->UpdateBuffer();
+            m_pModelTest->Render();
         }
         for (T_BOX* box : m_debugBoxList)
         {
