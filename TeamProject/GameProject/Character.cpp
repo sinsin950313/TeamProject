@@ -81,6 +81,9 @@ SSB::OBBData Character::GetBoundingVolume()
 
 bool	Character::Init()
 {
+	auto boundVolume = m_pModel->GetBoundingVolume();
+    m_ColliderBox.CreateOBBBox(boundVolume.Width, boundVolume.Height, boundVolume.Depth);
+
 	return true;
 }
 
@@ -93,6 +96,16 @@ bool	Character::Frame()
 
 	UpdateMatrix();
 	UpdateBuffer();
+
+	auto bv = m_pModel->GetBoundingVolume();
+	TMatrix local(
+		bv.Rotation._11, bv.Rotation._12, bv.Rotation._13, 0,
+		bv.Rotation._21, bv.Rotation._22, bv.Rotation._23, 0,
+		bv.Rotation._31, bv.Rotation._32, bv.Rotation._33, 0,
+		bv.Position.x, bv.Position.y, bv.Position.z, 1
+	);
+	TMatrix world = local * m_matWorld;
+    m_ColliderBox.UpdateBox(world);
 
 	return true;
 }

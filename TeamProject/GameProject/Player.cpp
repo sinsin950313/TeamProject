@@ -3,6 +3,7 @@
 
 bool    Player::Init()
 {
+	Character::Init();
 	m_fSpeed = 15.0f;
 	return true;
 }
