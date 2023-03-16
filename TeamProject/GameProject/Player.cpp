@@ -1,6 +1,12 @@
 #include "Player.h"
 #include "Input.h"
 
+bool    Player::Init()
+{
+	m_fSpeed = 15.0f;
+	return true;
+}
+
 bool    Player::Frame()
 {
 	float speed = 10.0f * g_fSecondPerFrame;
@@ -28,14 +34,28 @@ bool    Player::Frame()
 		moveChar = true;
 	}
 
+	if (I_Input.GetKey(VK_LBUTTON) == KEY_PUSH && !m_isAttack)
+	{
+		m_isAttack = true;
+	}
+
 	if (moveChar == true)
 	{
 		XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
 		MoveChar(desiredCharDir, world);
 		//m_matWorld = world;
 	}
+	if (m_isAttack)
+	{
+		Attack();
+	}
 
 	return Character::Frame();
+}
+
+void    Player::Attack()
+{
+
 }
 
 void Player::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
@@ -62,7 +82,7 @@ void Player::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
 		charDirAngle = -charDirAngle;
 
-	float speed = 15.0f * frameTime;
+	float speed = m_fSpeed * frameTime;
 	charPosition = charPosition + (destinationDirection * speed);
 
 	//// Update characters world matrix
@@ -78,6 +98,7 @@ void Player::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 
 	// Set the characters old direction
 	oldCharDirection = currCharDirection;
+	m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 
 	// Update our animation
 	float timeFactor = 1.0f;	// You can speed up or slow down time by changing this

@@ -1,5 +1,6 @@
 #pragma once
 #include "ShaderMgr.h"
+#include "TCollision.h"
 
 struct PC_Vertex
 {
@@ -15,7 +16,7 @@ struct BOX_CONSTANT_BUFFER
 	TVector4 vXAxis;
 	TVector4 vYAxis;
 	TVector4 vZAxis;
-	TVector4 vSize;
+	TVector4 vHalfSize;
 };
 
 class DebugBox
@@ -38,6 +39,7 @@ private:
 
 public:
 	void	SetBox(TVector3 pos, TVector3 rot, TVector3 size);
+	void	SetBox(T_BOX box);
 	void	SetColor(TColor color);
 	void	SetMatrix(TMatrix* matView, TMatrix* matProj);
 
