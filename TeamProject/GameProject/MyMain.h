@@ -5,6 +5,9 @@
 #include "Character.h"
 #include "DebugBox.h"
 #include "FQuadTree.h"
+#include "CharacterStateManager.h"
+#include <map>
+
 class MyMain :
     public GameCore
 {
@@ -27,5 +30,7 @@ public:
     std::vector<T_BOX*> m_debugBoxList;
 
     FQuadTree* m_pQuadTree = nullptr;
+
+    std::map<SSB::StateManagerName, SSB::CharacterStateManager*> m_StateManagerMap;
 };
 

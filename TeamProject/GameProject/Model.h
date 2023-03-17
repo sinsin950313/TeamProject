@@ -23,8 +23,6 @@ namespace SSB
 		float Depth;
 	};
 
-	typedef std::string AnimationName;
-
 	class Model : public Common, public Serializeable
 	{
 	private:

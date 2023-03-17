@@ -151,10 +151,12 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="CharacterStateManager.h" />
     <ClInclude Include="DebugBox.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPath.h" />
     <ClInclude Include="CommonUtility.h" />
+    <ClInclude Include="EnemyNPCMob.h" />
     <ClInclude Include="FileIOObject.h" />
     <ClInclude Include="FNode.h" />
     <ClInclude Include="FQuadTree.h" />
@@ -166,13 +168,18 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="MyMain.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerStateService.h" />
+    <ClInclude Include="PlayerTransferStateName.h" />
     <ClInclude Include="Serializeable.h" />
     <ClInclude Include="SerializeableDataType.h" />
+    <ClInclude Include="CharacterState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="CharacterStateManager.cpp" />
     <ClCompile Include="DebugBox.cpp" />
+    <ClCompile Include="EnemyNPCMob.cpp" />
     <ClCompile Include="FileIOObject.cpp" />
     <ClCompile Include="FNode.cpp" />
     <ClCompile Include="FQuadTree.cpp" />
@@ -182,7 +189,9 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MyMain.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerStateService.cpp" />
     <ClCompile Include="Serializeable.cpp" />
+    <ClCompile Include="CharacterState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameLib\GameLib.vcxproj">

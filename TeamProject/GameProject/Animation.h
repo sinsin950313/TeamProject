@@ -26,6 +26,7 @@ namespace SSB
 	};
 
 	static const DefaultAnimation kAnimationInitializer;
+	typedef std::string AnimationName;
 
 	class Animation : public Common, public Serializeable
 	{
