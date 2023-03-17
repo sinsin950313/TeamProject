@@ -61,6 +61,7 @@ bool    MyMain::Init()
     //modelBox.CreateOBBBox(1, 2, 1);
     //m_debugBoxList.push_back(&modelBox);
     m_debugBoxList.push_back(&m_pModelTest->m_ColliderBox);
+    m_debugBoxList.push_back(&((Player*)m_pModelTest)->m_AttackBox);
 
     testBox.CreateOBBBox(40, 4, 4);
     m_debugBoxList.push_back(&testBox);
@@ -146,7 +147,7 @@ bool    MyMain::Render()
             n = TVector3(0, 0, 1);
             TVector3 L = -((Player*)m_pModelTest)->m_vDirection;
             TVector3 refl = 2 * (D3DXVec3Dot(&n, &L) * n) - L;
-            m_pModelTest->m_vPos += refl * 15.0f * g_fSecondPerFrame;
+            m_pModelTest->m_vPos += L * 15.0f * g_fSecondPerFrame;
             m_pModelTest->UpdateMatrix();
             m_pModelTest->UpdateBuffer();
             m_pModelTest->Render();

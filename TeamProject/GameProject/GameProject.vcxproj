@@ -152,6 +152,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterStateManager.h" />
+    <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="DebugBox.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPath.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CharacterStateManager.cpp" />
+    <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="DebugBox.cpp" />
     <ClCompile Include="EnemyNPCMob.cpp" />
     <ClCompile Include="FileIOObject.cpp" />

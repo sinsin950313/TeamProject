@@ -45,7 +45,7 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	finalColor = finalColor * (1.0f - weights.g) + splatTex3 * weights.g;
 	finalColor = finalColor * (1.0f - weights.b) + splatTex4 * weights.b;
 	finalColor = finalColor * (1.0f - weights.a) + splatTex5 * weights.a;
-
+	return finalColor;
 	//AmbientLight
 	float ka = 0.1f;
 	float3 ia = float3(1.0f, 1.0f, 1.0f);

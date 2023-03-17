@@ -236,28 +236,28 @@ void DXDevice::ClearD3D11DeviceContext()
     UINT StrideOffset[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
     // Shaders
-    //m_pImmediateContext->VSSetShader(NULL, NULL, 0);
-    //m_pImmediateContext->HSSetShader(NULL, NULL, 0);
-    //m_pImmediateContext->DSSetShader(NULL, NULL, 0);
-    //m_pImmediateContext->GSSetShader(NULL, NULL, 0);
-    //m_pImmediateContext->PSSetShader(NULL, NULL, 0);
+    m_pImmediateContext->VSSetShader(NULL, NULL, 0);
+    m_pImmediateContext->HSSetShader(NULL, NULL, 0);
+    m_pImmediateContext->DSSetShader(NULL, NULL, 0);
+    m_pImmediateContext->GSSetShader(NULL, NULL, 0);
+    m_pImmediateContext->PSSetShader(NULL, NULL, 0);
 
     //// IA clear
-    //m_pImmediateContext->IASetVertexBuffers(0, 16, pBuffers, StrideOffset, StrideOffset);
-    //m_pImmediateContext->IASetIndexBuffer(NULL, DXGI_FORMAT_R16_UINT, 0);
-    //m_pImmediateContext->IASetInputLayout(NULL);
+    m_pImmediateContext->IASetVertexBuffers(0, 16, pBuffers, StrideOffset, StrideOffset);
+    m_pImmediateContext->IASetIndexBuffer(NULL, DXGI_FORMAT_R16_UINT, 0);
+    m_pImmediateContext->IASetInputLayout(NULL);
 
     //// Constant buffers
-    //m_pImmediateContext->VSSetConstantBuffers(0, 14, pBuffers);
-    //m_pImmediateContext->HSSetConstantBuffers(0, 14, pBuffers);
-    //m_pImmediateContext->DSSetConstantBuffers(0, 14, pBuffers);
-    //m_pImmediateContext->GSSetConstantBuffers(0, 14, pBuffers);
-    //m_pImmediateContext->PSSetConstantBuffers(0, 14, pBuffers);
+    m_pImmediateContext->VSSetConstantBuffers(0, 14, pBuffers);
+    m_pImmediateContext->HSSetConstantBuffers(0, 14, pBuffers);
+    m_pImmediateContext->DSSetConstantBuffers(0, 14, pBuffers);
+    m_pImmediateContext->GSSetConstantBuffers(0, 14, pBuffers);
+    m_pImmediateContext->PSSetConstantBuffers(0, 14, pBuffers);
 
     // Resources
     m_pImmediateContext->VSSetShaderResources(0, 16, pSRVs);
-    //m_pImmediateContext->HSSetShaderResources(0, 16, pSRVs);
-    //m_pImmediateContext->DSSetShaderResources(0, 16, pSRVs);
+    m_pImmediateContext->HSSetShaderResources(0, 16, pSRVs);
+    m_pImmediateContext->DSSetShaderResources(0, 16, pSRVs);
     m_pImmediateContext->GSSetShaderResources(0, 16, pSRVs);
     m_pImmediateContext->PSSetShaderResources(0, 16, pSRVs);
 
@@ -269,7 +269,7 @@ void DXDevice::ClearD3D11DeviceContext()
     //m_pImmediateContext->PSSetSamplers(0, 16, pSamplers);
 
     //// Render targets
-    //m_pImmediateContext->OMSetRenderTargets(8, pRTVs, pDSV);
+    m_pImmediateContext->OMSetRenderTargets(8, pRTVs, pDSV);
 
     //// States
     //FLOAT blendFactor[4] = { 0,0,0,0 };
