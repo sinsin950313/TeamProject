@@ -1,5 +1,8 @@
 #pragma once
+
 #include "Model.h"
+#include "TSelect.h"
+
 class Character
 {
 	struct ToViewSpaceTransformData
@@ -35,6 +38,7 @@ public:
 
 	void	CreateBuffer();
 	void	UpdateBuffer();
+	SSB::OBBData GetBoundingVolume();
 
 public:
 	SSB::Model* m_pModel = nullptr;
@@ -46,5 +50,8 @@ public:
 	TMatrix		m_matWorld = TMatrix::Identity;
 	TMatrix		m_matView = TMatrix::Identity;
 	TMatrix		m_matProj = TMatrix::Identity;
+
+public:
+	T_BOX m_ColliderBox;
 };
 

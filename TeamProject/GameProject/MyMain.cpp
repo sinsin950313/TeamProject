@@ -24,25 +24,27 @@ bool    MyMain::Init()
         , (float)g_rcClient.right / (float)g_rcClient.bottom);
 
 
-    SSB::ObjectScriptIO io;
-    std::string str = io.Read("ModelWriteTest_Man");
+    {
+        SSB::ObjectScriptIO io;
+        std::string str = io.Read("ModelWriteTest_Man");
 
-    m_pModelTest = new Player();
-    m_pModelTest->SetDevice(m_pd3dDevice, m_pImmediateContext);
-    ((Player*)m_pModelTest)->m_pMainCamera = m_pMainCamera;
-    m_pModelTest->Init();
-    ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &m_pModelTest->m_vPos;
-    
-    m_pModelTest->m_pModel = new SSB::Model();
-    m_pModelTest->m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
-    m_pModelTest->m_pModel->Deserialize(str);
-    m_pModelTest->m_pModel->Init();
-    m_pModelTest->m_pModel->SetCurrentAnimation("Take 001");
+        m_pModelTest = new Player();
+        m_pModelTest->SetDevice(m_pd3dDevice, m_pImmediateContext);
+        ((Player*)m_pModelTest)->m_pMainCamera = m_pMainCamera;
+        ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &m_pModelTest->m_vPos;
 
-    m_pModelTest->m_pModel->SizeCheck();
+        m_pModelTest->m_pModel = new SSB::Model();
+        m_pModelTest->m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
+        m_pModelTest->m_pModel->Deserialize(str);
+        m_pModelTest->m_pModel->Init();
+        m_pModelTest->m_pModel->SetCurrentAnimation("Take 001");
+
+        m_pModelTest->Init();
+    }
     //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
-    modelBox.CreateOBBBox(1, 2, 1);
-    m_debugBoxList.push_back(&modelBox);
+    //modelBox.CreateOBBBox(1, 2, 1);
+    //m_debugBoxList.push_back(&modelBox);
+    m_debugBoxList.push_back(&m_pModelTest->m_ColliderBox);
 
     testBox.CreateOBBBox(40, 4, 4);
     m_debugBoxList.push_back(&testBox);
@@ -70,7 +72,7 @@ bool    MyMain::Frame()
     m_pQuadTree->Update();
     m_pModelTest->Frame();
 
-    modelBox.UpdateBox(m_pModelTest->m_matWorld);
+    //modelBox.UpdateBox(m_pModelTest->m_matWorld);
     return true;
 }
 
@@ -88,11 +90,13 @@ bool    MyMain::Render()
     {
         m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         TColor color = TColor(0, 0, 1, 1);
-        if (TCollision::ChkOBBToOBB(modelBox, testBox))
+        //if (TCollision::ChkOBBToOBB(modelBox, testBox))
+        if (TCollision::ChkOBBToOBB(m_pModelTest->m_ColliderBox, testBox))
         {
             color = TColor(1, 0, 0, 1);
 
-            TVector3 l = modelBox.vCenter - testBox.vCenter;
+            //TVector3 l = modelBox.vCenter - testBox.vCenter;
+            TVector3 l = m_pModelTest->m_ColliderBox.vCenter - testBox.vCenter;
             l.Normalize();
             float min = D3D11_FLOAT32_MAX;
             TVector3 n;
@@ -136,7 +140,6 @@ bool    MyMain::Render()
 		//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
         //T_BOX box;
         //box.CreateOBBBox();
-        
     }
 
     return true;
