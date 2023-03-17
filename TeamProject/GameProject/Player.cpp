@@ -5,6 +5,7 @@ bool    Player::Init()
 {
 	Character::Init();
 	m_fSpeed = 15.0f;
+	m_AttackBox.CreateOBBBox(1, 1, 1);
 	return true;
 }
 
@@ -38,8 +39,18 @@ bool    Player::Frame()
 	if (I_Input.GetKey(VK_LBUTTON) == KEY_PUSH && !m_isAttack)
 	{
 		m_isAttack = true;
-	}
+		// 공격 애니메이션으로 변경
+		// 해당 애니메이션 프레임이 끝날때까지 공격 상태 유지
+		// 공격 중 특정 구간에서 툴에서 지정한 포인트 판정하는 기능
 
+	}
+	static float temp = 0.0f;
+	temp += g_fSecondPerFrame;
+	TVector3 cen;
+	TMatrix rot;
+	D3DXMatrixRotationYawPitchRoll(&rot, temp, 0, 0);
+	cen = m_vPos - m_matWorld.Right() * 2.0f;
+	m_AttackBox.CreateOBBBox(0, 0, 0, cen);
 	if (moveChar == true)
 	{
 		XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
@@ -67,12 +78,12 @@ void Player::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	destinationDirection = XMVector3Normalize(destinationDirection);
 
 	if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
-		oldCharDirection += XMVectorSet(0.02f, 0.0f, -0.02f, 0.0f);
+		oldCharDirection += XMVectorSet(0.12f, 0.0f, -0.12f, 0.0f);
 
 	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	charPosition = XMVector3TransformCoord(charPosition, worldMatrix);
 
-	float destDirLength = 10.0f * frameTime;
+	float destDirLength = 15.0f * frameTime;
 
 	XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection * destDirLength);	// Get the characters direction (based off time, old position, and desired
 	
@@ -94,14 +105,10 @@ void Player::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	//rotationMatrix = XMMatrixRotationY(charDirAngle - 3.14159265f);		// Subtract PI from angle so the character doesn't run backwards
 
 	m_vScale = TVector3(1, 1, 1);
-	m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
+	m_vRotation = TVector3(0, charDirAngle - XM_PI, 0);
 	m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
 
 	// Set the characters old direction
 	oldCharDirection = currCharDirection;
 	m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
-
-	// Update our animation
-	float timeFactor = 1.0f;	// You can speed up or slow down time by changing this
-	//UpdateMD5Model(NewMD5Model, time * timeFactor, 0);
 }

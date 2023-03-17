@@ -98,12 +98,16 @@ bool	Character::Frame()
 	UpdateBuffer();
 
 	auto bv = m_pModel->GetBoundingVolume();
-	TMatrix local(
-		bv.Rotation._11, bv.Rotation._12, bv.Rotation._13, 0,
-		bv.Rotation._21, bv.Rotation._22, bv.Rotation._23, 0,
-		bv.Rotation._31, bv.Rotation._32, bv.Rotation._33, 0,
-		bv.Position.x, bv.Position.y, bv.Position.z, 1
-	);
+	//TMatrix local(
+	//	bv.Rotation._11, bv.Rotation._12, bv.Rotation._13, 0,
+	//	bv.Rotation._21, bv.Rotation._22, bv.Rotation._23, 0,
+	//	bv.Rotation._31, bv.Rotation._32, bv.Rotation._33, 0,
+	//	bv.Position.x, bv.Position.y, bv.Position.z, 1
+	//);
+	TMatrix local = TMatrix::Identity;
+	local._41 = bv.Position.x;
+	local._42 = bv.Position.y;
+	local._43 = bv.Position.z;
 	TMatrix world = local * m_matWorld;
     m_ColliderBox.UpdateBox(world);
 
