@@ -1,6 +1,7 @@
 #include "EnemyNPCMobStateService.h"
 #include "TMath.h"
 #include "EnemyNPCMob.h"
+#include "Player.h"
 
 namespace SSB
 {
@@ -9,7 +10,7 @@ namespace SSB
         bool transfer = false;
 
         EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
-        if (TVector3::Distance(mob->GetTargetPlayer()->GetPosition(), mob->GetPosition()) <= mob->GetSpotRange())
+        if (TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition()) <= mob->GetSpotRange())
         {
 			transfer = true;
 			SetNextTransferName(kEnemyNPCMobMove);
@@ -33,7 +34,7 @@ namespace SSB
         bool transfer = false;
 
         EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
-        Character* targetPlayer = mob->GetTargetPlayer();
+        Character* targetPlayer = &Player::GetInstance();
         if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
         {
 			transfer = true;
@@ -58,7 +59,7 @@ namespace SSB
     {
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
         EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
-        XMVECTOR dir = mob->GetTargetPlayer()->GetPosition() - m_pCharacter->GetPosition();;
+        XMVECTOR dir = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
         dir = XMVector3Normalize(dir);
 
         m_pCharacter->MoveChar(dir, world);
@@ -70,7 +71,7 @@ namespace SSB
         bool transfer = false;
 
         EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
-        Character* targetPlayer = mob->GetTargetPlayer();
+        Character* targetPlayer = &Player::GetInstance();
         if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
         {
 			transfer = true;

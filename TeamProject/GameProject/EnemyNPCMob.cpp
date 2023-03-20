@@ -11,12 +11,4 @@ namespace SSB
 	{
 		return m_SpotRange;
 	}
-	void EnemyNPCMob::Initialize_SetTargetPlayer(Character* targetPlayer)
-	{
-		m_pTargetPlayer = targetPlayer;
-	}
-	Character* EnemyNPCMob::GetTargetPlayer()
-	{
-		return m_pTargetPlayer;
-	}
 }

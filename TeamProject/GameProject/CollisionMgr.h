@@ -1,15 +1,10 @@
 #pragma once
 #include "Character.h"
 
-class CollisionMgr : public CSingleton<CollisionMgr>
+class CollisionMgr : public Singleton<CollisionMgr>
 {
-public:
-	ID3D11Device* m_pd3dDevice = nullptr;
-	ID3D11DeviceContext* m_pImmediateContext = nullptr;
-	void	SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
-
 private:
-	friend class CSingleton<CollisionMgr>;
+	friend class Singleton<CollisionMgr>;
 	/*std::map<Character*, T_BOX*>	m_List;*/
 	/*
 	StaticMeshList
@@ -20,13 +15,19 @@ private:
 	PlayerAttackList
 	NpcAttackList
 	*/
+	std::map<T_BOX*, Character*> m_StaticObjectList;
+	std::map<T_BOX*, Character*>	m_NpcList;
+
+	// Character* -> NpcAttack : Attack 형식의 클래스로 변경예정..?
+	std::map<T_BOX*, Character*> m_NpcAttackList;
 
 public:
-	/*
-	HRESULT Load(std::wstring name, Texture** retTex);
-	Texture* Find(std::wstring name);
-	*/
-	bool	Release();
+	bool	ChkPlayerAttackToNpcList(T_BOX* box);
+
+public:
+	void	AddStaticObjectBox(T_BOX* box, Character* pChar);
+	void	AddNpcBox(T_BOX* box, Character* pChar);
+	void	DeleteBox(T_BOX* box);
 
 private:
 	CollisionMgr();
@@ -34,5 +35,5 @@ public:
 	~CollisionMgr();
 };
 
-#define I_Col CollisionMgr::GetInstance()
+#define I_Collision CollisionMgr::GetInstance()
 

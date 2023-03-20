@@ -2,7 +2,6 @@
 #include "GameCore.h"
 #include "CameraDebug.h"
 #include "CameraTPS.h"
-#include "Character.h"
 #include "DebugBox.h"
 #include "FQuadTree.h"
 #include "CharacterStateManager.h"
@@ -24,12 +23,11 @@ public:
 public:
     Camera* m_pMainCamera = nullptr;
 
-    Character* m_pModelTest = nullptr;
     SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;
 
-    //DebugBox* m_pDebugBox = nullptr;
-    //std::vector<T_BOX*> m_debugBoxList;
+    DebugBox* m_pDebugBox = nullptr;
+    std::vector<T_BOX*> m_debugBoxList;
 
     FQuadTree* m_pQuadTree = nullptr;
 

@@ -32,6 +32,8 @@ public:
 	virtual bool	Render();
 	virtual bool	Release();
 
+	void	UpdateBox();
+
 	void	UpdateMatrix();
 	void	SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj);
 

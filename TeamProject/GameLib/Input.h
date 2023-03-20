@@ -9,10 +9,10 @@ enum KEYSTATE
 	KEY_HOLD
 };
 
-class Input : public CSingleton<Input>
+class Input : public Singleton<Input>
 {
 private:
-	friend class CSingleton<Input>;
+	friend class Singleton<Input>;
 	Input() {};
 
 private:

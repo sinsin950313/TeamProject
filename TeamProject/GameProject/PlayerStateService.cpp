@@ -8,22 +8,10 @@ namespace SSB
 	{
 		bool transfer = false;
 
-		if (I_Input.GetKey('A') == KEY_HOLD)
-		{
-			transfer = true;
-			SetNextTransferName(kPlayerMove);
-		}
-		if (I_Input.GetKey('D') == KEY_HOLD)
-		{
-			transfer = true;
-			SetNextTransferName(kPlayerMove);
-		}
-		if (I_Input.GetKey('W') == KEY_HOLD)
-		{
-			transfer = true;
-			SetNextTransferName(kPlayerMove);
-		}
-		if (I_Input.GetKey('S') == KEY_HOLD)
+		if (I_Input.GetKey('A') == KEY_HOLD || 
+			I_Input.GetKey('D') == KEY_HOLD || 
+			I_Input.GetKey('W') == KEY_HOLD || 
+			I_Input.GetKey('S') == KEY_HOLD)
 		{
 			transfer = true;
 			SetNextTransferName(kPlayerMove);
@@ -84,7 +72,6 @@ namespace SSB
 
 		Player* player = static_cast<Player*>(m_pCharacter);
 
-		float speed = 10.0f * g_fSecondPerFrame;
 		bool moveChar = false;
 		XMVECTOR desiredCharDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -119,6 +106,7 @@ namespace SSB
 	{
 		bool transfer = false;
 
+		// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 		if (I_Input.GetKey(VK_LBUTTON) != KEY_PUSH && 
 			I_Input.GetKey(VK_LBUTTON) != KEY_HOLD)
 		{
@@ -138,6 +126,8 @@ namespace SSB
 	{
         m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
 
+		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
+		// 충돌 처리가 될 수 있게끔 해야함
 		OutputDebugString(L"Attack\n");
 	}
 }

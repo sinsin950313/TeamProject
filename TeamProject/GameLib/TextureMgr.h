@@ -1,6 +1,6 @@
 #pragma once
 #include "Texture.h"
-class TextureMgr : public CSingleton<TextureMgr>
+class TextureMgr : public Singleton<TextureMgr>
 {
 public:
 	ID3D11Device* m_pd3dDevice = nullptr;
@@ -8,7 +8,7 @@ public:
 	void	SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
 
 private:
-	friend class CSingleton<TextureMgr>;
+	friend class Singleton<TextureMgr>;
 	std::map<std::wstring, Texture*>	m_List;
 
 public:

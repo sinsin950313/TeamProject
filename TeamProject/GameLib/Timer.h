@@ -1,10 +1,10 @@
 #pragma once
 #include "std.h"
 #pragma comment(lib, "winmm.lib") // timeGetTime
-class Timer : public CSingleton<Timer>
+class Timer : public Singleton<Timer>
 {
 private:
-	friend class CSingleton<Timer>;
+	friend class Singleton<Timer>;
 	
 public:
 	bool Init();
