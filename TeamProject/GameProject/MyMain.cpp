@@ -45,7 +45,8 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
-        std::string str = io.Read("ModelWriteTest_Man");
+        //std::string str = io.Read("ModelWriteTest_Man");
+        std::string str = io.Read("AtroxNPC");
 
         //m_pModelTest = new Player();
         //Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -54,7 +55,8 @@ bool    MyMain::Init()
         Player::GetInstance().m_pMainCamera = m_pMainCamera;
         ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
-        I_Model.Load(str, "Take 001", &Player::GetInstance().m_pModel);
+        I_Model.Load(str, "Move", &Player::GetInstance().m_pModel);
+        //Idle, Attack123, Move, Dead
 
         //Player::GetInstance().m_pModel = new SSB::Model();
         //Player::GetInstance().m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -63,14 +65,15 @@ bool    MyMain::Init()
         //Player::GetInstance().m_pModel->SetCurrentAnimation("Take 001");
 
         Player::GetInstance().Init();
+        Player::GetInstance().m_vScale *= 0.01f;
 
         m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
     }
     //modelBox.CreateAABBBox(Player::GetInstance().m_pModel->_maxVertex, Player::GetInstance().m_pModel->_minVertex);
     //modelBox.CreateOBBBox(1, 2, 1);
     //m_debugBoxList.push_back(&modelBox);
-    m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-    m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+    //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
+    //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
     //I_Collision.AddBox(&Player::GetInstance().m_AttackBox, &Player::GetInstance());
 
     testBox.CreateOBBBox(40, 4, 4);

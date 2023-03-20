@@ -189,7 +189,7 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	//XMMATRIX Translation = XMMatrixTranslation(XMVectorGetX(charPosition), 0.0f, XMVectorGetZ(charPosition));
 	//rotationMatrix = XMMatrixRotationY(charDirAngle - 3.14159265f);		// Subtract PI from angle so the character doesn't run backwards
 
-	m_vScale = TVector3(1, 1, 1);
+	//m_vScale = TVector3(1, 1, 1);
 	m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
 	m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
 
