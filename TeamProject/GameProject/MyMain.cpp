@@ -4,6 +4,9 @@
 #include "FileIOObject.h"
 #include "Player.h"
 #include "TCollision.h"
+#include "CharacterStateManager.h"
+#include "PlayerStateService.h"
+#include "PlayerTransferStateName.h"
 
 int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -23,6 +26,17 @@ bool    MyMain::Init()
     m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f
         , (float)g_rcClient.right / (float)g_rcClient.bottom);
 
+    // Register State Manager
+    {
+        {
+            SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+            manager->Initialize_RegisterState(SSB::kPlayerIdle, new SSB::PlayerIdleState);
+            manager->Initialize_RegisterState(SSB::kPlayerMove, new SSB::PlayerMoveState);
+            manager->Initialize_RegisterState(SSB::kPlayerAttack, new SSB::PlayerAttackState);
+
+			m_StateManagerMap.insert(std::make_pair(SSB::kPlayerStateManager, manager));
+        }
+    }
 
     {
         SSB::ObjectScriptIO io;
@@ -40,6 +54,8 @@ bool    MyMain::Init()
         m_pModelTest->m_pModel->SetCurrentAnimation("Take 001");
 
         m_pModelTest->Init();
+
+        m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(m_pModelTest, SSB::kPlayerIdle);
     }
     //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
     //modelBox.CreateOBBBox(1, 2, 1);
@@ -60,6 +76,11 @@ bool    MyMain::Init()
 
 bool    MyMain::Frame()
 {
+    for (auto manager : m_StateManagerMap)
+    {
+        manager.second->Frame();
+    }
+
     if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
         m_bGameRun = false;
 
@@ -172,6 +193,12 @@ bool    MyMain::Release()
         m_pDebugBox->Release();
         delete m_pDebugBox;
     }
+
+    for (auto manager : m_StateManagerMap)
+    {
+        delete manager.second;
+    }
+    m_StateManagerMap.clear();
 
     return true;
 }

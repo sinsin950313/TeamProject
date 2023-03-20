@@ -2,6 +2,7 @@
 
 #include "Model.h"
 #include "TSelect.h"
+#include <map>
 
 class Character
 {
@@ -39,6 +40,13 @@ public:
 	void	CreateBuffer();
 	void	UpdateBuffer();
 	SSB::OBBData GetBoundingVolume();
+
+public:
+    float   m_fSpeed;
+    TVector3 m_vDirection;
+
+public:
+    void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);
 
 public:
 	SSB::Model* m_pModel = nullptr;

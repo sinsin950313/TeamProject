@@ -75,6 +75,21 @@
     <ClInclude Include="Map.h">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterState.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyNPCMob.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterStateManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerStateService.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerTransferStateName.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>Ch</Filter>
     </ClInclude>
@@ -118,6 +133,18 @@
     </ClCompile>
     <ClCompile Include="MeshMap.cpp">
       <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterState.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyNPCMob.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterStateManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerStateService.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>Ch</Filter>
