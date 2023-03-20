@@ -77,17 +77,17 @@ bool    MyMain::Init()
 
         m_pEnemy->m_pModel = new SSB::Model();
         m_pEnemy->m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
-        //m_pEnemy->m_pModel->Deserialize(str);
+        m_pEnemy->m_pModel->Deserialize(str);
         m_pEnemy->m_pModel->Init();
         m_pEnemy->m_pModel->SetCurrentAnimation("Idle");
 
-    //    //m_pEnemy->Initialize_SetPosition(TVector3(-100, 0, 0));
-    //    m_pEnemy->Initialize_SetTargetPlayer(m_pModelTest);
-    //    m_pEnemy->Init();
+        //m_pEnemy->Initialize_SetPosition(TVector3(-100, 0, 0));
+        m_pEnemy->Initialize_SetTargetPlayer(m_pModelTest);
+        m_pEnemy->Init();
 
-    //    m_pEnemy->Scale(0.01f);
+        m_pEnemy->Scale(0.01f);
 
-    //    m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(m_pEnemy, SSB::kEnemyNPCMobIdle);
+        m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(m_pEnemy, SSB::kEnemyNPCMobIdle);
     }
 
     //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
@@ -126,7 +126,7 @@ bool    MyMain::Frame()
 
     m_pQuadTree->Update();
     m_pModelTest->Frame();
-    //m_pEnemy->Frame();
+    m_pEnemy->Frame();
 
     //modelBox.UpdateBox(m_pModelTest->m_matWorld);
     return true;
@@ -142,8 +142,8 @@ bool    MyMain::Render()
     //m_pModelTest->Frame();
     m_pModelTest->Render();
 
-    //m_pEnemy->SetMatrix(&m_pEnemy->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    //m_pEnemy->Render();
+    m_pEnemy->SetMatrix(&m_pEnemy->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pEnemy->Render();
 
   //  if (m_pDebugBox)
   //  {
