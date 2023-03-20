@@ -56,7 +56,11 @@ namespace SSB
 	{
 		if (_animations.find(name) != _animations.end())
 		{
-			_currentAnimation = _animations.find(name)->second;
+			if (_currentAnimation != _animations.find(name)->second)
+			{
+				_currentAnimation = _animations.find(name)->second;
+				_currentAnimation->ResetAnimationTimer();
+			}
 		}
 		else
 		{

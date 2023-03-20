@@ -1,6 +1,5 @@
 #include "PlayerStateService.h"
 #include "Input.h"
-#include "PlayerTransferStateName.h"
 #include "Player.h"
 
 namespace SSB
@@ -36,10 +35,17 @@ namespace SSB
 			SetNextTransferName(kPlayerAttack);
 		}
 
+		if (m_pCharacter->IsDead())
+		{
+			transfer = true;
+			SetNextTransferName(kPlayerDead);
+		}
+
 		return transfer;
 	}
 	void PlayerIdleState::Run()
 	{
+        m_pCharacter->m_pModel->SetCurrentAnimation("Idle");
 		OutputDebugString(L"Idle\n");
 	}
 	bool PlayerMoveState::IsTransfer()
@@ -64,10 +70,18 @@ namespace SSB
 			}
 		}
 
+		if (m_pCharacter->IsDead())
+		{
+			transfer = true;
+			SetNextTransferName(kPlayerDead);
+		}
+
 		return transfer;
 	}
 	void PlayerMoveState::Run()
 	{
+        m_pCharacter->m_pModel->SetCurrentAnimation("Move");
+
 		Player* player = static_cast<Player*>(m_pCharacter);
 
 		float speed = 10.0f * g_fSecondPerFrame;
@@ -112,10 +126,18 @@ namespace SSB
 			SetNextTransferName(kPlayerIdle);
 		}
 
+		if (m_pCharacter->IsDead())
+		{
+			transfer = true;
+			SetNextTransferName(kPlayerDead);
+		}
+
 		return transfer;
 	}
 	void PlayerAttackState::Run()
 	{
+        m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
+
 		OutputDebugString(L"Attack\n");
 	}
 }

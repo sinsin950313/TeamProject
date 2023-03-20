@@ -41,6 +41,8 @@ public:
 	void	UpdateBuffer();
 	SSB::OBBData GetBoundingVolume();
 
+	void Scale(float val);
+
 public:
     float   m_fSpeed;
     TVector3 m_vDirection;
@@ -61,5 +63,12 @@ public:
 
 public:
 	T_BOX m_ColliderBox;
+
+public:
+	void Initialize_SetPosition(TVector3 pos);
+
+public:
+	TVector3 GetPosition();
+	bool IsDead();
 };
 
