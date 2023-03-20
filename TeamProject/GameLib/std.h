@@ -42,7 +42,7 @@ extern float g_fSecondPerFrame;
 #define clamp(x,MinX,MaxX) if (x>MaxX) x=MaxX; else if (x<MinX) x=MinX;
 
 
-template<class T> class CSingleton
+template<class T> class Singleton
 {
 public:
 	static T& GetInstance()

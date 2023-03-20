@@ -1,6 +1,6 @@
 #pragma once
 #include "Sound.h"
-class SoundMgr : public CSingleton<SoundMgr>
+class SoundMgr : public Singleton<SoundMgr>
 {
 private:
 	FMOD::System* m_pSystem = nullptr;
@@ -19,7 +19,7 @@ public:
 	Sound* Find(std::wstring name);
 
 private:
-	friend class CSingleton<SoundMgr>;
+	friend class Singleton<SoundMgr>;
 	SoundMgr();
 public:
 	~SoundMgr();

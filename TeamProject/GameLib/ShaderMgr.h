@@ -1,6 +1,6 @@
 #pragma once
 #include "Shader.h"
-class ShaderMgr : public CSingleton<ShaderMgr>
+class ShaderMgr : public Singleton<ShaderMgr>
 {
 public:
 	ID3D11Device* m_pd3dDevice = nullptr;
@@ -8,7 +8,7 @@ public:
 	void	SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
 
 private:
-	friend class CSingleton<ShaderMgr>;
+	friend class Singleton<ShaderMgr>;
 	std::map<std::wstring, Shader*>	m_List;
 
 public:
