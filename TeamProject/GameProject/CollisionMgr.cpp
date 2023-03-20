@@ -10,58 +10,45 @@ CollisionMgr::~CollisionMgr()
 
 }
 
-bool	CollisionMgr::Frame()
-{
-	Player* player = &Player::GetInstance();
+	//
+	// 각 객체가 CollisionMgr에 본인의 박스를 원하는 리스트에 충돌검사를 해달라는 요청 후 피드백으로 결과 받기
+	//
 
-	// static mesh -> player check
-	// 충돌시 플레이어의 방향 반대편으로 이동속도만큼 뒤로 
-	for (auto iter : m_StaticObjectList)
+bool	CollisionMgr::ChkPlayerAttackToNpcList(T_BOX* box)
+{
+	for (auto iter : m_NpcList)
 	{
-		T_BOX box = *iter.first;
-		if (TCollision::ChkOBBToOBB(box, player->m_ColliderBox))
+		T_BOX* npcBox = iter.first;
+		if (TCollision::ChkOBBToOBB(*box, *npcBox))
 		{
-			player->m_vPos = player->m_vPos + (-player->m_vDirection * player->m_fSpeed * g_fSecondPerFrame);
-			player->UpdateMatrix();
-			//player->UpdateBox();
-			//player->UpdateBuffer();
+			// NPC의 피격 이벤트 활성화?
+			// 아니면 리턴 받은 곳에서 true false로 체크
+
+			return true;
 		}
 	}
-
-	// player attack -> npc check
-	// 충돌시 npc에게 데미지 이후 데미지 받은 npc는 무적 판정이나 같은 공격에 연속 데미지 방지
-	// 평타에 광역 판정을 넣으면 이후 충돌 npc도 데미지 단일 타겟이면 이후 공격 판정 삭제
-	// 아마 광역 판정으로 할듯?
-
-	// npc attack -> player check
-	// npc 어택(근거리) 플레이어에게 데미지 후 무적판정
-	// 플레이어가 데미지를 받았으면 break해도 될듯
-
-	// 
-
-	return true;
+	return false;
 }
-void	CollisionMgr::AddBox(T_BOX* box, Character* pChar)
-{
-	if (test.find(box) == test.end())
-	{
-		test.insert(std::make_pair(box, pChar));
 
-	}
-	int a = 4;
-}
 
 void	CollisionMgr::AddStaticObjectBox(T_BOX* box, Character* pChar)
 {
 	if (m_StaticObjectList.find(box) == m_StaticObjectList.end())
 	{
 		m_StaticObjectList.insert(std::make_pair(box, pChar));
+	}
+}
 
+void	CollisionMgr::AddNpcBox(T_BOX* box, Character* pChar)
+{
+	if (m_NpcList.find(box) == m_NpcList.end())
+	{
+		m_NpcList.insert(std::make_pair(box, pChar));
 	}
 }
 
 void	CollisionMgr::DeleteBox(T_BOX* box)
 {
-	test.erase(box);
-	int a = 4;
+	//test.erase(box);
+	//int a = 4;
 }

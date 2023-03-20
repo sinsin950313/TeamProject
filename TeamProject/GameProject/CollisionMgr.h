@@ -15,17 +15,18 @@ private:
 	PlayerAttackList
 	NpcAttackList
 	*/
-	std::map<T_BOX*, Character*> test;
 	std::map<T_BOX*, Character*> m_StaticObjectList;
+	std::map<T_BOX*, Character*>	m_NpcList;
 
-	// void* -> NpcAttack : Attack 형식의 클래스로 변경예정..?
-	std::map<T_BOX*, void*> m_NpcAttackList;
+	// Character* -> NpcAttack : Attack 형식의 클래스로 변경예정..?
+	std::map<T_BOX*, Character*> m_NpcAttackList;
 
 public:
-	bool	Frame();
+	bool	ChkPlayerAttackToNpcList(T_BOX* box);
 
-	void	AddBox(T_BOX* box, Character* pChar);
+public:
 	void	AddStaticObjectBox(T_BOX* box, Character* pChar);
+	void	AddNpcBox(T_BOX* box, Character* pChar);
 	void	DeleteBox(T_BOX* box);
 
 private:

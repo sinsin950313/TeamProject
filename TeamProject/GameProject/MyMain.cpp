@@ -105,7 +105,6 @@ bool    MyMain::Frame()
 
     m_pQuadTree->Update();
     Player::GetInstance().Frame();
-    I_Collision.Frame();
 
     //modelBox.UpdateBox(Player::GetInstance().m_matWorld);
     return true;

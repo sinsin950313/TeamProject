@@ -100,7 +100,7 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ModelMgr.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Ch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +159,7 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ModelMgr.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Ch</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
