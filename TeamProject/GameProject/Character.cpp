@@ -155,6 +155,15 @@ void	Character::UpdateMatrix()
 	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &q, &m_vPos);
 }
 
+TVector3 Character::GetCurSocketPos(std::string socket)
+{
+	TVector3 ret;
+	TMatrix mat = m_pModel->GetSocketCurrentMatrix(socket);
+	ret = TVector3(mat._41, mat._42, mat._43);
+	D3DXVec3TransformCoord(&ret, &ret, &m_matWorld);
+	return ret;
+}
+
 void	Character::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
 {
 	if (!m_pModel)
@@ -181,7 +190,7 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	destinationDirection = XMVector3Normalize(destinationDirection);
 
 	if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
-		oldCharDirection += XMVectorSet(0.02f, 0.0f, -0.02f, 0.0f);
+		oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
 
 	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	charPosition = XMVector3TransformCoord(charPosition, worldMatrix);

@@ -175,6 +175,7 @@
     <ClInclude Include="Serializeable.h" />
     <ClInclude Include="SerializeableDataType.h" />
     <ClInclude Include="CharacterState.h" />
+    <ClInclude Include="TrailEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
@@ -197,6 +198,7 @@
     <ClCompile Include="PlayerStateService.cpp" />
     <ClCompile Include="Serializeable.cpp" />
     <ClCompile Include="CharacterState.cpp" />
+    <ClCompile Include="TrailEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameLib\GameLib.vcxproj">

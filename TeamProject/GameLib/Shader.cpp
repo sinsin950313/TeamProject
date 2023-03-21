@@ -51,8 +51,6 @@ HRESULT Shader::VSLoad(
 	if (FAILED(hr))
 		return hr;
 
-	m_pPS = NULL;
-
 	return hr;
 }
 
@@ -67,8 +65,6 @@ HRESULT Shader::PSLoad(
 	hr = CreatePixelShader(name, PSname);
 	if (FAILED(hr))
 		return hr;
-
-	m_pVS = NULL;
 
 	return hr;
 }
