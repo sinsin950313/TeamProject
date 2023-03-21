@@ -141,6 +141,12 @@ namespace SSB
 		}
 		_data.clear();
 
+		if (_currentFrameInfo != nullptr)
+		{
+			delete _currentFrameInfo;
+			_currentFrameInfo = nullptr;
+		}
+
 		if (_animatedFrameBuffer)
 		{
 			_animatedFrameBuffer->Release();
@@ -229,6 +235,28 @@ namespace SSB
 				_data[i] = frameInfo;
 			}
 		}
+	}
+	TMatrix Animation::GetCurrentBoneMatrix(BoneIndex index)
+	{
+		if (_data.empty())
+		{
+			return XMFLOAT4X4();
+		}
+
+		m_fAnimTime += g_fSecondPerFrame * _framePerSecond;
+		while (m_fAnimTime > _data.size() - 1)
+		{
+			m_fAnimTime -= _data.size() - 1;
+		}
+		int prevIndex = m_fAnimTime;
+		int nextIndex = prevIndex + 1;
+		float t = m_fAnimTime - prevIndex;
+
+		return GetInterpolate(_data[prevIndex]->BoneAnimationUnit[index], _data[nextIndex]->BoneAnimationUnit[index], t);
+	}
+	void Animation::ResetAnimationTimer()
+	{
+		m_fAnimTime = 0;
 	}
 	DefaultAnimation::DefaultAnimation()
 	{

@@ -158,6 +158,7 @@
     <ClInclude Include="CommonPath.h" />
     <ClInclude Include="CommonUtility.h" />
     <ClInclude Include="EnemyNPCMob.h" />
+    <ClInclude Include="EnemyNPCMobStateService.h" />
     <ClInclude Include="FileIOObject.h" />
     <ClInclude Include="FNode.h" />
     <ClInclude Include="FQuadTree.h" />
@@ -171,7 +172,6 @@
     <ClInclude Include="MyMain.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerStateService.h" />
-    <ClInclude Include="PlayerTransferStateName.h" />
     <ClInclude Include="Serializeable.h" />
     <ClInclude Include="SerializeableDataType.h" />
     <ClInclude Include="CharacterState.h" />
@@ -183,6 +183,7 @@
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="DebugBox.cpp" />
     <ClCompile Include="EnemyNPCMob.cpp" />
+    <ClCompile Include="EnemyNPCMobStateService.cpp" />
     <ClCompile Include="FileIOObject.cpp" />
     <ClCompile Include="FNode.cpp" />
     <ClCompile Include="FQuadTree.cpp" />

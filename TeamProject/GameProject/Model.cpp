@@ -6,6 +6,7 @@
 namespace SSB
 {
 	Animation Model::DefaultAnimation;
+	bool Model::DefaultAnimationInitialized = false;
 
 	Model::Model()
 	{
@@ -56,7 +57,11 @@ namespace SSB
 	{
 		if (_animations.find(name) != _animations.end())
 		{
-			_currentAnimation = _animations.find(name)->second;
+			if (_currentAnimation != _animations.find(name)->second)
+			{
+				_currentAnimation = _animations.find(name)->second;
+				_currentAnimation->ResetAnimationTimer();
+			}
 		}
 		else
 		{
@@ -80,8 +85,12 @@ namespace SSB
 	}
 	bool Model::Init()
 	{
-		DefaultAnimation.SetDevice(m_pd3dDevice, m_pImmediateContext);
-		DefaultAnimation.Init();
+		if (!DefaultAnimationInitialized)
+		{
+			DefaultAnimation.SetDevice(m_pd3dDevice, m_pImmediateContext);
+			DefaultAnimation.Init();
+			DefaultAnimationInitialized = true;
+		}
 		_currentAnimation = &DefaultAnimation;
 
 		for (auto mesh : _meshes)

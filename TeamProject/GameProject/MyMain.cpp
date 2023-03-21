@@ -8,7 +8,7 @@
 #include "ModelMgr.h"
 #include "CharacterStateManager.h"
 #include "PlayerStateService.h"
-#include "PlayerTransferStateName.h"
+#include "EnemyNPCMobStateService.h"
 
 int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -27,57 +27,72 @@ bool    MyMain::Init()
     //pSound->Play(true);
 
     m_pMainCamera = new CameraTPS;
-    //m_pMainCamera = new CameraDebug;
-    //m_pMainCamera = new CCamera;
     m_pMainCamera->CreateViewMatrix(TVector3(0, 0, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
     m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f
         , (float)g_rcClient.right / (float)g_rcClient.bottom);
 
     // Register State Manager
 	{
-		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
-		manager->Initialize_RegisterState(SSB::kPlayerIdle, new SSB::PlayerIdleState);
-		manager->Initialize_RegisterState(SSB::kPlayerMove, new SSB::PlayerMoveState);
-		manager->Initialize_RegisterState(SSB::kPlayerAttack, new SSB::PlayerAttackState);
+        {
+            SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+            manager->Initialize_RegisterState(SSB::kPlayerIdle, new SSB::PlayerIdleState);
+            manager->Initialize_RegisterState(SSB::kPlayerMove, new SSB::PlayerMoveState);
+            manager->Initialize_RegisterState(SSB::kPlayerAttack, new SSB::PlayerAttackState);
 
-		m_StateManagerMap.insert(std::make_pair(SSB::kPlayerStateManager, manager));
-	}
+            m_StateManagerMap.insert(std::make_pair(SSB::kPlayerStateManager, manager));
+        }
+
+        {
+            SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+            manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, new SSB::EnemyNPCMobIdleState);
+            manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, new SSB::EnemyNPCMobMoveState);
+            manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, new SSB::EnemyNPCMobAttackState);
+
+			m_StateManagerMap.insert(std::make_pair(SSB::kEnemyNPCMobStateManager, manager));
+        }
+    }
 
     {
         SSB::ObjectScriptIO io;
-        //std::string str = io.Read("ModelWriteTest_Man");
-        std::string str = io.Read("AtroxNPC");
+        std::string str = io.Read("PlayerGaren");
 
-        //m_pModelTest = new Player();
-        //Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
-        //((Player*)m_pModelTest)->m_pMainCamera = m_pMainCamera;
         Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
         Player::GetInstance().m_pMainCamera = m_pMainCamera;
         ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
-        I_Model.Load(str, "Move", &Player::GetInstance().m_pModel);
-        //Idle, Attack123, Move, Dead
-
-        //Player::GetInstance().m_pModel = new SSB::Model();
-        //Player::GetInstance().m_pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
-        //Player::GetInstance().m_pModel->Deserialize(str);
-        //Player::GetInstance().m_pModel->Init();
-        //Player::GetInstance().m_pModel->SetCurrentAnimation("Take 001");
+        //Idle, Attack1, Attack2, Attack3, Move, Dead
+        I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
 
         Player::GetInstance().Init();
-        Player::GetInstance().m_vScale *= 0.01f;
+        Player::GetInstance().Scale(0.01f);
 
         m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
     }
-    //modelBox.CreateAABBBox(Player::GetInstance().m_pModel->_maxVertex, Player::GetInstance().m_pModel->_minVertex);
+
+    {
+        SSB::ObjectScriptIO io;
+        std::string str = io.Read("Alistar");
+
+        m_pEnemy = new SSB::EnemyNPCMob();
+        m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+        I_Model.Load(str, "Idle", &m_pEnemy->m_pModel);
+
+        //m_pEnemy->Initialize_SetPosition(TVector3(-100, 0, 0));
+        m_pEnemy->Init();
+        m_pEnemy->Scale(0.01f);
+
+        m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(m_pEnemy, SSB::kEnemyNPCMobIdle);
+    }
+
+    //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
     //modelBox.CreateOBBBox(1, 2, 1);
     //m_debugBoxList.push_back(&modelBox);
     //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
     //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
     //I_Collision.AddBox(&Player::GetInstance().m_AttackBox, &Player::GetInstance());
 
-    testBox.CreateOBBBox(40, 4, 4);
-    m_debugBoxList.push_back(&testBox);
+    //testBox.CreateOBBBox(40, 4, 4);
+    //m_debugBoxList.push_back(&testBox);
 
     I_Collision.AddStaticObjectBox(&testBox, NULL);
 
@@ -108,6 +123,7 @@ bool    MyMain::Frame()
 
     m_pQuadTree->Update();
     Player::GetInstance().Frame();
+    m_pEnemy->Frame();
 
     //modelBox.UpdateBox(Player::GetInstance().m_matWorld);
     return true;
@@ -122,6 +138,9 @@ bool    MyMain::Render()
     //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     //Player::GetInstance().Frame();
     Player::GetInstance().Render();
+
+    m_pEnemy->SetMatrix(&m_pEnemy->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pEnemy->Render();
 
     if (m_pDebugBox)
     {
@@ -166,6 +185,12 @@ bool    MyMain::Release()
         m_pMainCamera->Release();
         delete m_pMainCamera;
     }
+    
+    if (m_pEnemy)
+    {
+        m_pEnemy->Release();
+        delete m_pEnemy;
+    }
 
     if (m_pDebugBox)
     {
@@ -175,6 +200,7 @@ bool    MyMain::Release()
 
     for (auto manager : m_StateManagerMap)
     {
+        manager.second->Release();
         delete manager.second;
     }
     m_StateManagerMap.clear();

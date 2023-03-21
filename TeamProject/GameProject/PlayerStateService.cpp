@@ -1,6 +1,5 @@
 #include "PlayerStateService.h"
 #include "Input.h"
-#include "PlayerTransferStateName.h"
 #include "Player.h"
 
 namespace SSB
@@ -24,10 +23,17 @@ namespace SSB
 			SetNextTransferName(kPlayerAttack);
 		}
 
+		if (m_pCharacter->IsDead())
+		{
+			transfer = true;
+			SetNextTransferName(kPlayerDead);
+		}
+
 		return transfer;
 	}
 	void PlayerIdleState::Run()
 	{
+        m_pCharacter->m_pModel->SetCurrentAnimation("Idle");
 		OutputDebugString(L"Idle\n");
 	}
 	bool PlayerMoveState::IsTransfer()
@@ -52,10 +58,18 @@ namespace SSB
 			}
 		}
 
+		if (m_pCharacter->IsDead())
+		{
+			transfer = true;
+			SetNextTransferName(kPlayerDead);
+		}
+
 		return transfer;
 	}
 	void PlayerMoveState::Run()
 	{
+        m_pCharacter->m_pModel->SetCurrentAnimation("Move");
+
 		Player* player = static_cast<Player*>(m_pCharacter);
 
 		bool moveChar = false;
@@ -100,10 +114,18 @@ namespace SSB
 			SetNextTransferName(kPlayerIdle);
 		}
 
+		if (m_pCharacter->IsDead())
+		{
+			transfer = true;
+			SetNextTransferName(kPlayerDead);
+		}
+
 		return transfer;
 	}
 	void PlayerAttackState::Run()
 	{
+        m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
+
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
 		OutputDebugString(L"Attack\n");

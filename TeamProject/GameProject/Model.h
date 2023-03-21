@@ -26,6 +26,7 @@ namespace SSB
 	class Model : public Common, public Serializeable
 	{
 	private:
+		static bool DefaultAnimationInitialized;
 		static Animation DefaultAnimation;
 
 	private:

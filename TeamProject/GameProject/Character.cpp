@@ -79,6 +79,11 @@ SSB::OBBData Character::GetBoundingVolume()
 	return data;
 }
 
+void Character::Scale(float val)
+{
+	m_vScale = TVector3(val, val, val);
+}
+
 bool	Character::Init()
 {
 	auto boundVolume = m_pModel->GetBoundingVolume();
@@ -200,4 +205,26 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	// Update our animation
 	float timeFactor = 1.0f;	// You can speed up or slow down time by changing this
 	//UpdateMD5Model(NewMD5Model, time * timeFactor, 0);
+}
+
+void Character::Initialize_SetPosition(TVector3 pos)
+{
+	m_vPos = pos;
+}
+
+TVector3 Character::GetPosition()
+{
+	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
+	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	charPosition = XMVector3TransformCoord(charPosition, world);
+
+	TVector3 pos;
+	XMStoreFloat3(&pos, charPosition);
+
+	return pos;
+}
+
+bool Character::IsDead()
+{
+	return false;
 }

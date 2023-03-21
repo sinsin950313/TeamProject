@@ -11,6 +11,7 @@
 namespace SSB
 {
 	typedef unsigned int FrameIndex;
+	typedef int BoneIndex;
 
 	class DefaultAnimation
 	{
@@ -72,5 +73,10 @@ namespace SSB
 		bool Release() override;
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+		// Test가 필요함
+		TMatrix GetCurrentBoneMatrix(BoneIndex index);
+
+	public:
+		void ResetAnimationTimer();
 	};
 };

@@ -6,6 +6,7 @@
 #include "FQuadTree.h"
 #include "CharacterStateManager.h"
 #include <map>
+#include "EnemyNPCMob.h"
 
 class MyMain :
     public GameCore
@@ -22,7 +23,7 @@ public:
 public:
     Camera* m_pMainCamera = nullptr;
 
-    //Character* m_pModelTest = nullptr;
+    SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;
 
     DebugBox* m_pDebugBox = nullptr;
