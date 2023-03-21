@@ -30,6 +30,20 @@ bool	CollisionMgr::ChkPlayerAttackToNpcList(T_BOX* box)
 	return false;
 }
 
+std::vector<Character*> CollisionMgr::GetHitCharacterList(T_BOX* attackBox)
+{
+	std::vector<Character*> ret;
+	for (auto iter : m_NpcList)
+	{
+		T_BOX* npcBox = iter.first;
+		if (TCollision::ChkOBBToOBB(*attackBox, *npcBox))
+		{
+			ret.push_back(iter.second);
+		}
+	}
+	return ret;
+}
+
 
 void	CollisionMgr::AddStaticObjectBox(T_BOX* box, Character* pChar)
 {

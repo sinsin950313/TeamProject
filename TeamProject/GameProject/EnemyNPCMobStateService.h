@@ -13,7 +13,6 @@ namespace SSB
 	{
 	public:
 		bool IsTransfer() override;
-		void Run() override;
 	};
 
 	class EnemyNPCMobMoveState : public CharacterState
@@ -30,10 +29,9 @@ namespace SSB
 		void Run() override;
 	};
 
-	//class EnemyNPCMobDeadState : public CharacterState, public EnemyNPCMobInterface
-	//{
-	//public:
-	//	bool IsTransfer() override;
-	//	void Run() override;
-	//};
+	class EnemyNPCMobDeadState : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+	};
 }

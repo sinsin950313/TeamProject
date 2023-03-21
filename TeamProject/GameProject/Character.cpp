@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "CollisionMgr.h"
 
 void	Character::SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -88,6 +89,15 @@ bool	Character::Init()
 {
 	auto boundVolume = m_pModel->GetBoundingVolume();
     m_ColliderBox.CreateOBBBox(boundVolume.Width, boundVolume.Height, boundVolume.Depth);
+    I_Collision.AddNpcBox(&m_ColliderBox, this);
+
+	m_AttackBox.CreateOBBBox(1, 1, 1);
+	m_AttackBoxLocalMatrix = TMatrix(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 100, -200, 1
+	);
 
 	m_fSpeed = 15.0f;
 
@@ -133,6 +143,9 @@ void	Character::UpdateBox()
 	local._43 = bv.Position.z;
 	TMatrix world = local * m_matWorld;
 	m_ColliderBox.UpdateBox(world);
+
+	TMatrix mat = m_AttackBoxLocalMatrix * m_matWorld;
+	m_AttackBox.UpdateBox(mat);
 }
 
 void	Character::UpdateMatrix()
@@ -226,5 +239,35 @@ TVector3 Character::GetPosition()
 
 bool Character::IsDead()
 {
-	return false;
+	return m_HealthPoint <= 0;
+}
+
+void Character::Damage(int damage, float timeStamp)
+{
+	if (m_fDamagedTimeStamp != timeStamp)
+	{
+		m_HealthPoint -= damage;
+		m_fDamagedTimeStamp = timeStamp;
+	}
+}
+
+void Character::ResetStateElapseTime()
+{
+	m_fStateElapseTime = 0;
+	m_fBeforeTime = g_fGameTimer;
+	m_fStateTImeStamp = g_fGameTimer;
+}
+
+float Character::GetStateElapseTime()
+{
+	float elapseTime = g_fGameTimer - m_fBeforeTime;
+	m_fStateElapseTime += elapseTime;
+m_fBeforeTime = g_fGameTimer;
+
+	return m_fStateElapseTime;
+}
+
+float Character::GetStateTimeStamp()
+{
+	return m_fStateTImeStamp;
 }
