@@ -243,16 +243,7 @@ namespace SSB
 			return XMFLOAT4X4();
 		}
 
-		m_fAnimTime += g_fSecondPerFrame * _framePerSecond;
-		while (m_fAnimTime > _data.size() - 1)
-		{
-			m_fAnimTime -= _data.size() - 1;
-		}
-		int prevIndex = m_fAnimTime;
-		int nextIndex = prevIndex + 1;
-		float t = m_fAnimTime - prevIndex;
-
-		return GetInterpolate(_data[prevIndex]->BoneAnimationUnit[index], _data[nextIndex]->BoneAnimationUnit[index], t);
+		return _frameMatrixInfo.BoneMatrix[index].Transpose();
 	}
 	void Animation::ResetAnimationTimer()
 	{

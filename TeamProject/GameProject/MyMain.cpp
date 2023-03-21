@@ -123,6 +123,11 @@ bool    MyMain::Frame()
 
     m_pQuadTree->Update();
     Player::GetInstance().Frame();
+
+    TVector3 p = Player::GetInstance().m_vPos;
+    p.y += 5.0f;
+    Player::GetInstance().m_pTrail->AddTrailPos(Player::GetInstance().m_vPos, p);
+
     m_pEnemy->Frame();
 
     //modelBox.UpdateBox(Player::GetInstance().m_matWorld);
@@ -137,9 +142,11 @@ bool    MyMain::Render()
     //TMatrix matWorld = TMatrix::Identity;
     //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     //Player::GetInstance().Frame();
-    Player::GetInstance().Render();
+    //Player::GetInstance().Render();
+    Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    Player::GetInstance().m_pTrail->Render();
 
-    m_pEnemy->SetMatrix(&m_pEnemy->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pEnemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     m_pEnemy->Render();
 
     if (m_pDebugBox)
@@ -163,6 +170,43 @@ bool    MyMain::Render()
             m_pDebugBox->UpdateBuffer();
             m_pDebugBox->Render();
         }
+
+        T_BOX b;
+        b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponLow"));
+        m_pDebugBox->SetBox(b);
+        m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+        m_pDebugBox->UpdateBuffer();
+        //m_pDebugBox->Render();
+
+        b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+        m_pDebugBox->SetBox(b);
+        m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+        m_pDebugBox->UpdateBuffer();
+        //m_pDebugBox->Render();
+
+        TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
+        TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
+        float ex = D3DXVec3Length(&l);
+        
+        TVector3 axis[3];
+        axis[0] = -l;
+        D3DXVec3Normalize(&axis[0], &axis[0]);
+
+        TVector3 B;
+        D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
+        if (B == TVector3::Zero)
+        {
+            D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
+        }
+        TVector3 C;
+        D3DXVec3Cross(&C, &axis[0], &B);
+
+        b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
+        m_pDebugBox->SetBox(b);
+        m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+        m_pDebugBox->UpdateBuffer();
+        //m_pDebugBox->Render();
+
 		//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
         //T_BOX box;
         //box.CreateOBBBox();

@@ -107,6 +107,10 @@ namespace SSB
 		bool transfer = false;
 
 		// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
+		// 키를 떼도 공격키를 눌렀으면 공격이 진행돼야함
+		// 그럴려면 키를 누른 순간에 타이머를 사용하거나
+		// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
+
 		if (I_Input.GetKey(VK_LBUTTON) != KEY_PUSH && 
 			I_Input.GetKey(VK_LBUTTON) != KEY_HOLD)
 		{
@@ -125,6 +129,15 @@ namespace SSB
 	void PlayerAttackState::Run()
 	{
         m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
+
+		static float timer = 0.0f;
+		timer += g_fSecondPerFrame;
+		if (timer > 0.05f)
+		{
+			Player::GetInstance().m_pTrail->AddTrailPos(
+				Player::GetInstance().GetCurSocketPos("WeaponLow"), Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+			timer = 0.0f;
+		}
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함

@@ -98,12 +98,22 @@ namespace DX
 		{
 			m_pTextureSRV = m_pTexture->m_pTextureSRV;
 		}
+		else
+		{
+			m_szPSname = L"COLOR_PS";
+			if (FAILED(I_Shader.Load(shaderPath, VSname, m_szPSname, &m_pShader)))
+				return false;
+			return true;
+		}
 
 		return true;
 	}
 
 	void	BaseObject::CreateVertexData()
 	{
+		if (m_VertexList.size() > 0)
+			return;
+
 		m_VertexList.resize(4);
 		m_VertexList[0].p = { -1.0f, 1.0f, 0.0f };
 		m_VertexList[1].p = { +1.0f, 1.0f,  0.0f };
@@ -127,6 +137,8 @@ namespace DX
 	}
 	void	BaseObject::CreateIndexData()
 	{
+		if (m_IndexList.size() > 0)
+			return;
 		// 정점버퍼에 인덱스
 		m_IndexList.resize(6);
 		m_IndexList[0] = 0;
@@ -277,9 +289,9 @@ namespace DX
 		m_pImmediateContext->PSSetShader(m_pShader->m_pPS, NULL, 0);
 		m_pImmediateContext->IASetInputLayout(m_pVertexLayout);
 
-		m_pImmediateContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 		m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTextureSRV);
+
+		m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
 
 		return true;
 	}

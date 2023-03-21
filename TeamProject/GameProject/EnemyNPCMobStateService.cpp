@@ -100,7 +100,9 @@ namespace SSB
     }
     void EnemyNPCMobAttackState::Run()
     {
-        m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
+        std::string anim = "Attack" + std::to_string(rand() % 2 + 1);
+
+        m_pCharacter->m_pModel->SetCurrentAnimation(anim);
 
 		OutputDebugString(L"Enemy NPC Mob Attack\n");
     }
