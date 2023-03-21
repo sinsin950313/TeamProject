@@ -53,6 +53,10 @@ namespace SSB
 	{
 		_boundingVolume = data;
 	}
+	void Model::Initialize_RegisterSocket(SocketName name, BoneIndex index)
+	{
+		_sockets.insert(std::make_pair(name, index));
+	}
 	void Model::SetCurrentAnimation(AnimationName name)
 	{
 		if (_animations.find(name) != _animations.end())
@@ -78,6 +82,14 @@ namespace SSB
 	void Model::SetPixelShader(Shader* shader)
 	{
 		_ps = shader;
+	}
+	TMatrix Model::GetSocketCurrentMatrix(SocketName name)
+	{
+		if (_sockets.find(name) != _sockets.end())
+		{
+			return _currentAnimation->GetCurrentBoneMatrix(_sockets.find(name)->second);
+		}
+		return TMatrix();
 	}
 	OBBData Model::GetBoundingVolume()
 	{
@@ -187,6 +199,23 @@ namespace SSB
 			XMFLOAT3 tmp;
 			Serializeable::Deserialize(data.str, tmp);
 			_maxVertex = tmp;
+		}
+
+		{
+			offset = serialedString.find(_socketDataStr);
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			int socketCount;
+			Serializeable::Deserialize(data.str, socketCount);
+			for (int i = 0; i < socketCount; ++i)
+			{
+				auto socketNameData = GetUnitAtomic(serialedString, offset);
+				offset = socketNameData.offset;
+				auto boneIndexData = GetUnitAtomic(serialedString, offset);
+				offset = boneIndexData.offset;
+
+				_sockets.insert(std::make_pair(socketNameData.str, std::stoi(boneIndexData.str)));
+			}
 		}
 
 		offset = serialedString.find(_boundingVolumeStr);
