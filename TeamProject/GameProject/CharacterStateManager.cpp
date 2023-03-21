@@ -35,6 +35,7 @@ namespace SSB
 			{
 				CharacterState* newState = m_StateMap.find(state->GetNextTransferStateName())->second;
 				m_CharacterStateMap[character] = newState;
+				character->ResetStateElapseTime();
 			}
 		}
 

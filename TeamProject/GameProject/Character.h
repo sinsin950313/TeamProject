@@ -74,5 +74,27 @@ public:
 public:
 	TVector3 GetPosition();
 	bool IsDead();
+
+public:
+    TMatrix m_AttackBoxLocalMatrix;
+    T_BOX   m_AttackBox;
+
+public:
+	int m_HealthPoint = 100;
+	int m_Damage = 30;
+	float m_fDamagedTimeStamp = 0;
+
+public:
+	void Damage(int damage, float timeStamp);
+
+public:
+	float m_fStateTImeStamp = 0;
+	float m_fBeforeTime = 0;
+	float m_fStateElapseTime = 0;
+
+public:
+	void ResetStateElapseTime();
+	float GetStateElapseTime();
+	float GetStateTimeStamp();
 };
 

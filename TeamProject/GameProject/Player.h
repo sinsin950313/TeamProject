@@ -18,17 +18,11 @@ public:
     virtual bool    Init();
     virtual bool    Frame();
 
-    void    Attack();
-
 private:
     Player();
-public:
     ~Player();
 
 public:
-    T_BOX   m_AttackBox;
-    bool    m_isAttack;
-
     Camera* m_pMainCamera;
 
     TrailEffect* m_pTrail;

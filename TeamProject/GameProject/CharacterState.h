@@ -14,6 +14,7 @@ namespace SSB
 	private:
 		StateName m_TransferStateName;
 		AnimationName m_StateAnimationName;
+		float m_Cooltime = 0;
 
 	protected:
 		Character* m_pCharacter = nullptr;
@@ -23,12 +24,14 @@ namespace SSB
 
 	public:
 		void Initialize_SetStateAnimation(AnimationName name);
+		void Initialize_SetCoolTime(float cooltime);
 		void SetCharacter(Character* character);
 		AnimationName GetStateAnimationName();
 		StateName GetNextTransferStateName();
+		bool IsPassedRequireCoolTime(float elapseTime);
 
 	public:
 		virtual bool IsTransfer() = 0;
-		virtual void Run() = 0;
+		virtual void Run();
 	};
 }

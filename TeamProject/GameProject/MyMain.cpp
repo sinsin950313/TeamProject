@@ -35,18 +35,61 @@ bool    MyMain::Init()
 	{
         {
             SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
-            manager->Initialize_RegisterState(SSB::kPlayerIdle, new SSB::PlayerIdleState);
-            manager->Initialize_RegisterState(SSB::kPlayerMove, new SSB::PlayerMoveState);
-            manager->Initialize_RegisterState(SSB::kPlayerAttack, new SSB::PlayerAttackState);
+
+            {
+                SSB::CharacterState* state = new SSB::PlayerIdleState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Idle");
+                manager->Initialize_RegisterState(SSB::kPlayerIdle, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::PlayerMoveState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Move");
+                manager->Initialize_RegisterState(SSB::kPlayerMove, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::PlayerAttackState;
+                state->Initialize_SetCoolTime(2);
+                state->Initialize_SetStateAnimation("Attack1");
+                manager->Initialize_RegisterState(SSB::kPlayerAttack, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::PlayerDeadState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Dead");
+                manager->Initialize_RegisterState(SSB::kPlayerDead, state);
+            }
 
             m_StateManagerMap.insert(std::make_pair(SSB::kPlayerStateManager, manager));
         }
 
         {
             SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
-            manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, new SSB::EnemyNPCMobIdleState);
-            manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, new SSB::EnemyNPCMobMoveState);
-            manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, new SSB::EnemyNPCMobAttackState);
+            {
+                SSB::CharacterState* state = new SSB::EnemyNPCMobIdleState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Idle");
+                manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Move");
+                manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState;
+                state->Initialize_SetCoolTime(2);
+                state->Initialize_SetStateAnimation("Attack1");
+                manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::EnemyNPCMobDeadState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Dead");
+                manager->Initialize_RegisterState(SSB::kEnemyNPCMobDead, state);
+            }
 
 			m_StateManagerMap.insert(std::make_pair(SSB::kEnemyNPCMobStateManager, manager));
         }
@@ -78,6 +121,7 @@ bool    MyMain::Init()
         I_Model.Load(str, "Idle", &m_pEnemy->m_pModel);
 
         //m_pEnemy->Initialize_SetPosition(TVector3(-100, 0, 0));
+        m_pEnemy->m_Damage = 0;
         m_pEnemy->Init();
         m_pEnemy->Scale(0.01f);
 
@@ -87,9 +131,11 @@ bool    MyMain::Init()
     //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
     //modelBox.CreateOBBBox(1, 2, 1);
     //m_debugBoxList.push_back(&modelBox);
-    //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-    //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
-    //I_Collision.AddBox(&Player::GetInstance().m_AttackBox, &Player::GetInstance());
+    m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
+    m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+
+    m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
+    m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
 
     //testBox.CreateOBBBox(40, 4, 4);
     //m_debugBoxList.push_back(&testBox);

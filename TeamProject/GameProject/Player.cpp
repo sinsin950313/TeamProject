@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Input.h"
+#include "CollisionMgr.h"
 
 Player::Player()
 {
@@ -20,11 +21,13 @@ Player::~Player()
 bool    Player::Init()
 {
 	Character::Init();
+
 	m_AttackBox.CreateOBBBox(1, 1, 1);
 
 	m_pTrail = new TrailEffect();
 	m_pTrail->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/TrailEffect.txt", L"");
 	m_pTrail->Init();
+
 	return true;
 }
 
@@ -32,10 +35,6 @@ bool    Player::Frame()
 {
 	m_pTrail->Frame();
 	Character::Frame();
+
 	return true;
-}
-
-void    Player::Attack()
-{
-
 }
