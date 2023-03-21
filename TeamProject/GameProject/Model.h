@@ -12,6 +12,8 @@
 
 namespace SSB
 {
+	typedef std::string SocketName;
+
 	struct OBBData
 	{
 		TVector3 Position;
@@ -46,6 +48,8 @@ namespace SSB
 
 		OBBData _boundingVolume;
 
+		std::map<SocketName, BoneIndex> _sockets;
+
 	public:
 		Model();
 		virtual ~Model();
@@ -58,11 +62,13 @@ namespace SSB
 		void Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh);
 		void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
 		void Initialize_SetBoundingVolume(OBBData data);
+		void Initialize_RegisterSocket(SocketName name, BoneIndex index);
 
 	public:
 		void SetCurrentAnimation(AnimationName name);
 		void SetVertexShader(Shader* shader);
 		void SetPixelShader(Shader* shader);
+		TMatrix GetSocketCurrentMatrix(SocketName name);
 		OBBData GetBoundingVolume();
 
 	public:
