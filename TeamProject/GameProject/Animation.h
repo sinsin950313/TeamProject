@@ -52,6 +52,8 @@ namespace SSB
 		FrameMatrixInfo _frameMatrixInfo;
 		ID3D11Buffer* _animatedFrameBuffer;
 
+		bool _isLoop = false;;
+
 	public:
 		Animation();
 		~Animation();
@@ -65,6 +67,7 @@ namespace SSB
 		void Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo*> data);
 		void Initialize_SetFrameInterval(FrameIndex start, FrameIndex end);
 		void Initialize_SetAnimationUnitMaximumCount(int boneCount, int meshCount);
+		void Initialize_SetLoop(bool loop);
 
 	public:
 		bool Init() override;

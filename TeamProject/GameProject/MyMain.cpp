@@ -128,14 +128,11 @@ bool    MyMain::Init()
         m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(m_pEnemy, SSB::kEnemyNPCMobIdle);
     }
 
-    //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
-    //modelBox.CreateOBBBox(1, 2, 1);
-    //m_debugBoxList.push_back(&modelBox);
-    m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-    m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+    //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
+    //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
-    m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
-    m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
+    //m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
+    //m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
 
     //testBox.CreateOBBBox(40, 4, 4);
     //m_debugBoxList.push_back(&testBox);
