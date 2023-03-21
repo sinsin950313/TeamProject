@@ -71,7 +71,7 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
-        std::string str = io.Read("AtroxNPC");
+        std::string str = io.Read("Alistar");
 
         m_pEnemy = new SSB::EnemyNPCMob();
         m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
