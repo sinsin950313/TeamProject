@@ -105,6 +105,10 @@ namespace SSB
 	{
 		bool transfer = false;
 
+		// ì–´íƒ íƒ€ì´ë¨¸ > 0, isAttack != true, ì• ë‹ˆë©”ì´ì…˜ì˜ ë ì•Œë¦¼ë“±ì˜ ì¡°ê±´ì´ ì¶”ê°€ë  í•„ìš” ìžˆìŒ
+		// í‚¤ë¥¼ ë–¼ë„ ê³µê²©í‚¤ë¥¼ ëˆŒë €ìœ¼ë©´ ê³µê²©ì´ ì§„í–‰ë¼ì•¼í•¨
+		// ê·¸ëŸ´ë ¤ë©´ í‚¤ë¥¼ ëˆ„ë¥¸ ìˆœê°„ì— íƒ€ì´ë¨¸ë¥¼ ì‚¬ìš©í•˜ê±°ë‚˜
+		// í˜„ìž¬ì˜ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚¬ë‚˜ ì•ˆëë‚¬ë‚˜ë¥¼ ì²´í¬í•´ì•¼í•¨
 		if (m_pCharacter->IsDead())
 		{
 			transfer = true;
@@ -112,7 +116,7 @@ namespace SSB
 		}
 		else
 		{
-			// ¾îÅÃ Å¸ÀÌ¸Ó > 0, isAttack != true, ¾Ö´Ï¸ÞÀÌ¼ÇÀÇ ³¡ ¾Ë¸²µîÀÇ Á¶°ÇÀÌ Ãß°¡µÉ ÇÊ¿ä ÀÖÀ½
+			// ì–´íƒ íƒ€ì´ë¨¸ > 0, isAttack != true, ì• ë‹ˆë©”ì´ì…˜ì˜ ë ì•Œë¦¼ë“±ì˜ ì¡°ê±´ì´ ì¶”ê°€ë  í•„ìš” ìžˆìŒ
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
 			if (I_Input.GetKey(VK_LBUTTON) != KEY_PUSH &&
@@ -128,9 +132,23 @@ namespace SSB
 	}
 	void PlayerAttackState::Run()
 	{
+
         CharacterState::Run();
-		// ¼±ÅÃµÈ ¼ÒÄÏÀÇ ¾Ö´Ï¸ÞÀÌ¼Ç Çà·ÄÀ» °¡Á®¿Í¼­ ¾îÅÃ ¹Ú½º¿¡ Àû¿ë½ÃÄÑ¼­ 
-		// Ãæµ¹ Ã³¸®°¡ µÉ ¼ö ÀÖ°Ô²û ÇØ¾ßÇÔ
+
+        m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
+
+		static float timer = 0.0f;
+		timer += g_fSecondPerFrame;
+		if (timer > 0.05f)
+		{
+			Player::GetInstance().m_pTrail->AddTrailPos(
+				Player::GetInstance().GetCurSocketPos("WeaponLow"), Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+			timer = 0.0f;
+		}
+
+
+		// ì„ íƒëœ ì†Œì¼“ì˜ ì• ë‹ˆë©”ì´ì…˜ í–‰ë ¬ì„ ê°€ì ¸ì™€ì„œ ì–´íƒ ë°•ìŠ¤ì— ì ìš©ì‹œì¼œì„œ 
+		// ì¶©ëŒ ì²˜ë¦¬ê°€ ë  ìˆ˜ ìžˆê²Œë” í•´ì•¼í•¨
         if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
         {
 			auto list = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);

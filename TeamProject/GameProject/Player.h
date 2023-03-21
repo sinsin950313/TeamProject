@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Camera.h"
 #include "TCollision.h"
+#include "TrailEffect.h"
 
 class Player :
     public Character
@@ -23,4 +24,6 @@ private:
 
 public:
     Camera* m_pMainCamera;
+
+    TrailEffect* m_pTrail;
 };

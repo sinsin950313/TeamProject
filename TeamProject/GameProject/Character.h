@@ -45,6 +45,8 @@ public:
 
 	void Scale(float val);
 
+	TVector3 GetCurSocketPos(std::string socket);
+
 public:
     float   m_fSpeed;
     TVector3 m_vDirection;

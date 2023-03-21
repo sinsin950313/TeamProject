@@ -117,5 +117,10 @@ namespace SSB
     bool EnemyNPCMobDeadState::IsTransfer()
     {
         return false;
+        std::string anim = "Attack" + std::to_string(rand() % 2 + 1);
+
+        m_pCharacter->m_pModel->SetCurrentAnimation(anim);
+
+		OutputDebugString(L"Enemy NPC Mob Attack\n");
     }
 }
