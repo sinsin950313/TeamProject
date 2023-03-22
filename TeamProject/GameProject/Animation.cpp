@@ -76,6 +76,10 @@ namespace SSB
 			prevIndex = m_fAnimTime;
 			nextIndex = prevIndex;
 		}
+		if (nextIndex == _data.size())
+		{
+			nextIndex -= 1;
+		}
 		t = m_fAnimTime - prevIndex;
 
 		for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)

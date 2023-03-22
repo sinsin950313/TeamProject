@@ -99,8 +99,6 @@ bool	Character::Init()
 		0, 100, -200, 1
 	);
 
-	m_fSpeed = 15.0f;
-
 	return true;
 }
 
@@ -130,6 +128,11 @@ bool	Character::Release()
 {
 	if (_objectToWorldTransformBuffer) _objectToWorldTransformBuffer->Release();
 	if (_toViewSpaceTransformBuffer) _toViewSpaceTransformBuffer->Release();
+	if (m_pModel)
+	{
+		m_pModel->Release();
+		delete m_pModel;
+	}
 
 	return true;
 }
@@ -251,13 +254,19 @@ bool Character::IsDead()
 	return m_HealthPoint <= 0;
 }
 
-void Character::Damage(int damage, float timeStamp)
+void Character::DamagingCharacter(Character* character)
 {
-	if (m_fDamagedTimeStamp != timeStamp)
-	{
-		m_HealthPoint -= damage;
-		m_fDamagedTimeStamp = timeStamp;
-	}
+	m_DamagedCharacters.insert(character);
+}
+
+bool Character::IsAlreadyDamagedCurrentState(Character* character)
+{
+	return m_DamagedCharacters.find(character) != m_DamagedCharacters.end();
+}
+
+void Character::Damage(int damage)
+{
+	m_HealthPoint -= damage;
 }
 
 void Character::ResetStateElapseTime()
@@ -265,6 +274,7 @@ void Character::ResetStateElapseTime()
 	m_fStateElapseTime = 0;
 	m_fBeforeTime = g_fGameTimer;
 	m_fStateTImeStamp = g_fGameTimer;
+	m_DamagedCharacters.clear();
 }
 
 float Character::GetStateElapseTime()

@@ -80,7 +80,7 @@ bool    MyMain::Init()
             }
             {
                 SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState;
-                state->Initialize_SetCoolTime(2);
+                state->Initialize_SetCoolTime(1.5f);
                 state->Initialize_SetStateAnimation("Attack1");
                 manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
             }
@@ -106,6 +106,7 @@ bool    MyMain::Init()
         //Idle, Attack1, Attack2, Attack3, Move, Dead
         I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
 
+		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
         Player::GetInstance().Init();
         Player::GetInstance().Scale(0.01f);
 
@@ -116,16 +117,22 @@ bool    MyMain::Init()
         SSB::ObjectScriptIO io;
         std::string str = io.Read("Alistar");
 
-        m_pEnemy = new SSB::EnemyNPCMob();
-        m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-        I_Model.Load(str, "Idle", &m_pEnemy->m_pModel);
+        for (int i = 0; i < m_EnemyCount; ++i)
+        {
+            SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
+            enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+            I_Model.Load(str, "Idle", &enemy->m_pModel);
 
-        //m_pEnemy->Initialize_SetPosition(TVector3(-100, 0, 0));
-        m_pEnemy->m_Damage = 0;
-        m_pEnemy->Init();
-        m_pEnemy->Scale(0.01f);
+			enemy->Initialize_SetPosition(TVector3(-50 + i * 10, 0, 50 + i * 10));
+			enemy->m_Damage = 5;
+            enemy->m_fSpeed = 10;
+			enemy->Init();
+			enemy->Scale(0.01f);
 
-        m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(m_pEnemy, SSB::kEnemyNPCMobIdle);
+			m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
+
+            m_Enemies.push_back(enemy);
+        }
     }
 
     //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
@@ -149,29 +156,61 @@ bool    MyMain::Init()
 
 bool    MyMain::Frame()
 {
-    for (auto manager : m_StateManagerMap)
+    if (m_Win)
     {
-        manager.second->Frame();
+        OutputDebugString(L"Win!\n");
+    }
+    else if (m_Defeat)
+    {
+        OutputDebugString(L"Defeat!\n");
+    }
+    else
+    {
+        //if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
+        //    m_bGameRun = false;
+
+        int deadCount = 0;
+        for (auto enemy : m_Enemies)
+        {
+            if (enemy->IsDead())
+            {
+                ++deadCount;
+            }
+        }
+        if (deadCount == m_Enemies.size())
+        {
+            m_Win = true;
+        }
+
+        if (Player::GetInstance().IsDead())
+        {
+            m_Defeat = true;
+        }
     }
 
-    if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
-        m_bGameRun = false;
+	if (m_pMainCamera)
+	{
+		m_pMainCamera->Frame();
 
-    if (m_pMainCamera)
-    {
-        m_pMainCamera->Frame();
+		Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	}
 
-        Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    }
+	m_pQuadTree->Update();
+	Player::GetInstance().Frame();
 
-    m_pQuadTree->Update();
-    Player::GetInstance().Frame();
+	TVector3 p = Player::GetInstance().m_vPos;
+	p.y += 5.0f;
+	Player::GetInstance().m_pTrail->AddTrailPos(Player::GetInstance().m_vPos, p);
 
-    TVector3 p = Player::GetInstance().m_vPos;
-    p.y += 5.0f;
-    Player::GetInstance().m_pTrail->AddTrailPos(Player::GetInstance().m_vPos, p);
+	for (auto enemy : m_Enemies)
+	{
+		enemy->Frame();
+	}
 
-    m_pEnemy->Frame();
+	for (auto manager : m_StateManagerMap)
+	{
+		manager.second->Frame();
+	}
 
     //modelBox.UpdateBox(Player::GetInstance().m_matWorld);
     return true;
@@ -185,12 +224,16 @@ bool    MyMain::Render()
     //TMatrix matWorld = TMatrix::Identity;
     //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     //Player::GetInstance().Frame();
-    //Player::GetInstance().Render();
+    Player::GetInstance().Render();
     Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().m_pTrail->Render();
 
-    m_pEnemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    m_pEnemy->Render();
+
+    for (auto enemy : m_Enemies)
+    {
+		enemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		enemy->Render();
+    }
 
     if (m_pDebugBox)
     {
@@ -273,10 +316,10 @@ bool    MyMain::Release()
         delete m_pMainCamera;
     }
     
-    if (m_pEnemy)
+    for (auto enemy : m_Enemies)
     {
-        m_pEnemy->Release();
-        delete m_pEnemy;
+		enemy->Release();
+		delete enemy;
     }
 
     if (m_pDebugBox)

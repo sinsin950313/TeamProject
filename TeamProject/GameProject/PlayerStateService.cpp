@@ -156,7 +156,11 @@ namespace SSB
 			{
 				if (obj != m_pCharacter)
 				{
-					obj->Damage(m_pCharacter->m_Damage, m_pCharacter->m_fStateTImeStamp);
+					if (!m_pCharacter->IsAlreadyDamagedCurrentState(obj))
+					{
+						obj->Damage(m_pCharacter->m_Damage);
+						m_pCharacter->DamagingCharacter(obj);
+					}
 				}
 			}
         }

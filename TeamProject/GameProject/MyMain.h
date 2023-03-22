@@ -23,7 +23,11 @@ public:
 public:
     Camera* m_pMainCamera = nullptr;
 
-    SSB::EnemyNPCMob* m_pEnemy = nullptr;
+    bool m_Win = false;
+    bool m_Defeat = false;
+
+    int m_EnemyCount = 3;
+    std::vector<SSB::EnemyNPCMob*> m_Enemies;
     T_BOX       testBox;
 
     DebugBox* m_pDebugBox = nullptr;

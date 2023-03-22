@@ -37,6 +37,13 @@ namespace SSB
 				m_CharacterStateMap[character] = newState;
 				character->ResetStateElapseTime();
 			}
+			else
+			{
+				if (state->IsPassedRequireCoolTime(character->GetStateElapseTime()))
+				{
+					character->ResetStateElapseTime();
+				}
+			}
 		}
 
 		return true;
