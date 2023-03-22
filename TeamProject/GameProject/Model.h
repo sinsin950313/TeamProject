@@ -42,7 +42,9 @@ namespace SSB
 		std::map<MeshIndex, MeshInterface*> _meshes;
 
 		std::map<AnimationName, Animation*> _animations;
+	public:
 		Animation* _currentAnimation;
+	private:
 
 		Shader* _ps;
 

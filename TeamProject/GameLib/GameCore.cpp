@@ -101,7 +101,6 @@ bool	GameCore::CoreFrame()
 	I_Sound.Frame();
 	m_Writer.Frame();
 
-	ClearD3D11DeviceContext();
 	return Frame();
 }
 
@@ -134,6 +133,7 @@ bool	GameCore::CoreRender()
 	if (m_RT.Begin(m_pImmediateContext))
 	{
 		Render();
+		ClearD3D11DeviceContext();
 		m_RT.End(m_pImmediateContext);
 	}
 

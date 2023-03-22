@@ -34,7 +34,7 @@ VS_out VS(VS_in input)
 float4 PS(VS_out input) : SV_Target
 {
 	float4 vColor = g_txTexA.Sample(g_SampleWrap , input.t);
-	return vColor;
+	return vColor * input.c;
 }
 
 float4 COLOR_PS(VS_out input) : SV_Target

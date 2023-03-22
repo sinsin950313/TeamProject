@@ -131,11 +131,12 @@ bool    MyMain::Init()
     //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
     //modelBox.CreateOBBBox(1, 2, 1);
     //m_debugBoxList.push_back(&modelBox);
-    m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-    m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
-
-    m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
-    m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
+    
+    //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
+    //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+    //
+    //m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
+    //m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
 
     //testBox.CreateOBBBox(40, 4, 4);
     //m_debugBoxList.push_back(&testBox);
@@ -165,14 +166,11 @@ bool    MyMain::Frame()
         m_pMainCamera->Frame();
 
         Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+        Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     }
 
     m_pQuadTree->Update();
     Player::GetInstance().Frame();
-
-    TVector3 p = Player::GetInstance().m_vPos;
-    p.y += 5.0f;
-    Player::GetInstance().m_pTrail->AddTrailPos(Player::GetInstance().m_vPos, p);
 
     m_pEnemy->Frame();
 
@@ -185,12 +183,7 @@ bool    MyMain::Render()
     m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     m_pQuadTree->Render();
 
-    //TMatrix matWorld = TMatrix::Identity;
-    //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    //Player::GetInstance().Frame();
-    //Player::GetInstance().Render();
-    Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    Player::GetInstance().m_pTrail->Render();
+    Player::GetInstance().Render();
 
     m_pEnemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     m_pEnemy->Render();
@@ -257,7 +250,7 @@ bool    MyMain::Render()
         //T_BOX box;
         //box.CreateOBBBox();
     }
-
+    Player::GetInstance().m_pTrail->Render();
     return true;
 }
 
