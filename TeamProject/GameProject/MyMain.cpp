@@ -29,7 +29,7 @@ bool    MyMain::Init()
 
     m_pInter = new Interface();
     m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/tempBar.png");
-    m_pInter->m_vPos = TVector3(800, 700, 0);
+    m_pInter->m_vPos = TVector3(0, 0, 0);
     m_pInter->m_vScale = TVector3(1, 1, 1);
     //m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
 
@@ -176,8 +176,9 @@ bool    MyMain::Init()
     m_pDebugBox = new DebugBox;
     m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
-    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
-    m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
+    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 
     
     Sound* sound = I_Sound.Find(L"BGM.mp3");
@@ -190,14 +191,14 @@ bool    MyMain::Frame()
 {
     if (m_Win)
     {
-        if (MessageBoxA(g_hWnd, "���ӿ��� �¸��߽�ϴ�!", "Win!", MB_OK))
+        if (MessageBoxA(g_hWnd, "asdf", "Win!", MB_OK))
         {
             m_bGameRun = false;
         }
     }
     else if (m_Defeat)
     {
-        if (MessageBoxA(g_hWnd, "���ӿ��� �й��߽�ϴ�!", "Defeat!", MB_OK))
+        if (MessageBoxA(g_hWnd, "asdf", "Defeat!", MB_OK))
         {
             m_bGameRun = false;
         }
@@ -263,8 +264,8 @@ bool    MyMain::Frame()
 
 bool    MyMain::Render()
 {
-    m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    m_pQuadTree->Render();
+    //m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    //m_pQuadTree->Render();
 
     //TMatrix matWorld = TMatrix::Identity;
     //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);

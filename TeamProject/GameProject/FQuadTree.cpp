@@ -209,13 +209,14 @@ void FQuadTree::Reset(FNode* pNode)
 
 FNode* FQuadTree::VisibleNode(FNode* pNode)
 {
+    m_pCurrentCamera->m_vFrustum;
     PLANE_COLTYPE dwRet = m_pCurrentCamera->m_vFrustum.ClassifyOBB(pNode->m_Box);
     if (P_FRONT == dwRet)// 완전포함.
     {
         m_pDrawLeafNodeList.push_back(pNode);
         return pNode;
     }
-    if (P_SPANNING == dwRet) // 걸쳐있다.
+    if (1) // 걸쳐있다.
     {
         if (pNode->m_bLeaf)
         {
@@ -237,17 +238,20 @@ void	FQuadTree::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
     //m_constantDataMap.matWorld;
     if (matWorld)
     {
-        m_constantDataMap.matWorld = XMLoadFloat4x4(&(*matWorld));
+        TMatrix world = *matWorld;
+        m_constantDataMap.matWorld = XMLoadFloat4x4(&world);
         //m_constantDataMap.matWorld = XMMatrixTranspose(world);
     }
     if (matView)
     {
-        m_constantDataMap.matView = XMLoadFloat4x4(&(*matView));
+        TMatrix view = *matView;
+        m_constantDataMap.matView = XMLoadFloat4x4(&view);
         //m_constantDataMap.matView = XMMatrixTranspose(view);
     }
     if (matProj)
     {
-        m_constantDataMap.matProj = XMLoadFloat4x4(&(*matProj));
+        TMatrix proj = *matProj;
+        m_constantDataMap.matProj = XMLoadFloat4x4(&proj);
         //m_constantDataMap.matProj = XMMatrixTranspose(proj);
     }
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, NULL, NULL, &m_constantDataMap, NULL, NULL);
@@ -659,10 +663,6 @@ namespace MAPLOAD
 		UINT iMaxDepth = 0;
 		std::wstring szVSPath;
 		std::wstring szPSPath;
-		void* shader_byte_code_vs = nullptr;
-		void* shader_byte_code_ps = nullptr;
-		size_t size_shader_vs = 0;
-		size_t size_shader_ps = 0;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
 		std::unordered_set<Object*> allObjectList;

@@ -4235,7 +4235,6 @@ vertex:position:30 0 -32, texcoord:0.96875 1, normal:0 1 0, color:1 1 1 1
 vertex:position:31 0 -32, texcoord:0.984375 1, normal:0 1 0, color:1 1 1 1
 vertex:position:32 0 -32, texcoord:1 1, normal:0 1 0, color:1 1 1 1
 m_pAllObjectList:
-D:\sylProject\Project41\data\fbx\PlayerBoy\Cs_Avatar_Boy_Sword_PlayerBoy #1 (merge).fbx, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_SOLID, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_STATIC, position:-6.306 0 -0.612, rotation:-90 47 0, scale:5 5 5
 SimpleObjectBox, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_SIMPLE, position:5.3241 0 -1.42542, rotation:0 0 0, scale:1 1 1, m_fLength:1
 SimpleObjectBox, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_SIMPLE, position:5.39496 0 -6.28905, rotation:0 0 0, scale:1 1 1, m_fLength:2
 SimpleObjectBox, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_SIMPLE, position:5.25392 0 -17.5231, rotation:0 0 0, scale:1 1 1, m_fLength:6

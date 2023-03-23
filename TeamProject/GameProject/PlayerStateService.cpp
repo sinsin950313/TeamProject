@@ -76,12 +76,12 @@ namespace SSB
 
 		if (I_Input.GetKey('A') == KEY_HOLD)
 		{
-			desiredCharDir += (player->m_pMainCamera->m_vRight);
+			desiredCharDir += -(player->m_pMainCamera->m_vRight);
 			moveChar = true;
 		}
 		if (I_Input.GetKey('D') == KEY_HOLD)
 		{
-			desiredCharDir += -(player->m_pMainCamera->m_vRight);
+			desiredCharDir += (player->m_pMainCamera->m_vRight);
 			moveChar = true;
 		}
 		if (I_Input.GetKey('W') == KEY_HOLD)
