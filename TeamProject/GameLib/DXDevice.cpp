@@ -262,11 +262,11 @@ void DXDevice::ClearD3D11DeviceContext()
     m_pImmediateContext->PSSetShaderResources(0, 16, pSRVs);
 
     // Samplers
-    m_pImmediateContext->VSSetSamplers(0, 16, pSamplers);
-    m_pImmediateContext->HSSetSamplers(0, 16, pSamplers);
-    m_pImmediateContext->DSSetSamplers(0, 16, pSamplers);
-    m_pImmediateContext->GSSetSamplers(0, 16, pSamplers);
-    m_pImmediateContext->PSSetSamplers(0, 16, pSamplers);
+    //m_pImmediateContext->VSSetSamplers(0, 16, pSamplers);
+    //m_pImmediateContext->HSSetSamplers(0, 16, pSamplers);
+    //m_pImmediateContext->DSSetSamplers(0, 16, pSamplers);
+    //m_pImmediateContext->GSSetSamplers(0, 16, pSamplers);
+    //m_pImmediateContext->PSSetSamplers(0, 16, pSamplers);
 
     // Render targets
     m_pImmediateContext->OMSetRenderTargets(8, pRTVs, pDSV);

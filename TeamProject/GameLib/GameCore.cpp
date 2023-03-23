@@ -133,7 +133,6 @@ bool	GameCore::CoreRender()
 	if (m_RT.Begin(m_pImmediateContext))
 	{
 		Render();
-		ClearD3D11DeviceContext();
 		m_RT.End(m_pImmediateContext);
 	}
 
@@ -156,6 +155,7 @@ bool	GameCore::CorePostRender()
 	m_Writer.Render();
 
 	m_pSwapChain->Present(0, 0);
+	ClearD3D11DeviceContext();
 	return true;
 }
 

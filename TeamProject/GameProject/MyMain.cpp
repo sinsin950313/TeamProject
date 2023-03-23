@@ -192,16 +192,6 @@ bool    MyMain::Render()
     {
         m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         TColor color = TColor(0, 0, 1, 1);
-        if (TCollision::ChkOBBToOBB(Player::GetInstance().m_ColliderBox, testBox))
-        {
-            color = TColor(1, 0, 0, 1);
-            TVector3 n = TVector3(0, 0, 1);
-            //TVector3 L = -Player::GetInstance().m_vDirection;
-            //Player::GetInstance().m_vPos += L * 15.0f * g_fSecondPerFrame;
-            //Player::GetInstance().UpdateMatrix();
-            //Player::GetInstance().UpdateBuffer();
-            //Player::GetInstance().Render();
-        }
         for (T_BOX* box : m_debugBoxList)
         {
             m_pDebugBox->SetBox(*box);
@@ -245,12 +235,11 @@ bool    MyMain::Render()
         m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
         m_pDebugBox->UpdateBuffer();
         //m_pDebugBox->Render();
-
-		//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
-        //T_BOX box;
-        //box.CreateOBBBox();
     }
+    
     Player::GetInstance().m_pTrail->Render();
+
+    ClearD3D11DeviceContext();
     return true;
 }
 
