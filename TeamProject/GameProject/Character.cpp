@@ -132,6 +132,7 @@ bool	Character::Release()
 	{
 		m_pModel->Release();
 		delete m_pModel;
+		m_pModel = nullptr;
 	}
 
 	return true;
@@ -198,7 +199,7 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	charPosition = XMVector3TransformCoord(charPosition, worldMatrix);
 
-	float destDirLength = 10.0f * frameTime;
+	float destDirLength = 30.0f * frameTime;
 
 	XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection * destDirLength);	// Get the characters direction (based off time, old position, and desired
 	

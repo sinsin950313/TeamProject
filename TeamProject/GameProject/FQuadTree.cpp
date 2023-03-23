@@ -138,10 +138,10 @@ void FQuadTree::SetConstantData(constant_map cc)
 
 BOOL FQuadTree::AddObject(Object* pObj)
 {
-    return FALSE;
-    //m_pAllObjectList.insert(pObj);
+    //return FALSE;
+    m_pAllObjectList.insert(pObj);
 
-    FNode* pFindNode = FindNode(m_pRootNode, pObj);
+    FNode* pFindNode = FindCollisionNode(m_pRootNode, pObj);
     if (pFindNode != nullptr)
     {
         pFindNode->m_pDynamicObjectList.push_back(pObj);
@@ -181,17 +181,17 @@ BOOL FQuadTree::IsSubDivide(FNode* pNode)
     return FALSE;
 }
 
-FNode* FQuadTree::FindNode(FNode* pNode, Object* pObj)
+FNode* FQuadTree::FindCollisionNode(FNode* pNode, Object* pObj)
 {
     for (int i = 0; i < 4; i++)
     {
         if (pNode->m_pChild[i] != nullptr)
         {
-            //if (TCollision::BoxToBox(pNode->m_pChild[i]->m_Box, pObj->m_Box))
-            //{
-            //    pNode = FindNode(pNode->m_pChild[i], pObj);
-            //    break;
-            //}
+            if (TCollision::TCollision::ChkOBBToOBB(pNode->m_pChild[i]->m_Box, pObj->m_ColliderBox))
+            {
+                pNode = FindCollisionNode(pNode->m_pChild[i], pObj);
+                break;
+            }
         }
     }
     return pNode;
@@ -209,36 +209,27 @@ void FQuadTree::Reset(FNode* pNode)
 
 FNode* FQuadTree::VisibleNode(FNode* pNode)
 {
-    if (pNode->m_bLeaf)
+    PLANE_COLTYPE dwRet = m_pCurrentCamera->m_vFrustum.ClassifyOBB(pNode->m_Box);
+    if (P_FRONT == dwRet)// 완전포함.
     {
         m_pDrawLeafNodeList.push_back(pNode);
         return pNode;
     }
-    for (int i = 0; i < 4; i++)
+    if (P_SPANNING == dwRet) // 걸쳐있다.
     {
-        VisibleNode(pNode->m_pChild[i]);
+        if (pNode->m_bLeaf)
+        {
+            m_pDrawLeafNodeList.push_back(pNode);
+        }
+        else
+        {
+            for (int iNode = 0; iNode < 4; iNode++)
+            {
+                VisibleNode(pNode->m_pChild[iNode]);
+            }
+        }
     }
-    //F_POSITION dwRet = m_pCamera->m_Frustum.ClassifyBox(pNode->m_Box);
-    //if (F_FRONT == dwRet)// 완전포함.
-    //{
-    //    m_pDrawLeafNodeList.push_back(pNode);
-    //    return pNode;
-    //}
-    //if (F_SPANNING == dwRet) // 걸쳐있다.
-    //{
-    //    if (pNode->m_bLeaf)
-    //    {
-    //        m_pDrawLeafNodeList.push_back(pNode);
-    //    }
-    //    else
-    //    {
-    //        for (int iNode = 0; iNode < 4; iNode++)
-    //        {
-    //            VisibleNode(pNode->m_pChild[iNode]);
-    //        }
-    //    }
-    //}
-    //return pNode;
+    return pNode;
 }
 
 void	FQuadTree::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
@@ -280,6 +271,9 @@ void FQuadTree::Update()
     //m_Select.SetMatrix(nullptr, &m_pCamera->m_matCamera, &m_pCamera->m_matProj);
 
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, NULL, NULL, &m_constantDataMap, NULL, NULL);
+
+    for (const auto& object : m_pAllObjectList)
+        object->Frame();
 }
 
 void	FQuadTree::PreRender()
@@ -312,10 +306,25 @@ void FQuadTree::Render()
         m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList를 Index로그린다
         m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
     }
+    for (const auto& object : m_pAllObjectList)
+    {   
+        TMatrix view = TMatrix(m_constantDataMap.matView);
+        TMatrix proj = TMatrix(m_constantDataMap.matProj);
+        object->SetMatrix(nullptr, &view, &proj);
+        object->Render();
+    }
+        
 }
 
 void	FQuadTree::Release()
 {
+    for (auto obj : m_pAllObjectList)
+    {
+        obj->Release();
+        delete obj;
+    }
+    m_pAllObjectList.clear();
+
     if (m_fAlphaData)
     {
         delete[] m_fAlphaData;
@@ -348,9 +357,288 @@ void	FQuadTree::Release()
     }
 }
 
-
 namespace MAPLOAD
 {
+#define _DegreeToRadian(X) X*(XM_PI/180.0f)
+    constexpr auto _Epsilon = 0.001f;
+    static XMFLOAT2 operator+(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        return XMFLOAT2(a.x + b.x, a.y + b.y);
+    }
+
+    static XMFLOAT2 operator-(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        return XMFLOAT2(a.x - b.x, a.y - b.y);
+    }
+
+    static XMFLOAT2 operator*(XMFLOAT2& a, float scala)
+    {
+        return XMFLOAT2(a.x * scala, a.y * scala);
+    }
+
+    static XMFLOAT2 operator/(XMFLOAT2& a, float scala)
+    {
+        return XMFLOAT2(a.x / scala, a.y / scala);
+    }
+
+    static XMFLOAT2 operator+=(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        a.x += b.x;
+        a.y += b.y;
+        return a;
+    }
+
+    static XMFLOAT2 operator-=(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        a.x -= b.x;
+        a.y -= b.y;
+        return a;
+    }
+
+    static XMFLOAT2 operator*=(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        a.x *= b.x;
+        a.y *= b.y;
+        return a;
+    }
+
+    static XMFLOAT2 operator/=(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        a.x /= b.x;
+        a.y /= b.y;
+        return a;
+    }
+
+    static bool operator==(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        if ((fabs(a.x - b.x) <= _Epsilon) && (fabs(a.y - b.y) <= _Epsilon))
+            return true;
+        else
+            return false;
+    }
+
+    static bool operator<=(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        if (a.x <= b.x && a.y <= b.y)
+            return true;
+        else
+            return false;
+    }
+
+    static bool operator>=(XMFLOAT2& a, XMFLOAT2& b)
+    {
+        if (a.x >= b.x && a.y >= b.y)
+            return true;
+        else
+            return false;
+    }
+
+
+
+    static XMFLOAT3 operator+(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        return XMFLOAT3(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+
+    static XMFLOAT3 operator-(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        return XMFLOAT3(a.x - b.x, a.y - b.y, a.z - b.z);
+    }
+
+    static XMFLOAT3 operator*(XMFLOAT3& a, float scala)
+    {
+        return XMFLOAT3(a.x * scala, a.y * scala, a.z * scala);
+    }
+
+    static XMFLOAT3 operator/(XMFLOAT3& a, float scala)
+    {
+        return XMFLOAT3(a.x / scala, a.y / scala, a.z / scala);
+    }
+
+    static XMFLOAT3 operator+=(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        a.x += b.x;
+        a.y += b.y;
+        a.z += b.z;
+        return a;
+    }
+
+    static XMFLOAT3 operator-=(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        a.x -= b.x;
+        a.y -= b.y;
+        a.z -= b.z;
+        return a;
+    }
+
+    static XMFLOAT3 operator*=(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        a.x *= b.x;
+        a.y *= b.y;
+        a.z *= b.z;
+        return a;
+    }
+
+    static XMFLOAT3 operator/=(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        a.x /= b.x;
+        a.y /= b.y;
+        a.z /= b.z;
+        return a;
+    }
+
+    static bool operator==(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        if ((fabs(a.x - b.x) <= _Epsilon) && (fabs(a.y - b.y) <= _Epsilon) && (fabs(a.z - b.z) <= _Epsilon))
+            return true;
+        else
+            return false;
+    }
+
+    static bool operator<=(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        if (a.x <= b.x && a.y <= b.y && a.z <= b.z)
+            return true;
+        else
+            return false;
+    }
+
+    static bool operator>=(XMFLOAT3& a, XMFLOAT3& b)
+    {
+        if (a.x >= b.x && a.y >= b.y && a.z >= b.z)
+            return true;
+        else
+            return false;
+    }
+    struct S_BOX
+    {
+        // Common
+        XMFLOAT3		vCenter;
+        XMFLOAT3		vPos[8];
+        // AABB
+        XMFLOAT3		vMax;
+        XMFLOAT3		vMin;
+        // OBB
+        XMFLOAT3		vAxis[3];
+        float		    fExtent[3];
+
+        unsigned int vRectIndices[36] =
+        {
+            0, 1, 2, 2, 3, 0,
+            3, 2, 6, 6, 7, 3,
+            7, 6, 5, 5, 4, 7,
+            4, 5, 1, 1, 0, 4,
+            4, 0, 3, 3, 7, 4,
+            1, 5, 6, 6, 2, 1
+        };
+
+        S_BOX()
+        {
+
+        }
+        S_BOX(XMFLOAT3	max, XMFLOAT3 min)
+        {
+            Set(max, min);
+        }
+        void Set(XMFLOAT3 max, XMFLOAT3	min)
+        {
+            vMax = max;
+            vMin = min;
+            vCenter = (vMax + vMin);
+            vCenter =  vCenter * 0.5f;
+            vAxis[0] = { 1,0,0 };
+            vAxis[1] = { 0,1,0 };
+            vAxis[2] = { 0,0,1 };
+            fExtent[0] = vMax.x - vCenter.x;
+            fExtent[1] = vMax.y - vCenter.y;
+            fExtent[2] = vMax.z - vCenter.z;
+
+            vPos[0] = XMFLOAT3(vMin.x, vMin.y, vMin.z);
+            vPos[1] = XMFLOAT3(vMin.x, vMin.y, vMax.z);
+            vPos[2] = XMFLOAT3(vMax.x, vMin.y, vMax.z);
+            vPos[3] = XMFLOAT3(vMax.x, vMin.y, vMin.z);
+            vPos[4] = XMFLOAT3(vMin.x, vMax.y, vMin.z);
+            vPos[5] = XMFLOAT3(vMin.x, vMax.y, vMax.z);
+            vPos[6] = XMFLOAT3(vMax.x, vMax.y, vMax.z);
+            vPos[7] = XMFLOAT3(vMax.x, vMax.y, vMin.z);
+        }
+        void Set(XMMATRIX matWorld)
+        {
+            
+            // 중심점을 월드 변환 행렬로 변환
+            XMVECTOR center = XMLoadFloat3(&vCenter);
+            center = XMVector3Transform(center, matWorld);
+            XMStoreFloat3(&vCenter, center);
+
+            // 각 포인트를 월드 변환 행렬로 변환
+            for (int i = 0; i < 8; ++i)
+            {
+                XMVECTOR point = XMLoadFloat3(&vPos[i]);
+                point = XMVector3Transform(point, matWorld);
+                XMStoreFloat3(&vPos[i], point);
+            }
+
+            // AABB의 최소, 최대 점을 월드 변환 행렬로 변환
+            XMVECTOR minPoint = XMLoadFloat3(&vMin);
+            minPoint = XMVector3Transform(minPoint, matWorld);
+            XMStoreFloat3(&vMin, minPoint);
+
+            XMVECTOR maxPoint = XMLoadFloat3(&vMax);
+            maxPoint = XMVector3Transform(maxPoint, matWorld);
+            XMStoreFloat3(&vMax, maxPoint);
+
+            // OBB의 축 벡터를 월드 변환 행렬로 변환
+            for (int i = 0; i < 3; ++i)
+            {
+                XMVECTOR axis = XMLoadFloat3(&vAxis[i]);
+                axis = XMVector3Transform(axis, matWorld);
+                axis = XMVector3Normalize(axis);
+                XMStoreFloat3(&vAxis[i], axis);
+            }
+            fExtent[0] = vMax.x - vCenter.x;
+            fExtent[1] = vMax.y - vCenter.y;
+            fExtent[2] = vMax.z - vCenter.z;
+        }
+
+        friend std::ostream& operator<<(std::ostream& os, const S_BOX& tBox)
+        {
+            os << "vAxis:" << tBox.vAxis[0].x << " " << tBox.vAxis[0].y << " " << tBox.vAxis[0].z << " "
+                << tBox.vAxis[1].x << " " << tBox.vAxis[1].y << " " << tBox.vAxis[1].z << " "
+                << tBox.vAxis[2].x << " " << tBox.vAxis[2].y << " " << tBox.vAxis[2].z << ", ";
+            os << "fExtent:" << tBox.fExtent[0] << " " << tBox.fExtent[1] << " " << tBox.fExtent[2];
+            return os;
+        }
+
+        friend std::stringstream& operator>>(std::stringstream& is, S_BOX& tBox)
+        {
+            /*std::string line;
+            std::getline(is, line);*/
+
+            // axis 값을 추출합니다.
+            size_t axis_start = is.str().find("vAxis:") + strlen("vAxis:");
+            size_t axis_end = is.str().find(",", axis_start);
+            std::string axis_str = is.str().substr(axis_start, axis_end - axis_start);
+            std::istringstream axis_stream(axis_str);
+            XMFLOAT3 axis[3];
+            axis_stream >> axis[0].x >> axis[0].y >> axis[0].z >> axis[1].x >> axis[1].y >> axis[1].z >> axis[2].x >> axis[2].y >> axis[2].z;
+            tBox.vAxis[0] = axis[0];
+            tBox.vAxis[1] = axis[1];
+            tBox.vAxis[2] = axis[2];
+
+            // extent 값을 추출합니다.
+            size_t extent_start = is.str().find("fExtent:") + strlen("fExtent:");
+            size_t extent_end = is.str().find(",", extent_start);
+            std::string extent_str = is.str().substr(extent_start, extent_end - extent_start);
+            std::istringstream extent_stream(extent_str);
+            float extent[3];
+            extent_stream >> extent[0] >> extent[1] >> extent[2];
+            tBox.fExtent[0] = extent[0];
+            tBox.fExtent[1] = extent[1];
+            tBox.fExtent[2] = extent[2];
+
+            return is;
+        }
+    };
 	FQuadTree* OpenMap(std::wstring szFullPath, ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 	{
 		Texture* pTexture = nullptr;
@@ -365,7 +653,7 @@ namespace MAPLOAD
 		size_t size_shader_ps = 0;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
-		//std::unordered_set<Object*> allObjectList;
+		std::unordered_set<Object*> allObjectList;
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
 		std::string line;
@@ -476,9 +764,12 @@ namespace MAPLOAD
 						Transform transform;
 						texturesStream >> transform;
 
+                        MAPLOAD::S_BOX box;
+                        texturesStream >> box;
+
 						float length;
 
-						if (specifyMode == "OBJECT_SIMPLE")
+						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
 						{
 							// pos 값을 추출합니다.
 							size_t pos_start = texturesStream.str().find("m_fLength:") + strlen("m_fLength:");
@@ -488,15 +779,45 @@ namespace MAPLOAD
 							pos_stream >> length;
 						}
 
-						//Object* pObject = nullptr;
-						//if (specifyMode == OBJECT_SPECIFY::OBJECT_SIMPLE)
-						//    pObject = CreateSimpleBox(length, transform.position, transform.rotation, transform.scale);
-						//else if (specifyMode == OBJECT_SPECIFY::OBJECT_STATIC)
-						//    pObject = CreateFbxObject(_tomw(strName), transform.position, transform.rotation, transform.scale);
-						//else if (specifyMode == OBJECT_SPECIFY::OBJECT_SKELETON)
-						//    pObject = CreateFbxObject(_tomw(str), transform.position, transform.rotation, transform.scale);
-						//
-						//allObjectList.insert(pObject);
+                        if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
+                        {
+                            T_BOX mePeedBox;
+
+                            XMFLOAT3 scale;
+                            XMStoreFloat3(&scale, transform.scale);
+                            XMFLOAT3 rot;
+                            XMStoreFloat3(&rot, transform.rotation);
+                            XMFLOAT3 translation;
+                            XMStoreFloat3(&translation, transform.position);
+
+                            XMMATRIX matWorld = XMMatrixTransformation({ 0,0,0,1 }, { 0,0,0,1 }, transform.scale, { 0,0,0,1 }, XMQuaternionRotationRollPitchYaw(
+                                _DegreeToRadian(rot.x),
+                                _DegreeToRadian(rot.y),
+                                _DegreeToRadian(rot.z)), transform.position);
+                            for (int i = 0; i < 3; ++i)
+                            {
+                                XMVECTOR axis = XMLoadFloat3(&box.vAxis[i]);
+                                axis = XMVector3TransformNormal(axis, matWorld);
+                                //axis = XMVector3Normalize(axis);
+                                XMStoreFloat3(&box.vAxis[i], axis);
+                            }
+                            
+                            mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
+                            I_Collision.AddMapCollisionBox(mePeedBox);
+                        }
+                        else
+                        {
+                            Object* pObject = new Object(strName, transform, box.vAxis[0], box.vAxis[1], box.vAxis[2], box.fExtent[0], box.fExtent[1], box.fExtent[2], pd3dDevice, pContext);
+                            //if (specifyMode == OBJECT_SPECIFY::OBJECT_SIMPLE)
+                            //    pObject = CreateSimpleBox(length, transform.position, transform.rotation, transform.scale);
+                            //else if (specifyMode == OBJECT_SPECIFY::OBJECT_STATIC)
+                            //    pObject = CreateFbxObject(_tomw(strName), transform.position, transform.rotation, transform.scale);
+                            //else if (specifyMode == OBJECT_SPECIFY::OBJECT_SKELETON)
+                            //    pObject = CreateFbxObject(_tomw(str), transform.position, transform.rotation, transform.scale);
+                            //
+                            allObjectList.insert(pObject);
+                        }
+                         
 						prevPos = is.tellg();
 					}
 					is.seekg(prevPos);
@@ -562,12 +883,12 @@ namespace MAPLOAD
 		pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
 		//pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
 
-		//for (const auto& obj : allObjectList)
-		//{
-		//    if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
-		//        m_ListFbx.insert(obj->GetObjectName());
-		//    pQuadTree->AddObject(obj);
-		//}
+		for (const auto& obj : allObjectList)
+		{
+		    /*if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
+		        m_ListFbx.insert(obj->GetObjectName());*/
+		    pQuadTree->AddObject(obj);
+		}
 
 		return pQuadTree;
 	}

@@ -15,6 +15,7 @@ private:
 	PlayerAttackList
 	NpcAttackList
 	*/
+	std::vector<T_BOX> m_MapCollisionList;
 	std::map<T_BOX*, Character*> m_StaticObjectList;
 	std::map<T_BOX*, Character*>	m_NpcList;
 
@@ -31,6 +32,10 @@ public:
 	void	AddStaticObjectBox(T_BOX* box, Character* pChar);
 	void	AddNpcBox(T_BOX* box, Character* pChar);
 	void	DeleteBox(T_BOX* box);
+
+public:
+	void	AddMapCollisionBox(T_BOX tBox);
+	std::vector<T_BOX>& GetMapCollisionList();
 
 private:
 	CollisionMgr();

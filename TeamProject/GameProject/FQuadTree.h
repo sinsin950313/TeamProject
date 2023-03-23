@@ -4,7 +4,14 @@
 #include "TextureMgr.h"
 #include "ShaderMgr.h"
 #include "std.h"
+//-----------------------------
+#include <unordered_set>
+#include "Object.h"
+#include "CollisionMgr.h"
+#include "CameraTPS.h"
+//-----------------------------
 
+class Camera;
 class Object;
 class FQuadTree
 {
@@ -25,7 +32,7 @@ public:
 	BOOL	DeleteObject(Object* pObj);
 	void	BuildTree(FNode* pNode, MeshMap* pMap);
 	BOOL	IsSubDivide(FNode* pNode);
-	FNode*	FindNode(FNode* pNode, Object* pObj);
+	FNode*	FindCollisionNode(FNode* pNode, Object* pObj);
 	void	Reset(FNode* pNode);
 	FNode*	VisibleNode(FNode* pNode);
 	void	Update();
@@ -80,10 +87,12 @@ public:
 	std::wstring m_szPSPath;
 	Shader* m_pPixelShader;
 
-	//std::unordered_set<Object*> m_pAllObjectList;
+	std::unordered_set<Object*> m_pAllObjectList;
 	std::vector<FNode*> m_pLeafNodeList;
 	std::vector<FNode*> m_pDrawLeafNodeList;
 
+	//Camera
+	Camera* m_pCurrentCamera;
 };
 
 

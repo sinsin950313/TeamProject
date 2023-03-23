@@ -163,3 +163,46 @@ PLANE_COLTYPE	Frustum::ClassifyBOX(C_BOX box)
 	return ClassifyOBB(obb);
 }
 */
+
+PLANE_COLTYPE	Frustum::ClassifyOBB(T_BOX obb)
+{
+	float		fPlaneToCenter = 0.0;
+	float		fDistance = 0.0f;
+	XMFLOAT3	vDir;
+	PLANE_COLTYPE  t_Position;
+
+	t_Position = P_SPANNING;
+	for (int iPlane = 0; iPlane < 6; iPlane++)
+	{
+		vDir = obb.vAxis[0] * obb.fExtent[0];
+		fDistance = fabs(m_Plane[iPlane].x * vDir.x + m_Plane[iPlane].y * vDir.y + m_Plane[iPlane].z * vDir.z);
+		vDir = obb.vAxis[1] * obb.fExtent[1];
+		fDistance += fabs(m_Plane[iPlane].x * vDir.x + m_Plane[iPlane].y * vDir.y + m_Plane[iPlane].z * vDir.z);
+		vDir = obb.vAxis[2] * obb.fExtent[2];
+		fDistance += fabs(m_Plane[iPlane].x * vDir.x + m_Plane[iPlane].y * vDir.y + m_Plane[iPlane].z * vDir.z);
+
+		fPlaneToCenter = m_Plane[iPlane].x * obb.vCenter.x + m_Plane[iPlane].y * obb.vCenter.y +
+			m_Plane[iPlane].z * obb.vCenter.z + m_Plane[iPlane].w;
+
+		if (fPlaneToCenter <= -fDistance) return P_BACK;
+		/*if (fPlaneToCenter > 0)
+		{
+			if (fPlaneToCenter < fDistance)
+			{
+				t_Position = F_SPANNING;
+				break;
+			}
+		}
+		else
+			if (fPlaneToCenter < 0)
+			{
+				t_Position = F_BACK;
+				if (fPlaneToCenter > -fDistance)
+				{
+					t_Position = F_SPANNING;
+				}
+				break;
+			}*/
+	}
+	return t_Position;
+}

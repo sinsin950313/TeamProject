@@ -84,6 +84,15 @@ bool CollisionMgr::IsCollide(T_BOX* box)
 	return false;
 }
 
+void CollisionMgr::AddMapCollisionBox(T_BOX tBox)
+{
+	m_MapCollisionList.push_back(tBox);
+}
+
+std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()
+{
+	return m_MapCollisionList;
+}
 
 void	CollisionMgr::AddStaticObjectBox(T_BOX* box, Character* pChar)
 {

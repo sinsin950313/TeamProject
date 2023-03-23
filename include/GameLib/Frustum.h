@@ -1,6 +1,6 @@
 #pragma once
 #include "TMath.h"
-
+#include "TCollision.h"
 enum PLANE_COLTYPE
 {
 	P_BACK = 0,
@@ -24,5 +24,7 @@ public:
 	//PLANE_COLTYPE	ClassifyAABB(C_AABB v); //OBB를 구현하면 그게 그거임
 	//PLANE_COLTYPE	ClassifyOBB(C_OBB obb);
 	//PLANE_COLTYPE	ClassifyBOX(C_BOX box);
+	PLANE_COLTYPE	ClassifyOBB(T_BOX obb);
+
 };
 

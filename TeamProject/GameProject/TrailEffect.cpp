@@ -89,15 +89,14 @@ void	TrailEffect::AddTrailPos(TVector3 low, TVector3 high)
 	v.p = low;
 	v.n = TVector3(0, 0, 0);
 	v.c = TVector4(1, 1, 1, 1);
-	v.t = TVector2(1, 1);
+	v.t = TVector2(0, 0);
 
 	m_VertexList[m_iPos++] = v;
 	//m_VertexList.push_back(v);
 
 	v.p = high;
 	m_VertexList[m_iPos++] = v;
-	if (m_iPos == m_VertexList.size() - 1 || 
-		m_iPos >= 4)
+	if (m_iPos == m_VertexList.size() - 1)
 		return;
 
 	/*

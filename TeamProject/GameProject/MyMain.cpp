@@ -27,13 +27,10 @@ bool    MyMain::Init()
     I_Sound.LoadDir(kTeamProjectSoundPath);
     I_Sound.LoadAll(kTeamProjectSoundPath);
 
-    //I_Sound.LoadAll(L"");
-    //Sound* pSound = I_Sound.Find(L"");
-    //pSound->Play(true);
-
     m_pInter = new Interface();
-    m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/sky.jpg");
-    m_pInter->m_vScale = TVector3(2, 2, 2);
+    m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/tempBar.png");
+    m_pInter->m_vPos = TVector3(800, 700, 0);
+    m_pInter->m_vScale = TVector3(1, 1, 1);
     //m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
 
     m_pMainCamera = new CameraTPS;
@@ -113,6 +110,7 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
+        //std::string filename = "PlayerGaren";
         std::string filename = "dummy";
         std::string str = io.Read(filename);
 
@@ -121,7 +119,8 @@ bool    MyMain::Init()
         ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
         //Idle, Attack1, Attack2, Attack3, Move, Dead
-        I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
+        //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
+        I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
 
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 20));
 		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
@@ -134,8 +133,8 @@ bool    MyMain::Init()
     {
         SSB::ObjectScriptIO io;
 
-        std::string str = io.Read("Alistar");
-        //std::string str = io.Read("dummy");
+        //std::string str = io.Read("Alistar");
+        std::string str = io.Read("dummy");
 
         for (int i = 0; i < m_EnemyCount; ++i)
         {
@@ -177,7 +176,8 @@ bool    MyMain::Init()
     m_pDebugBox = new DebugBox;
     m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
-    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
+    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
+    m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 
     Sound* sound = I_Sound.Find(L"BGM.mp3");
     sound->Play(true);
@@ -244,10 +244,6 @@ bool    MyMain::Frame()
 	m_pQuadTree->Update();
 	Player::GetInstance().Frame();
 
-	TVector3 p = Player::GetInstance().m_vPos;
-	p.y += 5.0f;
-	Player::GetInstance().m_pTrail->AddTrailPos(Player::GetInstance().m_vPos, p);
-
 	for (auto enemy : m_Enemies)
 	{
 		enemy->Frame();
@@ -258,7 +254,7 @@ bool    MyMain::Frame()
 		manager.second->Frame();
 	}
 
-    m_pEnemy->Frame();
+    //m_pEnemy->Frame();
     m_pInter->Frame();
     //modelBox.UpdateBox(Player::GetInstance().m_matWorld);
     return true;
@@ -284,120 +280,58 @@ bool    MyMain::Render()
 		enemy->Render();
     }
 
-  //  if (m_pDebugBox)
-  //  {
-  //      m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-  //      TColor color = TColor(0, 0, 1, 1);
-  //      if (TCollision::ChkOBBToOBB(Player::GetInstance().m_ColliderBox, testBox))
-  //      {
-  //          color = TColor(1, 0, 0, 1);
-  //          TVector3 n = TVector3(0, 0, 1);
-  //          //TVector3 L = -Player::GetInstance().m_vDirection;
-  //          //Player::GetInstance().m_vPos += L * 15.0f * g_fSecondPerFrame;
-  //          //Player::GetInstance().UpdateMatrix();
-  //          //Player::GetInstance().UpdateBuffer();
-  //          //Player::GetInstance().Render();
-  //      }
-  //      for (T_BOX* box : m_debugBoxList)
-  //      {
-  //          m_pDebugBox->SetBox(*box);
-  //          m_pDebugBox->SetColor(color);
-  //          m_pDebugBox->UpdateBuffer();
-  //          m_pDebugBox->Render();
-  //      }
+    if (m_pDebugBox)
+	{
+		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		TColor color = TColor(0, 0, 1, 1);
+		for (T_BOX* box : m_debugBoxList)
+		{
+			m_pDebugBox->SetBox(*box);
+			m_pDebugBox->SetColor(color);
+			m_pDebugBox->UpdateBuffer();
+			m_pDebugBox->Render();
+		}
 
-  //      T_BOX b;
-  //      b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponLow"));
-  //      m_pDebugBox->SetBox(b);
-  //      m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-  //      m_pDebugBox->UpdateBuffer();
-  //      //m_pDebugBox->Render();
+		T_BOX b;
+		b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+		m_pDebugBox->SetBox(b);
+		m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+		m_pDebugBox->UpdateBuffer();
+		//m_pDebugBox->Render();
 
-  //      b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
-  //      m_pDebugBox->SetBox(b);
-  //      m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-  //      m_pDebugBox->UpdateBuffer();
-  //      //m_pDebugBox->Render();
+		TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
+		TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
+		float ex = D3DXVec3Length(&l);
 
-  //      TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
-  //      TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
-  //      float ex = D3DXVec3Length(&l);
-  //      
-  //      TVector3 axis[3];
-  //      axis[0] = -l;
-  //      D3DXVec3Normalize(&axis[0], &axis[0]);
+		TVector3 axis[3];
+		axis[0] = -l;
+		D3DXVec3Normalize(&axis[0], &axis[0]);
 
-  //      TVector3 B;
-  //      D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
-  //      if (B == TVector3::Zero)
-  //      {
-  //          D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
-  //      }
-  //      TVector3 C;
-  //      D3DXVec3Cross(&C, &axis[0], &B);
+		TVector3 B;
+		D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
+		if (B == TVector3::Zero)
+		{
+			D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
+		}
+		TVector3 C;
+		D3DXVec3Cross(&C, &axis[0], &B);
 
-  //      b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
-  //      m_pDebugBox->SetBox(b);
-  //      m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-  //      m_pDebugBox->UpdateBuffer();
-  //      //m_pDebugBox->Render();
+		b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
+		m_pDebugBox->SetBox(b);
+		m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+		m_pDebugBox->UpdateBuffer();
+		//m_pDebugBox->Render();
 
-		////m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
-  //      //T_BOX box;
-  //      //box.CreateOBBBox();
-  //  }
+	    //m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
+		//T_BOX box;
+		//box.CreateOBBBox();
+		//m_pDebugBox->Render();
+	}
 
-        m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-        TColor color = TColor(0, 0, 1, 1);
-        for (T_BOX* box : m_debugBoxList)
-        {
-            m_pDebugBox->SetBox(*box);
-            m_pDebugBox->SetColor(color);
-            m_pDebugBox->UpdateBuffer();
-            m_pDebugBox->Render();
-        }
-
-        T_BOX b;
-        b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponLow"));
-        m_pDebugBox->SetBox(b);
-        m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-        m_pDebugBox->UpdateBuffer();
-        //m_pDebugBox->Render();
-
-        b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
-        m_pDebugBox->SetBox(b);
-        m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-        m_pDebugBox->UpdateBuffer();
-        //m_pDebugBox->Render();
-
-        TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
-        TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
-        float ex = D3DXVec3Length(&l);
-        
-        TVector3 axis[3];
-        axis[0] = -l;
-        D3DXVec3Normalize(&axis[0], &axis[0]);
-
-        TVector3 B;
-        D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
-        if (B == TVector3::Zero)
-        {
-            D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
-        }
-        TVector3 C;
-        D3DXVec3Cross(&C, &axis[0], &B);
-
-        b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
-        m_pDebugBox->SetBox(b);
-        m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-        m_pDebugBox->UpdateBuffer();
-        //m_pDebugBox->Render();
-    }
-    
-    Player::GetInstance().m_pTrail->Render();
-    m_pInter->Render();
-    ClearD3D11DeviceContext();
-    return true;
+	Player::GetInstance().m_pTrail->Render();
+	m_pInter->Render();
+	ClearD3D11DeviceContext();
+	return true;
 }
 
 bool    MyMain::Release()
