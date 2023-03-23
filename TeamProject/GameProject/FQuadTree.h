@@ -9,6 +9,7 @@
 #include "Object.h"
 #include "CollisionMgr.h"
 #include "CameraTPS.h"
+#include "BaseObject.h"
 //-----------------------------
 
 class Camera;
@@ -92,7 +93,10 @@ public:
 	std::vector<FNode*> m_pDrawLeafNodeList;
 
 	//Camera
-	Camera* m_pCurrentCamera;
+	Camera* m_pCurrentCamera = nullptr;
+
+	//SkyDome
+	BaseObject* m_pSphereObject = nullptr;
 };
 
 

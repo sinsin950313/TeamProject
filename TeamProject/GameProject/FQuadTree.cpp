@@ -274,6 +274,8 @@ void FQuadTree::Update()
 
     for (const auto& object : m_pAllObjectList)
         object->Frame();
+
+    m_pSphereObject->Frame();
 }
 
 void	FQuadTree::PreRender()
@@ -306,18 +308,28 @@ void FQuadTree::Render()
         m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList를 Index로그린다
         m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
     }
+
+    TMatrix view = TMatrix(m_constantDataMap.matView);
+    TMatrix proj = TMatrix(m_constantDataMap.matProj);
     for (const auto& object : m_pAllObjectList)
     {   
-        TMatrix view = TMatrix(m_constantDataMap.matView);
-        TMatrix proj = TMatrix(m_constantDataMap.matProj);
         object->SetMatrix(nullptr, &view, &proj);
         object->Render();
     }
-        
+
+    m_pSphereObject->SetMatrix(nullptr, &view, &proj);
+    m_pSphereObject->Render();
 }
 
 void	FQuadTree::Release()
 {
+    if (m_pSphereObject)
+    {
+        m_pSphereObject->Release();
+        delete m_pSphereObject;
+        m_pSphereObject = nullptr;
+    }
+
     for (auto obj : m_pAllObjectList)
     {
         obj->Release();
@@ -657,6 +669,9 @@ namespace MAPLOAD
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
 		std::string line;
+
+        BaseObject* pSphereObject = nullptr;
+
 		while (std::getline(is, line))
 		{
 			std::istringstream iss(line);
@@ -768,7 +783,9 @@ namespace MAPLOAD
                         texturesStream >> box;
 
 						float length;
-
+                        float fRadius;
+                        UINT iSliceCount;
+                        UINT iStackCount;
 						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
 						{
 							// pos 값을 추출합니다.
@@ -778,6 +795,29 @@ namespace MAPLOAD
 							std::istringstream pos_stream(pos_str);
 							pos_stream >> length;
 						}
+                        else if (specifyMode == "OBJECT_SKYDOME")
+                        {
+                            // radius 값을 추출합니다.
+                            size_t radius_start = texturesStream.str().find("m_fRadius:") + strlen("m_fRadius:");
+                            size_t radius_end = texturesStream.str().find(",", radius_start);
+                            std::string radius_str = texturesStream.str().substr(radius_start, radius_end - radius_start);
+                            std::istringstream radius_stream(radius_str);
+                            radius_stream >> fRadius;
+
+                            // slice 값을 추출합니다.
+                            size_t slice_start = texturesStream.str().find("m_iSliceCount:") + strlen("m_iSliceCount:");
+                            size_t slice_end = texturesStream.str().find(",", slice_start);
+                            std::string slice_str = texturesStream.str().substr(slice_start, slice_end - slice_start);
+                            std::istringstream slice_stream(slice_str);
+                            slice_stream >> iSliceCount;
+
+                            // stack 값을 추출합니다.
+                            size_t stack_start = texturesStream.str().find("m_iStackCount:") + strlen("m_iStackCount:");
+                            size_t stack_end = texturesStream.str().find(",", stack_start);
+                            std::string stack_str = texturesStream.str().substr(stack_start, stack_end - stack_start);
+                            std::istringstream stack_stream(stack_str);
+                            stack_stream >> iStackCount;
+                        }
 
                         if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
                         {
@@ -804,6 +844,61 @@ namespace MAPLOAD
                             
                             mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
                             I_Collision.AddMapCollisionBox(mePeedBox);
+                        }
+                        else if (specifyMode == "OBJECT_SKYDOME")
+                        {
+                            pSphereObject = new BaseObject();
+
+    
+                            float phiStep = XM_PI / iStackCount;
+                            float thetaStep = 2.0f * XM_PI / iSliceCount;
+                            for (UINT i = 0; i <= iStackCount; i++)
+                            {
+                                float phi = i * phiStep;
+
+                                for (UINT j = 0; j <= iSliceCount; j++)
+                                {
+                                    float theta = j * thetaStep;
+
+                                    Vertex vertex;
+
+                                    vertex.p.x = fRadius * sinf(phi) * cosf(theta);
+                                    vertex.p.y = fRadius * cosf(phi);
+                                    vertex.p.z = fRadius * sinf(phi) * sinf(theta);
+
+                                    vertex.n = vertex.p;
+                                    XMStoreFloat3(&vertex.n, XMVector3Normalize(XMLoadFloat3(&vertex.n)));
+
+                                    vertex.c = TVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+                                    vertex.t.x = (float)j / (float)iSliceCount;
+                                    vertex.t.y = (float)i / (float)iStackCount;
+
+                                    pSphereObject->m_VertexList.push_back(vertex);
+                                }
+                            }
+
+                            for (UINT i = 0; i < iStackCount; i++)
+                            {
+                                for (UINT j = 0; j < iSliceCount; j++)
+                                {
+                                    UINT index1 = i * (iSliceCount + 1) + j;
+                                    UINT index2 = i * (iSliceCount + 1) + j + 1;
+                                    UINT index3 = (i + 1) * (iSliceCount + 1) + j;
+                                    UINT index4 = (i + 1) * (iSliceCount + 1) + j + 1;
+
+                                    pSphereObject->m_IndexList.push_back(index1);
+                                    pSphereObject->m_IndexList.push_back(index3);
+                                    pSphereObject->m_IndexList.push_back(index2);
+
+                                    pSphereObject->m_IndexList.push_back(index2);
+                                    pSphereObject->m_IndexList.push_back(index3);
+                                    pSphereObject->m_IndexList.push_back(index4);
+                                }
+                            }
+                         
+                            pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/SkyDomeShader.hlsl", mtw(strName));
+                            pSphereObject->Init();
                         }
                         else
                         {
@@ -889,6 +984,8 @@ namespace MAPLOAD
 		        m_ListFbx.insert(obj->GetObjectName());*/
 		    pQuadTree->AddObject(obj);
 		}
+        if (pSphereObject)
+            pQuadTree->m_pSphereObject = pSphereObject;
 
 		return pQuadTree;
 	}

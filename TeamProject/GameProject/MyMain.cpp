@@ -283,14 +283,14 @@ bool    MyMain::Render()
 
     if (m_pDebugBox)
 	{
-        for (auto box : I_Collision.GetMapCollisionList())
+        /*for (auto box : I_Collision.GetMapCollisionList())
         {
             m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
             m_pDebugBox->SetBox(box);
             m_pDebugBox->SetColor({1, 0, 0, 1});
             m_pDebugBox->UpdateBuffer();
             m_pDebugBox->Render();
-        }
+        }*/
 
 		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		TColor color = TColor(0, 0, 1, 1);
