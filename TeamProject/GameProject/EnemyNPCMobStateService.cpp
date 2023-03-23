@@ -3,6 +3,7 @@
 #include "EnemyNPCMob.h"
 #include "Player.h"
 #include "CollisionMgr.h"
+#include "SoundMgr.h"
 
 namespace SSB
 {

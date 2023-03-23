@@ -9,6 +9,7 @@
 #include "CharacterStateManager.h"
 #include "PlayerStateService.h"
 #include "EnemyNPCMobStateService.h"
+#include "CommonPath.h"
 
 int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -22,6 +23,10 @@ int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 bool    MyMain::Init()
 {
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
+
+    I_Sound.LoadDir(kTeamProjectSoundPath);
+    I_Sound.LoadAll(kTeamProjectSoundPath);
+
     //I_Sound.LoadAll(L"");
     //Sound* pSound = I_Sound.Find(L"");
     //pSound->Play(true);
@@ -46,18 +51,21 @@ bool    MyMain::Init()
                 SSB::CharacterState* state = new SSB::PlayerMoveState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Move");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenWalk.mp3"), true);
                 manager->Initialize_RegisterState(SSB::kPlayerMove, state);
             }
             {
                 SSB::CharacterState* state = new SSB::PlayerAttackState;
                 state->Initialize_SetCoolTime(2);
                 state->Initialize_SetStateAnimation("Attack1");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
                 manager->Initialize_RegisterState(SSB::kPlayerAttack, state);
             }
             {
                 SSB::CharacterState* state = new SSB::PlayerDeadState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Dead");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
                 manager->Initialize_RegisterState(SSB::kPlayerDead, state);
             }
 
@@ -76,18 +84,21 @@ bool    MyMain::Init()
                 SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Move");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarWalk.mp3"), true);
                 manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, state);
             }
             {
                 SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState;
                 state->Initialize_SetCoolTime(1.5f);
                 state->Initialize_SetStateAnimation("Attack1");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
                 manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
             }
             {
                 SSB::CharacterState* state = new SSB::EnemyNPCMobDeadState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Dead");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarDead.mp3"));
                 manager->Initialize_RegisterState(SSB::kEnemyNPCMobDead, state);
             }
 
@@ -98,6 +109,7 @@ bool    MyMain::Init()
     {
         SSB::ObjectScriptIO io;
         std::string str = io.Read("PlayerGaren");
+        //std::string str = io.Read("dummy");
 
         Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
         Player::GetInstance().m_pMainCamera = m_pMainCamera;
@@ -107,6 +119,7 @@ bool    MyMain::Init()
         I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
 
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
+		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
         Player::GetInstance().Init();
         Player::GetInstance().Scale(0.01f);
 
@@ -116,6 +129,7 @@ bool    MyMain::Init()
     {
         SSB::ObjectScriptIO io;
         std::string str = io.Read("Alistar");
+        //std::string str = io.Read("dummy");
 
         for (int i = 0; i < m_EnemyCount; ++i)
         {
@@ -126,6 +140,7 @@ bool    MyMain::Init()
 			enemy->Initialize_SetPosition(TVector3(-50 + i * 10, 0, 50 + i * 10));
 			enemy->m_Damage = 5;
             enemy->m_fSpeed = 10;
+            enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
 			enemy->Init();
 			enemy->Scale(0.01f);
 
@@ -151,6 +166,9 @@ bool    MyMain::Init()
 
     m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
 
+    Sound* sound = I_Sound.Find(L"BGM.mp3");
+    sound->Play(true);
+
     return true;
 }
 
@@ -158,11 +176,17 @@ bool    MyMain::Frame()
 {
     if (m_Win)
     {
-        OutputDebugString(L"Win!\n");
+        if (MessageBoxA(g_hWnd, "게임에서 승리했습니다!", "Win!", MB_OK))
+        {
+            m_bGameRun = false;
+        }
     }
     else if (m_Defeat)
     {
-        OutputDebugString(L"Defeat!\n");
+        if (MessageBoxA(g_hWnd, "게임에서 패배했습니다!", "Defeat!", MB_OK))
+        {
+            m_bGameRun = false;
+        }
     }
     else
     {

@@ -267,6 +267,10 @@ bool Character::IsAlreadyDamagedCurrentState(Character* character)
 void Character::Damage(int damage)
 {
 	m_HealthPoint -= damage;
+	if (!IsDead())
+	{
+		_damagedSound->Play();
+	}
 }
 
 void Character::ResetStateElapseTime()

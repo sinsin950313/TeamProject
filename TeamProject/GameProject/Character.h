@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "TSelect.h"
 #include <map>
+#include "Sound.h"
 
 class Character
 {
@@ -46,6 +47,9 @@ public:
 	void Scale(float val);
 
 	TVector3 GetCurSocketPos(std::string socket);
+
+	Sound* _currentSound = nullptr;
+	Sound* _damagedSound = nullptr;
 
 public:
     float   m_fSpeed = 15;

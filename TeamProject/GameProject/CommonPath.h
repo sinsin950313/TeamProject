@@ -10,3 +10,4 @@ const static std::wstring kHeightMapPath = L"../../data/Resource/Texture/Texture
 const static std::wstring kFBXPath = L"../../data/Resource/FBX/FBX/";
 const static std::wstring kFBXScriptPath = L"../../data/Resource/FBX/Script/";
 const static std::wstring kObjectScriptPath = L"../../data/Resource/Script/";
+const static std::wstring kTeamProjectSoundPath = L"../../data/Sound/";

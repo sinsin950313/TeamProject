@@ -4,6 +4,7 @@
 #include <map>
 #include "Animation.h"
 #include "Character.h"
+#include "Sound.h"
 
 namespace SSB
 {
@@ -16,6 +17,9 @@ namespace SSB
 		AnimationName m_StateAnimationName;
 		float m_Cooltime = 0;
 
+		Sound* _sound = nullptr;
+		bool _loop = false;
+
 	protected:
 		Character* m_pCharacter = nullptr;
 
@@ -25,10 +29,15 @@ namespace SSB
 	public:
 		void Initialize_SetStateAnimation(AnimationName name);
 		void Initialize_SetCoolTime(float cooltime);
+		void Initialize_SetEffectSound(Sound* sound, bool loop = false);
 		void SetCharacter(Character* character);
 		AnimationName GetStateAnimationName();
 		StateName GetNextTransferStateName();
 		bool IsPassedRequireCoolTime(float elapseTime);
+
+	public:
+		Sound* GetSound();
+		bool IsSoundLoop();
 
 	public:
 		virtual bool IsTransfer() = 0;

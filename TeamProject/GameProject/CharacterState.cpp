@@ -14,6 +14,11 @@ namespace SSB
 	{
 		m_Cooltime = cooltime;
 	}
+	void CharacterState::Initialize_SetEffectSound(Sound* sound, bool loop)
+	{
+		_sound = sound;
+		_loop = loop;
+	}
 	void CharacterState::SetCharacter(Character* character)
 	{
 		m_pCharacter = character;
@@ -29,6 +34,14 @@ namespace SSB
 	bool CharacterState::IsPassedRequireCoolTime(float elapseTime)
 	{
 		return m_Cooltime <= elapseTime;
+	}
+	Sound* CharacterState::GetSound()
+	{
+		return _sound;
+	}
+	bool CharacterState::IsSoundLoop()
+	{
+		return _loop;
 	}
 	void CharacterState::Run()
 	{
