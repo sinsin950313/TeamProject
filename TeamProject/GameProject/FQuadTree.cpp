@@ -209,13 +209,14 @@ void FQuadTree::Reset(FNode* pNode)
 
 FNode* FQuadTree::VisibleNode(FNode* pNode)
 {
+    m_pCurrentCamera->m_vFrustum;
     PLANE_COLTYPE dwRet = m_pCurrentCamera->m_vFrustum.ClassifyOBB(pNode->m_Box);
     if (P_FRONT == dwRet)// 완전포함.
     {
         m_pDrawLeafNodeList.push_back(pNode);
         return pNode;
     }
-    if (P_SPANNING == dwRet) // 걸쳐있다.
+    if (1) // 걸쳐있다.
     {
         if (pNode->m_bLeaf)
         {
@@ -237,17 +238,20 @@ void	FQuadTree::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
     //m_constantDataMap.matWorld;
     if (matWorld)
     {
-        m_constantDataMap.matWorld = XMLoadFloat4x4(&(*matWorld));
+        TMatrix world = *matWorld;
+        m_constantDataMap.matWorld = XMLoadFloat4x4(&world);
         //m_constantDataMap.matWorld = XMMatrixTranspose(world);
     }
     if (matView)
     {
-        m_constantDataMap.matView = XMLoadFloat4x4(&(*matView));
+        TMatrix view = *matView;
+        m_constantDataMap.matView = XMLoadFloat4x4(&view);
         //m_constantDataMap.matView = XMMatrixTranspose(view);
     }
     if (matProj)
     {
-        m_constantDataMap.matProj = XMLoadFloat4x4(&(*matProj));
+        TMatrix proj = *matProj;
+        m_constantDataMap.matProj = XMLoadFloat4x4(&proj);
         //m_constantDataMap.matProj = XMMatrixTranspose(proj);
     }
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, NULL, NULL, &m_constantDataMap, NULL, NULL);
@@ -647,10 +651,6 @@ namespace MAPLOAD
 		UINT iMaxDepth = 0;
 		std::wstring szVSPath;
 		std::wstring szPSPath;
-		void* shader_byte_code_vs = nullptr;
-		void* shader_byte_code_ps = nullptr;
-		size_t size_shader_vs = 0;
-		size_t size_shader_ps = 0;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
 		std::unordered_set<Object*> allObjectList;
@@ -837,60 +837,58 @@ namespace MAPLOAD
 
 		is.close();
 
-		constant_map cc;
-		cc.matWorld = XMMatrixIdentity();
-		cc.matView = XMMatrixIdentity();
-		cc.matProj = XMMatrixIdentity();
+		//constant_map cc;
+		//cc.matWorld = XMMatrixIdentity();
+		//cc.matView = XMMatrixIdentity();
+		//cc.matProj = XMMatrixIdentity();
+        //
+		////_EngineSystem.GetMeshSystem()->AddResource(L"MapMesh", pMapMesh);
+        //
+        //std::wstring DefaultShaderPath = L"../../data/shader/MAP/";
+		//Shader* pVertexShader;
+		//I_Shader.VSLoad(DefaultShaderPath + szVSPath, L"vsmain", &pVertexShader);
+		//Shader* pPixelShader;
+		//I_Shader.PSLoad(DefaultShaderPath + szPSPath, L"psmain", &pPixelShader);
+        //
+		//pMapMesh->m_pVertexBuffer =
+		//	DX::CreateVertexBuffer(pd3dDevice, &pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size());
+        //D3D11_INPUT_ELEMENT_DESC layout[] =
+        //{
+        //    //SEMANTIC NAME, SEMANTIC INDEX, FORMAT, INPUT SLOT, ALIGNED BYTE OFFSET, INPUT SLOT CLASS, INSTANCE DATA STEP RATE, 
+        //    {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},		//POSITION0
+        //    {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        //    {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        //    {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        //};
+        //
+        //UINT iSizeLayout = ARRAYSIZE(layout);
+        //if (FAILED(pd3dDevice->CreateInputLayout(layout, iSizeLayout,
+        //    pVertexShader->m_pVSCode->GetBufferPointer(), 
+        //    pVertexShader->m_pVSCode->GetBufferSize(), 
+        //    &pMapMesh->m_pVertexInputLayout)))
+        //    throw std::exception("InputLayout not create successfully");
+        //
+		//pMapMesh->m_pIndexBuffer =
+		//	DX::CreateIndexBuffer(pd3dDevice, &pMapMesh->GetListIndex()[0], sizeof(DWORD), pMapMesh->GetListIndex().size());
+        //
+		//FQuadTree* pQuadTree = new FQuadTree(pMapMesh, pd3dDevice, pContext, iMaxDepth, fAlphaData);
+		//pQuadTree->SetConstantData(cc);
+		//pQuadTree->SetTransform({ mapTransform.position, mapTransform.rotation, mapTransform.scale });
+		//pQuadTree->SetTexture(pTexture);
+		//for (const auto& texture : pTexList)
+		//	pQuadTree->SetSplattingTexture(texture);
+		//pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
+		////pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
+        //
+		//for (const auto& obj : allObjectList)
+		//{
+		//    /*if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
+		//        m_ListFbx.insert(obj->GetObjectName());*/
+		//    pQuadTree->AddObject(obj);
+		//}
 
-		//_EngineSystem.GetMeshSystem()->AddResource(L"MapMesh", pMapMesh);
-
-        std::wstring DefaultShaderPath = L"../../data/shader/MAP/";
-		Shader* pVertexShader;
-		I_Shader.VSLoad(DefaultShaderPath + szVSPath, L"vsmain", &pVertexShader);
-		Shader* pPixelShader;
-		I_Shader.PSLoad(DefaultShaderPath + szPSPath, L"psmain", &pPixelShader);
-
-		//VertexBuffer* pVertexBuffer = _EngineSystem.GetRenderSystem()->CreateVertexBuffer(&pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size(), shader_byte_code_vs, size_shader_vs);
-		//IndexBuffer* pIndexBuffer = _EngineSystem.GetRenderSystem()->CreateIndexBuffer(&pMapMesh->GetListIndex()[0], pMapMesh->GetListIndex().size());
-
-		pMapMesh->m_pVertexBuffer =
-			DX::CreateVertexBuffer(pd3dDevice, &pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size());
-        D3D11_INPUT_ELEMENT_DESC layout[] =
-        {
-            //SEMANTIC NAME, SEMANTIC INDEX, FORMAT, INPUT SLOT, ALIGNED BYTE OFFSET, INPUT SLOT CLASS, INSTANCE DATA STEP RATE, 
-            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},		//POSITION0
-            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        };
-
-        UINT iSizeLayout = ARRAYSIZE(layout);
-        if (FAILED(pd3dDevice->CreateInputLayout(layout, iSizeLayout,
-            pVertexShader->m_pVSCode->GetBufferPointer(), 
-            pVertexShader->m_pVSCode->GetBufferSize(), 
-            &pMapMesh->m_pVertexInputLayout)))
-            throw std::exception("InputLayout not create successfully");
-
-		pMapMesh->m_pIndexBuffer =
-			DX::CreateIndexBuffer(pd3dDevice, &pMapMesh->GetListIndex()[0], sizeof(DWORD), pMapMesh->GetListIndex().size());
-
-		FQuadTree* pQuadTree = new FQuadTree(pMapMesh, pd3dDevice, pContext, iMaxDepth, fAlphaData);
-		pQuadTree->SetConstantData(cc);
-		pQuadTree->SetTransform({ mapTransform.position, mapTransform.rotation, mapTransform.scale });
-		pQuadTree->SetTexture(pTexture);
-		for (const auto& texture : pTexList)
-			pQuadTree->SetSplattingTexture(texture);
-		pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
-		//pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
-
-		for (const auto& obj : allObjectList)
-		{
-		    /*if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
-		        m_ListFbx.insert(obj->GetObjectName());*/
-		    pQuadTree->AddObject(obj);
-		}
-
-		return pQuadTree;
+        return nullptr;
+		//return pQuadTree;
 	}
 
     void	PathChanger(std::string& str)

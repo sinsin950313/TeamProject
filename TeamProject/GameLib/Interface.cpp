@@ -153,9 +153,9 @@ void	Interface::ToNDC()
 	m_VertexList[0].p.x = pos.x;
 	m_VertexList[0].p.y = pos.y;
 	
-	m_VertexList[1].p = m_VertexList[0].p + TVector3(width, 0, 0);
-	m_VertexList[2].p = m_VertexList[0].p + TVector3(0, -height, 0);
-	m_VertexList[3].p = m_VertexList[0].p + TVector3(width, -height, 0);
+	m_VertexList[1].p = m_VertexList[0].p + TVector3(width * 2, 0, 0);
+	m_VertexList[2].p = m_VertexList[0].p + TVector3(0, -height * 2, 0);
+	m_VertexList[3].p = m_VertexList[0].p + TVector3(width * 2, -height * 2, 0);
 	
 	//m_VertexList[0].p = { -1.0f, 1.0f, 0.0f };
 	//m_VertexList[1].p = { +1.0f, 1.0f,  0.0f };
