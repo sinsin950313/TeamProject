@@ -7,6 +7,7 @@
 #include "CharacterStateManager.h"
 #include <map>
 #include "EnemyNPCMob.h"
+#include "Interface.h"
 
 class MyMain :
     public GameCore
@@ -22,6 +23,8 @@ public:
 
 public:
     Camera* m_pMainCamera = nullptr;
+
+    Interface* m_pInter;
 
     SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;

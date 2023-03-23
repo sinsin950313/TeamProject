@@ -3,8 +3,8 @@
 
 bool CameraTPS::Frame()
 {
-	m_fCameraYawAngle += I_Input.m_ptOffset.x * 0.002f;
-	m_fCameraPitchAngle += I_Input.m_ptOffset.y * 0.002f;
+	m_fCameraYawAngle += I_Input.m_ptOffset.x * g_fSecondPerFrame;
+	m_fCameraPitchAngle += I_Input.m_ptOffset.y * g_fSecondPerFrame;
 	// Check that the camera doesn't go over the top or under the player
 	if (m_fCameraPitchAngle > 0.85f)
 		m_fCameraPitchAngle = 0.85f;

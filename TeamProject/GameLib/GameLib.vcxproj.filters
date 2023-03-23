@@ -34,6 +34,9 @@
     <Filter Include="Object\Resource">
       <UniqueIdentifier>{d2f3d299-d43e-4f98-ac45-7373aa165167}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{9879c2e6-e59c-4c82-bb59-c583ba5444d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="std.h">
@@ -108,6 +111,15 @@
     <ClInclude Include="TSelect.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialog.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArcBall.cpp">
@@ -178,6 +190,15 @@
     </ClCompile>
     <ClCompile Include="TSelect.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -13,7 +13,7 @@ private:
 	std::map<std::string, SSB::Model*>	m_List;
 
 public:
-	HRESULT Load(std::string name, std::string anim, SSB::Model** retModel);
+	HRESULT Load(std::string filename, std::string name, std::string anim, SSB::Model** retModel);
 	SSB::Model* Find(std::string name);
 	bool	Release();
 

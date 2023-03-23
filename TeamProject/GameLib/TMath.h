@@ -92,6 +92,8 @@ namespace TBASIS_EX
 
 		static TRectangle Union(const TRectangle& ra, const TRectangle& rb);
 		static RECT Union(const RECT& rcta, const RECT& rctb);
+
+		bool IntersectPoint(POINT pt);
 	};
 
 	//------------------------------------------------------------------------------

@@ -23,6 +23,8 @@ public:
 	POINT	m_ptPrePos;
 	POINT	m_ptOffset;
 
+	bool		m_isMouse = false;
+
 public:
 	bool	Init();
 	bool	Frame();

@@ -113,7 +113,7 @@ namespace SSB
 		{
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].p = { 0, 0, 0 };
+				pTrail->m_VertexList[i].c.w = 0.0f;
 
 			transfer = true;
 			SetNextTransferName(kPlayerDead);

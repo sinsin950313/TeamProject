@@ -26,6 +26,11 @@ bool    MyMain::Init()
     //Sound* pSound = I_Sound.Find(L"");
     //pSound->Play(true);
 
+    m_pInter = new Interface();
+    m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/sky.jpg");
+    m_pInter->m_vScale = TVector3(2, 2, 2);
+    //m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
+
     m_pMainCamera = new CameraTPS;
     m_pMainCamera->CreateViewMatrix(TVector3(0, 0, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
     m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f
@@ -97,14 +102,15 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
-        std::string str = io.Read("PlayerGaren");
+        std::string filename = "dummy";
+        std::string str = io.Read(filename);
 
         Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
         Player::GetInstance().m_pMainCamera = m_pMainCamera;
         ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
         //Idle, Attack1, Attack2, Attack3, Move, Dead
-        I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
+        I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
 
         Player::GetInstance().Init();
         Player::GetInstance().Scale(0.01f);
@@ -114,11 +120,12 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
-        std::string str = io.Read("Alistar");
+        std::string filename = "dummy";
+        std::string str = io.Read(filename);
 
         m_pEnemy = new SSB::EnemyNPCMob();
         m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-        I_Model.Load(str, "Idle", &m_pEnemy->m_pModel);
+        I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
 
         //m_pEnemy->Initialize_SetPosition(TVector3(-100, 0, 0));
         m_pEnemy->m_Damage = 0;
@@ -160,6 +167,8 @@ bool    MyMain::Frame()
 
     if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
         m_bGameRun = false;
+    if (I_Input.GetKey(VK_F3) == KEY_PUSH)
+        I_Input.m_isMouse = !I_Input.m_isMouse;
 
     if (m_pMainCamera)
     {
@@ -173,7 +182,7 @@ bool    MyMain::Frame()
     Player::GetInstance().Frame();
 
     m_pEnemy->Frame();
-
+    m_pInter->Frame();
     //modelBox.UpdateBox(Player::GetInstance().m_matWorld);
     return true;
 }
@@ -238,13 +247,20 @@ bool    MyMain::Render()
     }
     
     Player::GetInstance().m_pTrail->Render();
-
+    m_pInter->Render();
     ClearD3D11DeviceContext();
     return true;
 }
 
 bool    MyMain::Release()
 {
+    if (m_pInter)
+    {
+        m_pInter->Release();
+        delete m_pInter;
+        m_pInter = nullptr;
+    }
+
     if (m_pQuadTree)
     {
         m_pQuadTree->Release();

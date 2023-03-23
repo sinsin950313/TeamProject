@@ -12,10 +12,26 @@ bool	Input::Init()
 
 bool	Input::Frame()
 {
-	GetCursorPos(&m_ptPos);
-	ScreenToClient(g_hWnd, &m_ptPos);
-	m_ptOffset.x = m_ptPos.x - m_ptPrePos.x;
-	m_ptOffset.y = m_ptPos.y - m_ptPrePos.y;
+	POINT pt;
+	pt.x = (g_rcClient.right - g_rcClient.left) / 2;
+	pt.y = (g_rcClient.bottom - g_rcClient.top) / 2;
+
+	ShowCursor(m_isMouse);
+	if (m_isMouse)
+	{
+		GetCursorPos(&m_ptPos);
+		ScreenToClient(g_hWnd, &m_ptPos);
+		m_ptOffset.x = m_ptPos.x - m_ptPrePos.x;
+		m_ptOffset.y = m_ptPos.y - m_ptPrePos.y;
+	}
+	else
+	{
+		GetCursorPos(&m_ptPos);
+		//ScreenToClient(g_hWnd, &m_ptPos);
+		m_ptOffset.x = m_ptPos.x - pt.x;// m_ptPrePos.x;
+		m_ptOffset.y = m_ptPos.y - pt.y;// m_ptPrePos.y;
+	}
+	
 
 	for (int i = 0; i < 256; i++)
 	{
@@ -38,6 +54,9 @@ bool	Input::Frame()
 		}
 	}
 	m_ptPrePos = m_ptPos;
+
+	if(!m_isMouse)
+		SetCursorPos(pt.x, pt.y);
 	return true;
 }
 

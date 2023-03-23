@@ -6,7 +6,7 @@ void	ModelMgr::SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
 	m_pImmediateContext = pContext;
 }
 
-HRESULT ModelMgr::Load(std::string name, std::string anim, SSB::Model** retModel)
+HRESULT ModelMgr::Load(std::string filename, std::string name, std::string anim, SSB::Model** retModel)
 {
 	if (retModel)
 	{
@@ -17,7 +17,7 @@ HRESULT ModelMgr::Load(std::string name, std::string anim, SSB::Model** retModel
 		return E_INVALIDARG;
 	}
 
-	SSB::Model* pModel = Find(name);
+	SSB::Model* pModel = Find(filename);
 	if (pModel != nullptr)
 	{
 		*retModel = pModel;
@@ -32,7 +32,7 @@ HRESULT ModelMgr::Load(std::string name, std::string anim, SSB::Model** retModel
 		pModel->Deserialize(name);
 		pModel->Init();
 		pModel->SetCurrentAnimation(anim);
-		m_List.insert(std::make_pair(name, pModel));
+		m_List.insert(std::make_pair(filename, pModel));
 		*retModel = pModel;
 		return S_OK;
 

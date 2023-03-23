@@ -160,6 +160,7 @@ BOOL MyWindows::InitInstance(const WCHAR* szTitle, UINT width, UINT height)
     }
 
     ShowWindow(g_hWnd, SW_SHOW);
+    ShowCursor(FALSE);
     SetFocus(g_hWnd);
     //UpdateWindow(g_hWnd);
     CenterWindow();
