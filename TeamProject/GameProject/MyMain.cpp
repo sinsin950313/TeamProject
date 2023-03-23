@@ -110,8 +110,8 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
-        //std::string filename = "PlayerGaren";
-        std::string filename = "dummy";
+        std::string filename = "PlayerGaren";
+        //std::string filename = "dummy";
         std::string str = io.Read(filename);
 
         Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -180,6 +180,7 @@ bool    MyMain::Init()
     m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
     //m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 
+    
     Sound* sound = I_Sound.Find(L"BGM.mp3");
     sound->Play(true);
 
@@ -242,8 +243,8 @@ bool    MyMain::Frame()
 		Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	}
 
-	//m_pQuadTree->Update();
 	Player::GetInstance().Frame();
+	m_pQuadTree->Update();
 
 	for (auto enemy : m_Enemies)
 	{
@@ -283,6 +284,15 @@ bool    MyMain::Render()
 
     if (m_pDebugBox)
 	{
+        for (auto box : I_Collision.GetMapCollisionList())
+        {
+            m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+            m_pDebugBox->SetBox(box);
+            m_pDebugBox->SetColor({1, 0, 0, 1});
+            m_pDebugBox->UpdateBuffer();
+            m_pDebugBox->Render();
+        }
+
 		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		TColor color = TColor(0, 0, 1, 1);
 		for (T_BOX* box : m_debugBoxList)

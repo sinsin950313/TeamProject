@@ -9,13 +9,13 @@ void	Frustum::CreateFrustum(TMatrix* view, TMatrix* proj)
 	//CYJMATH::Invert(&matInvViewProj, &matInvViewProj);
 	D3DXMatrixInverse(&matInvViewProj, nullptr, &matInvViewProj);
 
-	m_vFrustum[0] = TVector3(-1.0f, -1.0f, 0.0f);
-	m_vFrustum[1] = TVector3(-1.0f, 1.0f, 0.0f);
-	m_vFrustum[2] = TVector3(1.0f, 1.0f, 0.0f);
+	m_vFrustum[0] = TVector3(-1.0f, 1.0f, 0.0f);
+	m_vFrustum[1] = TVector3(1.0f, 1.0f, 0.0f);
+	m_vFrustum[2] = TVector3(-1.0f, -1.0f, 0.0f);
 	m_vFrustum[3] = TVector3(1.0f, -1.0f, 0.0f);
-	m_vFrustum[4] = TVector3(-1.0f, -1.0f, 1.0f);
-	m_vFrustum[5] = TVector3(-1.0f, 1.0f, 1.0f);
-	m_vFrustum[6] = TVector3(1.0f, 1.0f, 1.0f);
+	m_vFrustum[4] = TVector3(-1.0f, 1.0f, 1.0f);
+	m_vFrustum[5] = TVector3(1.0f, 1.0f, 1.0f);
+	m_vFrustum[6] = TVector3(-1.0f, -1.0f, 1.0f);
 	m_vFrustum[7] = TVector3(1.0f, -1.0f, 1.0f);
 
 	for (int iVer = 0; iVer < 8; iVer++)
@@ -28,18 +28,24 @@ void	Frustum::CreateFrustum(TMatrix* view, TMatrix* proj)
 	// 1	2
 	// 0	3
 
-	// LEFT
-	m_Plane[0] = TPlane(m_vFrustum[5], m_vFrustum[0], m_vFrustum[1]);
-	// RIGHT
-	m_Plane[1] = TPlane(m_vFrustum[6], m_vFrustum[2], m_vFrustum[7]);
-	// TOP
-	m_Plane[2] = TPlane(m_vFrustum[1], m_vFrustum[2], m_vFrustum[5]);
-	// BOTTOM
-	m_Plane[3] = TPlane(m_vFrustum[0], m_vFrustum[4], m_vFrustum[7]);
-	// NEAR
-	m_Plane[4] = TPlane(m_vFrustum[2], m_vFrustum[1], m_vFrustum[0]);
-	// FAR
-	m_Plane[5] = TPlane(m_vFrustum[4], m_vFrustum[5], m_vFrustum[6]);
+	m_Plane[0].Create(*((XMVECTOR*)&m_vFrustum[0]),
+		*((XMVECTOR*)&m_vFrustum[4]),
+		*((XMVECTOR*)&m_vFrustum[6])); // left
+	m_Plane[1].Create(*((XMVECTOR*)&m_vFrustum[7]), // right
+		*((XMVECTOR*)&m_vFrustum[5]),
+		*((XMVECTOR*)&m_vFrustum[3]));
+	m_Plane[2].Create(*((XMVECTOR*)&m_vFrustum[4]), // top
+		*((XMVECTOR*)&m_vFrustum[0]),
+		*((XMVECTOR*)&m_vFrustum[5]));
+	m_Plane[3].Create(*((XMVECTOR*)&m_vFrustum[3]), // bottom
+		*((XMVECTOR*)&m_vFrustum[6]),
+		*((XMVECTOR*)&m_vFrustum[7]));
+	m_Plane[4].Create(*((XMVECTOR*)&m_vFrustum[1]), // near
+		*((XMVECTOR*)&m_vFrustum[0]),
+		*((XMVECTOR*)&m_vFrustum[2]));
+	m_Plane[5].Create(*((XMVECTOR*)&m_vFrustum[4]), // far
+		*((XMVECTOR*)&m_vFrustum[5]),
+		*((XMVECTOR*)&m_vFrustum[6]));
 }
 /*
 PLANE_COLTYPE	Frustum::ClassifyPoint(TVector3 v)
@@ -164,7 +170,7 @@ PLANE_COLTYPE	Frustum::ClassifyBOX(C_BOX box)
 }
 */
 
-PLANE_COLTYPE	Frustum::ClassifyOBB(T_BOX obb)
+PLANE_COLTYPE	Frustum::ClassifyOBB(T_BOX v)
 {
 	float		fPlaneToCenter = 0.0;
 	float		fDistance = 0.0f;
@@ -174,15 +180,15 @@ PLANE_COLTYPE	Frustum::ClassifyOBB(T_BOX obb)
 	t_Position = P_SPANNING;
 	for (int iPlane = 0; iPlane < 6; iPlane++)
 	{
-		vDir = obb.vAxis[0] * obb.fExtent[0];
-		fDistance = fabs(m_Plane[iPlane].x * vDir.x + m_Plane[iPlane].y * vDir.y + m_Plane[iPlane].z * vDir.z);
-		vDir = obb.vAxis[1] * obb.fExtent[1];
-		fDistance += fabs(m_Plane[iPlane].x * vDir.x + m_Plane[iPlane].y * vDir.y + m_Plane[iPlane].z * vDir.z);
-		vDir = obb.vAxis[2] * obb.fExtent[2];
-		fDistance += fabs(m_Plane[iPlane].x * vDir.x + m_Plane[iPlane].y * vDir.y + m_Plane[iPlane].z * vDir.z);
+		vDir = v.vAxis[0] * v.fExtent[0];
+		fDistance = fabs(m_Plane[iPlane].a * vDir.x + m_Plane[iPlane].b * vDir.y + m_Plane[iPlane].c * vDir.z);
+		vDir = v.vAxis[1] * v.fExtent[1];
+		fDistance += fabs(m_Plane[iPlane].a * vDir.x + m_Plane[iPlane].b * vDir.y + m_Plane[iPlane].c * vDir.z);
+		vDir = v.vAxis[2] * v.fExtent[2];
+		fDistance += fabs(m_Plane[iPlane].a * vDir.x + m_Plane[iPlane].b * vDir.y + m_Plane[iPlane].c * vDir.z);
 
-		fPlaneToCenter = m_Plane[iPlane].x * obb.vCenter.x + m_Plane[iPlane].y * obb.vCenter.y +
-			m_Plane[iPlane].z * obb.vCenter.z + m_Plane[iPlane].w;
+		fPlaneToCenter = m_Plane[iPlane].a * v.vCenter.x + m_Plane[iPlane].b * v.vCenter.y +
+			m_Plane[iPlane].c * v.vCenter.z + m_Plane[iPlane].d;
 
 		if (fPlaneToCenter <= -fDistance) return P_BACK;
 		/*if (fPlaneToCenter > 0)
