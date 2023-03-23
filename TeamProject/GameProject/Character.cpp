@@ -230,6 +230,14 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	// Update our animation
 	float timeFactor = 1.0f;	// You can speed up or slow down time by changing this
 	//UpdateMD5Model(NewMD5Model, time * timeFactor, 0);
+
+	if (CollisionMgr::GetInstance().IsCollide(&m_ColliderBox))
+	{
+		charPosition = charPosition + (destinationDirection * (speed + 0.1f) * -1);
+		m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
+		oldCharDirection = currCharDirection;
+		m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+	}
 }
 
 void Character::Initialize_SetPosition(TVector3 pos)

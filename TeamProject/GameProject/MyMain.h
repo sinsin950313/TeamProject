@@ -28,7 +28,7 @@ public:
 
     int m_EnemyCount = 3;
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
-    T_BOX       testBox;
+    //T_BOX       testBox;
 
     DebugBox* m_pDebugBox = nullptr;
     std::vector<T_BOX*> m_debugBoxList;
