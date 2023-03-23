@@ -12,5 +12,8 @@ public:
 	virtual bool PostRender();
 
 	void	AddTrailPos(TVector3 low, TVector3 high);
+
+public:	
+	int		m_iPos;
 };
 

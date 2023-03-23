@@ -101,7 +101,6 @@ bool	GameCore::CoreFrame()
 	I_Sound.Frame();
 	m_Writer.Frame();
 
-	ClearD3D11DeviceContext();
 	return Frame();
 }
 
@@ -156,6 +155,7 @@ bool	GameCore::CorePostRender()
 	m_Writer.Render();
 
 	m_pSwapChain->Present(0, 0);
+	ClearD3D11DeviceContext();
 	return true;
 }
 

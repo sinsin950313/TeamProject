@@ -18,12 +18,7 @@ VS_out VS(VS_in input)
 {
 	VS_out output = (VS_out)0;
 
-	float4 vWorld = float4(input.p, 1.0f);
-	//float4 vView = mul(vWorld, g_matView);
-	//float4 vProj = mul(vView, g_matProj);
-	float4 vProj = mul(vWorld, g_matComb); // 위의 세 행렬을 곱한 행렬
-
-	output.p = vProj;
+	output.p = float4(input.p, 1.0f);
 	output.n = input.n;
 	output.c = input.c;
 	output.t = input.t;

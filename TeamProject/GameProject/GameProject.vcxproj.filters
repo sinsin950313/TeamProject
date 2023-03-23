@@ -22,6 +22,9 @@
     <Filter Include="Map">
       <UniqueIdentifier>{dcdd967e-21a4-4ea4-9eca-4aaf8a0eb35f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{32a8b9ce-803c-4b83-9a1b-e01e5372bf74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyMain.h">
@@ -105,6 +108,18 @@
     <ClInclude Include="TrailEffect.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CSceneEnd.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CSceneInGame.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CSceneTitle.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -169,6 +184,18 @@
     </ClCompile>
     <ClCompile Include="TrailEffect.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CSceneEnd.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CSceneInGame.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="CSceneTitle.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

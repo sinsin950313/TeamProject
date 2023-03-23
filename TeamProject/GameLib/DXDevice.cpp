@@ -261,19 +261,19 @@ void DXDevice::ClearD3D11DeviceContext()
     m_pImmediateContext->GSSetShaderResources(0, 16, pSRVs);
     m_pImmediateContext->PSSetShaderResources(0, 16, pSRVs);
 
-    //// Samplers
+    // Samplers
     //m_pImmediateContext->VSSetSamplers(0, 16, pSamplers);
     //m_pImmediateContext->HSSetSamplers(0, 16, pSamplers);
     //m_pImmediateContext->DSSetSamplers(0, 16, pSamplers);
     //m_pImmediateContext->GSSetSamplers(0, 16, pSamplers);
     //m_pImmediateContext->PSSetSamplers(0, 16, pSamplers);
 
-    //// Render targets
+    // Render targets
     m_pImmediateContext->OMSetRenderTargets(8, pRTVs, pDSV);
 
-    //// States
-    //FLOAT blendFactor[4] = { 0,0,0,0 };
-    //m_pImmediateContext->OMSetBlendState(NULL, blendFactor, 0xFFFFFFFF);
-    //m_pImmediateContext->OMSetDepthStencilState(NULL, 0);
-    //m_pImmediateContext->RSSetState(NULL);
+    // States
+    FLOAT blendFactor[4] = { 0,0,0,0 };
+    m_pImmediateContext->OMSetBlendState(NULL, blendFactor, 0xFFFFFFFF);
+    m_pImmediateContext->OMSetDepthStencilState(NULL, 0);
+    m_pImmediateContext->RSSetState(NULL);
 }

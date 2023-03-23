@@ -111,6 +111,10 @@ namespace SSB
 		// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 		if (m_pCharacter->IsDead())
 		{
+			auto pTrail = Player::GetInstance().m_pTrail;
+			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
+				pTrail->m_VertexList[i].c.w = 0.0f;
+
 			transfer = true;
 			SetNextTransferName(kPlayerDead);
 		}
@@ -119,7 +123,7 @@ namespace SSB
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
-			if (I_Input.GetKey(VK_LBUTTON) != KEY_PUSH &&
+				if (I_Input.GetKey(VK_LBUTTON) != KEY_PUSH &&
 					I_Input.GetKey(VK_LBUTTON) != KEY_HOLD)
 				{
 					transfer = true;
@@ -132,10 +136,18 @@ namespace SSB
 	}
 	void PlayerAttackState::Run()
 	{
+		CharacterState::Run();
 
-        CharacterState::Run();
-
-        m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
+        //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 1.0f)
+		{
+			Player::GetInstance().m_pTrail->m_iPos = 0;
+			int size = Player::GetInstance().m_pTrail->m_IndexList.size();
+			int p = Player::GetInstance().m_pTrail->m_VertexList.size() - 1;
+			//for (int i = 0; i < size; i++)
+			//	Player::GetInstance().m_pTrail->m_IndexList[i] = p;
+			//int a = 4;
+		}
 
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;

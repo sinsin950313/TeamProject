@@ -7,6 +7,7 @@
 #include "CharacterStateManager.h"
 #include <map>
 #include "EnemyNPCMob.h"
+#include "Interface.h"
 
 class MyMain :
     public GameCore
@@ -29,6 +30,10 @@ public:
     int m_EnemyCount = 3;
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
     //T_BOX       testBox;
+    Interface* m_pInter;
+
+    SSB::EnemyNPCMob* m_pEnemy = nullptr;
+    T_BOX       testBox;
 
     DebugBox* m_pDebugBox = nullptr;
     std::vector<T_BOX*> m_debugBoxList;

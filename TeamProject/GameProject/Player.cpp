@@ -25,7 +25,7 @@ bool    Player::Init()
 	m_AttackBox.CreateOBBBox(1, 1, 1);
 
 	m_pTrail = new TrailEffect();
-	m_pTrail->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/TrailEffect.txt", L"");
+	m_pTrail->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/TrailEffect.txt", L"../../data/_RAINBOW.bmp");
 	m_pTrail->Init();
 
 	return true;
@@ -33,8 +33,8 @@ bool    Player::Init()
 
 bool    Player::Frame()
 {
-	m_pTrail->Frame();
 	Character::Frame();
+	m_pTrail->Frame();
 
 	return true;
 }

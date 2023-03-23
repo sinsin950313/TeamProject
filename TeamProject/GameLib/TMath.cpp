@@ -155,6 +155,17 @@ namespace TBASIS_EX
 		return result;
 	}
 
+	bool TRectangle::IntersectPoint(POINT pt)
+	{
+		if (x <= pt.x && pt.x <= x + width)
+		{
+			if (y <= pt.y && pt.y <= y + height)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/****************************************************************************
 	*

@@ -293,7 +293,7 @@ float Character::GetStateElapseTime()
 {
 	float elapseTime = g_fGameTimer - m_fBeforeTime;
 	m_fStateElapseTime += elapseTime;
-m_fBeforeTime = g_fGameTimer;
+	m_fBeforeTime = g_fGameTimer;
 
 	return m_fStateElapseTime;
 }

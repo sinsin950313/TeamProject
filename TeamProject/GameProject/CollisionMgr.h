@@ -23,6 +23,7 @@ private:
 
 public:
 	bool	ChkPlayerAttackToNpcList(T_BOX* box);
+	bool	ChkCharacterToStaticObjList(T_BOX* box);
 	std::vector<Character*> GetHitCharacterList(T_BOX* attackBox);
 	bool IsCollide(T_BOX* box);
 
