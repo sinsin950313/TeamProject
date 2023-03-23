@@ -7,8 +7,8 @@ namespace SSB
     class EnemyNPCMob : public Character
     {
     public:
-        float m_BattleRange = 30;
-        float m_SpotRange = 300;
+        float m_BattleRange = 5;
+        float m_SpotRange = 30;
 
     public:
         float GetBattleRange();

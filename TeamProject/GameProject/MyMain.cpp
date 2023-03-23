@@ -9,6 +9,7 @@
 #include "CharacterStateManager.h"
 #include "PlayerStateService.h"
 #include "EnemyNPCMobStateService.h"
+#include "CommonPath.h"
 
 int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -22,6 +23,10 @@ int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 bool    MyMain::Init()
 {
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
+
+    I_Sound.LoadDir(kTeamProjectSoundPath);
+    I_Sound.LoadAll(kTeamProjectSoundPath);
+
     //I_Sound.LoadAll(L"");
     //Sound* pSound = I_Sound.Find(L"");
     //pSound->Play(true);
@@ -51,18 +56,21 @@ bool    MyMain::Init()
                 SSB::CharacterState* state = new SSB::PlayerMoveState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Move");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenWalk.mp3"), true);
                 manager->Initialize_RegisterState(SSB::kPlayerMove, state);
             }
             {
                 SSB::CharacterState* state = new SSB::PlayerAttackState;
                 state->Initialize_SetCoolTime(2);
                 state->Initialize_SetStateAnimation("Attack1");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
                 manager->Initialize_RegisterState(SSB::kPlayerAttack, state);
             }
             {
                 SSB::CharacterState* state = new SSB::PlayerDeadState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Dead");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
                 manager->Initialize_RegisterState(SSB::kPlayerDead, state);
             }
 
@@ -81,18 +89,21 @@ bool    MyMain::Init()
                 SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Move");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarWalk.mp3"), true);
                 manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, state);
             }
             {
                 SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState;
-                state->Initialize_SetCoolTime(2);
+                state->Initialize_SetCoolTime(1.5f);
                 state->Initialize_SetStateAnimation("Attack1");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
                 manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
             }
             {
                 SSB::CharacterState* state = new SSB::EnemyNPCMobDeadState;
                 state->Initialize_SetCoolTime(0);
                 state->Initialize_SetStateAnimation("Dead");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarDead.mp3"));
                 manager->Initialize_RegisterState(SSB::kEnemyNPCMobDead, state);
             }
 
@@ -112,6 +123,8 @@ bool    MyMain::Init()
         //Idle, Attack1, Attack2, Attack3, Move, Dead
         I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
 
+		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 20));
+		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
         Player::GetInstance().Init();
         Player::GetInstance().Scale(0.01f);
 
@@ -120,50 +133,75 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
+
+        std::string str = io.Read("Alistar");
+        //std::string str = io.Read("dummy");
+
+        for (int i = 0; i < m_EnemyCount; ++i)
+        {
+            SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
+            enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+            I_Model.Load(str, "Idle", &enemy->m_pModel);
+
+			enemy->Initialize_SetPosition(TVector3(-50 + i * 10, 0, 50 + i * 10));
+			enemy->m_Damage = 5;
+            enemy->m_fSpeed = 10;
+            enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
+			enemy->Init();
+			enemy->Scale(0.01f);
+/*
         std::string filename = "dummy";
         std::string str = io.Read(filename);
 
         m_pEnemy = new SSB::EnemyNPCMob();
         m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
         I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
+*/
 
-        //m_pEnemy->Initialize_SetPosition(TVector3(-100, 0, 0));
-        m_pEnemy->m_Damage = 0;
-        m_pEnemy->Init();
-        m_pEnemy->Scale(0.01f);
+			m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
 
-        m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(m_pEnemy, SSB::kEnemyNPCMobIdle);
+            m_Enemies.push_back(enemy);
+        }
     }
 
-    //modelBox.CreateAABBBox(m_pModelTest->m_pModel->_maxVertex, m_pModelTest->m_pModel->_minVertex);
-    //modelBox.CreateOBBBox(1, 2, 1);
-    //m_debugBoxList.push_back(&modelBox);
-    
     //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
     //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
-    //
+
     //m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
     //m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
 
     //testBox.CreateOBBBox(40, 4, 4);
     //m_debugBoxList.push_back(&testBox);
-
-    I_Collision.AddStaticObjectBox(&testBox, NULL);
+    //I_Collision.AddStaticObjectBox(&testBox, NULL);
 
     m_pDebugBox = new DebugBox;
     m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
     m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
 
+    Sound* sound = I_Sound.Find(L"BGM.mp3");
+    sound->Play(true);
+
     return true;
 }
 
 bool    MyMain::Frame()
 {
-    for (auto manager : m_StateManagerMap)
+    if (m_Win)
     {
-        manager.second->Frame();
+        if (MessageBoxA(g_hWnd, "���ӿ��� �¸��߽�ϴ�!", "Win!", MB_OK))
+        {
+            m_bGameRun = false;
+        }
     }
+    else if (m_Defeat)
+    {
+        if (MessageBoxA(g_hWnd, "���ӿ��� �й��߽�ϴ�!", "Defeat!", MB_OK))
+        {
+            m_bGameRun = false;
+        }
+    }
+    else
 
     if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
         m_bGameRun = false;
@@ -172,14 +210,53 @@ bool    MyMain::Frame()
 
     if (m_pMainCamera)
     {
-        m_pMainCamera->Frame();
+        //if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
+        //    m_bGameRun = false;
 
+        int deadCount = 0;
+        for (auto enemy : m_Enemies)
+        {
+            if (enemy->IsDead())
+            {
+                ++deadCount;
+            }
+        }
+        if (deadCount == m_Enemies.size())
+        {
+            m_Win = true;
+        }
+
+        if (Player::GetInstance().IsDead())
+        {
+            m_Defeat = true;
+        }
         Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     }
 
-    m_pQuadTree->Update();
-    Player::GetInstance().Frame();
+	if (m_pMainCamera)
+	{
+		m_pMainCamera->Frame();
+
+		Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	}
+
+	m_pQuadTree->Update();
+	Player::GetInstance().Frame();
+
+	TVector3 p = Player::GetInstance().m_vPos;
+	p.y += 5.0f;
+	Player::GetInstance().m_pTrail->AddTrailPos(Player::GetInstance().m_vPos, p);
+
+	for (auto enemy : m_Enemies)
+	{
+		enemy->Frame();
+	}
+
+	for (auto manager : m_StateManagerMap)
+	{
+		manager.second->Frame();
+	}
 
     m_pEnemy->Frame();
     m_pInter->Frame();
@@ -192,13 +269,84 @@ bool    MyMain::Render()
     m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     m_pQuadTree->Render();
 
+    //TMatrix matWorld = TMatrix::Identity;
+    //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    //Player::GetInstance().Frame();
     Player::GetInstance().Render();
+    Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    Player::GetInstance().m_pTrail->Render();
 
-    m_pEnemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    m_pEnemy->Render();
 
-    if (m_pDebugBox)
+
+    for (auto enemy : m_Enemies)
     {
+		enemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		enemy->Render();
+    }
+
+  //  if (m_pDebugBox)
+  //  {
+  //      m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+  //      TColor color = TColor(0, 0, 1, 1);
+  //      if (TCollision::ChkOBBToOBB(Player::GetInstance().m_ColliderBox, testBox))
+  //      {
+  //          color = TColor(1, 0, 0, 1);
+  //          TVector3 n = TVector3(0, 0, 1);
+  //          //TVector3 L = -Player::GetInstance().m_vDirection;
+  //          //Player::GetInstance().m_vPos += L * 15.0f * g_fSecondPerFrame;
+  //          //Player::GetInstance().UpdateMatrix();
+  //          //Player::GetInstance().UpdateBuffer();
+  //          //Player::GetInstance().Render();
+  //      }
+  //      for (T_BOX* box : m_debugBoxList)
+  //      {
+  //          m_pDebugBox->SetBox(*box);
+  //          m_pDebugBox->SetColor(color);
+  //          m_pDebugBox->UpdateBuffer();
+  //          m_pDebugBox->Render();
+  //      }
+
+  //      T_BOX b;
+  //      b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponLow"));
+  //      m_pDebugBox->SetBox(b);
+  //      m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+  //      m_pDebugBox->UpdateBuffer();
+  //      //m_pDebugBox->Render();
+
+  //      b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+  //      m_pDebugBox->SetBox(b);
+  //      m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+  //      m_pDebugBox->UpdateBuffer();
+  //      //m_pDebugBox->Render();
+
+  //      TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
+  //      TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
+  //      float ex = D3DXVec3Length(&l);
+  //      
+  //      TVector3 axis[3];
+  //      axis[0] = -l;
+  //      D3DXVec3Normalize(&axis[0], &axis[0]);
+
+  //      TVector3 B;
+  //      D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
+  //      if (B == TVector3::Zero)
+  //      {
+  //          D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
+  //      }
+  //      TVector3 C;
+  //      D3DXVec3Cross(&C, &axis[0], &B);
+
+  //      b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
+  //      m_pDebugBox->SetBox(b);
+  //      m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+  //      m_pDebugBox->UpdateBuffer();
+  //      //m_pDebugBox->Render();
+
+		////m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
+  //      //T_BOX box;
+  //      //box.CreateOBBBox();
+  //  }
+
         m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         TColor color = TColor(0, 0, 1, 1);
         for (T_BOX* box : m_debugBoxList)
@@ -274,10 +422,10 @@ bool    MyMain::Release()
         delete m_pMainCamera;
     }
     
-    if (m_pEnemy)
+    for (auto enemy : m_Enemies)
     {
-        m_pEnemy->Release();
-        delete m_pEnemy;
+		enemy->Release();
+		delete enemy;
     }
 
     if (m_pDebugBox)

@@ -24,6 +24,8 @@ HRESULT ModelMgr::Load(std::string filename, std::string name, std::string anim,
 		return S_OK;
 	}
 
+	// 중복된 Model을 불러오더라도 다시 new처리를 하므로 Memory Leak을 유발합니다
+	// 일단은 그냥 Character에서 메모리를 해제하도록 수정해놨습니다.
 	pModel = new SSB::Model();
 	if (pModel)
 	{
@@ -66,13 +68,13 @@ SSB::Model* ModelMgr::Find(std::string name)
 
 bool	ModelMgr::Release()
 {
-	for (std::pair<std::string, SSB::Model*> data : m_List)
-	{
-		SSB::Model* pModel = data.second;
-		if (pModel) pModel->Release();
-		delete pModel;
-		pModel = nullptr;
-	}
+	//for (std::pair<std::string, SSB::Model*> data : m_List)
+	//{
+	//	SSB::Model* pModel = data.second;
+	//	if (pModel) pModel->Release();
+	//	delete pModel;
+	//	pModel = nullptr;
+	//}
 	m_List.clear();
 	return true;
 }

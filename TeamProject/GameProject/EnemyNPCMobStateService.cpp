@@ -3,6 +3,7 @@
 #include "EnemyNPCMob.h"
 #include "Player.h"
 #include "CollisionMgr.h"
+#include "SoundMgr.h"
 
 namespace SSB
 {
@@ -24,6 +25,12 @@ namespace SSB
 				{
 					transfer = true;
 					SetNextTransferName(kEnemyNPCMobMove);
+				}
+
+				if (TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+				{
+					transfer = true;
+					SetNextTransferName(kEnemyNPCMobAttack);
 				}
 			}
 		}
@@ -49,7 +56,7 @@ namespace SSB
                 SetNextTransferName(kEnemyNPCMobAttack);
             }
 
-            if (targetPlayer->IsDead())
+            if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
             {
                 transfer = true;
                 SetNextTransferName(kEnemyNPCMobIdle);
@@ -83,19 +90,13 @@ namespace SSB
         {
             if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
             {
-                if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-                {
-                    transfer = true;
-                    SetNextTransferName(kEnemyNPCMobIdle);
-                }
-
                 if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
                 {
                     transfer = true;
                     SetNextTransferName(kEnemyNPCMobMove);
                 }
 
-                if (targetPlayer->IsDead())
+                if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
                 {
                     transfer = true;
                     SetNextTransferName(kEnemyNPCMobIdle);
@@ -108,19 +109,48 @@ namespace SSB
     void EnemyNPCMobAttackState::Run()
     {
         CharacterState::Run();
+
         // LookAt Target
-        if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+        if(IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
         {
-            Player::GetInstance().Damage(m_pCharacter->m_Damage, m_pCharacter->m_fStateTImeStamp);
+            XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
+            oldCharDirection = XMVector3Normalize(oldCharDirection);
+
+            XMVECTOR destinationDirection = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
+            destinationDirection = XMVector3Normalize(destinationDirection);
+
+            if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
+                oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
+
+            XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection);	// Get the characters direction (based off time, old position, and desired
+            currCharDirection = XMVector3Normalize(currCharDirection);
+
+            XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+            float charDirAngle = XMVectorGetX(XMVector3AngleBetweenNormals(XMVector3Normalize(currCharDirection), XMVector3Normalize(DefaultForward)));
+            if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
+                charDirAngle = -charDirAngle;
+
+            m_pCharacter->m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
+
+            // Set the characters old direction
+            m_pCharacter->m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+
+            TQuaternion q;
+            D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
+            D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
+        }
+
+		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+        {
+            if (!m_pCharacter->IsAlreadyDamagedCurrentState(&Player::GetInstance()))
+            {
+                Player::GetInstance().Damage(m_pCharacter->m_Damage);
+                m_pCharacter->DamagingCharacter(&Player::GetInstance());
+            }
         }
     }
     bool EnemyNPCMobDeadState::IsTransfer()
     {
         return false;
-        std::string anim = "Attack" + std::to_string(rand() % 2 + 1);
-
-        m_pCharacter->m_pModel->SetCurrentAnimation(anim);
-
-		OutputDebugString(L"Enemy NPC Mob Attack\n");
     }
 }

@@ -33,9 +33,28 @@ namespace SSB
 
 			if (state->IsTransfer())
 			{
+				if (character->_currentSound != nullptr)
+				{
+					character->_currentSound->Stop();
+				}
+
 				CharacterState* newState = m_StateMap.find(state->GetNextTransferStateName())->second;
 				m_CharacterStateMap[character] = newState;
 				character->ResetStateElapseTime();
+
+				CharacterState* nextState = m_StateMap.find(state->GetNextTransferStateName())->second;
+				character->_currentSound = nextState->GetSound();
+				if (character->_currentSound != nullptr)
+				{
+					character->_currentSound->Play(nextState->IsSoundLoop());
+				}
+			}
+			else
+			{
+				if (state->IsPassedRequireCoolTime(character->GetStateElapseTime()))
+				{
+					character->ResetStateElapseTime();
+				}
 			}
 		}
 

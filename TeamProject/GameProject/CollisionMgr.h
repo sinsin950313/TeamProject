@@ -25,6 +25,7 @@ public:
 	bool	ChkPlayerAttackToNpcList(T_BOX* box);
 	bool	ChkCharacterToStaticObjList(T_BOX* box);
 	std::vector<Character*> GetHitCharacterList(T_BOX* attackBox);
+	bool IsCollide(T_BOX* box);
 
 public:
 	void	AddStaticObjectBox(T_BOX* box, Character* pChar);

@@ -57,6 +57,33 @@ std::vector<Character*> CollisionMgr::GetHitCharacterList(T_BOX* attackBox)
 	return ret;
 }
 
+bool CollisionMgr::IsCollide(T_BOX* box)
+{
+	// NPC간의 충돌 시 문제가 있음
+	//for (auto iter : m_NpcList)
+	//{
+	//	T_BOX* npcBox = iter.first;
+	//	if (npcBox != box)
+	//	{
+	//		if (TCollision::ChkOBBToOBB(*box, *npcBox))
+	//		{
+	//			return true;
+	//		}
+	//	}
+	//}
+
+	for (auto iter : m_StaticObjectList)
+	{
+		T_BOX* staticBox = iter.first;
+		if (TCollision::ChkOBBToOBB(*box, *staticBox))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 void	CollisionMgr::AddStaticObjectBox(T_BOX* box, Character* pChar)
 {

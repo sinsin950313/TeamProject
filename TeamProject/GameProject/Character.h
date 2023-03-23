@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "TSelect.h"
 #include <map>
+#include "Sound.h"
 
 class Character
 {
@@ -47,8 +48,11 @@ public:
 
 	TVector3 GetCurSocketPos(std::string socket);
 
+	Sound* _currentSound = nullptr;
+	Sound* _damagedSound = nullptr;
+
 public:
-    float   m_fSpeed;
+    float   m_fSpeed = 15;
     TVector3 m_vDirection;
 
 public:
@@ -82,10 +86,12 @@ public:
 public:
 	int m_HealthPoint = 100;
 	int m_Damage = 30;
-	float m_fDamagedTimeStamp = 0;
+	std::set<Character*> m_DamagedCharacters;
 
 public:
-	void Damage(int damage, float timeStamp);
+	void DamagingCharacter(Character* character);
+	bool IsAlreadyDamagedCurrentState(Character* character);
+	void Damage(int damage);
 
 public:
 	float m_fStateTImeStamp = 0;

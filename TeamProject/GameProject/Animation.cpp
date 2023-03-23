@@ -52,36 +52,35 @@ namespace SSB
 	void Animation::UpdateFrameInfo()
 	{
 		m_fAnimTime += g_fSecondPerFrame * _framePerSecond;
-		while (m_fAnimTime > _data.size() - 1)
+
+		int prevIndex;
+		int nextIndex;
+		float t;
+		if (_isLoop)
 		{
-			m_fAnimTime -= _data.size() - 1;
+			while (m_fAnimTime > _data.size() - 1)
+			{
+				m_fAnimTime -= _data.size() - 1;
+			}
+
+			prevIndex = m_fAnimTime;
+			nextIndex = prevIndex + 1;
 		}
-		int prevIndex = m_fAnimTime;
-		int nextIndex = prevIndex + 1;
-		float t = m_fAnimTime - prevIndex;
-
-		/*
-			float animationElapseTime = (float)(g_fSecondPerFrame / 1000.0f);
-			int beforeIndex = animationElapseTime * _framePerSecond;
-			int afterIndex = beforeIndex + 1;
-			if (afterIndex == _data.size())
+		else
+		{
+			if (m_fAnimTime > _data.size() - 1)
 			{
-				afterIndex = beforeIndex;
-			}
-			else if (_data.size() <= beforeIndex)
-			{
-				beforeIndex = beforeIndex % _data.size();
-				afterIndex = afterIndex % _data.size();
+				m_fAnimTime = _data.size() - 1;
 			}
 
-			float beforeTime = beforeIndex / _framePerSecond;
-			float afterTime = afterIndex / _framePerSecond;
-			float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
-			if (afterTime - beforeTime < 0.001f)
-			{
-				t = 0;
-			}
-		*/
+			prevIndex = m_fAnimTime;
+			nextIndex = prevIndex;
+		}
+		if (nextIndex == _data.size())
+		{
+			nextIndex -= 1;
+		}
+		t = m_fAnimTime - prevIndex;
 
 		for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
 		{
@@ -115,6 +114,10 @@ namespace SSB
 	{
 		_boneAnimationUnitMaxCount = boneCount;
 		_meshAnimationUnitMaxCount = meshCount;
+	}
+	void Animation::Initialize_SetLoop(bool loop)
+	{
+		_isLoop = loop;
 	}
 	bool Animation::Frame()
 	{
@@ -166,6 +169,23 @@ namespace SSB
 		serialedString = data.str;
 
 		int offset = 0;
+		{
+			offset = serialedString.find(_isLoopStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+
+			auto atomic = GetUnitAtomic(elem, 0);
+			if (atomic.str == "1")
+			{
+				_isLoop = true;
+			}
+			else
+			{
+				_isLoop = false;
+			}
+		}
+
 		{
 			offset = serialedString.find(_framePerSecondStr, offset);
 			auto data = GetUnitElement(serialedString, offset);
