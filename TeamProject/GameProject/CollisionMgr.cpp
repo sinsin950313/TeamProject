@@ -72,10 +72,9 @@ bool CollisionMgr::IsCollide(T_BOX* box)
 	//	}
 	//}
 
-	for (auto iter : m_StaticObjectList)
+	for (auto iter : m_MapCollisionList)
 	{
-		T_BOX* staticBox = iter.first;
-		if (TCollision::ChkOBBToOBB(*box, *staticBox))
+		if (TCollision::ChkOBBToOBB(*box, iter))
 		{
 			return true;
 		}

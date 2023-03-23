@@ -80,9 +80,9 @@ Object::Object(std::string szFullPath, Transform transform, XMFLOAT3 vAxis0, XMF
 	m_pModel->Deserialize(str);
 	m_pModel->Init();
 
-	m_ColliderBox.CreateOBBBox(fExtentX, fExtentY, fExtentZ, translation, vAxis0, vAxis1, vAxis2);
+	/*m_ColliderBox.CreateOBBBox(fExtentX, fExtentY, fExtentZ, translation, vAxis0, vAxis1, vAxis2);
 
-	I_Collision.AddStaticObjectBox(&m_ColliderBox, this);
+	I_Collision.AddStaticObjectBox(&m_ColliderBox, this);*/
 }
 
 Object::~Object()
