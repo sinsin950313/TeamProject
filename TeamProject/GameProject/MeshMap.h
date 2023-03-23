@@ -12,8 +12,6 @@ struct vertex_info
 	XMVECTOR vNormal;
 };
 
-
-
 class MeshMap
 {
 public:

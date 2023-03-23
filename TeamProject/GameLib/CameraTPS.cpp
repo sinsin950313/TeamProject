@@ -62,5 +62,6 @@ bool CameraTPS::Frame()
 	XMStoreFloat3(&m_vPos, camPosition);
 	m_matView = XMMatrixLookAtLH(camPosition, m_vTarget, m_vUp);
 
+	UpdateVector();
 	return true;
 }

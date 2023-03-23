@@ -42,6 +42,27 @@ struct T_BOX
 	// OBB
 	TVector3		vAxis[3];
 	float			fExtent[3];
+	void Set(XMFLOAT3 max, XMFLOAT3	min)
+	{
+		vMax = max;
+		vMin = min;
+		vCenter = (vMax + vMin) * 0.5f;
+		vAxis[0] = { 1,0,0 };
+		vAxis[1] = { 0,1,0 };
+		vAxis[2] = { 0,0,1 };
+		fExtent[0] = vMax.x - vCenter.x;
+		fExtent[1] = vMax.y - vCenter.y;
+		fExtent[2] = vMax.z - vCenter.z;
+
+		vPos[0] = XMFLOAT3(vMin.x, vMin.y, vMin.z);
+		vPos[1] = XMFLOAT3(vMin.x, vMin.y, vMax.z);
+		vPos[2] = XMFLOAT3(vMax.x, vMin.y, vMax.z);
+		vPos[3] = XMFLOAT3(vMax.x, vMin.y, vMin.z);
+		vPos[4] = XMFLOAT3(vMin.x, vMax.y, vMin.z);
+		vPos[5] = XMFLOAT3(vMin.x, vMax.y, vMax.z);
+		vPos[6] = XMFLOAT3(vMax.x, vMax.y, vMax.z);
+		vPos[7] = XMFLOAT3(vMax.x, vMax.y, vMin.z);
+	}
 };
 
 struct T_RAY

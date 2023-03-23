@@ -110,8 +110,8 @@ bool    MyMain::Init()
 
     {
         SSB::ObjectScriptIO io;
-        //std::string filename = "PlayerGaren";
-        std::string filename = "dummy";
+        std::string filename = "PlayerGaren";
+        //std::string filename = "dummy";
         std::string str = io.Read(filename);
 
         Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -241,8 +241,8 @@ bool    MyMain::Frame()
 		Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	}
 
-	m_pQuadTree->Update();
 	Player::GetInstance().Frame();
+	m_pQuadTree->Update();
 
 	for (auto enemy : m_Enemies)
 	{
