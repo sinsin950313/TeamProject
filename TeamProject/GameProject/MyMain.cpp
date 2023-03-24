@@ -28,7 +28,7 @@ bool    MyMain::Init()
     I_Sound.LoadAll(kTeamProjectSoundPath);
 
     m_pInter = new Interface();
-    m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/tempBar.png");
+    m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/ui.png");
     m_pInter->m_vPos = TVector3(0, 0, 0);
     m_pInter->m_vScale = TVector3(1, 1, 1);
     //m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
@@ -58,7 +58,7 @@ bool    MyMain::Init()
             }
             {
                 SSB::CharacterState* state = new SSB::PlayerAttackState;
-                state->Initialize_SetCoolTime(2);
+                state->Initialize_SetCoolTime(1.8f);
                 state->Initialize_SetStateAnimation("Attack1");
                 state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
                 manager->Initialize_RegisterState(SSB::kPlayerAttack, state);

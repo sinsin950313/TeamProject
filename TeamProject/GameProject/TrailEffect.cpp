@@ -11,7 +11,7 @@ bool	TrailEffect::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
 		Vertex v;
 		float x = i;
 		v.p = { x, 2, 0 };
-		v.c = { 1, 1, 1, 0.5 };
+		v.c = { 1, 1, 1, 0.0 };
 		v.t = { 1, 1 };
 		v.n = { 0, 0, 0 };
 
@@ -75,7 +75,7 @@ bool TrailEffect::PostRender()
 		m_pImmediateContext->Draw(m_VertexList.size(), 0);
 	else
 	{
-		int iTriCnt = (m_iPos - 2);
+		int iTriCnt = (m_iPos - 4);
 		if (iTriCnt > 1)
 			m_pImmediateContext->DrawIndexed(iTriCnt * 3, 0, 0);
 	}
@@ -91,14 +91,15 @@ void	TrailEffect::AddTrailPos(TVector3 low, TVector3 high)
 	v.c = TVector4(1, 1, 1, 1);
 	v.t = TVector2(0, 0);
 
+	if (m_iPos == m_VertexList.size() - 1)
+		return;
+
 	m_VertexList[m_iPos++] = v;
 	//m_VertexList.push_back(v);
 
 	v.p = high;
 	m_VertexList[m_iPos++] = v;
-	if (m_iPos == m_VertexList.size() - 1)
-		return;
-
+	
 	/*
 	int iCatmullRomCount = m_iPos / 2;
 	int iEndIndex = iCatmullRomCount * 2 + (m_VertexList.size() - 1);
