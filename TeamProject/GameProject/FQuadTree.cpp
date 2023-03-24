@@ -176,7 +176,7 @@ void FQuadTree::BuildTree(FNode* pNode, MeshMap* pMap)
 
 BOOL FQuadTree::IsSubDivide(FNode* pNode)
 {
-    if ((pNode->m_dwCorner[1] - pNode->m_dwCorner[0]) == 1) return FALSE; //ÀÌÀÌ»ó ºĞÇØÇÒ¼ö ¾øÀ¸¸é 
+    if ((pNode->m_dwCorner[1] - pNode->m_dwCorner[0]) == 1) return FALSE; //ì´ì´ìƒ ë¶„í•´í• ìˆ˜ ì—†ìœ¼ë©´ 
     if (pNode->m_iDepth < m_iMaxDepth) return TRUE;
     return FALSE;
 }
@@ -211,12 +211,12 @@ FNode* FQuadTree::VisibleNode(FNode* pNode)
 {
     m_pCurrentCamera->m_vFrustum;
     PLANE_COLTYPE dwRet = m_pCurrentCamera->m_vFrustum.ClassifyOBB(pNode->m_Box);
-    if (P_FRONT == dwRet)// ¿ÏÀüÆ÷ÇÔ.
+    if (P_FRONT == dwRet)// ì™„ì „í¬í•¨.
     {
         m_pDrawLeafNodeList.push_back(pNode);
         return pNode;
     }
-    if (1) // °ÉÃÄÀÖ´Ù.
+    if (1) // ê±¸ì³ìˆë‹¤.
     {
         if (pNode->m_bLeaf)
         {
@@ -270,7 +270,7 @@ void FQuadTree::Update()
     //_EngineSystem.GetRenderSystem()->UpdateConstantBuffer(m_pConstantBuffer, &m_constantDataMap);
 
     m_pDrawLeafNodeList.clear();
-    VisibleNode(m_pRootNode); //Àç±Í·Î VisibleNodeÃ¼Å©
+    VisibleNode(m_pRootNode); //ì¬ê·€ë¡œ VisibleNodeì²´í¬
 
     //m_Select.SetMatrix(nullptr, &m_pCamera->m_matCamera, &m_pCamera->m_matProj);
 
@@ -289,9 +289,9 @@ void	FQuadTree::PreRender()
     m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
     m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
 
-    UINT stride = sizeof(PTNC); //Á¤Á¡ÀÇÅ©±â
-    UINT offset = 0;          //Á¤Á¡ÀÇ¿ÀÇÁ¼Â
-    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer¸¦ ¼¼ÆÃ, 1Àº ¹öÆÛÀÇ°¹¼ö
+    UINT stride = sizeof(PTNC); //ì •ì ì˜í¬ê¸°
+    UINT offset = 0;          //ì •ì ì˜ì˜¤í”„ì…‹
+    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBufferë¥¼ ì„¸íŒ…, 1ì€ ë²„í¼ì˜ê°¯ìˆ˜
     m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
 
     m_pImmediateContext->VSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
@@ -309,7 +309,7 @@ void FQuadTree::Render()
     {
         m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-        m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList¸¦ Index·Î±×¸°´Ù
+        m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleListë¥¼ Indexë¡œê·¸ë¦°ë‹¤
         m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
     }
 
@@ -581,12 +581,12 @@ namespace MAPLOAD
         void Set(XMMATRIX matWorld)
         {
             
-            // Áß½ÉÁ¡À» ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // ì¤‘ì‹¬ì ì„ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             XMVECTOR center = XMLoadFloat3(&vCenter);
             center = XMVector3Transform(center, matWorld);
             XMStoreFloat3(&vCenter, center);
 
-            // °¢ Æ÷ÀÎÆ®¸¦ ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // ê° í¬ì¸íŠ¸ë¥¼ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             for (int i = 0; i < 8; ++i)
             {
                 XMVECTOR point = XMLoadFloat3(&vPos[i]);
@@ -594,7 +594,7 @@ namespace MAPLOAD
                 XMStoreFloat3(&vPos[i], point);
             }
 
-            // AABBÀÇ ÃÖ¼Ò, ÃÖ´ë Á¡À» ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // AABBì˜ ìµœì†Œ, ìµœëŒ€ ì ì„ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             XMVECTOR minPoint = XMLoadFloat3(&vMin);
             minPoint = XMVector3Transform(minPoint, matWorld);
             XMStoreFloat3(&vMin, minPoint);
@@ -603,7 +603,7 @@ namespace MAPLOAD
             maxPoint = XMVector3Transform(maxPoint, matWorld);
             XMStoreFloat3(&vMax, maxPoint);
 
-            // OBBÀÇ Ãà º¤ÅÍ¸¦ ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // OBBì˜ ì¶• ë²¡í„°ë¥¼ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             for (int i = 0; i < 3; ++i)
             {
                 XMVECTOR axis = XMLoadFloat3(&vAxis[i]);
@@ -630,7 +630,7 @@ namespace MAPLOAD
             /*std::string line;
             std::getline(is, line);*/
 
-            // axis °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+            // axis ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
             size_t axis_start = is.str().find("vAxis:") + strlen("vAxis:");
             size_t axis_end = is.str().find(",", axis_start);
             std::string axis_str = is.str().substr(axis_start, axis_end - axis_start);
@@ -641,7 +641,7 @@ namespace MAPLOAD
             tBox.vAxis[1] = axis[1];
             tBox.vAxis[2] = axis[2];
 
-            // extent °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+            // extent ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
             size_t extent_start = is.str().find("fExtent:") + strlen("fExtent:");
             size_t extent_end = is.str().find(",", extent_start);
             std::string extent_str = is.str().substr(extent_start, extent_end - extent_start);
@@ -788,7 +788,7 @@ namespace MAPLOAD
                         UINT iStackCount;
 						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
 						{
-							// pos °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+							// pos ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
 							size_t pos_start = texturesStream.str().find("m_fLength:") + strlen("m_fLength:");
 							size_t pos_end = texturesStream.str().find(",", pos_start);
 							std::string pos_str = texturesStream.str().substr(pos_start, pos_end - pos_start);
@@ -797,21 +797,21 @@ namespace MAPLOAD
 						}
                         else if (specifyMode == "OBJECT_SKYDOME")
                         {
-                            // radius °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+                            // radius ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
                             size_t radius_start = texturesStream.str().find("m_fRadius:") + strlen("m_fRadius:");
                             size_t radius_end = texturesStream.str().find(",", radius_start);
                             std::string radius_str = texturesStream.str().substr(radius_start, radius_end - radius_start);
                             std::istringstream radius_stream(radius_str);
                             radius_stream >> fRadius;
 
-                            // slice °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+                            // slice ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
                             size_t slice_start = texturesStream.str().find("m_iSliceCount:") + strlen("m_iSliceCount:");
                             size_t slice_end = texturesStream.str().find(",", slice_start);
                             std::string slice_str = texturesStream.str().substr(slice_start, slice_end - slice_start);
                             std::istringstream slice_stream(slice_str);
                             slice_stream >> iSliceCount;
 
-                            // stack °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+                            // stack ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
                             size_t stack_start = texturesStream.str().find("m_iStackCount:") + strlen("m_iStackCount:");
                             size_t stack_end = texturesStream.str().find(",", stack_start);
                             std::string stack_str = texturesStream.str().substr(stack_start, stack_end - stack_start);
@@ -937,16 +937,11 @@ namespace MAPLOAD
 		cc.matView = XMMatrixIdentity();
 		cc.matProj = XMMatrixIdentity();
 
-		//_EngineSystem.GetMeshSystem()->AddResource(L"MapMesh", pMapMesh);
-
-        std::wstring DefaultShaderPath = L"../../data/shader/MAP/";
+    std::wstring DefaultShaderPath = L"../../data/shader/MAP/";
 		Shader* pVertexShader;
 		I_Shader.VSLoad(DefaultShaderPath + szVSPath, L"vsmain", &pVertexShader);
 		Shader* pPixelShader;
 		I_Shader.PSLoad(DefaultShaderPath + szPSPath, L"psmain", &pPixelShader);
-
-		//VertexBuffer* pVertexBuffer = _EngineSystem.GetRenderSystem()->CreateVertexBuffer(&pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size(), shader_byte_code_vs, size_shader_vs);
-		//IndexBuffer* pIndexBuffer = _EngineSystem.GetRenderSystem()->CreateIndexBuffer(&pMapMesh->GetListIndex()[0], pMapMesh->GetListIndex().size());
 
 		pMapMesh->m_pVertexBuffer =
 			DX::CreateVertexBuffer(pd3dDevice, &pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size());
@@ -984,6 +979,7 @@ namespace MAPLOAD
 		        m_ListFbx.insert(obj->GetObjectName());*/
 		    pQuadTree->AddObject(obj);
 		}
+
         if (pSphereObject)
             pQuadTree->m_pSphereObject = pSphereObject;
 

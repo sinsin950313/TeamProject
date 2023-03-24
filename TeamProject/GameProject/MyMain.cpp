@@ -122,7 +122,7 @@ bool    MyMain::Init()
         //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
         I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
 
-		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 20));
+		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
 		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
         Player::GetInstance().Init();
         Player::GetInstance().Scale(0.01f);
@@ -133,8 +133,8 @@ bool    MyMain::Init()
     {
         SSB::ObjectScriptIO io;
 
-        //std::string str = io.Read("Alistar");
-        std::string str = io.Read("dummy");
+        std::string str = io.Read("Alistar");
+        //std::string str = io.Read("dummy");
 
         for (int i = 0; i < m_EnemyCount; ++i)
         {
@@ -142,7 +142,7 @@ bool    MyMain::Init()
             enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
             I_Model.Load(str, "Idle", &enemy->m_pModel);
 
-			enemy->Initialize_SetPosition(TVector3(-50 + i * 10, 0, 50 + i * 10));
+			enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
 			enemy->m_Damage = 5;
             enemy->m_fSpeed = 10;
             enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
@@ -176,9 +176,9 @@ bool    MyMain::Init()
     m_pDebugBox = new DebugBox;
     m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
-    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
-    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
-    //m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
+    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
+    m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 
     
     Sound* sound = I_Sound.Find(L"BGM.mp3");
@@ -191,14 +191,14 @@ bool    MyMain::Frame()
 {
     if (m_Win)
     {
-        if (MessageBoxA(g_hWnd, "asdf", "Win!", MB_OK))
+        if (MessageBoxA(g_hWnd, "승리했습니다!", "Win!", MB_OK))
         {
             m_bGameRun = false;
         }
     }
     else if (m_Defeat)
     {
-        if (MessageBoxA(g_hWnd, "asdf", "Defeat!", MB_OK))
+        if (MessageBoxA(g_hWnd, "패배했습니다!", "Defeat!", MB_OK))
         {
             m_bGameRun = false;
         }
@@ -264,8 +264,8 @@ bool    MyMain::Frame()
 
 bool    MyMain::Render()
 {
-    //m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    //m_pQuadTree->Render();
+    m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pQuadTree->Render();
 
     //TMatrix matWorld = TMatrix::Identity;
     //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
@@ -284,14 +284,16 @@ bool    MyMain::Render()
 
     if (m_pDebugBox)
 	{
-        /*for (auto box : I_Collision.GetMapCollisionList())
-        {
-            m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-            m_pDebugBox->SetBox(box);
-            m_pDebugBox->SetColor({1, 0, 0, 1});
-            m_pDebugBox->UpdateBuffer();
-            m_pDebugBox->Render();
-        }*/
+
+        //for (auto box : I_Collision.GetMapCollisionList())
+        //{
+        //    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+        //    m_pDebugBox->SetBox(box);
+        //    m_pDebugBox->SetColor({1, 0, 0, 1});
+        //    m_pDebugBox->UpdateBuffer();
+        //    m_pDebugBox->Render();
+        //}
+
 
 		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		TColor color = TColor(0, 0, 1, 1);
