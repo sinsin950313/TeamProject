@@ -190,7 +190,7 @@ void	Character::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
 void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 {
 	float frameTime = g_fSecondPerFrame;
-	XMVECTOR oldCharDirection = XMVectorZero();
+	XMVECTOR oldCharDirection = m_vOldDirection;
 
 	destinationDirection = XMVector3Normalize(destinationDirection);
 
@@ -226,7 +226,7 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
 
 	// Set the characters old direction
-	oldCharDirection = currCharDirection;
+	m_vOldDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 	m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 
 	// Update our animation
