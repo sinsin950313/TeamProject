@@ -897,6 +897,7 @@ namespace MAPLOAD
                                 }
                             }
                          
+                            PathChanger(strName);
                             pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/SkyDomeShader.hlsl", mtw(strName));
                             pSphereObject->Init();
                         }
@@ -988,7 +989,7 @@ namespace MAPLOAD
 
     void	PathChanger(std::string& str)
     {
-        std::string::size_type pos = str.find("D:\\sylProject\\Project41\\");
+        std::string::size_type pos = str.find("D:\\");
         std::string::size_type end = str.find("Asset");
         str.replace(pos, end - 1, "../../data");
 

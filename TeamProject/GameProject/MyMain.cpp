@@ -271,10 +271,6 @@ bool    MyMain::Render()
     //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     //Player::GetInstance().Frame();
     Player::GetInstance().Render();
-    Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    Player::GetInstance().m_pTrail->Render();
-
-
 
     for (auto enemy : m_Enemies)
     {
@@ -341,6 +337,7 @@ bool    MyMain::Render()
 		//m_pDebugBox->Render();
 	}
 
+    Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	Player::GetInstance().m_pTrail->Render();
 	m_pInter->Render();
 	ClearD3D11DeviceContext();
