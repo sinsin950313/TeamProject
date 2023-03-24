@@ -191,14 +191,14 @@ bool    MyMain::Frame()
 {
     if (m_Win)
     {
-        if (MessageBoxA(g_hWnd, "½Â¸®Çß½À´Ï´Ù!", "Win!", MB_OK))
+        if (MessageBoxA(g_hWnd, "ìŠ¹ë¦¬í–ˆìŠµë‹ˆë‹¤!", "Win!", MB_OK))
         {
             m_bGameRun = false;
         }
     }
     else if (m_Defeat)
     {
-        if (MessageBoxA(g_hWnd, "ÆÐ¹èÇß½À´Ï´Ù!", "Defeat!", MB_OK))
+        if (MessageBoxA(g_hWnd, "íŒ¨ë°°í–ˆìŠµë‹ˆë‹¤!", "Defeat!", MB_OK))
         {
             m_bGameRun = false;
         }
@@ -284,6 +284,7 @@ bool    MyMain::Render()
 
     if (m_pDebugBox)
 	{
+
         //for (auto box : I_Collision.GetMapCollisionList())
         //{
         //    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
@@ -292,6 +293,7 @@ bool    MyMain::Render()
         //    m_pDebugBox->UpdateBuffer();
         //    m_pDebugBox->Render();
         //}
+
 
 		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		TColor color = TColor(0, 0, 1, 1);

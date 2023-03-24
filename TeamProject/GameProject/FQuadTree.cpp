@@ -176,7 +176,7 @@ void FQuadTree::BuildTree(FNode* pNode, MeshMap* pMap)
 
 BOOL FQuadTree::IsSubDivide(FNode* pNode)
 {
-    if ((pNode->m_dwCorner[1] - pNode->m_dwCorner[0]) == 1) return FALSE; //ÀÌÀÌ»ó ºĞÇØÇÒ¼ö ¾øÀ¸¸é 
+    if ((pNode->m_dwCorner[1] - pNode->m_dwCorner[0]) == 1) return FALSE; //ì´ì´ìƒ ë¶„í•´í• ìˆ˜ ì—†ìœ¼ë©´ 
     if (pNode->m_iDepth < m_iMaxDepth) return TRUE;
     return FALSE;
 }
@@ -211,12 +211,12 @@ FNode* FQuadTree::VisibleNode(FNode* pNode)
 {
     m_pCurrentCamera->m_vFrustum;
     PLANE_COLTYPE dwRet = m_pCurrentCamera->m_vFrustum.ClassifyOBB(pNode->m_Box);
-    if (P_FRONT == dwRet)// ¿ÏÀüÆ÷ÇÔ.
+    if (P_FRONT == dwRet)// ì™„ì „í¬í•¨.
     {
         m_pDrawLeafNodeList.push_back(pNode);
         return pNode;
     }
-    if (1) // °ÉÃÄÀÖ´Ù.
+    if (1) // ê±¸ì³ìˆë‹¤.
     {
         if (pNode->m_bLeaf)
         {
@@ -270,7 +270,7 @@ void FQuadTree::Update()
     //_EngineSystem.GetRenderSystem()->UpdateConstantBuffer(m_pConstantBuffer, &m_constantDataMap);
 
     m_pDrawLeafNodeList.clear();
-    VisibleNode(m_pRootNode); //Àç±Í·Î VisibleNodeÃ¼Å©
+    VisibleNode(m_pRootNode); //ì¬ê·€ë¡œ VisibleNodeì²´í¬
 
     //m_Select.SetMatrix(nullptr, &m_pCamera->m_matCamera, &m_pCamera->m_matProj);
 
@@ -278,6 +278,8 @@ void FQuadTree::Update()
 
     for (const auto& object : m_pAllObjectList)
         object->Frame();
+
+    m_pSphereObject->Frame();
 }
 
 void	FQuadTree::PreRender()
@@ -287,9 +289,9 @@ void	FQuadTree::PreRender()
     m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
     m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
 
-    UINT stride = sizeof(PTNC); //Á¤Á¡ÀÇÅ©±â
-    UINT offset = 0;          //Á¤Á¡ÀÇ¿ÀÇÁ¼Â
-    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer¸¦ ¼¼ÆÃ, 1Àº ¹öÆÛÀÇ°¹¼ö
+    UINT stride = sizeof(PTNC); //ì •ì ì˜í¬ê¸°
+    UINT offset = 0;          //ì •ì ì˜ì˜¤í”„ì…‹
+    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBufferë¥¼ ì„¸íŒ…, 1ì€ ë²„í¼ì˜ê°¯ìˆ˜
     m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
 
     m_pImmediateContext->VSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
@@ -307,21 +309,31 @@ void FQuadTree::Render()
     {
         m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-        m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList¸¦ Index·Î±×¸°´Ù
+        m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleListë¥¼ Indexë¡œê·¸ë¦°ë‹¤
         m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
     }
+
+    TMatrix view = TMatrix(m_constantDataMap.matView);
+    TMatrix proj = TMatrix(m_constantDataMap.matProj);
     for (const auto& object : m_pAllObjectList)
     {   
-        TMatrix view = TMatrix(m_constantDataMap.matView);
-        TMatrix proj = TMatrix(m_constantDataMap.matProj);
         object->SetMatrix(nullptr, &view, &proj);
         object->Render();
     }
-        
+
+    m_pSphereObject->SetMatrix(nullptr, &view, &proj);
+    m_pSphereObject->Render();
 }
 
 void	FQuadTree::Release()
 {
+    if (m_pSphereObject)
+    {
+        m_pSphereObject->Release();
+        delete m_pSphereObject;
+        m_pSphereObject = nullptr;
+    }
+
     for (auto obj : m_pAllObjectList)
     {
         obj->Release();
@@ -569,12 +581,12 @@ namespace MAPLOAD
         void Set(XMMATRIX matWorld)
         {
             
-            // Áß½ÉÁ¡À» ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // ì¤‘ì‹¬ì ì„ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             XMVECTOR center = XMLoadFloat3(&vCenter);
             center = XMVector3Transform(center, matWorld);
             XMStoreFloat3(&vCenter, center);
 
-            // °¢ Æ÷ÀÎÆ®¸¦ ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // ê° í¬ì¸íŠ¸ë¥¼ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             for (int i = 0; i < 8; ++i)
             {
                 XMVECTOR point = XMLoadFloat3(&vPos[i]);
@@ -582,7 +594,7 @@ namespace MAPLOAD
                 XMStoreFloat3(&vPos[i], point);
             }
 
-            // AABBÀÇ ÃÖ¼Ò, ÃÖ´ë Á¡À» ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // AABBì˜ ìµœì†Œ, ìµœëŒ€ ì ì„ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             XMVECTOR minPoint = XMLoadFloat3(&vMin);
             minPoint = XMVector3Transform(minPoint, matWorld);
             XMStoreFloat3(&vMin, minPoint);
@@ -591,7 +603,7 @@ namespace MAPLOAD
             maxPoint = XMVector3Transform(maxPoint, matWorld);
             XMStoreFloat3(&vMax, maxPoint);
 
-            // OBBÀÇ Ãà º¤ÅÍ¸¦ ¿ùµå º¯È¯ Çà·Ä·Î º¯È¯
+            // OBBì˜ ì¶• ë²¡í„°ë¥¼ ì›”ë“œ ë³€í™˜ í–‰ë ¬ë¡œ ë³€í™˜
             for (int i = 0; i < 3; ++i)
             {
                 XMVECTOR axis = XMLoadFloat3(&vAxis[i]);
@@ -618,7 +630,7 @@ namespace MAPLOAD
             /*std::string line;
             std::getline(is, line);*/
 
-            // axis °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+            // axis ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
             size_t axis_start = is.str().find("vAxis:") + strlen("vAxis:");
             size_t axis_end = is.str().find(",", axis_start);
             std::string axis_str = is.str().substr(axis_start, axis_end - axis_start);
@@ -629,7 +641,7 @@ namespace MAPLOAD
             tBox.vAxis[1] = axis[1];
             tBox.vAxis[2] = axis[2];
 
-            // extent °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+            // extent ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
             size_t extent_start = is.str().find("fExtent:") + strlen("fExtent:");
             size_t extent_end = is.str().find(",", extent_start);
             std::string extent_str = is.str().substr(extent_start, extent_end - extent_start);
@@ -657,6 +669,9 @@ namespace MAPLOAD
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
 		std::string line;
+
+        BaseObject* pSphereObject = nullptr;
+
 		while (std::getline(is, line))
 		{
 			std::istringstream iss(line);
@@ -768,16 +783,41 @@ namespace MAPLOAD
                         texturesStream >> box;
 
 						float length;
-
+                        float fRadius;
+                        UINT iSliceCount;
+                        UINT iStackCount;
 						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
 						{
-							// pos °ªÀ» ÃßÃâÇÕ´Ï´Ù.
+							// pos ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
 							size_t pos_start = texturesStream.str().find("m_fLength:") + strlen("m_fLength:");
 							size_t pos_end = texturesStream.str().find(",", pos_start);
 							std::string pos_str = texturesStream.str().substr(pos_start, pos_end - pos_start);
 							std::istringstream pos_stream(pos_str);
 							pos_stream >> length;
 						}
+                        else if (specifyMode == "OBJECT_SKYDOME")
+                        {
+                            // radius ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
+                            size_t radius_start = texturesStream.str().find("m_fRadius:") + strlen("m_fRadius:");
+                            size_t radius_end = texturesStream.str().find(",", radius_start);
+                            std::string radius_str = texturesStream.str().substr(radius_start, radius_end - radius_start);
+                            std::istringstream radius_stream(radius_str);
+                            radius_stream >> fRadius;
+
+                            // slice ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
+                            size_t slice_start = texturesStream.str().find("m_iSliceCount:") + strlen("m_iSliceCount:");
+                            size_t slice_end = texturesStream.str().find(",", slice_start);
+                            std::string slice_str = texturesStream.str().substr(slice_start, slice_end - slice_start);
+                            std::istringstream slice_stream(slice_str);
+                            slice_stream >> iSliceCount;
+
+                            // stack ê°’ì„ ì¶”ì¶œí•©ë‹ˆë‹¤.
+                            size_t stack_start = texturesStream.str().find("m_iStackCount:") + strlen("m_iStackCount:");
+                            size_t stack_end = texturesStream.str().find(",", stack_start);
+                            std::string stack_str = texturesStream.str().substr(stack_start, stack_end - stack_start);
+                            std::istringstream stack_stream(stack_str);
+                            stack_stream >> iStackCount;
+                        }
 
                         if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
                         {
@@ -804,6 +844,61 @@ namespace MAPLOAD
                             
                             mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
                             I_Collision.AddMapCollisionBox(mePeedBox);
+                        }
+                        else if (specifyMode == "OBJECT_SKYDOME")
+                        {
+                            pSphereObject = new BaseObject();
+
+    
+                            float phiStep = XM_PI / iStackCount;
+                            float thetaStep = 2.0f * XM_PI / iSliceCount;
+                            for (UINT i = 0; i <= iStackCount; i++)
+                            {
+                                float phi = i * phiStep;
+
+                                for (UINT j = 0; j <= iSliceCount; j++)
+                                {
+                                    float theta = j * thetaStep;
+
+                                    Vertex vertex;
+
+                                    vertex.p.x = fRadius * sinf(phi) * cosf(theta);
+                                    vertex.p.y = fRadius * cosf(phi);
+                                    vertex.p.z = fRadius * sinf(phi) * sinf(theta);
+
+                                    vertex.n = vertex.p;
+                                    XMStoreFloat3(&vertex.n, XMVector3Normalize(XMLoadFloat3(&vertex.n)));
+
+                                    vertex.c = TVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+                                    vertex.t.x = (float)j / (float)iSliceCount;
+                                    vertex.t.y = (float)i / (float)iStackCount;
+
+                                    pSphereObject->m_VertexList.push_back(vertex);
+                                }
+                            }
+
+                            for (UINT i = 0; i < iStackCount; i++)
+                            {
+                                for (UINT j = 0; j < iSliceCount; j++)
+                                {
+                                    UINT index1 = i * (iSliceCount + 1) + j;
+                                    UINT index2 = i * (iSliceCount + 1) + j + 1;
+                                    UINT index3 = (i + 1) * (iSliceCount + 1) + j;
+                                    UINT index4 = (i + 1) * (iSliceCount + 1) + j + 1;
+
+                                    pSphereObject->m_IndexList.push_back(index1);
+                                    pSphereObject->m_IndexList.push_back(index3);
+                                    pSphereObject->m_IndexList.push_back(index2);
+
+                                    pSphereObject->m_IndexList.push_back(index2);
+                                    pSphereObject->m_IndexList.push_back(index3);
+                                    pSphereObject->m_IndexList.push_back(index4);
+                                }
+                            }
+                         
+                            pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/SkyDomeShader.hlsl", mtw(strName));
+                            pSphereObject->Init();
                         }
                         else
                         {
@@ -841,15 +936,13 @@ namespace MAPLOAD
 		cc.matWorld = XMMatrixIdentity();
 		cc.matView = XMMatrixIdentity();
 		cc.matProj = XMMatrixIdentity();
-        
-		//_EngineSystem.GetMeshSystem()->AddResource(L"MapMesh", pMapMesh);
-        
-        std::wstring DefaultShaderPath = L"../../data/shader/MAP/";
+
+    std::wstring DefaultShaderPath = L"../../data/shader/MAP/";
 		Shader* pVertexShader;
 		I_Shader.VSLoad(DefaultShaderPath + szVSPath, L"vsmain", &pVertexShader);
 		Shader* pPixelShader;
 		I_Shader.PSLoad(DefaultShaderPath + szPSPath, L"psmain", &pPixelShader);
-        
+
 		pMapMesh->m_pVertexBuffer =
 			DX::CreateVertexBuffer(pd3dDevice, &pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size());
         D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -860,17 +953,17 @@ namespace MAPLOAD
             {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
             {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
-        
+
         UINT iSizeLayout = ARRAYSIZE(layout);
         if (FAILED(pd3dDevice->CreateInputLayout(layout, iSizeLayout,
             pVertexShader->m_pVSCode->GetBufferPointer(), 
             pVertexShader->m_pVSCode->GetBufferSize(), 
             &pMapMesh->m_pVertexInputLayout)))
             throw std::exception("InputLayout not create successfully");
-        
+
 		pMapMesh->m_pIndexBuffer =
 			DX::CreateIndexBuffer(pd3dDevice, &pMapMesh->GetListIndex()[0], sizeof(DWORD), pMapMesh->GetListIndex().size());
-        
+
 		FQuadTree* pQuadTree = new FQuadTree(pMapMesh, pd3dDevice, pContext, iMaxDepth, fAlphaData);
 		pQuadTree->SetConstantData(cc);
 		pQuadTree->SetTransform({ mapTransform.position, mapTransform.rotation, mapTransform.scale });
@@ -879,7 +972,7 @@ namespace MAPLOAD
 			pQuadTree->SetSplattingTexture(texture);
 		pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
 		//pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
-        
+
 		for (const auto& obj : allObjectList)
 		{
 		    /*if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
@@ -887,7 +980,9 @@ namespace MAPLOAD
 		    pQuadTree->AddObject(obj);
 		}
 
-        //return nullptr;
+        if (pSphereObject)
+            pQuadTree->m_pSphereObject = pSphereObject;
+
 		return pQuadTree;
 	}
 
