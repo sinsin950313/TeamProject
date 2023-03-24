@@ -124,6 +124,7 @@ bool    MyMain::Init()
 
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
 		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
+        Player::GetInstance().m_Damage = 100;
         Player::GetInstance().Init();
         Player::GetInstance().Scale(0.01f);
 
@@ -143,7 +144,7 @@ bool    MyMain::Init()
             I_Model.Load(str, "Idle", &enemy->m_pModel);
 
 			enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
-			enemy->m_Damage = 5;
+			enemy->m_Damage = 10;
             enemy->m_fSpeed = 10;
             enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
 			enemy->Init();
@@ -191,29 +192,32 @@ bool    MyMain::Frame()
 {
     if (m_Win)
     {
-        if (MessageBoxA(g_hWnd, "승리했습니다!", "Win!", MB_OK))
+        if (MessageBoxA(g_hWnd, "You Win!", "Win!", MB_OK))
         {
             m_bGameRun = false;
         }
     }
     else if (m_Defeat)
     {
-        if (MessageBoxA(g_hWnd, "패배했습니다!", "Defeat!", MB_OK))
+        if (MessageBoxA(g_hWnd, "You Lose!", "Defeat!", MB_OK))
         {
             m_bGameRun = false;
         }
     }
-    else
 
     if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
         m_bGameRun = false;
     if (I_Input.GetKey(VK_F3) == KEY_PUSH)
         I_Input.m_isMouse = !I_Input.m_isMouse;
 
+    for (auto manager : m_StateManagerMap)
+    {
+        manager.second->Frame();
+    }
+
     if (m_pMainCamera)
     {
-        //if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
-        //    m_bGameRun = false;
+        m_pMainCamera->Frame();
 
         int deadCount = 0;
         for (auto enemy : m_Enemies)
@@ -232,16 +236,7 @@ bool    MyMain::Frame()
         {
             m_Defeat = true;
         }
-        Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-        Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     }
-
-	if (m_pMainCamera)
-	{
-		m_pMainCamera->Frame();
-
-		Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	}
 
 	Player::GetInstance().Frame();
 	m_pQuadTree->Update();
@@ -249,11 +244,6 @@ bool    MyMain::Frame()
 	for (auto enemy : m_Enemies)
 	{
 		enemy->Frame();
-	}
-
-	for (auto manager : m_StateManagerMap)
-	{
-		manager.second->Frame();
 	}
 
     //m_pEnemy->Frame();
@@ -267,9 +257,7 @@ bool    MyMain::Render()
     m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     m_pQuadTree->Render();
 
-    //TMatrix matWorld = TMatrix::Identity;
-    //Player::GetInstance().SetMatrix(&matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    //Player::GetInstance().Frame();
+    Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().Render();
 
     for (auto enemy : m_Enemies)

@@ -190,19 +190,19 @@ void	Character::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
 void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 {
 	float frameTime = g_fSecondPerFrame;
-	XMVECTOR oldCharDirection = m_vOldDirection;
+	//m_vOldDirection;
 
 	destinationDirection = XMVector3Normalize(destinationDirection);
 
-	if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
-		oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
+	if (XMVectorGetX(XMVector3Dot(destinationDirection, m_vOldDirection)) == -1)
+		m_vOldDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
 
 	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	charPosition = XMVector3TransformCoord(charPosition, worldMatrix);
 
 	float destDirLength = 20.0f * frameTime;
 
-	XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection * destDirLength);	// Get the characters direction (based off time, old position, and desired
+	XMVECTOR currCharDirection = (m_vOldDirection)+(destinationDirection * destDirLength);	// Get the characters direction (based off time, old position, and desired
 	
 	currCharDirection = XMVector3Normalize(currCharDirection);
 
@@ -222,11 +222,13 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	//rotationMatrix = XMMatrixRotationY(charDirAngle - 3.14159265f);		// Subtract PI from angle so the character doesn't run backwards
 
 	//m_vScale = TVector3(1, 1, 1);
-	m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
+	float ry = charDirAngle - M_PI;
+	m_vRotation = TVector3(0, ry, 0);
 	m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
 
 	// Set the characters old direction
-	m_vOldDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+	m_vOldDirection = currCharDirection;
+	//m_vOldDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 	m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 
 	// Update our animation
@@ -235,10 +237,10 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 
 	if (CollisionMgr::GetInstance().IsCollide(&m_ColliderBox))
 	{
-		charPosition = charPosition + (destinationDirection * (speed + 0.1f) * -1);
+		charPosition = charPosition - (destinationDirection * (speed + 0.1f));
 		m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
-		oldCharDirection = currCharDirection;
-		m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+		//oldCharDirection = currCharDirection;
+		//m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 	}
 }
 

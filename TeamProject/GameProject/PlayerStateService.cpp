@@ -161,21 +161,25 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-        if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
-        {
-			auto list = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);
-			for (auto obj : list)
+		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		{
+			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
-				if (obj != m_pCharacter)
+				auto list = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);
+				for (auto obj : list)
 				{
-					if (!m_pCharacter->IsAlreadyDamagedCurrentState(obj))
+					if (obj != m_pCharacter)
 					{
-						obj->Damage(m_pCharacter->m_Damage);
-						m_pCharacter->DamagingCharacter(obj);
+						if (!m_pCharacter->IsAlreadyDamagedCurrentState(obj))
+						{
+							obj->Damage(m_pCharacter->m_Damage);
+							m_pCharacter->DamagingCharacter(obj);
+						}
 					}
 				}
 			}
-        }
+		}
 	}
 	bool PlayerDeadState::IsTransfer()
 	{
