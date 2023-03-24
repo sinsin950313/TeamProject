@@ -989,7 +989,8 @@ namespace MAPLOAD
 
     void	PathChanger(std::string& str)
     {
-        std::string::size_type pos = str.find("D:\\");
+        //std::string::size_type pos = str.find("D:\\");
+        std::string::size_type pos = 0;
         std::string::size_type end = str.find("Asset");
         str.replace(pos, end - 1, "../../data");
 
