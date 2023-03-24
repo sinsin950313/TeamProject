@@ -31,6 +31,9 @@ bool    MyMain::Init()
     m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/ui.png");
     m_pInter->m_vPos = TVector3(0, 0, 0);
     m_pInter->m_vScale = TVector3(1, 1, 1);
+    //m_pInter->m_pWorkList.push_back(new InterfaceFade());
+    //m_pInter->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
+    //m_pInter->m_pWorkList.push_back(new InterfaceLifeTime(10.0f));
     //m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
 
     m_pMainCamera = new CameraTPS;

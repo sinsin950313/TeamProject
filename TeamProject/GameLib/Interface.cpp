@@ -44,6 +44,9 @@ bool Interface::Frame()
 
 bool	Interface::Render()
 {
+	if (!m_isUsing)
+		return false;
+
 	m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
 	BaseObject::Render();
 

@@ -37,7 +37,7 @@ bool CameraTPS::Frame()
 	// Set our cameras position to rotate around the character. We need to add 5 to the characters
 	// position's y axis because i'm stupid and modeled the character in the 3d modeling program
 	// to be "standing" on (0,0,0), instead of centered around it ;) Well target her head here though
-	float charCamDist = 15.0f;
+	float charCamDist = 10.0f;
 	camPosition = (camPosition * charCamDist) + m_vTarget;
 
 	// We need to set our cameras forward and right vectors to lay

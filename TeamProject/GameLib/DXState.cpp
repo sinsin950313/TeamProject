@@ -37,7 +37,7 @@ bool DXState::SetState(ID3D11Device* pd3dDevice)
     //FLOAT MaxLOD;
 	pd3dDevice->CreateSamplerState(&sd, &g_pDefaultSS);
 
-    sd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+    sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sd.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
 	sd.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
 	sd.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;

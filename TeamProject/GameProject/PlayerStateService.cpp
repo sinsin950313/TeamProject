@@ -151,7 +151,7 @@ namespace SSB
 
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;
-		if (timer > 0.05f)
+		if (timer > 0.02f)
 		{
 			Player::GetInstance().m_pTrail->AddTrailPos(
 				Player::GetInstance().GetCurSocketPos("WeaponLow"), Player::GetInstance().GetCurSocketPos("WeaponHigh"));
