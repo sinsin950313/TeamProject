@@ -25,6 +25,12 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{32a8b9ce-803c-4b83-9a1b-e01e5372bf74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect">
+      <UniqueIdentifier>{83c44041-3bc4-41bb-bce4-083bd497f190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ch\FSM">
+      <UniqueIdentifier>{32f353c1-d470-48d3-b4a5-c37d0feb2eb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyMain.h">
@@ -78,18 +84,6 @@
     <ClInclude Include="Map.h">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterState.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyNPCMob.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterStateManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerStateService.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>Ch</Filter>
     </ClInclude>
@@ -102,26 +96,41 @@
     <ClInclude Include="ModelMgr.h">
       <Filter>Ch</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyNPCMobStateService.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TrailEffect.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CScene.h">
+    <ClInclude Include="Scene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="CSceneEnd.h">
+    <ClInclude Include="SceneEnd.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="CSceneInGame.h">
+    <ClInclude Include="SceneInGame.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="CSceneTitle.h">
+    <ClInclude Include="SceneTitle.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TrailEffect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterState.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterStateManager.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyNPCMob.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyNPCMobStateService.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerStateService.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,18 +167,6 @@
     <ClCompile Include="MeshMap.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterState.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyNPCMob.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterStateManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerStateService.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>Ch</Filter>
     </ClCompile>
@@ -182,26 +179,41 @@
     <ClCompile Include="ModelMgr.cpp">
       <Filter>Ch</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyNPCMobStateService.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TrailEffect.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CScene.cpp">
+    <ClCompile Include="Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="CSceneEnd.cpp">
+    <ClCompile Include="SceneEnd.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="CSceneInGame.cpp">
+    <ClCompile Include="SceneInGame.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="CSceneTitle.cpp">
+    <ClCompile Include="SceneTitle.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TrailEffect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterState.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterStateManager.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyNPCMob.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyNPCMobStateService.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerStateService.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

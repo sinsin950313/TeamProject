@@ -9,6 +9,11 @@ bool Interface::Frame()
 		if (work->m_isDone)
 		{
 			iter = m_pWorkList.erase(iter);
+			if (work)
+			{
+				delete work;
+				work = nullptr;
+			}
 			continue;
 		}
 		else
@@ -91,9 +96,17 @@ bool Interface::SetAttribute(TVector3 vPos, TRectangle rc)
 	return true;
 }
 
-bool Interface::SetAttribute(TVector3 vPos, TVector3 vScale)
+bool Interface::SetAttribute(TVector3 vPos, TVector3 vScale, TColor color)
 {
 	Init();
+
+	m_vPos = vPos;
+	m_vScale = vScale;
+	for (int i = 0; i < m_VertexList.size(); i++)
+	{
+		m_VertexList[i].c = color.ToVector4();
+	}
+
 	//m_ptImageSize.x = m_pTexture->m_Desc.Width;
 	//m_ptImageSize.y = m_pTexture->m_Desc.Height;
 	//_CRect rc = { 0, 0, (float)m_ptImageSize.x, (float)m_ptImageSize.y };
