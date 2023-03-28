@@ -1,7 +1,6 @@
 #include "MyMain.h"
 #include "Input.h"
 #include "SoundMgr.h"
-#include "FileIOObject.h"
 #include "Player.h"
 #include "TCollision.h"
 #include "CollisionMgr.h"
@@ -109,18 +108,13 @@ bool    MyMain::Init()
     }
 
     {
-        SSB::ObjectScriptIO io;
-        std::string filename = "PlayerGaren";
-        //std::string filename = "dummy";
-        std::string str = io.Read(filename);
-
         Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
         Player::GetInstance().m_pMainCamera = m_pMainCamera;
         ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
         //Idle, Attack1, Attack2, Attack3, Move, Dead
-        //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
-        I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
+        //I_Model.Load("dummy", "Idle", &Player::GetInstance().m_pModel);
+        I_Model.Load("PlayerGaren", "Idle", &Player::GetInstance().m_pModel);
 
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
 		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
@@ -131,16 +125,12 @@ bool    MyMain::Init()
     }
 
     {
-        SSB::ObjectScriptIO io;
-
-        std::string str = io.Read("Alistar");
-        //std::string str = io.Read("dummy");
-
         for (int i = 0; i < m_EnemyCount; ++i)
         {
             SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
             enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-            I_Model.Load(str, "Idle", &enemy->m_pModel);
+            //I_Model.Load("dummy", "Idle", &enemy->m_pModel);
+            I_Model.Load("Alistar", "Idle", &enemy->m_pModel);
 
 			enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
 			enemy->m_Damage = 5;

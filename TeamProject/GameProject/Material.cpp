@@ -51,25 +51,30 @@ namespace SSB
 
 		return true;
 	}
-	void Material::Deserialize(std::string& serialedString)
+	void Material::Deserialize(const char* buffer, int size, int& offset)
 	{
-		serialedString = GetUnitObject(serialedString, 0).str;
-
-		int offset = 0;
 		{
-			offset = serialedString.find(_materialIndexStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			Serializeable::Deserialize(atomic, _materialIndex);
+			memcpy(&_materialIndex, buffer + offset, sizeof(int));
+			offset += sizeof(int);
 		}
 
-		for (int i = 0; i < kTextureTypeCount; ++i)
 		{
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			I_Tex.Load(kTextureResourcePath + mtw(GetUnitAtomic(data.str, 0).str), &_textureArray[i]);
+			for (int i = 0; i < kTextureTypeCount; ++i)
+			{
+				int fileNameSize;
+				memcpy(&fileNameSize, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				char* fileNameBuffer = new char[fileNameSize];
+				memcpy(fileNameBuffer, buffer + offset, fileNameSize);
+				offset += fileNameSize;
+				std::string fileName(fileNameBuffer, fileNameSize);
+				if (fileName != "Empty")
+				{
+					I_Tex.Load(kTextureResourcePath + mtw(fileName), &_textureArray[i]);
+				}
+				delete[] fileNameBuffer;
+			}
 		}
 	}
 }

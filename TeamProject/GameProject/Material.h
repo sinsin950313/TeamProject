@@ -35,7 +35,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		std::string Serialize(int tabCount) { return ""; };
-		void Deserialize(std::string& serialedString) override;
+		std::string Serialize() override { return ""; };
+		void Deserialize(const char* buffer, int size, int& offset) override;
 	};
 }
