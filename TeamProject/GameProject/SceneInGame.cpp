@@ -27,143 +27,32 @@ E_SCENE SceneInGame::NextScene()
     return S_INGAME;
 }
 
-bool    SceneInGame::Init()
+void SceneInGame::DataLoad()
 {
+    m_fLoadRate = 0.0f;
+
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
 
     I_Sound.LoadDir(kTeamProjectSoundPath);
     I_Sound.LoadAll(kTeamProjectSoundPath);
+    m_fLoadRate = 0.05f;
 
-    m_pInter = new Interface();
-    m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/ui.png");
-    m_pInter->m_vPos = TVector3(0, 0, 0);
-    m_pInter->m_vScale = TVector3(1, 1, 1);
-    //m_pInter->m_pWorkList.push_back(new InterfaceFade());
-    //m_pInter->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
-    //m_pInter->m_pWorkList.push_back(new InterfaceLifeTime(10.0f));
-    //m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
+    CameraLoad();
+    UiLoad();
+    m_fLoadRate = 0.15f;
 
-    m_pMainCamera = new CameraTPS;
-    m_pMainCamera->CreateViewMatrix(TVector3(0, 0, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
-    m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f
-        , (float)g_rcClient.right / (float)g_rcClient.bottom);
+    FSMLoad();
+    m_fLoadRate = 0.22f;
 
-    // Register State Manager
-    {
-        {
-            SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+    CharacterLoad();
+    m_fLoadRate = 0.8f;
 
-            {
-                SSB::CharacterState* state = new SSB::PlayerIdleState;
-                state->Initialize_SetCoolTime(0);
-                state->Initialize_SetStateAnimation("Idle");
-                manager->Initialize_RegisterState(SSB::kPlayerIdle, state);
-            }
-            {
-                SSB::CharacterState* state = new SSB::PlayerMoveState;
-                state->Initialize_SetCoolTime(0);
-                state->Initialize_SetStateAnimation("Move");
-                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenWalk.mp3"), true);
-                manager->Initialize_RegisterState(SSB::kPlayerMove, state);
-            }
-            {
-                SSB::CharacterState* state = new SSB::PlayerAttackState;
-                state->Initialize_SetCoolTime(1.8f);
-                state->Initialize_SetStateAnimation("Attack1");
-                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
-                manager->Initialize_RegisterState(SSB::kPlayerAttack, state);
-            }
-            {
-                SSB::CharacterState* state = new SSB::PlayerDeadState;
-                state->Initialize_SetCoolTime(0);
-                state->Initialize_SetStateAnimation("Dead");
-                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
-                manager->Initialize_RegisterState(SSB::kPlayerDead, state);
-            }
+    MapLoad();
+    m_fLoadRate = 1.0f;
+}
 
-            m_StateManagerMap.insert(std::make_pair(SSB::kPlayerStateManager, manager));
-        }
-
-        {
-            SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
-            {
-                SSB::CharacterState* state = new SSB::EnemyNPCMobIdleState;
-                state->Initialize_SetCoolTime(0);
-                state->Initialize_SetStateAnimation("Idle");
-                manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, state);
-            }
-            {
-                SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
-                state->Initialize_SetCoolTime(0);
-                state->Initialize_SetStateAnimation("Move");
-                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarWalk.mp3"), true);
-                manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, state);
-            }
-            {
-                SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState;
-                state->Initialize_SetCoolTime(1.5f);
-                state->Initialize_SetStateAnimation("Attack1");
-                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
-                manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
-            }
-            {
-                SSB::CharacterState* state = new SSB::EnemyNPCMobDeadState;
-                state->Initialize_SetCoolTime(0);
-                state->Initialize_SetStateAnimation("Dead");
-                state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarDead.mp3"));
-                manager->Initialize_RegisterState(SSB::kEnemyNPCMobDead, state);
-            }
-
-            m_StateManagerMap.insert(std::make_pair(SSB::kEnemyNPCMobStateManager, manager));
-        }
-    }
-
-    {
-        Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
-        Player::GetInstance().m_pMainCamera = m_pMainCamera;
-        ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
-
-        //Idle, Attack1, Attack2, Attack3, Move, Dead
-        //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
-        I_Model.Load("PlayerGaren", "Idle", &Player::GetInstance().m_pModel);
-
-        Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
-        Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
-        Player::GetInstance().m_Damage = 100;
-        Player::GetInstance().Init();
-        Player::GetInstance().Scale(0.01f);
-
-        m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
-    }
-
-    {
-        for (int i = 0; i < m_EnemyCount; ++i)
-        {
-            SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
-            enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-            I_Model.Load("Alistar", "Idle", &enemy->m_pModel);
-
-            enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
-            enemy->m_Damage = 10;
-            enemy->m_fSpeed = 10;
-            enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
-            enemy->Init();
-            enemy->Scale(0.01f);
-            /*
-                    std::string filename = "dummy";
-                    std::string str = io.Read(filename);
-
-                    m_pEnemy = new SSB::EnemyNPCMob();
-                    m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-                    I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
-            */
-
-            m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
-
-            m_Enemies.push_back(enemy);
-        }
-    }
-
+bool    SceneInGame::Init()
+{
     //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
     //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
@@ -176,11 +65,6 @@ bool    SceneInGame::Init()
 
     m_pDebugBox = new DebugBox;
     m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
-
-    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
-    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
-    m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
-
 
     Sound* sound = I_Sound.Find(L"BGM.mp3");
     sound->Play(true);
@@ -373,23 +257,159 @@ bool    SceneInGame::Release()
     return true;
 }
 
-
-bool		SceneInGame::ObjectInit()
+void    SceneInGame::CameraLoad()
 {
-    return true;
+    m_pMainCamera = new CameraTPS;
+    m_pMainCamera->CreateViewMatrix(TVector3(0, 10, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
+    m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f
+        , (float)g_rcClient.right / (float)g_rcClient.bottom);
 }
 
-bool		SceneInGame::ObjectFrame()
+void    SceneInGame::CharacterLoad()
 {
-    return true;
+    {
+        SSB::ObjectScriptIO io;
+        //std::string filename = "PlayerGaren";
+        std::string filename = "dummy";
+        std::string str = io.Read(filename);
+
+        Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
+        Player::GetInstance().m_pMainCamera = m_pMainCamera;
+        ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+
+        //Idle, Attack1, Attack2, Attack3, Move, Dead
+        //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
+        I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
+
+        Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
+        Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
+        Player::GetInstance().m_Damage = 100;
+        Player::GetInstance().Init();
+        Player::GetInstance().Scale(0.01f);
+
+        m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
+    }
+
+    {
+        SSB::ObjectScriptIO io;
+
+        //std::string str = io.Read("Alistar");
+        std::string str = io.Read("dummy");
+
+        for (int i = 0; i < m_EnemyCount; ++i)
+        {
+            SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
+            enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+            I_Model.Load(str, "Idle", &enemy->m_pModel);
+
+            enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
+            enemy->m_Damage = 10;
+            enemy->m_fSpeed = 10;
+            enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
+            enemy->Init();
+            enemy->Scale(0.01f);
+            /*
+                    std::string filename = "dummy";
+                    std::string str = io.Read(filename);
+
+                    m_pEnemy = new SSB::EnemyNPCMob();
+                    m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+                    I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
+            */
+
+            m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
+
+            m_Enemies.push_back(enemy);
+        }
+    }
 }
 
-bool		SceneInGame::ObjectRender()
+void    SceneInGame::UiLoad()
 {
-    return true;
+    m_pInter = new Interface();
+    m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/ui.png");
+    m_pInter->m_vPos = TVector3(0, 0, 0);
+    m_pInter->m_vScale = TVector3(1, 1, 1);
+    //m_pInter->m_pWorkList.push_back(new InterfaceFade());
+    //m_pInter->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
+    //m_pInter->m_pWorkList.push_back(new InterfaceLifeTime(10.0f));
+    //m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
 }
 
-bool		SceneInGame::ObjectRelease()
+void    SceneInGame::FSMLoad()
 {
-    return true;
+    // Register State Manager
+	{
+		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+
+		{
+			SSB::CharacterState* state = new SSB::PlayerIdleState;
+			state->Initialize_SetCoolTime(0);
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kPlayerIdle, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerMoveState;
+			state->Initialize_SetCoolTime(0);
+			state->Initialize_SetStateAnimation("Move");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenWalk.mp3"), true);
+			manager->Initialize_RegisterState(SSB::kPlayerMove, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerAttackState;
+			state->Initialize_SetCoolTime(1.8f);
+			state->Initialize_SetStateAnimation("Attack1");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerAttack, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerDeadState;
+			state->Initialize_SetCoolTime(0);
+			state->Initialize_SetStateAnimation("Dead");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerDead, state);
+		}
+
+		m_StateManagerMap.insert(std::make_pair(SSB::kPlayerStateManager, manager));
+	}
+
+	{
+		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobIdleState;
+			state->Initialize_SetCoolTime(0);
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
+			state->Initialize_SetCoolTime(0);
+			state->Initialize_SetStateAnimation("Move");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarWalk.mp3"), true);
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState;
+			state->Initialize_SetCoolTime(1.5f);
+			state->Initialize_SetStateAnimation("Attack1");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobDeadState;
+			state->Initialize_SetCoolTime(0);
+			state->Initialize_SetStateAnimation("Dead");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarDead.mp3"));
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobDead, state);
+		}
+
+		m_StateManagerMap.insert(std::make_pair(SSB::kEnemyNPCMobStateManager, manager));
+	}
+}
+
+void    SceneInGame::MapLoad()
+{
+    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
+    m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 }

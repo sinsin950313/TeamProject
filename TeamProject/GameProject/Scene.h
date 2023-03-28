@@ -18,7 +18,12 @@ public:
     virtual bool    Render();
     virtual bool    Release();
 
+    virtual void    DataLoad() = 0;
+
     virtual E_SCENE     NextScene() = 0;
+
+public:
+    float   m_fLoadRate = 0.0f;
 
 public:
     ID3D11Device* m_pd3dDevice = nullptr;// 디바이스 객체

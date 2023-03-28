@@ -1,6 +1,13 @@
 #include "SceneEnd.h"
 #include "Input.h"
 
+void SceneEnd::DataLoad()
+{
+	m_fLoadRate = 0.0f;
+
+	m_fLoadRate = 1.0f;
+}
+
 bool SceneEnd::Init()
 {
 	return true;

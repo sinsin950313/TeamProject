@@ -10,6 +10,7 @@
 #include <atlconv.h>
 #include <codecvt>
 #include <tchar.h>
+#include <thread>
 #include <wrl.h> // windows runtime c++ templace library(wrl)
 #include "TMath.h"
 
