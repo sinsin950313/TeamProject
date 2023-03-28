@@ -132,6 +132,9 @@
     <ClInclude Include="SceneMgr.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="InterfactiveObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -214,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="SceneMgr.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="InterfactiveObject.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
