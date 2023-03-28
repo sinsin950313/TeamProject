@@ -291,6 +291,9 @@ void Character::ResetStateElapseTime()
 	m_fBeforeTime = g_fGameTimer;
 	m_fStateTImeStamp = g_fGameTimer;
 	m_DamagedCharacters.clear();
+
+	m_bIsReserveState = false;
+	m_ReservedState.clear();
 }
 
 float Character::GetStateElapseTime()

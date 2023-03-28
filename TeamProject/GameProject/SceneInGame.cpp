@@ -67,11 +67,25 @@ bool    SceneInGame::Init()
                 manager->Initialize_RegisterState(SSB::kPlayerMove, state);
             }
             {
-                SSB::CharacterState* state = new SSB::PlayerAttackState;
+                SSB::CharacterState* state = new SSB::PlayerAttackState1;
                 state->Initialize_SetCoolTime(1.8f);
                 state->Initialize_SetStateAnimation("Attack1");
                 state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
-                manager->Initialize_RegisterState(SSB::kPlayerAttack, state);
+                manager->Initialize_RegisterState(SSB::kPlayerAttack1, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::PlayerAttackState2;
+                state->Initialize_SetCoolTime(1.8f);
+                state->Initialize_SetStateAnimation("Attack2");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack2.mp3"));
+                manager->Initialize_RegisterState(SSB::kPlayerAttack2, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::PlayerAttackState3;
+                state->Initialize_SetCoolTime(1.8f);
+                state->Initialize_SetStateAnimation("Attack3");
+                state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack3.mp3"));
+                manager->Initialize_RegisterState(SSB::kPlayerAttack3, state);
             }
             {
                 SSB::CharacterState* state = new SSB::PlayerDeadState;

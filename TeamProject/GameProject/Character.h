@@ -103,5 +103,9 @@ public:
 	void ResetStateElapseTime();
 	float GetStateElapseTime();
 	float GetStateTimeStamp();
+
+public:
+	bool m_bIsReserveState = false;;
+	std::string m_ReservedState;
 };
 
