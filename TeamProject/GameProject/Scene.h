@@ -23,9 +23,6 @@ public:
     virtual E_SCENE     NextScene() = 0;
 
 public:
-    float   m_fLoadRate = 0.0f;
-
-public:
     ID3D11Device* m_pd3dDevice = nullptr;// 디바이스 객체
     ID3D11DeviceContext* m_pImmediateContext = nullptr;
 };

@@ -29,26 +29,19 @@ E_SCENE SceneInGame::NextScene()
 
 void SceneInGame::DataLoad()
 {
-    m_fLoadRate = 0.0f;
-
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
 
     I_Sound.LoadDir(kTeamProjectSoundPath);
     I_Sound.LoadAll(kTeamProjectSoundPath);
-    m_fLoadRate = 0.05f;
 
     CameraLoad();
     UiLoad();
-    m_fLoadRate = 0.15f;
 
     FSMLoad();
-    m_fLoadRate = 0.22f;
 
     CharacterLoad();
-    m_fLoadRate = 0.8f;
 
     MapLoad();
-    m_fLoadRate = 1.0f;
 }
 
 bool    SceneInGame::Init()
@@ -269,9 +262,9 @@ void    SceneInGame::CharacterLoad()
 {
     {
         SSB::ObjectScriptIO io;
-        //std::string filename = "PlayerGaren";
-        std::string filename = "dummy";
-        std::string str = io.Read(filename);
+        std::string filename = "PlayerGaren";
+        //std::string filename = "dummy";
+        //std::string str = io.Read(filename);
 
         Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
         Player::GetInstance().m_pMainCamera = m_pMainCamera;
@@ -279,7 +272,7 @@ void    SceneInGame::CharacterLoad()
 
         //Idle, Attack1, Attack2, Attack3, Move, Dead
         //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
-        I_Model.Load(str, "Idle", &Player::GetInstance().m_pModel);
+        I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
 
         Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
         Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
@@ -293,8 +286,8 @@ void    SceneInGame::CharacterLoad()
     {
         SSB::ObjectScriptIO io;
 
-        //std::string str = io.Read("Alistar");
-        std::string str = io.Read("dummy");
+        std::string str = "Alistar";
+        //std::string str = io.Read("dummy");
 
         for (int i = 0; i < m_EnemyCount; ++i)
         {

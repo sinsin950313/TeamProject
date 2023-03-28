@@ -6,7 +6,7 @@ void	SceneMgr::SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
     m_pImmediateContext = pContext;
 }
 
-void	SceneDataLoad(Scene* pScene)
+void    SceneDataLoad(Scene* pScene)
 {
     pScene->DataLoad();
 }
@@ -30,6 +30,7 @@ bool	SceneMgr::Init()
     m_CurScene = S_TITLE;
     m_pSceneArray[m_CurScene] = CreateScene(m_CurScene);
     m_pSceneArray[m_CurScene]->SetDevice(m_pd3dDevice, m_pImmediateContext);
+    m_pSceneArray[m_CurScene]->DataLoad();
     m_pSceneArray[m_CurScene]->Init();
     m_isChangingScene = false;
 
@@ -78,12 +79,13 @@ bool	SceneMgr::Frame()
             // Data Load Func() < Thread
 
             m_LoadState = LOADING;
-            SceneDataLoad(m_pSceneArray[m_CurScene]);
+            m_pSceneArray[m_CurScene]->DataLoad();
+            //SceneDataLoad(m_pSceneArray[m_CurScene]);
             //m_LoadThread = std::thread(&SceneDataLoad, m_pSceneArray[m_CurScene]);
         }
             break;
         case LOADING:
-            if (m_pSceneArray[m_CurScene]->m_fLoadRate >= 1.0f)
+            if (1)//m_pSceneArray[m_CurScene]->m_fLoadRate >= 1.0f)
             {
                 //m_LoadThread.join();
                 m_LoadState = LOADCOMPLETE;
