@@ -11,10 +11,17 @@
 class SceneInGame : public Scene
 {
 public:
-    virtual bool    Init();
-    virtual bool    Frame();
-    virtual bool    Render();
-    virtual bool    Release();
+    virtual bool    Init() override;
+    virtual bool    Frame() override;
+    virtual bool    Render() override;
+    virtual bool    Release() override;
+
+    virtual void DataLoad() override;
+    void    UiLoad();
+    void    CameraLoad();
+    void    FSMLoad();
+    void    CharacterLoad();
+    void    MapLoad();
 
 private:
     bool		ObjectInit();

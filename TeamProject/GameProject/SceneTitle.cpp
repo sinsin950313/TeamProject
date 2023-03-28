@@ -1,6 +1,13 @@
 #include "SceneTitle.h"
 #include "Input.h"
 
+void SceneTitle::DataLoad()
+{
+	m_fLoadRate = 0.0f;
+
+	m_fLoadRate = 1.0f;
+}
+
 bool    SceneTitle::Init()
 {
 	return true;

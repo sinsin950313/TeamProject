@@ -12,6 +12,8 @@ public:
     virtual bool Render() override;
     virtual bool Release() override;
 
+    virtual void DataLoad() override;
+
     E_SCENE NextScene();
 
 };
