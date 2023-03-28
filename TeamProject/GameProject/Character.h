@@ -54,6 +54,7 @@ public:
 public:
     float   m_fSpeed = 15;
     TVector3 m_vDirection;
+	XMVECTOR m_vOldDirection;
 
 public:
     void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);

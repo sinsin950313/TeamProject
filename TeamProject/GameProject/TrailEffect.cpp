@@ -6,7 +6,7 @@ bool	TrailEffect::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
 {
 	//m_VertexList.resize(100);
 
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		Vertex v;
 		float x = i;

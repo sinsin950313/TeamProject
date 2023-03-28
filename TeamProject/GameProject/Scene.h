@@ -9,10 +9,10 @@ enum E_SCENE
     MAX_SCENE
 };
 
-class CScene
+class Scene
 {
 public:
-    virtual bool    Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
+    virtual bool    SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
     virtual bool    Init();
     virtual bool    Frame();
     virtual bool    Render();
@@ -25,4 +25,4 @@ public:
     ID3D11DeviceContext* m_pImmediateContext = nullptr;
 };
 
-CScene* CreateScene(E_SCENE s_type);
+Scene* CreateScene(E_SCENE s_type);

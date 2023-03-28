@@ -1,15 +1,10 @@
 #pragma once
-#include "CScene.h"
+#include "Scene.h"
 
-class CSceneTitle :
-    public CScene
+class SceneTitle :
+    public Scene
 {
 public:
-    //CInterface* m_pTitle;
-    //CInterface* m_pStartButton;
-    //
-    //CSound* m_pBgTitle;
-    //CSound* m_pBtn;
 
 public:
     virtual bool Init() override;

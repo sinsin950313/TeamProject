@@ -19,7 +19,7 @@ public:
 	virtual bool Render() override;
 	virtual bool Release() override;
 	virtual bool SetAttribute(TVector3 vPos, TRectangle rc);
-	virtual bool SetAttribute(TVector3 vPos, TVector3 vScale);
+	virtual bool SetAttribute(TVector3 vPos, TVector3 vScale, TColor color);
 	virtual bool SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV);
 	virtual void AddChild(Interface* pUI)
 	{
@@ -47,7 +47,6 @@ public:
 	std::vector<Texture*>	m_pTexList;
 
 public:
-	bool	m_isFade = false;
 	bool	m_isUsing = true;
 };
 
@@ -115,16 +114,14 @@ public:
 	bool Frame(Interface* pInter)
 	{
 		m_fAlpha += m_iSwitch * g_fSecondPerFrame * 2.5f;
-		if (m_fAlpha >= 2.5f && !pInter->m_isFade)
+		if (m_fAlpha >= 2.5f)
 		{
 			m_iSwitch = -1;
 			m_fAlpha = 1.2f;
-			pInter->m_isFade = true;
 		}
-		if (m_fAlpha <= 0.0f && pInter->m_isFade)
+		if (m_fAlpha <= 0.0f)
 		{
 			m_isDone = true;
-			pInter->m_isFade = false;
 		}
 
 		for (int i = 0; i < pInter->m_VertexList.size(); i++)
@@ -135,8 +132,54 @@ public:
 	}
 
 public:
+	bool	m_isFade = false;
 	int		m_iSwitch = 1;
 	float m_fAlpha = 0.0f;
+};
+
+class InterfaceFadeIn : public InterfaceWork
+{
+public:
+	bool	Frame(Interface* pInter)
+	{
+		m_fAlpha += g_fSecondPerFrame * 2.5f;
+		if (m_fAlpha >= 2.5f)
+		{
+			m_fAlpha = 1.2f;
+			m_isDone = true;
+		}
+
+		for (int i = 0; i < pInter->m_VertexList.size(); i++)
+		{
+			pInter->m_VertexList[i].c.w = m_fAlpha;
+		}
+		return true;
+	}
+
+public:
+	float m_fAlpha = 0.0f;
+};
+
+class InterfaceFadeOut : public InterfaceWork
+{
+public:
+	bool	Frame(Interface* pInter)
+	{
+		m_fAlpha -= g_fSecondPerFrame * 2.5f;
+		if (m_fAlpha <= 0.0f)
+		{
+			m_isDone = true;
+		}
+
+		for (int i = 0; i < pInter->m_VertexList.size(); i++)
+		{
+			pInter->m_VertexList[i].c.w = m_fAlpha;
+		}
+		return true;
+	}
+
+public:
+	float m_fAlpha = 1.2f;
 };
 
 class InterfaceLoopFade : public InterfaceWork
@@ -145,15 +188,13 @@ public:
 	bool Frame(Interface* pInter)
 	{
 		m_fAlpha += m_iSwitch * g_fSecondPerFrame * m_fFadeSpeed;
-		if (m_fAlpha >= 1.0f && !pInter->m_isFade)
+		if (m_fAlpha >= 1.0f)
 		{
 			m_iSwitch = -1;
-			pInter->m_isFade = true;
 		}
-		if (m_fAlpha <= 0.0f && pInter->m_isFade)
+		if (m_fAlpha <= 0.0f)
 		{
 			m_iSwitch = 1;
-			pInter->m_isFade = false;
 		}
 
 		for (int i = 0; i < pInter->m_VertexList.size(); i++)

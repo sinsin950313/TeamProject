@@ -1,16 +1,10 @@
 #pragma once
-#include "CScene.h"
+#include "Scene.h"
 #include "SoundMgr.h"
-class CSceneEnd :
-    public CScene
+class SceneEnd :
+    public Scene
 {
 public:
-    //CInterface* m_pOver;
-    //CInterface* m_pBlack;
-    //
-    //CSound* m_pEndSound;
-
-    int     m_iPlayed;
 
 public:
     virtual bool Init() override;
