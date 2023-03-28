@@ -158,102 +158,124 @@ namespace SSB
 
 		return true;
 	}
-	std::string Animation::Serialize(int tabCount)
+	std::string Animation::Serialize()
 	{
 		std::string ret;
 		return ret;
 	}
-	void Animation::Deserialize(std::string& serialedString)
+	void Animation::Deserialize(const char* buffer, int size, int& offset)
 	{
-		auto data = GetUnitObject(serialedString, 0);
-		serialedString = data.str;
-
-		int offset = 0;
+		// FramePerSecond
 		{
-			offset = serialedString.find(_isLoopStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string elem = data.str;
-			offset = data.offset;
+			memcpy(&_framePerSecond, buffer + offset, sizeof(float));
+			offset += sizeof(float);
+		}
 
-			auto atomic = GetUnitAtomic(elem, 0);
-			if (atomic.str == "1")
+		// BoneAnimationUnitMaxCount
+		{
+			memcpy(&_boneAnimationUnitMaxCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// MeshAnimationUnitMaxCount;
+		{
+			memcpy(&_meshAnimationUnitMaxCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// Frame Data
+		{
+			int frameDataCount;
+			memcpy(&frameDataCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			_data.resize(frameDataCount);
+			for (int i = 0; i < frameDataCount; ++i)
 			{
-				_isLoop = true;
-			}
-			else
-			{
-				_isLoop = false;
-			}
-		}
-
-		{
-			offset = serialedString.find(_framePerSecondStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			Serializeable::Deserialize(atomic, _framePerSecond);
-		}
-
-		{
-			offset = serialedString.find(_boneAnimationUnitMaxCountStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			Serializeable::Deserialize(atomic, _boneAnimationUnitMaxCount);
-		}
-
-		{
-			offset = serialedString.find(_meshAnimationUnitMaxCountStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			Serializeable::Deserialize(atomic, _meshAnimationUnitMaxCount);
-		}
-
-		{
-			offset = serialedString.find(_startFrameStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			Serializeable::Deserialize(atomic, _startFrame);
-		}
-
-		{
-			offset = serialedString.find(_endFrameStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			Serializeable::Deserialize(atomic, _endFrame);
-		}
-
-		int maxFrameCount;
-		offset = serialedString.find(_frameInfoPerSecondStr, offset);
-		{
-			offset = serialedString.find(_maxFrameCountStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
-			std::string atomic = data.str;
-			offset = data.offset;
-			Serializeable::Deserialize(atomic, maxFrameCount);
-		}
-
-		_data.resize(maxFrameCount);
-
-		{
-			for (int i = 0; i < maxFrameCount; ++i)
-			{
+				_data[i] = new AnimationFrameInfo;
+				for (int j = 0; j < _boneAnimationUnitMaxCount; ++j)
 				{
-					offset = serialedString.find(_frameStr, offset);
-					auto elemData = GetUnitElement(serialedString, offset);
-					std::string elem = elemData.str;
-					offset = elemData.offset;
+					{
+						XMFLOAT4X4 matrix;
+						memcpy(&matrix, buffer + offset, sizeof(XMFLOAT4X4));
+						offset += sizeof(XMFLOAT4X4);
+
+						_data[i]->BoneAnimationUnit[j].Matrix = matrix;
+					}
+					{
+						XMFLOAT3 translate;
+						memcpy(&translate, buffer + offset, sizeof(XMFLOAT3));
+						offset += sizeof(XMFLOAT3);
+						_data[i]->BoneAnimationUnit[j].Translate = translate;
+					}
+					{
+						XMFLOAT3 scale;
+						memcpy(&scale, buffer + offset, sizeof(XMFLOAT3));
+						offset += sizeof(XMFLOAT3);
+						_data[i]->BoneAnimationUnit[j].Scale = scale;
+					}
+					{
+						XMFLOAT4 rotate;
+						memcpy(&rotate, buffer + offset, sizeof(XMFLOAT4));
+						offset += sizeof(XMFLOAT4);
+						_data[i]->BoneAnimationUnit[j].Rotate = {
+							rotate.x, rotate.y, rotate.z, rotate.w
+						};
+					}
 				}
 
-				auto data = GetUnitElement(serialedString, offset);
-				offset = data.offset;
-				AnimationFrameInfo* frameInfo = new AnimationFrameInfo;
-				Serializeable::Deserialize(data.str, *frameInfo, _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
-				_data[i] = frameInfo;
+				for (int j = 0; j < _meshAnimationUnitMaxCount; ++j)
+				{
+					{
+						XMFLOAT4X4 matrix;
+						memcpy(&matrix, buffer + offset, sizeof(XMFLOAT4X4));
+						offset += sizeof(XMFLOAT4X4);
+
+						_data[i]->MeshAnimationUnit[j].Matrix = matrix;
+					}
+					{
+						XMFLOAT3 translate;
+						memcpy(&translate, buffer + offset, sizeof(XMFLOAT3));
+						offset += sizeof(XMFLOAT3);
+						_data[i]->MeshAnimationUnit[j].Translate = translate;
+					}
+					{
+						XMFLOAT3 scale;
+						memcpy(&scale, buffer + offset, sizeof(XMFLOAT3));
+						offset += sizeof(XMFLOAT3);
+						_data[i]->MeshAnimationUnit[j].Scale = scale;
+					}
+					{
+						XMFLOAT4 rotate;
+						memcpy(&rotate, buffer + offset, sizeof(XMFLOAT4));
+						offset += sizeof(XMFLOAT4);
+						_data[i]->MeshAnimationUnit[j].Rotate = {
+							rotate.x, rotate.y, rotate.z, rotate.w
+						};
+					}
+				}
 			}
+		}
+
+		// Start Frame
+		{
+			memcpy(&_startFrame, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// End Frame
+		{
+			memcpy(&_endFrame, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// Loop
+		{
+			int tmpLoop;
+			memcpy(&tmpLoop, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			_isLoop = tmpLoop;
 		}
 	}
 	TMatrix Animation::GetCurrentBoneMatrix(BoneIndex index)

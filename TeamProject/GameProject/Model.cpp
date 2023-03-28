@@ -178,189 +178,211 @@ namespace SSB
 
 		return false;
 	}
-	void Model::Deserialize(std::string& serialedString)
+	void Model::Deserialize(const char* buffer, int size, int& offset)
 	{
-		serialedString = GetUnitObject(serialedString, 0).str;
-
-		int offset = 0;
+		// Min Vertex
 		{
-			offset = serialedString.find(_minVertexStr);
-			auto data = GetUnitElement(serialedString, offset);
-			offset = data.offset;
 			XMFLOAT3 tmp;
-			Serializeable::Deserialize(data.str, tmp);
+			memcpy(&tmp, buffer + offset, sizeof(XMFLOAT3));
 			_minVertex = tmp;
+			offset += sizeof(XMFLOAT3);
 		}
 
+		// Max Vertex
 		{
-			offset = serialedString.find(_maxVertexStr);
-			auto data = GetUnitElement(serialedString, offset);
-			offset = data.offset;
 			XMFLOAT3 tmp;
-			Serializeable::Deserialize(data.str, tmp);
+			memcpy(&tmp, buffer + offset, sizeof(XMFLOAT3));
 			_maxVertex = tmp;
+			offset += sizeof(XMFLOAT3);
 		}
 
+		// Material
 		{
-			offset = serialedString.find(_socketDataStr);
-			auto data = GetUnitElement(serialedString, offset);
-			offset = data.offset;
+			int materialCount;
+			memcpy(&materialCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			for (int i = 0; i < materialCount; ++i)
+			{
+				int materialIndex;
+				memcpy(&materialIndex, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				Material* tmp = new Material;
+				tmp->Deserialize(buffer, size, offset);
+				tmp->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				tmp->Init();
+				_materials.insert(std::make_pair(materialIndex, tmp));
+			}
+		}
+
+		// Mesh
+		{
+			int meshCount;
+			memcpy(&meshCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			for (int i = 0; i < meshCount; ++i)
+			{
+				int meshIndex;
+				{
+					memcpy(&meshIndex, buffer + offset, sizeof(int));
+					offset += sizeof(int);
+				}
+
+				std::string vertexType;
+
+				int vertexTypeSize;
+				memcpy(&vertexTypeSize, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+				{
+					char* meshTypeStr = new char[vertexTypeSize];
+					memcpy(meshTypeStr, buffer + offset, vertexTypeSize);
+					offset += vertexTypeSize;
+
+					vertexType = std::string(meshTypeStr, vertexTypeSize);
+					delete meshTypeStr;
+				}
+
+				MeshInterface* tmp;
+				if (vertexType == Vertex_PCNT_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNT;
+				}
+				else if (vertexType == Vertex_PCNT_Animatable_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNT_Animatable;
+				}
+				else if (vertexType == Vertex_PCNT_Skinning_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNT_Skinning;
+				}
+				else if (vertexType == Vertex_PCNTs_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNTs;
+				}
+				else if (vertexType == Vertex_PCNTs_Animatable_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNTs_Animatable;
+				}
+				else if (vertexType == Vertex_PCNTs_Skinning_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNTs_Skinning;
+				}
+				//if (vertexType == Vertex_PC_Keyword)
+				else
+				{
+					tmp = new Mesh_Vertex_PC;
+				}
+
+				tmp->Deserialize(buffer, size, offset);
+				tmp->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				tmp->Init();
+				_meshes.insert(std::make_pair(meshIndex, tmp));
+			}
+		}
+
+		// Animation
+		{
+			int animationCount;
+			memcpy(&animationCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			for (int i = 0; i < animationCount; ++i)
+			{
+				Animation* tmp = new Animation;
+				std::string animationName;
+				{
+					int animationNameSize;
+					memcpy(&animationNameSize, buffer + offset, sizeof(int));
+					offset += sizeof(int);
+
+					char* animationNameBuffer = new char[animationNameSize];
+					memcpy(animationNameBuffer, buffer + offset, animationNameSize);
+					offset += animationNameSize;
+					animationName = std::string(animationNameBuffer, animationNameSize);
+					delete animationNameBuffer;
+				}
+				tmp->Deserialize(buffer, size, offset);
+				tmp->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				tmp->Init();
+				_animations.insert(std::make_pair(animationName, tmp));
+			}
+		}
+
+		// Pixel Shader
+		{
+			int pixelShaderFileNameCount;
+			memcpy(&pixelShaderFileNameCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			char* fileNameBuffer = new char[pixelShaderFileNameCount];
+			memcpy(fileNameBuffer, buffer + offset, pixelShaderFileNameCount);
+			offset += pixelShaderFileNameCount;
+			std::string tmpFileName(fileNameBuffer, pixelShaderFileNameCount);
+			std::wstring fileName = mtw(tmpFileName);
+			I_Shader.PSLoad(kShaderPath + fileName, L"PS", &_ps);
+			delete fileNameBuffer;
+		}
+
+		// Socket
+		{
 			int socketCount;
-			Serializeable::Deserialize(data.str, socketCount);
+			memcpy(&socketCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
 			for (int i = 0; i < socketCount; ++i)
 			{
-				auto socketNameData = GetUnitAtomic(serialedString, offset);
-				offset = socketNameData.offset;
-				auto boneIndexData = GetUnitAtomic(serialedString, offset);
-				offset = boneIndexData.offset;
+				int socketNameCount;
+				memcpy(&socketNameCount, buffer + offset, sizeof(int));
+				offset += sizeof(int);
 
-				_sockets.insert(std::make_pair(socketNameData.str, std::stoi(boneIndexData.str)));
+				char* socketNameBuffer = new char[socketNameCount];
+				memcpy(socketNameBuffer, buffer + offset, socketNameCount);
+				std::string socketName(socketNameBuffer, socketNameCount);
+				offset += socketNameCount;
+
+				int socketIndex;
+				memcpy(&socketIndex, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				_sockets.insert(std::make_pair(socketName, socketIndex));
+				delete socketNameBuffer;
 			}
 		}
 
-		offset = serialedString.find(_boundingVolumeStr);
+		// Bounding Volume
 		{
-			auto data = GetUnitElement(serialedString, offset);
-			offset = data.offset;
-			XMFLOAT3 pos;
-			Serializeable::Deserialize(data.str, pos);
-
-			_boundingVolume.Position = pos;
-		}
-
-		{
-			auto data = GetUnitElement(serialedString, offset);
-			offset = data.offset;
-			XMFLOAT3X3 rot;
-			Serializeable::Deserialize(data.str, rot);
-
-			_boundingVolume.Rotation = rot;
-		}
-
-		{
-			auto data = GetUnitElement(serialedString, offset);
-			offset = data.offset;
-			XMFLOAT3 scale;
-			Serializeable::Deserialize(data.str, scale);
-
-			_boundingVolume.Scale = scale;
-		}
-
-		{
-			auto data = GetUnitElement(serialedString, offset);
-			offset = data.offset;
-			XMFLOAT3 tmp;
-			Serializeable::Deserialize(data.str, tmp);
-
-			_boundingVolume.Width = tmp.x;
-			_boundingVolume.Height = tmp.y;
-			_boundingVolume.Depth = tmp.z;
-		}
-
-		while (serialedString.find(_materialIndexStr, offset) != std::string::npos)
-		{
-			int materialIndex;
+			// Position
 			{
-				offset = serialedString.find(_materialIndexStr, offset);
-				auto data = GetUnitElement(serialedString, offset);
-				offset = data.offset;
-				Serializeable::Deserialize(data.str, materialIndex);
+				XMFLOAT3 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(XMFLOAT3));
+				offset += sizeof(XMFLOAT3);
+				_boundingVolume.Position = tmp;
 			}
-
-			auto objectData = GetUnitObject(serialedString, offset);
-			std::string objectStr = objectData.str;
-			offset = objectData.offset;
-			Material* mat = new Material;
-			mat->SetDevice(m_pd3dDevice, m_pImmediateContext);
-			mat->Deserialize(objectStr);
-			mat->Init();
-			_materials.insert(std::make_pair(materialIndex, mat));
-		}
-
-		while (serialedString.find(_meshIndexStr, offset) != std::string::npos)
-		{
-			int meshIndex;
+			// Rotation
 			{
-				offset = serialedString.find(_meshIndexStr, offset);
-				auto data = GetUnitElement(serialedString, offset);
-				offset = data.offset;
-				Serializeable::Deserialize(data.str, meshIndex);
+				XMFLOAT3X3 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(XMFLOAT3X3));
+				offset += sizeof(XMFLOAT3X3);
+				_boundingVolume.Rotation = tmp;
 			}
-
-			auto objectData = GetUnitObject(serialedString, offset);
-			std::string objectStr = objectData.str;
-
-			std::string vertexType;
+			// Scale
 			{
-				int tmpOffset = serialedString.find(_vertexTypeStr, offset);
-				std::string tmp = GetUnitElement(serialedString, tmpOffset).str;
-				vertexType = GetUnitAtomic(tmp, 0).str;
+				XMFLOAT3 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(XMFLOAT3));
+				offset += sizeof(XMFLOAT3);
+				_boundingVolume.Scale = tmp;
 			}
-			offset = objectData.offset;
-
-			MeshInterface* mesh;
-			if (vertexType == Vertex_PCNT_Keyword)
+			// Width, Height, Depth
 			{
-				mesh = new Mesh_Vertex_PCNT;
+				XMFLOAT3 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(XMFLOAT3));
+				offset += sizeof(XMFLOAT3);
+				_boundingVolume.Width = tmp.x;
+				_boundingVolume.Height = tmp.y;
+				_boundingVolume.Depth = tmp.z;
 			}
-			else if (vertexType == Vertex_PCNT_Animatable_Keyword)
-			{
-				mesh = new Mesh_Vertex_PCNT_Animatable;
-			}
-			else if (vertexType == Vertex_PCNT_Skinning_Keyword)
-			{
-				mesh = new Mesh_Vertex_PCNT_Skinning;
-			}
-			else if (vertexType == Vertex_PCNTs_Keyword)
-			{
-				mesh = new Mesh_Vertex_PCNTs;
-			}
-			else if (vertexType == Vertex_PCNTs_Animatable_Keyword)
-			{
-				mesh = new Mesh_Vertex_PCNTs_Animatable;
-			}
-			else if (vertexType == Vertex_PCNTs_Skinning_Keyword)
-			{
-				mesh = new Mesh_Vertex_PCNTs_Skinning;
-			}
-			//if (vertexType == Vertex_PC_Keyword)
-			else
-			{
-				mesh = new Mesh_Vertex_PC;
-			}
-
-			mesh->SetDevice(m_pd3dDevice, m_pImmediateContext);
-			mesh->Deserialize(objectStr);
-			mesh->Init();
-			
-			_meshes.insert(std::make_pair(meshIndex, mesh));
-		}
-
-		while (serialedString.find(_animationNameStr, offset) != std::string::npos)
-		{
-			AnimationName animationName;
-			{
-				offset = serialedString.find(_animationNameStr, offset);
-				auto atomic = GetUnitElement(serialedString, offset);
-				offset = atomic.offset;
-				animationName = std::string(GetUnitAtomic(atomic.str, 0).str);
-			}
-
-			auto objectData = GetUnitObject(serialedString, offset);
-			std::string objectStr = objectData.str;
-			offset = objectData.offset;
-			Animation* anim = new Animation;
-			anim->SetDevice(m_pd3dDevice, m_pImmediateContext);
-			anim->Deserialize(objectStr);
-			anim->Init();
-			_animations.insert(std::make_pair(animationName, anim));
-		}
-
-		{
-			offset = serialedString.find(_pixelShaderStr, offset);
-			auto atomicData = GetUnitElement(serialedString, offset);
-			std::string atomic = atomicData.str;
-			I_Shader.PSLoad(kShaderPath + mtw(GetUnitAtomic(atomic, 0).str), L"PS", &_ps);
 		}
 	}
 }

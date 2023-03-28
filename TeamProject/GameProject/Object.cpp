@@ -71,13 +71,14 @@ Object::Object(std::string szFullPath, Transform transform, XMFLOAT3 vAxis0, XMF
 	m_vPos = TVector3(translation);
 
 	SSB::ObjectScriptIO io;
-	std::string str = io.Read(wtm(splitedPath[2]));
+	auto scriptInfo = io.Read(wtm(splitedPath[2]));
 
 	//I_Model.Load(str, "Idle", &m_pModel);
 	// static object
 	m_pModel = new SSB::Model;
 	m_pModel->SetDevice(pDevice, pDeviceContext);
-	m_pModel->Deserialize(str);
+	int offset = 0;
+	m_pModel->Deserialize(scriptInfo.Pointer, scriptInfo.BufferSize, offset);
 	m_pModel->Init();
 
 	/*m_ColliderBox.CreateOBBBox(fExtentX, fExtentY, fExtentZ, translation, vAxis0, vAxis1, vAxis2);

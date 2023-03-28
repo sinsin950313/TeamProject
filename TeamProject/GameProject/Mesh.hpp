@@ -211,131 +211,80 @@ namespace SSB
 		return true;
 	}
 	template<typename VertexType>
-	std::string Mesh<VertexType>::Serialize(int tabCount)
+	std::string Mesh<VertexType>::Serialize()
 	{
 		std::string ret;
 		return ret;
 	}
 	template<typename VertexType>
-	void Mesh<VertexType>::Deserialize(std::string& serialedString)
+	void Mesh<VertexType>::Deserialize(const char* buffer, int size, int& offset)
 	{
-		serialedString = GetUnitObject(serialedString, 0).str;
-		int offset = 0;
-
 		{
-			auto data = GetUnitElement(serialedString, 0);
-			offset = data.offset;
-		}
+			int vertexCount;
+			memcpy(&vertexCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
 
-		int vertexCount;
-		{
-			auto data = GetUnitElement(serialedString, offset);
-			Serializeable::Deserialize(data.str, vertexCount);
-			offset = data.offset;
-		}
-
-		for(int i = 0; i < vertexCount; ++i)
-		{
-			auto elemData = GetUnitElement(serialedString, offset);
-			std::string elem = elemData.str;
-			offset = elemData.offset;
-			VertexType vertex = GetDeserializedVertex(elem);
-			_vertexList.push_back(vertex);
+			_vertexList.resize(vertexCount);
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				_vertexList[i] = GetVertex(buffer, size, offset);
+			}
 		}
 
 		{
 			int indexCount;
-			{
-				offset = serialedString.find(_indexListStr);
-				auto elemData = GetUnitElement(serialedString, offset);
-				offset = elemData.offset;
-				Serializeable::Deserialize(elemData.str, indexCount);
-			}
+			memcpy(&indexCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
 			_indexList.resize(indexCount);
-
-			auto data = GetUnitElement(serialedString, offset);
-			std::string elem = data.str;
-			offset = data.offset;
-
-			int indexOffset = 1;
-			for(int i = 0; i < indexCount; ++i)
+			for (int i = 0; i < indexCount; ++i)
 			{
-				auto data = GetUnitElement(elem, indexOffset);
-				int val;
-				Serializeable::Deserialize(data.str, val);
-				_indexList[i] = val;
-				indexOffset = data.offset;
+				int index;
+				memcpy(&index, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+				_indexList[i] = index;
 			}
 		}
 
 		{
-			offset = serialedString.find(_minVertexStr, offset);
-			auto elemData = GetUnitElement(serialedString, offset);
-			std::string elem = elemData.str;
-			offset = elemData.offset;
-			XMFLOAT3 tmp;
-			Serializeable::Deserialize(elem, tmp);
-			_minVertex = tmp;
+			XMFLOAT3 tmpBuffer;
+			memcpy(&tmpBuffer, buffer + offset, sizeof(XMFLOAT3));
+			offset += sizeof(XMFLOAT3);
+			_minVertex = tmpBuffer;
 		}
 
 		{
-			offset = serialedString.find(_maxVertexStr, offset);
-			auto elemData = GetUnitElement(serialedString, offset);
-			std::string elem = elemData.str;
-			offset = elemData.offset;
-			XMFLOAT3 tmp;
-			Serializeable::Deserialize(elem, tmp);
-			_maxVertex = tmp;
+			XMFLOAT3 tmpBuffer;
+			memcpy(&tmpBuffer, buffer + offset, sizeof(XMFLOAT3));
+			offset += sizeof(XMFLOAT3);
+			_maxVertex = tmpBuffer;
 		}
 
 		{
-			offset = serialedString.find(_vertexShaderStr, offset);
-			auto atomicData = GetUnitElement(serialedString, offset);
-			I_Shader.VSLoad(kShaderPath + mtw(GetUnitAtomic(atomicData.str, 0).str), L"VS", &_vs);
-		}
-
-		{
-			offset = serialedString.find(_subMeshStr, offset);
-			auto atomicData = GetUnitElement(serialedString, offset);
 			int subMeshCount;
-			Serializeable::Deserialize(atomicData.str, subMeshCount);
+			memcpy(&subMeshCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
 
-			for(int i = 0; i < subMeshCount; ++i)
+			_subMeshes.resize(subMeshCount);
+			for (int i = 0; i < subMeshCount; ++i)
 			{
-				auto objectData = GetUnitObject(serialedString, offset);
-				MeshInterface* mesh;
-				if (GetVertexType() == Vertex_PCNT_Keyword)
-				{
-					mesh = new Mesh_Vertex_PCNT;
-				}
-				else if (GetVertexType() == Vertex_PCNT_Animatable_Keyword)
-				{
-					mesh = new Mesh_Vertex_PCNT_Animatable;
-				}
-				else if (GetVertexType() == Vertex_PCNT_Skinning_Keyword)
-				{
-					mesh = new Mesh_Vertex_PCNT_Skinning;
-				}
-				else if (GetVertexType() == Vertex_PCNTs_Keyword)
-				{
-					mesh = new Mesh_Vertex_PCNTs;
-				}
-				else if (GetVertexType() == Vertex_PCNTs_Animatable_Keyword)
-				{
-					mesh = new Mesh_Vertex_PCNTs_Animatable;
-				}
-				else if (GetVertexType() == Vertex_PCNTs_Skinning_Keyword)
-				{
-					mesh = new Mesh_Vertex_PCNTs_Skinning;
-				}
-				//if (vertexType == Vertex_PC_Keyword)
-				else
-				{
-					mesh = new Mesh_Vertex_PC;
-				}
-
-				mesh->Deserialize(objectData.str);
+				MeshInterface* mesh = GetMesh();
+				mesh->Deserialize(buffer, size, offset);
+				_subMeshes[i] = mesh;
 			}
+		}
+
+		{
+			int vertexShaderFileNameSize;
+			memcpy(&vertexShaderFileNameSize, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			char* fileName = new char[vertexShaderFileNameSize];
+			memcpy(fileName, buffer + offset, vertexShaderFileNameSize);
+			offset += vertexShaderFileNameSize;
+			std::string tmpFileName(fileName, vertexShaderFileNameSize);
+			delete fileName;
+			I_Shader.VSLoad(kShaderPath + mtw(tmpFileName), L"VS", &_vs);
 		}
 	}
 }

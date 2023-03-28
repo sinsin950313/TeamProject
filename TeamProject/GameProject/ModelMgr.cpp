@@ -1,4 +1,5 @@
 #include "ModelMgr.h"
+#include "FileIOObject.h"
 
 void	ModelMgr::SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 {
@@ -17,21 +18,26 @@ HRESULT ModelMgr::Load(std::string name, std::string anim, SSB::Model** retModel
 		return E_INVALIDARG;
 	}
 
-	SSB::Model* pModel = Find(name);
-	if (pModel != nullptr)
-	{
-		*retModel = pModel;
-		return S_OK;
-	}
-
 	// 중복된 Model을 불러오더라도 다시 new처리를 하므로 Memory Leak을 유발합니다
 	// 일단은 그냥 Character에서 메모리를 해제하도록 수정해놨습니다.
-	pModel = new SSB::Model();
+	//SSB::Model* pModel = Find(name);
+	//if (pModel != nullptr)
+	//{
+	//	*retModel = pModel;
+	//	return S_OK;
+	//}
+
+	SSB::Model* pModel = new SSB::Model();
 	if (pModel)
 	{
+        SSB::ObjectScriptIO io;
+        std::string filename = name;
+        auto scriptInfo = io.Read(filename);
+
 		// 로드 실패가 정의되지 않는 방식
 		pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
-		pModel->Deserialize(name);
+		int offset = 0;
+		pModel->Deserialize(scriptInfo.Pointer, scriptInfo.BufferSize, offset);
 		pModel->Init();
 		pModel->SetCurrentAnimation(anim);
 		m_List.insert(std::make_pair(name, pModel));
@@ -67,21 +73,26 @@ HRESULT ModelMgr::Load(std::string filename, std::string name, std::string anim,
 		return E_INVALIDARG;
 	}
 
-	SSB::Model* pModel = Find(filename);
-	if (pModel != nullptr)
-	{
-		*retModel = pModel;
-		return S_OK;
-	}
-
 	// 중복된 Model을 불러오더라도 다시 new처리를 하므로 Memory Leak을 유발합니다
 	// 일단은 그냥 Character에서 메모리를 해제하도록 수정해놨습니다.
-	pModel = new SSB::Model();
+	//SSB::Model* pModel = Find(filename);
+	//if (pModel != nullptr)
+	//{
+	//	*retModel = pModel;
+	//	return S_OK;
+	//}
+
+	SSB::Model* pModel = new SSB::Model();
 	if (pModel)
 	{
+        SSB::ObjectScriptIO io;
+        std::string filename = name;
+        auto scriptInfo = io.Read(filename);
+
 		// 로드 실패가 정의되지 않는 방식
 		pModel->SetDevice(m_pd3dDevice, m_pImmediateContext);
-		pModel->Deserialize(name);
+		int offset = 0;
+		pModel->Deserialize(scriptInfo.Pointer, scriptInfo.BufferSize, offset);
 		pModel->Init();
 		pModel->SetCurrentAnimation(anim);
 		m_List.insert(std::make_pair(filename, pModel));

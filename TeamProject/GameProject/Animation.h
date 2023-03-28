@@ -74,8 +74,8 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		std::string Serialize() override;
+		void Deserialize(const char* buffer, int size, int& offset) override;
 		// Test가 필요함
 		TMatrix GetCurrentBoneMatrix(BoneIndex index);
 
