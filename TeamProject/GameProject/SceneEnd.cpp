@@ -8,6 +8,8 @@ void SceneEnd::DataLoad()
 
 bool SceneEnd::Init()
 {
+	I_Input.SwitchShowMouse(true);
+
 	return true;
 }
 

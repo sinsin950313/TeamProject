@@ -132,7 +132,10 @@
     <ClInclude Include="SceneMgr.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="InterfactiveObject.h">
+    <ClInclude Include="InteractiveObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -218,7 +221,10 @@
     <ClCompile Include="SceneMgr.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="InterfactiveObject.cpp">
+    <ClCompile Include="InteractiveObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

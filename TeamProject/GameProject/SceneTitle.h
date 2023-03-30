@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "InteractiveObject.h"
 
 class SceneTitle :
     public Scene
@@ -15,6 +16,10 @@ public:
     virtual void DataLoad() override;
 
     E_SCENE NextScene();
+
+public:
+    TestObj* m_pObj;
+    InteractiveObject* m_pInteract;
 
 };
 

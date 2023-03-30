@@ -251,14 +251,7 @@ void Character::Initialize_SetPosition(TVector3 pos)
 
 TVector3 Character::GetPosition()
 {
-	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
-	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	charPosition = XMVector3TransformCoord(charPosition, world);
-
-	TVector3 pos;
-	XMStoreFloat3(&pos, charPosition);
-
-	return pos;
+	return m_vPos;
 }
 
 bool Character::IsDead()

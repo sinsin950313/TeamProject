@@ -46,6 +46,8 @@ void SceneInGame::DataLoad()
 
 bool    SceneInGame::Init()
 {
+    I_Input.SwitchShowMouse(false);
+
     //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
     //m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
@@ -83,7 +85,7 @@ bool    SceneInGame::Frame()
 
     
     if (I_Input.GetKey(VK_F3) == KEY_PUSH)
-        I_Input.m_isMouse = !I_Input.m_isMouse;
+        I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
     for (auto manager : m_StateManagerMap)
     {

@@ -12,22 +12,21 @@ bool	Input::Init()
 
 bool	Input::Frame()
 {
-	POINT pt;
-	pt.x = (g_rcClient.right - g_rcClient.left) / 2;
-	pt.y = (g_rcClient.bottom - g_rcClient.top) / 2;
+	GetWindowRect(g_hWnd, &g_rcWindow);
 
-	ShowCursor(m_isMouse);
+	POINT pt;
+	pt.x = (g_rcWindow.right + g_rcWindow.left) / 2 + g_rcWindow.left;
+	pt.y = (g_rcWindow.bottom + g_rcWindow.top) / 2 + g_rcWindow.top + 40;
+	ScreenToClient(g_hWnd, &pt);
+	GetCursorPos(&m_ptPos);
+
 	if (m_isMouse)
 	{
-		GetCursorPos(&m_ptPos);
-		ScreenToClient(g_hWnd, &m_ptPos);
 		m_ptOffset.x = m_ptPos.x - m_ptPrePos.x;
 		m_ptOffset.y = m_ptPos.y - m_ptPrePos.y;
 	}
 	else
 	{
-		GetCursorPos(&m_ptPos);
-		//ScreenToClient(g_hWnd, &m_ptPos);
 		m_ptOffset.x = m_ptPos.x - pt.x;// m_ptPrePos.x;
 		m_ptOffset.y = m_ptPos.y - pt.y;// m_ptPrePos.y;
 	}
@@ -75,4 +74,15 @@ bool	Input::Release()
 DWORD Input::GetKey(DWORD key)
 {
 	return m_dwKeyState[key];
+}
+
+void	Input::SwitchShowMouse(bool bMouse)
+{
+	m_isMouse = bMouse;
+	ShowCursor(bMouse);
+}
+
+bool	Input::GetShowMouse()
+{
+	return m_isMouse;
 }

@@ -1,5 +1,6 @@
 #pragma once
-class InterfactiveObject
+#include "TestObj.h"
+class InteractiveObject
 {
 	// 충돌체
 	// 충돌 + 키 입력시 발생 이벤트 - string, enum, 
@@ -12,6 +13,20 @@ class InterfactiveObject
 	// 오브젝트를 연결할 방법이나 함수
 	// 움직인다면 몇초동안을 움직일지
 	// 
-	// 
+	// 방법 1)
+public:
+	void	SetSwitch(bool* b);
+	void	Switching();
+
+public:
+	bool* m_bSwitch;
+
+	// 방법 2)
+public:
+	void	SetObject(TestObj* obj);
+	void	Interacted();
+
+public:
+	TestObj* m_pObj;
 };
 
