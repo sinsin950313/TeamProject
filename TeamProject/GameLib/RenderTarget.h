@@ -1,5 +1,15 @@
 #pragma once
+
 #include "BaseObject.h"
+
+
+struct RenderTargetResult
+{
+	ID3D11Texture2D* PositionTexture;
+	ID3D11Texture2D* NormalTexture;
+	ID3D11Texture2D* ColorTexture;
+};
+
 class RenderTarget
 {
 public:
@@ -19,9 +29,29 @@ public:
 	bool	m_bWireFrame = false;
 
 public:
-	bool	Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
-		, FLOAT fWidth = 1024.0f, FLOAT fHeight = 1024.0f);
+	bool	Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 1024.0f, FLOAT fHeight = 1024.0f);
 	bool	Begin(ID3D11DeviceContext* pContext);
 	void	End(ID3D11DeviceContext* pContext);
 	bool	Release();
+
+private:
+	ID3D11Texture2D* m_pPositionTexture;
+	ID3D11Texture2D* m_pNormalTexture;
+	ID3D11Texture2D* m_pColorTexture;
+
+private:
+	ID3D11RenderTargetView* m_pPositionRenderTargetView;
+	ID3D11RenderTargetView* m_pNormalRenderTargetView;
+	ID3D11RenderTargetView* m_pColorRenderTargetView;
+
+private:
+	HRESULT CreatePositionTexture();
+	HRESULT CreatePositionRenderTarget();
+	HRESULT CreateNormalTexture();
+	HRESULT CreateNormalRenderTarget();
+	HRESULT CreateColorTexture();
+	HRESULT CreateColorRenderTarget();
+
+public:
+	RenderTargetResult GetResult();
 };

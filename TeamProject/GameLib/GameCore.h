@@ -2,6 +2,8 @@
 #include "Writer.h"
 #include "RenderTarget.h"
 #include "DXState.h"
+#include "Screen.h"
+
 class GameCore : public DXDevice
 {
 public:
@@ -30,7 +32,7 @@ public:
 	bool	m_isRelease;
 	Writer m_Writer;
 
-	BaseObject		m_BG;
+	SSB::Screen		m_Screen;
 	RenderTarget	m_RT;
 };
 
