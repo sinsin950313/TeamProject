@@ -43,6 +43,22 @@ bool	TrailEffect::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
 
 bool TrailEffect::Frame()
 {
+	//
+	// high 에서 low를 빼고 normal을 하면 right 
+	// 두 위치의 평균이 중심 
+	//  두 위치의 거리는 매번 계산 안하는게 좋을듯
+	// counter로 매번 값을 변경해야겠네 
+	// m_iPos는 그대로 사용하는데 m_iPos를 기반으로 사용중인 VertexList의 사이즈를 얻고 
+	// 그걸 기반으로 Index 숫자를 구할 수 있음
+	// 
+	// 콜리전 충돌
+	// x-axis에 현재 캐릭터의 방향을 내적해서 + / - / 0에 따라서 
+	// +-인 경우 
+	// 
+	// 그냥 T_BOX를 가지고 Plane 6개를 만드는 방식을 고려해봐야 할지도
+	// 
+	//
+
 	for (int i = 0; i < m_VertexList.size(); i++)
 	{
 		m_VertexList[i].c.w -= g_fSecondPerFrame * 2;
