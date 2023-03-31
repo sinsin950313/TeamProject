@@ -68,27 +68,27 @@ namespace SSB
 
 		return transfer;
 	}
-	bool BossMobStunState::IsTransfer()
-	{
-        bool transfer = false;
+	//bool BossMobStunState::IsTransfer()
+	//{
+ //       bool transfer = false;
 
-		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
-		if (mob->IsDead())
-		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
-		}
-		else
-		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobSpawn);
-			}
-		}
+	//	BossMob* mob = static_cast<BossMob*>(m_pCharacter);
+	//	if (mob->IsDead())
+	//	{
+	//		transfer = true;
+	//		SetNextTransferName(kBossMobDead);
+	//	}
+	//	else
+	//	{
+	//		if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
+	//		{
+	//			transfer = true;
+	//			SetNextTransferName(kBossMobIdle);
+	//		}
+	//	}
 
-		return transfer;
-	}
+	//	return transfer;
+	//}
 	bool BossMobDeadState::IsTransfer()
 	{
 		return false;

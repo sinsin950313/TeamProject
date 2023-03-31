@@ -309,3 +309,12 @@ float Character::GetStateTimeStamp()
 {
 	return m_fStateTImeStamp;
 }
+
+void Character::StateTransfer()
+{
+	m_bIsStateTransfer = true;
+
+	m_bSoundPlay = false;
+
+	ResetStateElapseTime();
+}

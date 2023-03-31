@@ -103,9 +103,12 @@ public:
 	void ResetStateElapseTime();
 	float GetStateElapseTime();
 	float GetStateTimeStamp();
+	void StateTransfer();
 
 public:
+	bool m_bIsStateTransfer = false;
 	bool m_bIsReserveState = false;;
 	std::string m_ReservedState;
+	bool m_bSoundPlay = false;
 };
 

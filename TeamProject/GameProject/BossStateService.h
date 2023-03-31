@@ -83,11 +83,11 @@ namespace SSB
 		bool IsTransfer() override;
 	};
 
-	class BossMobStunState : public CharacterState
-	{
-	public:
-		bool IsTransfer() override;
-	};
+	//class BossMobStunState : public CharacterState
+	//{
+	//public:
+	//	bool IsTransfer() override;
+	//};
 
 	class BossMobDeadState : public CharacterState
 	{
