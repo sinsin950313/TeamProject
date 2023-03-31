@@ -132,6 +132,12 @@
     <ClInclude Include="SceneMgr.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="BossMob.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="BossStateService.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -214,6 +220,12 @@
     </ClCompile>
     <ClCompile Include="SceneMgr.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="BossMob.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="BossStateService.cpp">
+      <Filter>Ch\FSM</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

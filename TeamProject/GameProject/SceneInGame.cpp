@@ -10,6 +10,7 @@
 #include "PlayerStateService.h"
 #include "EnemyNPCMobStateService.h"
 #include "CommonPath.h"
+#include "BossStateService.h"
 
 E_SCENE SceneInGame::NextScene()
 {
@@ -130,6 +131,95 @@ bool    SceneInGame::Init()
 
             m_StateManagerMap.insert(std::make_pair(SSB::kEnemyNPCMobStateManager, manager));
         }
+
+        {
+            SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+            {
+                SSB::CharacterState* state = new SSB::BossMobIdleState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Idle");
+                manager->Initialize_RegisterState(SSB::kBossMobIdle, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobAngryState;
+                state->Initialize_SetCoolTime(1);
+                state->Initialize_SetStateAnimation("Angry");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossAngry.mp3"), true);
+                manager->Initialize_RegisterState(SSB::kBossMobAngry, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobMoveState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Move");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossMove.mp3"), true);
+                manager->Initialize_RegisterState(SSB::kBossMobMove, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobAttack1State;
+                state->Initialize_SetCoolTime(1.5f);
+                state->Initialize_SetStateAnimation("Attack1");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossAttack1.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobAttack1, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobAttack2State;
+                state->Initialize_SetCoolTime(1.5f);
+                state->Initialize_SetStateAnimation("Attack2");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossAttack2.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobAttack2, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobDashStartState;
+                state->Initialize_SetCoolTime(2.0f);
+                state->Initialize_SetStateAnimation("DashStart");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossDashStart.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobDashStart, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobDashState;
+                state->Initialize_SetCoolTime(1.0f);
+                state->Initialize_SetStateAnimation("Dash");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossDash.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobDash, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobDashEndState;
+                state->Initialize_SetCoolTime(0.5f);
+                state->Initialize_SetStateAnimation("DashEnd");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossDashEnd.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobDashEnd, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobSkill1State;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Skill1");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossSkill1.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobSkill1, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobSpawnState;
+                state->Initialize_SetCoolTime(2);
+                state->Initialize_SetStateAnimation("Spawn");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossSpawn.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobSpawn, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobStunState;
+                state->Initialize_SetCoolTime(3);
+                state->Initialize_SetStateAnimation("Stun");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossStun.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobStun, state);
+            }
+            {
+                SSB::CharacterState* state = new SSB::BossMobDeadState;
+                state->Initialize_SetCoolTime(0);
+                state->Initialize_SetStateAnimation("Dead");
+                //state->Initialize_SetEffectSound(I_Sound.Find(L"BossDead.mp3"));
+                manager->Initialize_RegisterState(SSB::kBossMobDead, state);
+            }
+
+            m_StateManagerMap.insert(std::make_pair(SSB::kBossMobStateManager, manager));
+        }
     }
 
     {
@@ -176,6 +266,21 @@ bool    SceneInGame::Init()
 
             m_Enemies.push_back(enemy);
         }
+    }
+
+    {
+        m_pBoss = new SSB::BossMob;
+        m_pBoss->SetDevice(m_pd3dDevice, m_pImmediateContext);
+        I_Model.Load("Herald", "Spawn", &m_pBoss->m_pModel);
+
+		m_pBoss->Initialize_SetPosition(TVector3(0, 0, -50));
+        m_pBoss->m_Damage = 20;
+        m_pBoss->m_fSpeed = 5;
+        //m_pBoss->_damagedSound = I_Sound.Find(L"BossDamaged.mp3");
+        m_pBoss->Init();
+        m_pBoss->Scale(0.01f);
+
+		m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
     }
 
     //m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
@@ -241,7 +346,10 @@ bool    SceneInGame::Frame()
         }
         if (deadCount == m_Enemies.size())
         {
-            m_Win = true;
+            if (m_pBoss->IsDead())
+            {
+                m_Win = true;
+            }
         }
 
         if (Player::GetInstance().IsDead())
@@ -256,6 +364,10 @@ bool    SceneInGame::Frame()
     for (auto enemy : m_Enemies)
     {
         enemy->Frame();
+    }
+
+    {
+        m_pBoss->Frame();
     }
 
     //m_pEnemy->Frame();
@@ -276,6 +388,11 @@ bool    SceneInGame::Render()
     {
         enemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         enemy->Render();
+    }
+
+    {
+        m_pBoss->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+        m_pBoss->Render();
     }
 
     if (m_pDebugBox)
@@ -369,6 +486,11 @@ bool    SceneInGame::Release()
     {
         enemy->Release();
         delete enemy;
+    }
+
+    {
+        m_pBoss->Release();
+        delete m_pBoss;
     }
 
     if (m_pDebugBox)
