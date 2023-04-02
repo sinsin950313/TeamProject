@@ -130,6 +130,22 @@ namespace SSB
 
 		return false;
 	}
+	bool Model::PreRender()
+	{
+		_currentAnimation->PreRender();
+
+		for (auto material : _materials)
+		{
+			material.second->PreRender();
+		}
+
+		for (auto mesh : _meshes)
+		{
+			mesh.second->PreRender();
+		}
+
+		return false;
+	}
 	bool Model::Render()
 	{
 		_currentAnimation->Render();

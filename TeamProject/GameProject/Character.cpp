@@ -116,6 +116,14 @@ bool	Character::Frame()
 	return true;
 }
 
+bool Character::PreRender()
+{
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, &_toViewSpaceTransformBuffer);
+	m_pImmediateContext->VSSetConstantBuffers(1, 1, &_objectToWorldTransformBuffer);
+	m_pModel->PreRender();
+	return true;
+}
+
 bool	Character::Render()
 {
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &_toViewSpaceTransformBuffer);

@@ -13,6 +13,7 @@ class SceneInGame : public Scene
 public:
     virtual bool    Init();
     virtual bool    Frame();
+    virtual bool PreRender() override;
     virtual bool    Render();
     virtual bool    Release();
 

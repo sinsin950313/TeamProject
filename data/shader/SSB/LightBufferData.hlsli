@@ -1,36 +1,23 @@
-struct VertexData
-{
-	float4 Position;
-	float4 Normal;
-	float4 Color;
-	float2 Texture;
-};
-
-cbuffer AmbientLightData : register(b15)
+cbuffer AmbientLightData : register(b10)
 {
 	float3 LightAmbientCoefficient;
 }
 
-cbuffer LightData : register(b14)
+cbuffer LightData : register(b9)
 {
-	float3 LightPosition;
-	float LightPadding1;
-	float3 LightDirection;
-	float LightPadding2;
-	float3 LightColor;
-	float LightPadding3;
+	float4 LightColor;
 };
 
-cbuffer DirectionalLightData : register(b13)
+cbuffer DirectionalLightData : register(b8)
 {
 };
 
-cbuffer PointLightData : register(b12)
+cbuffer PointLightData : register(b7)
 {
 	float LightRadius;
 }
 
-cbuffer SpotLightData : register(b11)
+cbuffer SpotLightData : register(b6)
 {
 	float LightInCornRadius;
 	float LightOutCornRadius;

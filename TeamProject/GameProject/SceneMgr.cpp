@@ -93,6 +93,12 @@ bool	SceneMgr::Frame()
     return true;
 }
 
+bool SceneMgr::PreRender()
+{
+    (*m_pCurrentScene)->PreRender();
+    return true;
+}
+
 bool	SceneMgr::Render()
 {
     (*m_pCurrentScene)->Render();

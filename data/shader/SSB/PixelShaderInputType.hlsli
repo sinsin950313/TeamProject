@@ -4,6 +4,8 @@ Texture2D DiffuseArray[16] : register(t0);
 Texture2D DiffuseMask : register(t1);
 Texture2D DiffuseMaskArray[16] : register(t1);
 
+Texture2D LightShadowMap : register(t2);
+
 SamplerState Sampler : register(s0);
 
 struct PixelShaderInput_PC
