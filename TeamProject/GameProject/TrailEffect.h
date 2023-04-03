@@ -19,7 +19,6 @@ public:
 	static const int m_iTrailNum = 3;
 	int		m_iCurTrail = 0;
 	bool	m_isSetTrail[m_iTrailNum] = { false, };
-	std::vector<Vertex> m_AttackTrail[m_iTrailNum];
 
 	std::vector<TVector3>	m_vHighControlPosList[m_iTrailNum];
 	std::vector<TVector3>	m_vHighCatmullRomList[m_iTrailNum];
