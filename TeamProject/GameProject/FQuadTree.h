@@ -37,7 +37,7 @@ public:
 	void	Reset(FNode* pNode);
 	FNode*	VisibleNode(FNode* pNode);
 	void	Update();
-	void	PreRender();
+	//void	PreRender();
 	void	Render();
 	void	Release();
 

@@ -61,7 +61,7 @@ namespace SSB
 	public:
 		void Init();
 		void Frame();
-		void PreRender();
+		//void PreRender();
 		void Render();
 		void Release();
 	};

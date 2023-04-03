@@ -28,8 +28,8 @@ namespace SSB
 	}
 	bool MultiRenderTarget::Frame()
 	{
-		ID3D11RenderTargetView* pNullRTV[] = { m_pPositionRenderTargetView, m_pNormalRenderTargetView, m_pColorRenderTargetView };
-		m_pImmediateContext->OMSetRenderTargets(3, pNullRTV, m_pDepthStencilView);
+		ID3D11RenderTargetView* pRTV[] = { m_pPositionRenderTargetView, m_pNormalRenderTargetView, m_pColorRenderTargetView };
+		m_pImmediateContext->OMSetRenderTargets(3, pRTV, m_pDepthStencilView);
 		m_pImmediateContext->RSSetViewports(1, &m_Viewport);
 		ClearRenderTargets();
 
@@ -37,7 +37,11 @@ namespace SSB
 	}
 	bool MultiRenderTarget::Render()
 	{
-		return false;
+		ID3D11RenderTargetView* pRTV[] = { m_pPositionRenderTargetView, m_pNormalRenderTargetView, m_pColorRenderTargetView };
+		m_pImmediateContext->OMSetRenderTargets(3, pRTV, m_pDepthStencilView);
+		m_pImmediateContext->RSSetViewports(1, &m_Viewport);
+
+		return true;
 	}
 	bool MultiRenderTarget::Release()
 	{
@@ -135,7 +139,7 @@ namespace SSB
 		desc.Width = (UINT)m_fWidth;
 		desc.Height = (UINT)m_fHeight;
 		desc.MipLevels = 1;
-		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;
@@ -167,7 +171,7 @@ namespace SSB
 		desc.Width = (UINT)m_fWidth;
 		desc.Height = (UINT)m_fHeight;
 		desc.MipLevels = 1;
-		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;

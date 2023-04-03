@@ -14,6 +14,9 @@ namespace SSB
 		SSB::Light* m_MainLight = nullptr;
 
 	public:
+		~LightManager();
+
+	public:
 		//void RegisterLight(SSB::Light* light);
 		void SetLight(SSB::Light* light);
 
@@ -23,7 +26,7 @@ namespace SSB
 	public:
 		void Init();
 		void Frame();
-		void PreRender();
+		//void PreRender();
 		void Render();
 		void Release();
 	};

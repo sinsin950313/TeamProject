@@ -40,19 +40,22 @@ bool    MyMain::Frame()
 
 bool    MyMain::Render()
 {
-    // Calculate Shadow Depth Map
-    {
-        auto lights = SSB::I_Light.GetLightList();
-        for (auto light : lights)
-        {
-            light->PreRender();
-            I_Scene.PreRender();
-        }
-    }
+    //// Calculate Shadow Depth Map
+    //{
+    //    auto lights = SSB::I_Light.GetLightList();
+    //    for (auto light : lights)
+    //    {
+    //        light->PreRender();
+    //        I_Scene.PreRender();
+    //    }
+    //}
 
     // Calculate MRT data
     m_MRT.Render();
     I_Scene.Render();
+
+    // Change m_RT.m_pTexture desc if test
+	//m_pImmediateContext->CopyResource(m_RT.m_pTexture.Get(), m_MRT.m_pPositionTexture);
 
     // Draw
     {
@@ -62,7 +65,7 @@ bool    MyMain::Render()
         {
             light->Render();
             m_screen.Render();
-            m_pImmediateContext->CopyResource(m_RT.m_pDSTexture.Get(), m_screen.GetRenderTargetTexture());
+            m_pImmediateContext->CopyResource(m_RT.m_pTexture.Get(), m_screen.GetRenderTargetTexture());
         }
     }
 

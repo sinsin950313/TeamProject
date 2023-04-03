@@ -20,7 +20,7 @@ namespace SSB
 		float m_fWidth;
 		float m_fHeight;
 
-	private:
+	public:
 		ID3D11Texture2D* m_pPositionTexture;
 		ID3D11Texture2D* m_pNormalTexture;
 		ID3D11Texture2D* m_pColorTexture;
@@ -56,7 +56,7 @@ namespace SSB
 		void ClearRenderTargets();
 
 	public:
-		bool	Initialize_SetData(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 1024.0f, FLOAT fHeight = 1024.0f);
+		bool	Initialize_SetData(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 2048.0f, FLOAT fHeight = 2048.0f);
 		MultiRenderTargetResult GetResult();
 
 	public:

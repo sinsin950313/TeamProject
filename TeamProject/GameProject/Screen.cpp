@@ -1,4 +1,6 @@
 #include "Screen.h"
+#include "DXState.h"
+#include "CommonPath.h"
 
 namespace SSB
 {
@@ -17,9 +19,16 @@ namespace SSB
 
 		m_VertexList.resize(4);
 		m_VertexList[0].p = { -1.0f, 1.0f, 0.0f };
+		m_VertexList[0].uv = {0, 0};
+
 		m_VertexList[1].p = { +1.0f, 1.0f,  0.0f };
+		m_VertexList[1].uv = {0, 1};
+
 		m_VertexList[2].p = { -1.0f, -1.0f, 0.0f };
+		m_VertexList[2].uv = {1, 0};
+
 		m_VertexList[3].p = { 1.0f, -1.0f, 0.0f };
+		m_VertexList[3].uv = {1, 1};
 	}
 	void	Screen::CreateIndexData()
 	{
@@ -86,6 +95,7 @@ namespace SSB
 		D3D11_INPUT_ELEMENT_DESC ied[] =
 		{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TextureUV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		};
 		UINT NumElements = sizeof(ied) / sizeof(ied[0]);
 		hr = m_pd3dDevice->CreateInputLayout(
@@ -139,7 +149,7 @@ namespace SSB
 		desc.Width = (UINT)m_fWidth;
 		desc.Height = (UINT)m_fHeight;
 		desc.MipLevels = 1;
-		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		desc.SampleDesc.Count = 1;
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;
@@ -162,7 +172,7 @@ namespace SSB
 
 	void Screen::CreateShader()
 	{
-		I_Shader.Load(L"ScreenShader.hlsl", L"VS", L"PS", &m_pShader);
+		I_Shader.Load(kShaderPath + L"ScreenShader.hlsl", L"VS", L"PS", &m_pShader);
 	}
 
 	void Screen::SetMultiRenderTargetResult(MultiRenderTargetResult result)
@@ -175,6 +185,7 @@ namespace SSB
 
 	bool Screen::Init()
 	{
+		CreateShader();
 		CreateVertexData();
 		CreateVertexBuffer();
 		CreateIndexData();
@@ -182,7 +193,6 @@ namespace SSB
 		CreateVertexLayout();
 		CreateDepthStencilData();
 		CreateRenderTargetData();
-		CreateShader();
 
 		return true;
 	}
@@ -205,6 +215,7 @@ namespace SSB
 		m_pImmediateContext->IASetInputLayout(m_pVertexLayout);
 
 		m_pImmediateContext->PSSetShaderResources(0, m_ReferecedTextureCount, m_ShaderResourceList);
+		m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
 
 		if (m_pIndexBuffer == nullptr)
 			m_pImmediateContext->Draw(m_VertexList.size(), 0);
@@ -219,6 +230,36 @@ namespace SSB
 		if (m_pVertexBuffer) m_pVertexBuffer->Release();
 		if (m_pIndexBuffer)m_pIndexBuffer->Release();
 		if (m_pVertexLayout)m_pVertexLayout->Release();
+
+		if (m_pDepthStencilTexture)
+		{
+			m_pDepthStencilTexture->Release();
+			m_pDepthStencilTexture = nullptr;
+		}
+
+		if (m_pDepthStencilView != nullptr)
+		{
+			m_pDepthStencilView->Release();
+			m_pDepthStencilView = nullptr;
+		}
+
+		if (m_pShader != nullptr)
+		{
+			m_pShader = nullptr;
+		}
+
+		if (m_pTexture != nullptr)
+		{
+			m_pTexture->Release();
+			m_pTexture = nullptr;
+		}
+
+		if (m_pRenderTargetView != nullptr)
+		{
+			m_pRenderTargetView->Release();
+			m_pRenderTargetView = nullptr;
+		}
+
 		return true;
 	}
 	ID3D11Texture2D* Screen::GetRenderTargetTexture()

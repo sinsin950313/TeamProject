@@ -41,10 +41,10 @@ bool    Scene::Frame()
     return true;
 }
 
-bool Scene::PreRender()
-{
-    return true;
-}
+//bool Scene::PreRender()
+//{
+//    return true;
+//}
 
 bool    Scene::Render()
 {

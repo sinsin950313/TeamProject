@@ -10,6 +10,8 @@
 #include "PlayerStateService.h"
 #include "EnemyNPCMobStateService.h"
 #include "CommonPath.h"
+#include "DirectionalLight.h"
+#include "LightManager.h"
 
 E_SCENE SceneInGame::NextScene()
 {
@@ -29,6 +31,11 @@ E_SCENE SceneInGame::NextScene()
 
 bool    SceneInGame::Init()
 {
+    SSB::DirectionalLight* light = new SSB::DirectionalLight;
+    light->Initialize_SetDevice(m_pd3dDevice, m_pImmediateContext);
+    light->Init();
+    SSB::I_Light.GetInstance().SetLight(light);
+
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
 
     I_Sound.LoadDir(kTeamProjectSoundPath);
@@ -264,27 +271,27 @@ bool    SceneInGame::Frame()
     return true;
 }
 
-bool SceneInGame::PreRender()
-{
-    m_pQuadTree->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-    m_pQuadTree->PreRender();
-
-    Player::GetInstance().SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-    Player::GetInstance().PreRender();
-
-    for (auto enemy : m_Enemies)
-    {
-        enemy->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-        enemy->PreRender();
-    }
-
-    return true;
-}
+//bool SceneInGame::PreRender()
+//{
+//    m_pQuadTree->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
+//    m_pQuadTree->PreRender();
+//
+//    Player::GetInstance().SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
+//    Player::GetInstance().PreRender();
+//
+//    for (auto enemy : m_Enemies)
+//    {
+//        enemy->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
+//        enemy->PreRender();
+//    }
+//
+//    return true;
+//}
 
 bool    SceneInGame::Render()
 {
-    m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    m_pQuadTree->Render();
+    //m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    //m_pQuadTree->Render();
 
     Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().Render();
@@ -297,7 +304,6 @@ bool    SceneInGame::Render()
 
     if (m_pDebugBox)
     {
-
         //for (auto box : I_Collision.GetMapCollisionList())
         //{
         //    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
@@ -306,7 +312,6 @@ bool    SceneInGame::Render()
         //    m_pDebugBox->UpdateBuffer();
         //    m_pDebugBox->Render();
         //}
-
 
         m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
         TColor color = TColor(0, 0, 1, 1);
@@ -354,9 +359,9 @@ bool    SceneInGame::Render()
         //m_pDebugBox->Render();
     }
 
-    Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    Player::GetInstance().m_pTrail->Render();
-    m_pInter->Render();
+    //Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    //Player::GetInstance().m_pTrail->Render();
+    //m_pInter->Render();
     return true;
 }
 

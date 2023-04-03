@@ -1,6 +1,13 @@
 #include "PixelShaderInputType.hlsli"
+#include "PixelShaderOutputType.hlsli"
 
-float4 PS(PixelShaderInput_PCNT input) : SV_TARGET
+PixelOutput PS(PixelShaderInput_PCNT input)
 {
-	return Diffuse.Sample(Sampler, input.Diffuse);
+	PixelOutput output = (PixelOutput)0;
+
+	output.Position = input.Position;
+	output.Normal = input.Normal;
+	output.Color = Diffuse.Sample(Sampler, input.Diffuse);
+
+	return output;
 }

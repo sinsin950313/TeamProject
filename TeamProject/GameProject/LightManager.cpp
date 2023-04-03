@@ -2,6 +2,15 @@
 
 namespace SSB
 {
+	LightManager::~LightManager()
+	{
+		if (m_MainLight != nullptr)
+		{
+			m_MainLight->Release();
+			delete m_MainLight;
+			m_MainLight = nullptr;
+		}
+	}
 	void LightManager::SetLight(SSB::Light* light)
 	{
 		if (m_MainLight != nullptr)
@@ -13,7 +22,11 @@ namespace SSB
 	}
 	std::vector<Light*> LightManager::GetLightList()
 	{
-		return { m_MainLight };
+		if (m_MainLight != nullptr)
+		{
+			return { m_MainLight };
+		}
+		return std::vector<Light*>();
 	}
 	void LightManager::Init()
 	{
@@ -25,10 +38,10 @@ namespace SSB
 			m_MainLight->Frame();
 		}
 	}
-	void LightManager::PreRender()
-	{
-		m_MainLight->PreRender();
-	}
+	//void LightManager::PreRender()
+	//{
+	//	m_MainLight->PreRender();
+	//}
 	void LightManager::Render()
 	{
 		m_MainLight->Render();

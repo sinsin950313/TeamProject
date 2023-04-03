@@ -13,7 +13,8 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	m_TexDesc.Width = (UINT)fWidth;
 	m_TexDesc.Height = (UINT)fHeight;
 	m_TexDesc.MipLevels = 1;
-	m_TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	//m_TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_TexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	m_TexDesc.SampleDesc.Count = 1;
 	m_TexDesc.SampleDesc.Quality = 0;
 	m_TexDesc.Usage = D3D11_USAGE_DEFAULT;

@@ -12,6 +12,7 @@ namespace SSB
 	struct ScreenVertex
 	{
 		TVector3 p;
+		TVector2 uv;
 	};
 
 	class Screen
@@ -55,7 +56,7 @@ namespace SSB
 		ID3D11ShaderResourceView* m_ShaderResourceList[m_ReferecedTextureCount];
 
 	public:
-		void Initialize_SetData(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 1024.0f, FLOAT fHeight = 1024.0f);
+		void Initialize_SetData(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 2048.0f, FLOAT fHeight = 2048.0f);
 		void SetMultiRenderTargetResult(MultiRenderTargetResult result);
 
 	public:

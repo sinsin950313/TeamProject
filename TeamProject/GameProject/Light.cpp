@@ -13,7 +13,7 @@ namespace SSB
 			desc.Height = 1024;
 			desc.MipLevels = 1;
 			desc.ArraySize = 1;
-			desc.Format = DXGI_FORMAT_R8G8B8A8_SINT;
+			desc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 			desc.SampleDesc.Count = 1;
 			desc.Usage = D3D11_USAGE_DEFAULT;
 			desc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
@@ -35,7 +35,7 @@ namespace SSB
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 			ZeroMemory(&desc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-			desc.Format = DXGI_FORMAT_R8G8B8A8_SINT;
+			desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
 			_device->CreateShaderResourceView(_shadowDepthMap, &desc, &_shadowDepthMapShaderResourceView);
@@ -161,17 +161,17 @@ namespace SSB
 	void Light::Frame()
 	{
 	}
-	void Light::PreRender()
-	{
-		_dc->VSSetShader(_lightingShader->m_pVS, NULL, 0);
-		_dc->VSSetConstantBuffers(0, 1, &_lightBufferForDepth);
+	//void Light::PreRender()
+	//{
+	//	_dc->VSSetShader(_lightingShader->m_pVS, NULL, 0);
+	//	_dc->VSSetConstantBuffers(0, 1, &_lightBufferForDepth);
 
-		ID3D11RenderTargetView* tmp = NULL;
-		_dc->OMSetRenderTargets(1, &tmp, _shadowDepthMapDepthStencilView);
-	}
+	//	ID3D11RenderTargetView* tmp = NULL;
+	//	_dc->OMSetRenderTargets(1, &tmp, _shadowDepthMapDepthStencilView);
+	//}
 	void Light::Render()
 	{
-		_dc->PSSetShader(_lightingShader->m_pPS, NULL, 0);
+		//_dc->PSSetShader(_lightingShader->m_pPS, NULL, 0);
 		_dc->PSSetConstantBuffers(9, 1, &_lightBufferForRender);
 		_dc->PSSetShaderResources(2, 1, &_shadowDepthMapShaderResourceView);
 	}
@@ -209,7 +209,6 @@ namespace SSB
 
 		if (_lightingShader != nullptr)
 		{
-			_lightingShader->Release();
 			_lightingShader = nullptr;
 		}
 	}
