@@ -138,6 +138,12 @@
     <ClInclude Include="TestObj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="BossMob.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="BossStateService.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -226,6 +232,12 @@
     </ClCompile>
     <ClCompile Include="TestObj.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BossMob.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="BossStateService.cpp">
+      <Filter>Ch\FSM</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
