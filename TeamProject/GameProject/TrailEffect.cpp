@@ -1,12 +1,28 @@
 #include "TrailEffect.h"
 #include "DXState.h"
 
+void	InterpolateCatmullRom(const std::vector<TVector3>& controlPos, std::vector<TVector3>* CatmullRomList, size_t controlSize, int numSamples)
+{
+	for (int i = 0; i < controlSize - 1; i++) {
+		for (int j = 0; j < numSamples; j++) {
+			float t = static_cast<float>(j) / numSamples;
+			TVector3 p;
+			D3DXVec3CatmullRom(&p,
+				&controlPos[i > 0 ? i - 1 : i],
+				&controlPos[i],
+				&controlPos[i + 1],
+				&controlPos[i < controlSize - 2 ? i + 2 : i + 1], t);
+			CatmullRomList->push_back(p);
+		}
+	}
+}
+
 bool	TrailEffect::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, std::wstring shaderPath, std::wstring texPath,
 	std::wstring VSname, std::wstring PSname)
 {
 	//m_VertexList.resize(100);
-
-	for (int i = 0; i < 100; i++)
+	int controlSize = 100;
+	for (int i = 0; i < controlSize; i++)
 	{
 		Vertex v;
 		float x = i;
@@ -18,13 +34,22 @@ bool	TrailEffect::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
 		m_VertexList.push_back(v);
 
 		v.p = { x, 0, 0 };
+		v.t = { 0, 0 };
 		m_VertexList.push_back(v);
 	}
-	m_VertexList.push_back(Vertex());
+
+	for (int i = 0; i < m_iTrailNum; i++)
+	{
+		m_AttackTrail[i].resize(m_VertexList.size());
+		m_vHighControlPosList[i].resize(controlSize);
+		m_vLowControlPosList[i].resize(controlSize);
+		m_VertexCatmullRomList[i].resize(990 * 2);
+	}
+
+	m_VertexList.resize(990 * 2);
 
 	//m_IndexList.resize((100 - 2) * 3);
-	long dwTriCnt = m_VertexList.size() - 3;
-	int p = m_VertexList.size() - 1;
+	long dwTriCnt = m_VertexList.size() - 2;
 	for (UINT iTri = 0; iTri < dwTriCnt; iTri += 2)
 	{
 		m_IndexList.push_back(iTri + 3);
@@ -58,15 +83,19 @@ bool TrailEffect::Frame()
 	// 그냥 T_BOX를 가지고 Plane 6개를 만드는 방식을 고려해봐야 할지도
 	// 
 	//
-
-	for (int i = 0; i < m_VertexList.size(); i++)
-	{
-		m_VertexList[i].c.w -= g_fSecondPerFrame * 2;
-		if (m_VertexList[i].c.w < 0.0f)
-		{
-
-		}
-	}
+	//m_VertexList = std::move(m_AttackTrail[m_iCurTrail]);
+	//m_VertexList = m_AttackTrail[m_iCurTrail];
+	m_VertexList = m_VertexCatmullRomList[m_iCurTrail];
+	//for (int i = 0; i < m_VertexList.size(); i++)
+	//{
+	//	m_VertexList[i].p = m_AttackTrail[m_iCurTrail][i].p;
+	//	m_VertexList[i].c = m_AttackTrail[m_iCurTrail][i].c;
+	//	//m_AttackTrail[m_iCurTrail][i].c.w -= g_fSecondPerFrame * 2;
+	//	if (m_VertexList[i].c.w < 0.0f)
+	//	{
+	//
+	//	}
+	//}
 
 	return BaseObject::Frame();
 }
@@ -91,7 +120,8 @@ bool TrailEffect::PostRender()
 		m_pImmediateContext->Draw(m_VertexList.size(), 0);
 	else
 	{
-		int iTriCnt = (m_iPos - 4);
+		//int iTriCnt = (m_iPos - 4);
+		int iTriCnt = m_iCatmullRomSize[m_iCurTrail] - 4;
 		if (iTriCnt > 1)
 			m_pImmediateContext->DrawIndexed(iTriCnt * 3, 0, 0);
 	}
@@ -99,23 +129,54 @@ bool TrailEffect::PostRender()
 	return true;
 }
 
+#include "Player.h"
 void	TrailEffect::AddTrailPos(TVector3 low, TVector3 high)
 {
+	if (m_isSetTrail[m_iCurTrail])
+		return;
+
+	if (m_iPos == m_VertexList.size())
+		return;
+
+	TMatrix matInv = Player::GetInstance().m_matWorld.Invert();
 	Vertex v;
-	v.p = low;
+	//v.p = low;
+	D3DXVec3TransformCoord(&v.p, &low, &matInv);
 	v.n = TVector3(0, 0, 0);
 	v.c = TVector4(1, 1, 1, 1);
 	v.t = TVector2(0, 0);
 
-	if (m_iPos == m_VertexList.size() - 1)
-		return;
+	int controlPos = m_iPos / 2;
 
-	m_VertexList[m_iPos++] = v;
-	//m_VertexList.push_back(v);
+	//m_VertexList[m_iPos++] = v;
+	m_vLowControlPosList[m_iCurTrail][controlPos] = v.p;
+	m_AttackTrail[m_iCurTrail][m_iPos++] = v;
 
-	v.p = high;
-	m_VertexList[m_iPos++] = v;
+	//v.p = high;
+	D3DXVec3TransformCoord(&v.p, &high, &matInv);
+	//m_VertexList[m_iPos++] = v;
+	m_vHighControlPosList[m_iCurTrail][controlPos] = v.p;
+	m_AttackTrail[m_iCurTrail][m_iPos++] = v;
+
+	m_vLowCatmullRomList[m_iCurTrail].clear();
+	m_vHighCatmullRomList[m_iCurTrail].clear();
+	InterpolateCatmullRom(m_vLowControlPosList[m_iCurTrail], &m_vLowCatmullRomList[m_iCurTrail], m_iPos / 2, 10);
+	InterpolateCatmullRom(m_vHighControlPosList[m_iCurTrail], &m_vHighCatmullRomList[m_iCurTrail], m_iPos / 2, 10);
 	
+	// 로우 하이 중 작은 사이즈에 맞춰서 
+	// MixList에 둘의 값을 호로로록 넣으면 됨
+	//m_MixVertex[m_iCurTrail].clear();
+	size_t minSize = min(m_vLowCatmullRomList[m_iCurTrail].size(), m_vHighCatmullRomList[m_iCurTrail].size());
+	m_iCatmullRomSize[m_iCurTrail] = minSize * 2;
+	for (int i = 0; i < minSize; i++)
+	{
+		v.p = m_vLowCatmullRomList[m_iCurTrail][i];
+		m_VertexCatmullRomList[m_iCurTrail][i * 2 + 0] = v;
+		v.p = m_vHighCatmullRomList[m_iCurTrail][i];
+		m_VertexCatmullRomList[m_iCurTrail][i * 2 + 1] = v;
+	}
+
+
 	/*
 	int iCatmullRomCount = m_iPos / 2;
 	int iEndIndex = iCatmullRomCount * 2 + (m_VertexList.size() - 1);

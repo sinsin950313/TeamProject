@@ -132,6 +132,7 @@ namespace SSB
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
+				Player::GetInstance().m_pTrail->m_isSetTrail[1 - 1] = true;
 				if (m_pCharacter->m_bIsReserveState)
 				{
 					transfer = true;
@@ -153,14 +154,12 @@ namespace SSB
 		CharacterState::Run();
 
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 1.0f)
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->m_iPos = 0;
-			int size = Player::GetInstance().m_pTrail->m_IndexList.size();
-			int p = Player::GetInstance().m_pTrail->m_VertexList.size() - 1;
-			//for (int i = 0; i < size; i++)
-			//	Player::GetInstance().m_pTrail->m_IndexList[i] = p;
-			//int a = 4;
+			TrailEffect* pTrail = Player::GetInstance().m_pTrail;
+			pTrail->m_matWorld = Player::GetInstance().m_matWorld;
+			pTrail->m_iPos = 0;
+			pTrail->m_iCurTrail = 1 - 1;
 		}
 
 		static float timer = 0.0f;
@@ -226,6 +225,7 @@ namespace SSB
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
+				Player::GetInstance().m_pTrail->m_isSetTrail[2 - 1] = true;
 				if (m_pCharacter->m_bIsReserveState)
 				{
 					transfer = true;
@@ -247,14 +247,12 @@ namespace SSB
 		CharacterState::Run();
 
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 1.0f)
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->m_iPos = 0;
-			int size = Player::GetInstance().m_pTrail->m_IndexList.size();
-			int p = Player::GetInstance().m_pTrail->m_VertexList.size() - 1;
-			//for (int i = 0; i < size; i++)
-			//	Player::GetInstance().m_pTrail->m_IndexList[i] = p;
-			//int a = 4;
+			TrailEffect* pTrail = Player::GetInstance().m_pTrail;
+			pTrail->m_matWorld = Player::GetInstance().m_matWorld;
+			pTrail->m_iPos = 0;
+			pTrail->m_iCurTrail = 2 - 1;
 		}
 
 		static float timer = 0.0f;
@@ -320,6 +318,7 @@ namespace SSB
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
+				Player::GetInstance().m_pTrail->m_isSetTrail[3 - 1] = true;
 				if (m_pCharacter->m_bIsReserveState)
 				{
 					transfer = true;
@@ -341,14 +340,12 @@ namespace SSB
 		CharacterState::Run();
 
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 1.0f)
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->m_iPos = 0;
-			int size = Player::GetInstance().m_pTrail->m_IndexList.size();
-			int p = Player::GetInstance().m_pTrail->m_VertexList.size() - 1;
-			//for (int i = 0; i < size; i++)
-			//	Player::GetInstance().m_pTrail->m_IndexList[i] = p;
-			//int a = 4;
+			TrailEffect* pTrail = Player::GetInstance().m_pTrail;
+			pTrail->m_matWorld = Player::GetInstance().m_matWorld;
+			pTrail->m_iPos = 0;
+			pTrail->m_iCurTrail = 3 - 1;
 		}
 
 		static float timer = 0.0f;
