@@ -9,8 +9,8 @@ namespace SSB
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
-			desc.Width = 1980;
-			desc.Height = 1024;
+			desc.Width = 2048;
+			desc.Height = 2048;
 			desc.MipLevels = 1;
 			desc.ArraySize = 1;
 			desc.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -28,6 +28,7 @@ namespace SSB
 			ZeroMemory(&desc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 			desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 			desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			desc.Texture2D.MipSlice = 0;
 
 			_device->CreateDepthStencilView(_shadowDepthMap, &desc, &_shadowDepthMapDepthStencilView);
 		}
@@ -35,8 +36,9 @@ namespace SSB
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 			ZeroMemory(&desc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-			desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 			desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			desc.Texture2D.MipLevels = 1;
 
 			_device->CreateShaderResourceView(_shadowDepthMap, &desc, &_shadowDepthMapShaderResourceView);
 		}
@@ -173,7 +175,7 @@ namespace SSB
 	{
 		//_dc->PSSetShader(_lightingShader->m_pPS, NULL, 0);
 		_dc->PSSetConstantBuffers(9, 1, &_lightBufferForRender);
-		_dc->PSSetShaderResources(2, 1, &_shadowDepthMapShaderResourceView);
+		_dc->PSSetShaderResources(4, 1, &_shadowDepthMapShaderResourceView);
 	}
 	void Light::Release()
 	{

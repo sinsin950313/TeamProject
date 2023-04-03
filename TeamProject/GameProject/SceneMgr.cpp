@@ -102,7 +102,8 @@ bool	SceneMgr::Frame()
 bool	SceneMgr::Render()
 {
     (*m_pCurrentScene)->Render();
-    m_pFade->Render();
+    // Should Fade be here?
+    //m_pFade->Render();
     return true;
 }
 

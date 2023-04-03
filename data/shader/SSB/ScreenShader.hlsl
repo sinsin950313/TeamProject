@@ -30,6 +30,7 @@ Texture2D PositionMap : register(t0);
 Texture2D NormalMap : register(t1);
 Texture2D ColorMap : register(t2);
 Texture2D DepthMap : register(t3);
+Texture2D LightShadowMap : register(t4);
 
 SamplerState Sampler : register(s0);
 

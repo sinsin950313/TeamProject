@@ -24,7 +24,7 @@ namespace SSB
 		ID3D11Texture2D* m_pPositionTexture;
 		ID3D11Texture2D* m_pNormalTexture;
 		ID3D11Texture2D* m_pColorTexture;
-		ID3D11Texture2D* m_pDepthTexture;
+		//ID3D11Texture2D* m_pDepthTexture;
 
 	private:
 		ID3D11RenderTargetView* m_pPositionRenderTargetView;

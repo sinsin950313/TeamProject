@@ -22,10 +22,10 @@ namespace SSB
 		m_VertexList[0].uv = {0, 0};
 
 		m_VertexList[1].p = { +1.0f, 1.0f,  0.0f };
-		m_VertexList[1].uv = {0, 1};
+		m_VertexList[1].uv = {1, 0};
 
 		m_VertexList[2].p = { -1.0f, -1.0f, 0.0f };
-		m_VertexList[2].uv = {1, 0};
+		m_VertexList[2].uv = {0, 1};
 
 		m_VertexList[3].p = { 1.0f, -1.0f, 0.0f };
 		m_VertexList[3].uv = {1, 1};
@@ -204,6 +204,10 @@ namespace SSB
 
 	bool Screen::Render()
 	{
+		//ID3D11RenderTargetView* nullRTV[16];
+		//m_pImmediateContext->OMSetRenderTargets(16, nullRTV, NULL);
+		m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
 		UINT stride = sizeof(ScreenVertex);
 		UINT offset = 0;
 

@@ -63,11 +63,11 @@ namespace SSB
 			m_pColorTexture = nullptr;
 		}
 
-		if (m_pDepthTexture != nullptr)
-		{
-			m_pDepthTexture->Release();
-			m_pDepthTexture = nullptr;
-		}
+		//if (m_pDepthTexture != nullptr)
+		//{
+		//	m_pDepthTexture->Release();
+		//	m_pDepthTexture = nullptr;
+		//}
 
 		if (m_pPositionRenderTargetView != nullptr)
 		{
