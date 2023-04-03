@@ -18,6 +18,8 @@ public:
     virtual bool    Render();
     virtual bool    Release();
 
+    virtual void    DataLoad() = 0;
+
     virtual E_SCENE     NextScene() = 0;
 
 public:

@@ -132,6 +132,12 @@
     <ClInclude Include="SceneMgr.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="InteractiveObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObj.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="BossMob.h">
       <Filter>Ch\FSM</Filter>
     </ClInclude>
@@ -220,6 +226,12 @@
     </ClCompile>
     <ClCompile Include="SceneMgr.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="InteractiveObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObj.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="BossMob.cpp">
       <Filter>Ch\FSM</Filter>

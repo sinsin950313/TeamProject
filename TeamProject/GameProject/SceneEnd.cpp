@@ -1,8 +1,15 @@
 #include "SceneEnd.h"
 #include "Input.h"
 
+void SceneEnd::DataLoad()
+{
+
+}
+
 bool SceneEnd::Init()
 {
+	I_Input.SwitchShowMouse(true);
+
 	return true;
 }
 
