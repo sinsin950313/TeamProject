@@ -10,21 +10,34 @@ sampler TextureSamplerColor : register(s0);
 struct PS_INPUT
 {
 	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL0;
 	float4 color : COLOR0;
+	float2 tex : TEXCOORD0;
 	float3 direction_to_camera : TEXCOORD1;
 	float4 m_light_direction : TEXCOORD2;
 	float3 world : TEXCOORD3;
 	float4 tex2 : TEXCOORD4;
 };
 
+//if using row_major, not transpose in cpp
 cbuffer constant : register(b0)
 {
 	row_major float4x4 matWorld;
 	row_major float4x4 matView;
 	row_major float4x4 matProj;
-	float4 m_light_direction;
+};
+
+cbuffer constant : register(b1)
+{
+	float2 worldSize;
+	float cellDistance;
+	int tileCount;
+};
+
+cbuffer constant : register(b2)
+{
+	float4 lightDirection;
+	float4 cameraPosition;
 };
 
 float4 psmain(PS_INPUT input) : SV_TARGET
@@ -45,7 +58,7 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	finalColor = finalColor * (1.0f - weights.g) + splatTex3 * weights.g;
 	finalColor = finalColor * (1.0f - weights.b) + splatTex4 * weights.b;
 	finalColor = finalColor * (1.0f - weights.a) + splatTex5 * weights.a;
-	return finalColor;
+
 	//AmbientLight
 	float ka = 0.1f;
 	float3 ia = float3(1.0f, 1.0f, 1.0f);
@@ -72,5 +85,5 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 
 	float3 final_light = ambient_light + diffuse_light + specular_light;
 
-	return float4(final_light.rgb, 1.0f);
+	return finalColor;
 }
