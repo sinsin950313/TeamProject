@@ -12,6 +12,13 @@ namespace SSB
 		m_fHeight = fHeight;
 	}
 
+	void Screen::ClearRenderTarget()
+	{
+		const FLOAT color[] = { 0, 0, 0, 0 };
+		m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, color);
+		m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
+
 	void	Screen::CreateVertexData()
 	{
 		if (m_VertexList.size() > 0)
@@ -199,6 +206,8 @@ namespace SSB
 
 	bool Screen::Frame()
 	{
+		ClearRenderTarget();
+
 		return true;
 	}
 

@@ -74,7 +74,7 @@ namespace SSB
 		{
 			D3D11_BUFFER_DESC bd;
 			ZeroMemory(&bd, sizeof(bd));
-			bd.ByteWidth = sizeof(LightDataForDepth);
+			bd.ByteWidth = sizeof(LightLocationData);
 			bd.Usage = D3D11_USAGE_DEFAULT;
 			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
@@ -110,20 +110,21 @@ namespace SSB
 	}
 	void Light::UpdateLightBuffer()
 	{
+		TVector3 up(0, 1, 0);
+		D3DXMatrixLookAtLH(&_lightDataForDepth.WorldMatrix, &m_vPos, &m_vLookAt, &up);
+
+		LightLocationData locationData;
+		D3DXMatrixTranspose(&locationData.WorldMatrix, &_lightDataForDepth.WorldMatrix);
+		D3DXMatrixTranspose(&locationData.ViewMatrix, &_lightDataForDepth.ViewMatrix);
+		D3DXMatrixTranspose(&locationData.ProjMatrix, &_lightDataForDepth.ProjMatrix);
+
 		{
-			TVector3 up(0, 1, 0);
-			D3DXMatrixLookAtLH(&_lightDataForDepth.WorldMatrix, &m_vPos, &m_vLookAt, &up);
-
-			LightDataForDepth tmp;
-			D3DXMatrixTranspose(&tmp.WorldMatrix, &_lightDataForDepth.WorldMatrix);
-			D3DXMatrixTranspose(&tmp.ViewMatrix, &_lightDataForDepth.ViewMatrix);
-			D3DXMatrixTranspose(&tmp.ProjMatrix, &_lightDataForDepth.ProjMatrix);
-
-			_dc->UpdateSubresource(_lightBufferForDepth, 0, nullptr, &tmp, 0, 0);
+			_dc->UpdateSubresource(_lightBufferForDepth, 0, nullptr, &locationData, 0, 0);
 		}
 
 		{
 			LightDataForRender tmp;
+			tmp.LocationData = locationData;
 			tmp.Color = _lightDataForRender.Color;
 
 			_dc->UpdateSubresource(_lightBufferForRender, 0, nullptr, &tmp, 0, 0);
@@ -174,7 +175,7 @@ namespace SSB
 	void Light::Render()
 	{
 		//_dc->PSSetShader(_lightingShader->m_pPS, NULL, 0);
-		_dc->PSSetConstantBuffers(9, 1, &_lightBufferForRender);
+		_dc->PSSetConstantBuffers(10, 1, &_lightBufferForRender);
 		_dc->PSSetShaderResources(4, 1, &_shadowDepthMapShaderResourceView);
 	}
 	void Light::Release()

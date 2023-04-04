@@ -311,7 +311,7 @@ namespace SSB
 	}
 	void MultiRenderTarget::ClearRenderTargets()
 	{
-		const FLOAT color[] = { 0.5, 0.5, 0.5, 1 };
+		const FLOAT color[] = { 0, 0, 0, 0 };
 		m_pImmediateContext->ClearRenderTargetView(m_pPositionRenderTargetView, color);
 		m_pImmediateContext->ClearRenderTargetView(m_pNormalRenderTargetView, color);
 		m_pImmediateContext->ClearRenderTargetView(m_pColorRenderTargetView, color);

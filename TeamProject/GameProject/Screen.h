@@ -40,8 +40,10 @@ namespace SSB
 		Shader* m_pShader = nullptr;
 		ID3D11Texture2D* m_pTexture = nullptr;
 		ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
+		ID3D11BlendState* m_pLightBlendState = nullptr;
 
 	private:
+		void ClearRenderTarget();
 		void	CreateVertexData();
 		HRESULT CreateVertexBuffer();
 		void	CreateIndexData();

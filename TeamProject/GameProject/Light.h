@@ -18,16 +18,17 @@ namespace SSB
 		TVector3	m_vLookAt = TVector3::Zero;
 		TVector3	m_vScale = TVector3::One;
 
-		struct LightDataForDepth
+		struct LightLocationData
 		{
 			TMatrix WorldMatrix;
 			TMatrix ViewMatrix;
 			TMatrix ProjMatrix;
 		};
-		LightDataForDepth _lightDataForDepth;
+		LightLocationData _lightDataForDepth;
 
 		struct LightDataForRender
 		{
+			LightLocationData LocationData;
 			TVector4 Color;
 		};
 		LightDataForRender _lightDataForRender;
