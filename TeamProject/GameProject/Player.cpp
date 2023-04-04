@@ -25,7 +25,7 @@ bool    Player::Init()
 	m_AttackBox.CreateOBBBox(1, 1, 1);
 
 	m_pTrail = new TrailEffect();
-	m_pTrail->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/TrailEffect.txt", L"../../data/_RAINBOW.bmp");
+	m_pTrail->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/TrailEffect.txt", L"../../data/swoosh.png");
 	m_pTrail->Init();
 
 	return true;

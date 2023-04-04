@@ -132,7 +132,6 @@ namespace SSB
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
-				Player::GetInstance().m_pTrail->m_isSetTrail[1 - 1] = true;
 				if (m_pCharacter->m_bIsReserveState)
 				{
 					transfer = true;
@@ -156,10 +155,7 @@ namespace SSB
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			TrailEffect* pTrail = Player::GetInstance().m_pTrail;
-			pTrail->m_matWorld = Player::GetInstance().m_matWorld;
-			pTrail->m_iPos = 0;
-			pTrail->m_iCurTrail = 1 - 1;
+			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -225,7 +221,6 @@ namespace SSB
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
-				Player::GetInstance().m_pTrail->m_isSetTrail[2 - 1] = true;
 				if (m_pCharacter->m_bIsReserveState)
 				{
 					transfer = true;
@@ -249,10 +244,7 @@ namespace SSB
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			TrailEffect* pTrail = Player::GetInstance().m_pTrail;
-			pTrail->m_matWorld = Player::GetInstance().m_matWorld;
-			pTrail->m_iPos = 0;
-			pTrail->m_iCurTrail = 2 - 1;
+			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -318,7 +310,6 @@ namespace SSB
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
 			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
 			{
-				Player::GetInstance().m_pTrail->m_isSetTrail[3 - 1] = true;
 				if (m_pCharacter->m_bIsReserveState)
 				{
 					transfer = true;
@@ -342,10 +333,7 @@ namespace SSB
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			TrailEffect* pTrail = Player::GetInstance().m_pTrail;
-			pTrail->m_matWorld = Player::GetInstance().m_matWorld;
-			pTrail->m_iPos = 0;
-			pTrail->m_iCurTrail = 3 - 1;
+			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
