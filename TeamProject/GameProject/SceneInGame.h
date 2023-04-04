@@ -7,6 +7,7 @@
 #include "CharacterStateManager.h"
 #include "EnemyNPCMob.h"
 #include "Interface.h"
+#include "BossMob.h"
 
 class SceneInGame : public Scene
 {
@@ -37,7 +38,6 @@ public:
     bool m_Win = false;
     bool m_Defeat = false;
 
-    /*int m_EnemyCount = 3;*/
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
     //T_BOX       testBox;
     Interface* m_pInter;
@@ -51,5 +51,7 @@ public:
     FQuadTree* m_pQuadTree = nullptr;
 
     std::map<SSB::StateManagerName, SSB::CharacterStateManager*> m_StateManagerMap;
+
+    SSB::BossMob* m_pBoss = nullptr;
 };
 

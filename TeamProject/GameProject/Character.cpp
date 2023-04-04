@@ -290,6 +290,9 @@ void Character::ResetStateElapseTime()
 	m_fBeforeTime = g_fGameTimer;
 	m_fStateTImeStamp = g_fGameTimer;
 	m_DamagedCharacters.clear();
+
+	m_bIsReserveState = false;
+	m_ReservedState.clear();
 }
 
 float Character::GetStateElapseTime()
@@ -304,4 +307,13 @@ float Character::GetStateElapseTime()
 float Character::GetStateTimeStamp()
 {
 	return m_fStateTImeStamp;
+}
+
+void Character::StateTransfer()
+{
+	m_bIsStateTransfer = true;
+
+	m_bSoundPlay = false;
+
+	ResetStateElapseTime();
 }
