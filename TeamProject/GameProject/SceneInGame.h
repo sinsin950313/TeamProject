@@ -25,11 +25,6 @@ public:
     void    MapLoad();
 
 private:
-    bool		ObjectInit();
-    bool		ObjectFrame();
-    bool		ObjectRender();
-    bool		ObjectRelease();
-
     E_SCENE NextScene();
 
 public:
