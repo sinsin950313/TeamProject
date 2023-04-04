@@ -111,12 +111,6 @@
     <ClInclude Include="TSelect.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Dialog.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="Interface.h">
       <Filter>UI</Filter>
     </ClInclude>
@@ -190,12 +184,6 @@
     </ClCompile>
     <ClCompile Include="TSelect.cpp">
       <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Dialog.cpp">
-      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="Interface.cpp">
       <Filter>UI</Filter>
