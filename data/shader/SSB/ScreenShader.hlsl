@@ -38,8 +38,8 @@ SamplerState Sampler : register(s0);
 
 float4 GetDiffuse(float2 uv)
 {
-	float3 normal = normalize(NormalMap.Sample(Sampler, uv).xyz);
-	float3 lightDirection = normalize(LightWorldMatrix._13_23_33);
+	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
+	float4 lightDirection = LightWorldMatrix._13_23_33_43;
 	float intensity = min(1, max(0, dot(normal, -lightDirection)));
 
 	float4 ret = LightColor * intensity * 1;//* Attenuation;
@@ -51,10 +51,8 @@ float4 PS(PSInput input) : SV_TARGET0
 {
 	float4 diffuseColor = ColorMap.Sample(Sampler, input.TextureUV);
 
-	return diffuseColor * float4(0.3, 0.3f, 0.3f, 1);
-
 	float4 ret = diffuseColor * (GetDiffuse(input.TextureUV) + float4(0.3, 0.3, 0.3, 1));
 
-	return ret;
+	return float4(ret.xyz, 1);
 }
 
