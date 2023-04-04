@@ -232,7 +232,6 @@ void FQuadTree::Reset(FNode* pNode)
 
 FNode* FQuadTree::VisibleNode(FNode* pNode)
 {
-    m_pCurrentCamera->m_vFrustum;
     PLANE_COLTYPE dwRet = m_pCurrentCamera->m_vFrustum.ClassifyOBB(pNode->m_Box);
     if (P_FRONT == dwRet)// 완전포함.
     {
@@ -292,7 +291,6 @@ void FQuadTree::Update()
         XMVectorGetZ(m_pCurrentCamera->m_matWorld.Forward()),
         XMVectorGetW(m_pCurrentCamera->m_matWorld.Forward()));
 
-
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Map, NULL, NULL, &m_ConstantData_Map, NULL, NULL);
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Light, NULL, NULL, &m_ConstantData_Light, NULL, NULL);
 
@@ -300,8 +298,6 @@ void FQuadTree::Update()
 
     for (const auto& object : m_pAllObjectList)
         object->Frame();
-
-   
 }
 
 void	FQuadTree::PreRender()
@@ -704,6 +700,7 @@ namespace MAPLOAD
 		std::wstring szPSPath;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
+        std::vector<Transform> spawnList;
 		std::unordered_set<Object*> allObjectList;
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
@@ -858,7 +855,7 @@ namespace MAPLOAD
                             stack_stream >> iStackCount;
                         }
 
-                        if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" || specifyMode == "OBJECT_TRIGGER" || specifyMode == "OBJECT_SPAWN")
+                        if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" || specifyMode == "OBJECT_TRIGGER")
                         {
                             T_BOX mePeedBox;
 
@@ -883,6 +880,10 @@ namespace MAPLOAD
                             
                             mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
                             I_Collision.AddMapCollisionBox(mePeedBox);
+                        }
+                        else if (specifyMode == "OBJECT_SPAWN")
+                        {
+                            spawnList.push_back(transform);
                         }
                         else if (specifyMode == "OBJECT_SKYDOME")
                         {
@@ -1004,6 +1005,11 @@ namespace MAPLOAD
 		pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
 		//pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
 
+        for (const auto& transform : spawnList)
+        {
+            pQuadTree->m_EnemySpawnList.push_back(transform);
+        }
+
 		for (const auto& obj : allObjectList)
 		{
 		    /*if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
@@ -1021,7 +1027,7 @@ namespace MAPLOAD
     {
         //std::string::size_type pos = str.find("D:\\");
         std::string::size_type pos = 0;
-        std::string::size_type end = str.find("Asset");
+        std::string::size_type end = str.find("Assets");
         str.replace(pos, end - 1, "../../data");
 
         pos = str.find('\\');

@@ -94,6 +94,7 @@ public:
 	std::wstring m_szPSPath;
 	Shader* m_pPixelShader;
 
+	std::vector<Transform> m_EnemySpawnList;
 	std::unordered_set<Object*> m_pAllObjectList;
 	std::vector<FNode*> m_pLeafNodeList;
 	std::vector<FNode*> m_pDrawLeafNodeList;

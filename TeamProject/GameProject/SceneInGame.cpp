@@ -36,12 +36,11 @@ void SceneInGame::DataLoad()
 
     CameraLoad();
     UiLoad();
+    MapLoad();
 
     FSMLoad();
 
     CharacterLoad();
-
-    MapLoad();
 }
 
 bool    SceneInGame::Init()
@@ -115,8 +114,8 @@ bool    SceneInGame::Frame()
         }
     }
 
-    Player::GetInstance().Frame();
     m_pQuadTree->Update();
+    Player::GetInstance().Frame();
 
     for (auto enemy : m_Enemies)
     {
@@ -283,6 +282,8 @@ void    SceneInGame::CharacterLoad()
         Player::GetInstance().Scale(0.01f);
 
         m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
+
+        Player::GetInstance().SetMap(m_pQuadTree->m_pMap);
     }
 
     {
@@ -291,13 +292,15 @@ void    SceneInGame::CharacterLoad()
         std::string str = "Alistar";
         //std::string str = io.Read("dummy");
 
-        for (int i = 0; i < m_EnemyCount; ++i)
+        for (int i = 0; i < m_pQuadTree->m_EnemySpawnList.size(); ++i)
         {
             SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
             enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
             I_Model.Load(str, "Idle", &enemy->m_pModel);
 
-            enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
+            XMFLOAT3 pos;
+            XMStoreFloat3(&pos, m_pQuadTree->m_EnemySpawnList[i].position);
+            enemy->Initialize_SetPosition({pos.x, pos.y, pos.z});
             enemy->m_Damage = 10;
             enemy->m_fSpeed = 10;
             enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
@@ -315,6 +318,8 @@ void    SceneInGame::CharacterLoad()
             m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
 
             m_Enemies.push_back(enemy);
+
+            enemy->SetMap(m_pQuadTree->m_pMap);
         }
     }
 }
@@ -404,7 +409,9 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
+    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_normal_1.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
     //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
     m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 }
