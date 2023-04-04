@@ -35,15 +35,16 @@ void SceneInGame::DataLoad()
 	I_Sound.LoadDir(kTeamProjectSoundPath);
 	I_Sound.LoadAll(kTeamProjectSoundPath);
 
-	CameraLoad();
-	UiLoad();
+
+    CameraLoad();
+    UiLoad();
+    MapLoad();
+
 
 	FSMLoad();
 
-	CharacterLoad();
+    CharacterLoad();
 
-	MapLoad();
-}
 
 bool    SceneInGame::Init()
 {
@@ -69,6 +70,7 @@ bool    SceneInGame::Init()
 
 bool    SceneInGame::Frame()
 {
+
 	//if (m_Win)
 	//{
 	//    if (MessageBoxA(g_hWnd, "You Win!", "Win!", MB_OK))
@@ -280,123 +282,67 @@ void    SceneInGame::CameraLoad()
 
 void    SceneInGame::CharacterLoad()
 {
-	//{
-	//    SSB::ObjectScriptIO io;
-	//    std::string filename = "PlayerGaren";
-	//    //std::string filename = "dummy";
-	//    //std::string str = io.Read(filename);
+    {
+        SSB::ObjectScriptIO io;
+        std::string filename = "PlayerGaren";
+        //std::string filename = "dummy";
+        //std::string str = io.Read(filename);
 
-	//    Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
-	//    Player::GetInstance().m_pMainCamera = m_pMainCamera;
-	//    ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+        Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
+        Player::GetInstance().m_pMainCamera = m_pMainCamera;
+        ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
-	//    //Idle, Attack1, Attack2, Attack3, Move, Dead
-	//    //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
-	//    I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
+        //Idle, Attack1, Attack2, Attack3, Move, Dead
+        //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
+        I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
 
-	//    Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
-	//    Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
-	//    Player::GetInstance().m_Damage = 100;
-	//    Player::GetInstance().Init();
-	//    Player::GetInstance().Scale(0.01f);
+        Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
+        Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
+        Player::GetInstance().m_Damage = 100;
+        Player::GetInstance().Init();
+        Player::GetInstance().Scale(0.01f);
 
-	//    m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
-	//}
+        m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
 
-	//{
-	//    SSB::ObjectScriptIO io;
+        Player::GetInstance().SetMap(m_pQuadTree->m_pMap);
+    }
 
-	//    std::string str = "Alistar";
-	//    //std::string str = io.Read("dummy");
+    {
+        SSB::ObjectScriptIO io;
 
-	//    for (int i = 0; i < m_EnemyCount; ++i)
-	//    {
-	//        SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
-	//        enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-	//        I_Model.Load(str, "Idle", &enemy->m_pModel);
+        std::string str = "Alistar";
+        //std::string str = io.Read("dummy");
 
-	//        enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
-	//        enemy->m_Damage = 10;
-	//        enemy->m_fSpeed = 10;
-	//        enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
-	//        enemy->Init();
-	//        enemy->Scale(0.01f);
-	//        /*
-	//                std::string filename = "dummy";
-	//                std::string str = io.Read(filename);
+        for (int i = 0; i < m_pQuadTree->m_EnemySpawnList.size(); ++i)
+        {
+            SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
+            enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+            I_Model.Load(str, "Idle", &enemy->m_pModel);
 
-	//                m_pEnemy = new SSB::EnemyNPCMob();
-	//                m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-	//                I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
-	//        */
+            XMFLOAT3 pos;
+            XMStoreFloat3(&pos, m_pQuadTree->m_EnemySpawnList[i].position);
+            enemy->Initialize_SetPosition({pos.x, pos.y, pos.z});
+            enemy->m_Damage = 10;
+            enemy->m_fSpeed = 10;
+            enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
+            enemy->Init();
+            enemy->Scale(0.01f);
+            /*
+                    std::string filename = "dummy";
+                    std::string str = io.Read(filename);
 
-	//        m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
+                    m_pEnemy = new SSB::EnemyNPCMob();
+                    m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+                    I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
+            */
 
-	//        m_Enemies.push_back(enemy);
-	//    }
-	//}
+            m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
 
-	{
-		Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
-		Player::GetInstance().m_pMainCamera = m_pMainCamera;
-		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+            m_Enemies.push_back(enemy);
 
-		//Idle, Attack1, Attack2, Attack3, Move, Dead
-		//I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
-		I_Model.Load("PlayerGaren", "Idle", &Player::GetInstance().m_pModel);
-
-		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
-		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
-		Player::GetInstance().m_Damage = 100;
-		Player::GetInstance().Init();
-		Player::GetInstance().Scale(0.01f);
-
-		m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
-	}
-
-	{
-		for (int i = 0; i < m_EnemyCount; ++i)
-		{
-			SSB::EnemyNPCMob* enemy = new SSB::EnemyNPCMob();
-			enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-			I_Model.Load("Alistar", "Idle", &enemy->m_pModel);
-
-			enemy->Initialize_SetPosition(TVector3(-50 + i * 50, 0, -50));
-			enemy->m_Damage = 10;
-			enemy->m_fSpeed = 10;
-			enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
-			enemy->Init();
-			enemy->Scale(0.01f);
-			/*
-					std::string filename = "dummy";
-					std::string str = io.Read(filename);
-
-					m_pEnemy = new SSB::EnemyNPCMob();
-					m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-					I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
-			*/
-
-			m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
-
-			m_Enemies.push_back(enemy);
-		}
-	}
-
-	{
-		m_pBoss = new SSB::BossMob;
-		m_pBoss->SetDevice(m_pd3dDevice, m_pImmediateContext);
-		I_Model.Load("Herald", "Spawn", &m_pBoss->m_pModel);
-
-		m_pBoss->Initialize_SetPosition(TVector3(0, 0, -50));
-		m_pBoss->m_Damage = 20;
-		m_pBoss->m_fSpeed = 5;
-		m_pBoss->_damagedSound = I_Sound.Find(L"BossDamaged.mp3");
-		m_pBoss->Init();
-		m_pBoss->Scale(0.01f);
-
-		// SpawnÇÏ´Â AnimationÀÌ ÀÖ´Âµ¥ LoadingÀÌ ³¡³ªÁö ¾ÊÀº »óÅÂ¿¡¼­ FrameÀÌ µ¹´Ùº¸´Ï SkipµÇ´Â Çö»ó ¹ß°ß
-		m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
-	}
+            enemy->SetMap(m_pQuadTree->m_pMap);
+        }
+    }
 }
 
 void    SceneInGame::UiLoad()
@@ -583,8 +529,8 @@ void    SceneInGame::FSMLoad()
 
 		m_StateManagerMap.insert(std::make_pair(SSB::kBossMobStateManager, manager));
 
-		// FMod°¡ 1ÃÊ ¹Ì¸¸ÀÇ Sound¸¦ Loop ½Ã Loop°¡ ¾ÈµÇ´Â ¹ö±×°¡ ÀÖÀ½
-		// ChannelÀÇ ¹®Á¦·Î ÁüÀÛ Áß
+		// FModê°€ 1ì´ˆ ë¯¸ë§Œì˜ Soundë¥¼ Loop ì‹œ Loopê°€ ì•ˆë˜ëŠ” ë²„ê·¸ê°€ ìžˆìŒ
+		// Channelì˜ ë¬¸ì œë¡œ ì§ìž‘ ì¤‘
 		{
 			auto sound = I_Sound.Find(L"BossMove.mp3");
 			sound->VolumeDown(100);
@@ -602,7 +548,9 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-	m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_11_5_2.map", m_pd3dDevice, m_pImmediateContext);
-	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
-	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
+    m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_normal_1.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
+    //m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
+    m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 }

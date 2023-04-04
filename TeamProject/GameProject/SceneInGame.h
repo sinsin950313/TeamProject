@@ -38,8 +38,6 @@ public:
     bool m_Win = false;
     bool m_Defeat = false;
 
-    //int m_EnemyCount = 3;
-    int m_EnemyCount = 0;
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
     //T_BOX       testBox;
     Interface* m_pInter;

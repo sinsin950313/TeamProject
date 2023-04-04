@@ -5,6 +5,9 @@
 #include <map>
 #include "Sound.h"
 
+//HeightMap
+class MeshMap;
+
 class Character
 {
 	struct ToViewSpaceTransformData
@@ -56,6 +59,9 @@ public:
     TVector3 m_vDirection;
 	XMVECTOR m_vOldDirection;
 
+public:
+	void	SetMap(MeshMap* pMap);
+	MeshMap* m_pMap;
 public:
     void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);
 
