@@ -156,6 +156,7 @@ namespace SSB
 	}
 	void Light::Init()
 	{
+		CreateCameraBuffer();
 		CreateDepthMap();
 		CreateLightData();
 		CreateLightBuffer();
@@ -175,12 +176,14 @@ namespace SSB
 	void Light::Render()
 	{
 		//_dc->PSSetShader(_lightingShader->m_pPS, NULL, 0);
+
+		_dc->PSSetConstantBuffers(1, 1, &_objectToWorldTransformBuffer);
 		_dc->PSSetConstantBuffers(10, 1, &_lightBufferForRender);
 		_dc->PSSetShaderResources(4, 1, &_shadowDepthMapShaderResourceView);
 	}
 	void Light::Release()
 	{
-		if(_shadowDepthMap != nullptr)
+		if (_shadowDepthMap != nullptr)
 		{
 			_shadowDepthMap->Release();
 			_shadowDepthMap = nullptr;
@@ -214,5 +217,77 @@ namespace SSB
 		{
 			_lightingShader = nullptr;
 		}
+
+		if (_toViewSpaceTransformBuffer != nullptr)
+		{
+			_toViewSpaceTransformBuffer->Release();
+			_toViewSpaceTransformBuffer = nullptr;
+		}
+
+		if (_objectToWorldTransformBuffer != nullptr)
+		{
+			_objectToWorldTransformBuffer->Release();
+			_objectToWorldTransformBuffer = nullptr;
+		}
+	}
+	void Light::CreateCameraBuffer()
+	{
+		{
+			D3D11_BUFFER_DESC desc;
+			ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+			desc.ByteWidth = sizeof(ToViewSpaceTransformData);
+			desc.Usage = D3D11_USAGE_DEFAULT;
+			desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+			D3D11_SUBRESOURCE_DATA sd;
+			ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+			sd.pSysMem = &_toViewSpaceTransformData;
+			HRESULT hr = _device->CreateBuffer(&desc, &sd, &_toViewSpaceTransformBuffer);
+			if (FAILED(hr))
+			{
+				assert(SUCCEEDED(hr));
+			}
+		}
+		{
+			D3D11_BUFFER_DESC desc;
+			ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+			desc.ByteWidth = sizeof(ObjectToWorldTransformData);
+			desc.Usage = D3D11_USAGE_DEFAULT;
+			desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+			D3D11_SUBRESOURCE_DATA sd;
+			ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+			sd.pSysMem = &_objectToWorldTransformData;
+			HRESULT hr = _device->CreateBuffer(&desc, &sd, &_objectToWorldTransformBuffer);
+			if (FAILED(hr))
+			{
+				assert(SUCCEEDED(hr));
+			}
+		}
+	}
+	void Light::UpdateCameraBuffer()
+	{
+		//D3DXMatrixTranspose(&_objectToWorldTransformData.World, &m_matWorld);
+		_dc->UpdateSubresource(_objectToWorldTransformBuffer, 0, nullptr, &m_matWorld, 0, 0);
+
+		D3DXMatrixTranspose(&_toViewSpaceTransformData.matView, &m_matView);
+		D3DXMatrixTranspose(&_toViewSpaceTransformData.matProj, &m_matProj);
+		_dc->UpdateSubresource(_toViewSpaceTransformBuffer, 0, nullptr, &_toViewSpaceTransformData, 0, 0);
+	}
+	void Light::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
+	{
+		if (matWorld)
+		{
+			m_matWorld = *matWorld;
+		}
+		if (matView)
+		{
+			m_matView = *matView;
+		}
+		if (matProj)
+		{
+			m_matProj = *matProj;
+		}
+		UpdateCameraBuffer();
 	}
 }

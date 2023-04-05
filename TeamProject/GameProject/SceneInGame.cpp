@@ -34,7 +34,7 @@ bool    SceneInGame::Init()
     SSB::DirectionalLight* light = new SSB::DirectionalLight;
     light->Initialize_SetDevice(m_pd3dDevice, m_pImmediateContext);
     light->Init();
-    light->SetLightDirection(TVector3(1, -1, 1));
+    light->SetLightDirection(TVector3(0, -1, 1));
     SSB::I_Light.GetInstance().SetLight(light);
 
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -147,7 +147,7 @@ bool    SceneInGame::Init()
 
         //Idle, Attack1, Attack2, Attack3, Move, Dead
         //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
-        I_Model.Load("PlayerGaren", "Idle", &Player::GetInstance().m_pModel);
+        I_Model.Load("Yasuo", "Idle", &Player::GetInstance().m_pModel);
 
         Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
         Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
@@ -363,6 +363,13 @@ bool    SceneInGame::Render()
     //Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     //Player::GetInstance().m_pTrail->Render();
     //m_pInter->Render();
+
+	auto lights = SSB::I_Light.GetLightList();
+	for (auto light : lights)
+	{
+		light->SetMatrix(&Player::GetInstance().m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	}
+
     return true;
 }
 

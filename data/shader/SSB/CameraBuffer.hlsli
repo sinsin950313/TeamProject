@@ -4,9 +4,9 @@
 // Animation : Register 3
 // Mesh : Register 4
 
-cbuffer Camera : register(b0)
+cbuffer Camera : register(b1)
 {
 	matrix CameraPosition : packoffset(c0);
-	matrix ViewMatrix : packoffset(c4);
-	matrix ProjectionMatrix : packoffset(c8);
+	//matrix ViewMatrix : packoffset(c4);
+	//matrix ProjectionMatrix : packoffset(c8);
 };

@@ -65,5 +65,34 @@ namespace SSB
 		//void PreRender();
 		void Render();
 		void Release();
+
+	private:
+		struct ToViewSpaceTransformData
+		{
+			TMatrix matWorld;
+			TMatrix matView;
+			TMatrix matProj;
+		};
+		ToViewSpaceTransformData _toViewSpaceTransformData;
+		ID3D11Buffer* _toViewSpaceTransformBuffer;
+
+		struct ObjectToWorldTransformData
+		{
+			TMatrix World;
+		};
+		ObjectToWorldTransformData _objectToWorldTransformData;
+		ID3D11Buffer* _objectToWorldTransformBuffer;
+
+	private:
+		TMatrix		m_matWorld = TMatrix::Identity;
+		TMatrix		m_matView = TMatrix::Identity;
+		TMatrix		m_matProj = TMatrix::Identity;
+
+	private:
+		void	CreateCameraBuffer();
+		void	UpdateCameraBuffer();
+
+	public:
+		void	SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj);
 	};
 }

@@ -34,10 +34,10 @@ VertexOutput_PCNT VS(Vertex_PCNT_Skinning input)
 	float4 view = mul(world, ViewMatrix);
 	float4 proj = mul(view, ProjectionMatrix);
 
-	float4 worldNormal = float4(mul(normal, WorldTransformMatrix).xyz, 1);
+	float4 worldNormal = float4(normalize(mul(normal, WorldTransformMatrix)).xyz, 1);
 
 	output.p = proj;
-	output.n = input.Normal;
+	output.n = worldNormal;
 	output.c = input.Color;
 	output.t = input.Diffuse;
 
