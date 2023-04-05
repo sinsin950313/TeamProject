@@ -40,12 +40,14 @@ namespace SSB
 
 	private:
 		D3D11_VIEWPORT	m_Viewport;
+		ID3D11BlendState* m_pBlendState = nullptr;
 		ID3D11DepthStencilView* m_pDepthStencilView;
 		ID3D11ShaderResourceView* m_pDepthStencilShaderResourceView;
 		ID3D11PixelShader* m_pPixelShader = nullptr;
 
 	private:
 		void CreateViewPort();
+		void CreateBlendState();
 		HRESULT CreatePositionTexture();
 		HRESULT CreateNormalTexture();
 		HRESULT CreateColorTexture();

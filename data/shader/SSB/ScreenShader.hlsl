@@ -31,6 +31,8 @@ Texture2D NormalMap : register(t1);
 Texture2D ColorMap : register(t2);
 Texture2D DepthMap : register(t3);
 Texture2D LightShadowMap : register(t4);
+// Need Light Direction Map
+// Need Material Power Value Map
 
 SamplerState Sampler : register(s0);
 
@@ -41,17 +43,38 @@ float4 GetDiffuse(float2 uv)
 	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
 	float4 lightDirection = LightWorldMatrix._13_23_33_43;
 	float intensity = min(1, max(0, dot(normal, -lightDirection)));
+	float Attenuation = 1;
 
-	float4 ret = LightColor * intensity * 1;//* Attenuation;
+	float4 ret = LightColor * intensity * Attenuation;
 
 	return ret;
+}
+
+float4 GetSpecular(float2 uv)
+{
+	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
+	float4 reflectVector = refect(lightDirection, normal);
+	float powVal = 10;
+	float Attenuation = 1;
+	float4 eyePosition = ;
+	float4 eyeDirection = normalize(eyePosition - float4(PositionMap.Sample(Sampler, uv).xyz ,1));
+
+	float intensity = pow(dot(eyeDirection, reflectVector), powVal);
+	float4 ret = LightColor * intensity * Attenuation;
+
+	return ret;
+}
+
+float4 GetAmbient()
+{
+	return float4(0.3, 0.3, 0.3, 1)
 }
 
 float4 PS(PSInput input) : SV_TARGET0
 {
 	float4 diffuseColor = ColorMap.Sample(Sampler, input.TextureUV);
 
-	float4 ret = diffuseColor * (GetDiffuse(input.TextureUV) + float4(0.3, 0.3, 0.3, 1));
+	float4 ret = diffuseColor * (GetDiffuse(input.TextureUV) + GetSpecular(input.TextureUV) + GetAmbient());
 
 	return float4(ret.xyz, 1);
 }

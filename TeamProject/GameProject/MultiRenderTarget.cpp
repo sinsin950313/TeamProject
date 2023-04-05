@@ -17,6 +17,7 @@ namespace SSB
 	}
 	bool MultiRenderTarget::Init()
 	{
+		//CreateBlendState();
 		CreatePositionTexture();
 		CreateNormalTexture();
 		CreateColorTexture();
@@ -37,6 +38,8 @@ namespace SSB
 	}
 	bool MultiRenderTarget::Render()
 	{
+		//m_pImmediateContext->OMSetBlendState(m_pBlendState, 0, -1);
+
 		ID3D11RenderTargetView* pRTV[] = { m_pPositionRenderTargetView, m_pNormalRenderTargetView, m_pColorRenderTargetView };
 		m_pImmediateContext->OMSetRenderTargets(3, pRTV, m_pDepthStencilView);
 		m_pImmediateContext->RSSetViewports(1, &m_Viewport);
@@ -127,6 +130,12 @@ namespace SSB
 		{
 			m_pPixelShader->Release();
 			m_pPixelShader = nullptr;
+		}
+
+		if (m_pBlendState != nullptr)
+		{
+			m_pBlendState->Release();
+			m_pBlendState = nullptr;
 		}
 
 		return true;
@@ -235,6 +244,59 @@ namespace SSB
 		m_Viewport.TopLeftY = 0;
 		m_Viewport.MinDepth = 0.0f;
 		m_Viewport.MaxDepth = 1.0f;
+	}
+	void MultiRenderTarget::CreateBlendState()
+	{
+		D3D11_BLEND_DESC blendDesc;
+		ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+		blendDesc.AlphaToCoverageEnable = false;
+		blendDesc.IndependentBlendEnable = true;
+
+		// Position
+		{
+			D3D11_RENDER_TARGET_BLEND_DESC desc;
+			desc.BlendEnable = false;
+			desc.SrcBlend;
+			desc.DestBlend;
+			desc.BlendOp;
+			desc.SrcBlendAlpha;
+			desc.DestBlendAlpha;
+			desc.BlendOpAlpha;
+			desc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+			blendDesc.RenderTarget[0] = desc;
+		}
+
+		// Normal
+		{
+			D3D11_RENDER_TARGET_BLEND_DESC desc;
+			desc.BlendEnable = true;
+			desc.SrcBlend = D3D11_BLEND_ONE;
+			desc.DestBlend = D3D11_BLEND_ONE;
+			desc.BlendOp = D3D11_BLEND_OP_ADD;
+			desc.SrcBlendAlpha = D3D11_BLEND_ZERO;
+			desc.DestBlendAlpha = D3D11_BLEND_ZERO;
+			desc.BlendOpAlpha = D3D11_BLEND_OP_MAX;
+			desc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+			blendDesc.RenderTarget[1] = desc;
+		}
+
+		// Color
+		{
+			D3D11_RENDER_TARGET_BLEND_DESC desc;
+			desc.BlendEnable = false;
+			desc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+			desc.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+			desc.BlendOp = D3D11_BLEND_OP_ADD;
+			desc.SrcBlendAlpha = D3D11_BLEND_ONE;
+			desc.DestBlendAlpha = D3D11_BLEND_ZERO;
+			desc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+			desc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+			blendDesc.RenderTarget[2] = desc;
+		}
+		m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendState);
 	}
 	//HRESULT MultiRenderTarget::CreateDepthTexture()
 	//{

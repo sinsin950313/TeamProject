@@ -213,6 +213,8 @@ namespace SSB
 
 	bool Screen::Render()
 	{
+		m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
+
 		//ID3D11RenderTargetView* nullRTV[16];
 		//m_pImmediateContext->OMSetRenderTargets(16, nullRTV, NULL);
 		m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
