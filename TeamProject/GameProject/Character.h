@@ -10,6 +10,7 @@ class MeshMap;
 
 class Character
 {
+protected:
 	struct ToViewSpaceTransformData
 	{
 		TMatrix matWorld;

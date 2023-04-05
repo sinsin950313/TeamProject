@@ -17,6 +17,7 @@ public:
 public:
     virtual bool    Init();
     virtual bool    Frame();
+    virtual bool	Render();
 
 private:
     Player();
