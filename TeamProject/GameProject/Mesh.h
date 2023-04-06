@@ -36,6 +36,8 @@ namespace SSB
 	public:
 		virtual void SetShader(Shader* shader) = 0;
 
+		virtual bool RenderInstancing(UINT iNum) = 0;
+
 	public:
 		virtual TVector3 GetMinVertex() = 0;
 		virtual TVector3 GetMaxVertex() = 0;
@@ -94,6 +96,7 @@ namespace SSB
 		bool Init() override;
 		bool Frame() override;
 		bool Render() override;
+		bool RenderInstancing(UINT iNum);
 		bool Release() override;
 
 	protected:
@@ -186,6 +189,7 @@ namespace SSB
 	public:
 		bool Init() override;
 		bool Render() override;
+		bool RenderInstancing(UINT iNum);
 		bool Release() override;
 
 	public:

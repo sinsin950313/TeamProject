@@ -148,6 +148,24 @@ namespace SSB
 
 		return false;
 	}
+	bool Model::RenderInstancing(UINT iNum)
+	{
+		_currentAnimation->Render();
+
+		m_pImmediateContext->PSSetShader(_ps->m_pPS, NULL, 0);
+
+		for (auto material : _materials)
+		{
+			material.second->Render();
+		}
+
+		for (auto mesh : _meshes)
+		{
+			mesh.second->RenderInstancing(iNum);
+		}
+
+		return false;
+	}
 	bool Model::Release()
 	{
 		for (auto material : _materials)

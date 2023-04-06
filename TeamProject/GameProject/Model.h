@@ -77,6 +77,7 @@ namespace SSB
 		bool Init() override;
 		bool Frame() override;
 		bool Render() override;
+		bool RenderInstancing(UINT iNum);
 		bool Release() override;
 		std::string Serialize() override { return ""; }
 		void Deserialize(const char* buffer, int size, int& offset) override;

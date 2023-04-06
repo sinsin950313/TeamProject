@@ -177,6 +177,31 @@ namespace SSB
 		return true;
 	}
 	template<typename VertexType>
+	bool Mesh<VertexType>::RenderInstancing(UINT iNum)
+	{
+		ID3D11DeviceContext* dc = m_pImmediateContext;
+
+		dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		dc->IASetInputLayout(_vertexLayout);
+		{
+			UINT stride = sizeof(VertexType);
+			UINT offset = 0;
+			dc->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
+		}
+		dc->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		dc->VSSetShader(_vs->m_pVS, NULL, 0);
+
+		//dc->DrawIndexed(_indexList.size(), 0, 0);
+		dc->DrawIndexedInstanced(_indexList.size(), iNum, 0, 0, 0);
+
+		for (auto subMesh : _subMeshes)
+		{
+			subMesh->Render();
+		}
+
+		return true;
+	}
+	template<typename VertexType>
 	bool Mesh<VertexType>::Release()
 	{
 		if (_vertexLayout != nullptr)

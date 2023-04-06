@@ -552,8 +552,8 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_normal_1.map", m_pd3dDevice, m_pImmediateContext);
-	m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
+	m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_normal_1.map", m_pd3dDevice, m_pImmediateContext);
+	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
 	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
