@@ -27,14 +27,21 @@ cbuffer constant : register(b0)
 	float4 m_light_direction;
 };
 
-float4 psmain(PS_INPUT input) : SV_TARGET
+struct MRTOutput
 {
-	float4 texelColor = TextureColor.Sample(TextureSamplerColor, input.tex);
-	float4 mask = g_txMaskTex.Sample(TextureSamplerColor, input.tex);
-	float4 splatTex2 = g_txTex2.Sample(TextureSamplerColor, input.tex);
-	float4 splatTex3 = g_txTex3.Sample(TextureSamplerColor, input.tex);
-	float4 splatTex4 = g_txTex4.Sample(TextureSamplerColor, input.tex);
-	float4 splatTex5 = g_txTex5.Sample(TextureSamplerColor, input.tex);
+	float4 Position : SV_TARGET0;
+	float4 Normal : SV_TARGET1;
+	float4 Color : SV_TARGET2;
+};
+
+float4 GetTextureColor(float2 uv)
+{
+	float4 texelColor = TextureColor.Sample(TextureSamplerColor, uv);
+	float4 mask = g_txMaskTex.Sample(TextureSamplerColor, uv);
+	float4 splatTex2 = g_txTex2.Sample(TextureSamplerColor, uv);
+	float4 splatTex3 = g_txTex3.Sample(TextureSamplerColor, uv);
+	float4 splatTex4 = g_txTex4.Sample(TextureSamplerColor, uv);
+	float4 splatTex5 = g_txTex5.Sample(TextureSamplerColor, uv);
 
 	// Calculate weights based on mask
 	float4 weights = mask.rgba;
@@ -45,8 +52,22 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 	finalColor = finalColor * (1.0f - weights.g) + splatTex3 * weights.g;
 	finalColor = finalColor * (1.0f - weights.b) + splatTex4 * weights.b;
 	finalColor = finalColor * (1.0f - weights.a) + splatTex5 * weights.a;
+
 	return finalColor;
+}
+
+MRTOutput psmain(PS_INPUT input) : SV_TARGET
+{
+	MRTOutput output = (MRTOutput)0;
+
+	output.Position = float4(input.world, 1);
+	output.Normal = float4(input.normal, 1);
+	output.Color = GetTextureColor(input.tex);
+
+	return output;
+
 	//AmbientLight
+	float4 finalColor = GetTextureColor(input.tex);
 	float ka = 0.1f;
 	float3 ia = float3(1.0f, 1.0f, 1.0f);
 	ia *= finalColor.rgb;
@@ -72,5 +93,5 @@ float4 psmain(PS_INPUT input) : SV_TARGET
 
 	float3 final_light = ambient_light + diffuse_light + specular_light;
 
-	return float4(final_light.rgb, 1.0f);
+	//return float4(final_light.rgb, 1.0f);
 }

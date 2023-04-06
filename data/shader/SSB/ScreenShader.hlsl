@@ -43,7 +43,7 @@ float4 GetDiffuse(float2 uv)
 {
 	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
 	float4 lightDirection = LightWorldMatrix._13_23_33_43;
-	float intensity = dot(normal, -lightDirection);
+	float intensity = max(0, dot(normal, -lightDirection));
 	float Attenuation = 1;
 
 	float4 ret = LightColor * intensity * Attenuation;
@@ -56,13 +56,14 @@ float4 GetSpecular(float2 uv)
 	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
 	float4 lightDirection = LightWorldMatrix._13_23_33_43;
 	float4 reflectVector = reflect(lightDirection, normal);
-	float powVal = 1;
-	float Attenuation = 1;
-	float4 eyePosition = CameraPosition._41_42_43_44;
-	float4 eyeDirection = normalize(eyePosition - float4(PositionMap.Sample(Sampler, uv).xyz ,1));
-	eyeDirection = float4(0, 0, -1, 0);
 
+	float4 eyePosition = CameraPosition._14_24_34_44;
+	float4 eyeDirection = normalize(eyePosition - float4(PositionMap.Sample(Sampler, uv).xyz ,1));
+
+	float powVal = 10;
+	float Attenuation = 1;
 	float intensity = min(1, max(0, pow(dot(eyeDirection, reflectVector), powVal)));
+
 	float4 ret = LightColor * intensity * Attenuation;
 
 	return ret;
@@ -70,7 +71,7 @@ float4 GetSpecular(float2 uv)
 
 float4 GetAmbient()
 {
-	return float4(0.3, 0.3, 0.3, 1);
+	return float4(0.4, 0.4, 0.4, 1);
 }
 
 float4 PS(PSInput input) : SV_TARGET0

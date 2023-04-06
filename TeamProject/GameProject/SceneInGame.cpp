@@ -34,7 +34,7 @@ bool    SceneInGame::Init()
     SSB::DirectionalLight* light = new SSB::DirectionalLight;
     light->Initialize_SetDevice(m_pd3dDevice, m_pImmediateContext);
     light->Init();
-    light->SetLightDirection(TVector3(0, -1, 1));
+    light->SetLightDirection(TVector3(0, 0, 1));
     SSB::I_Light.GetInstance().SetLight(light);
 
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -291,8 +291,8 @@ bool    SceneInGame::Frame()
 
 bool    SceneInGame::Render()
 {
-    //m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-    //m_pQuadTree->Render();
+    m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pQuadTree->Render();
 
     Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().Render();
@@ -364,10 +364,11 @@ bool    SceneInGame::Render()
     //Player::GetInstance().m_pTrail->Render();
     //m_pInter->Render();
 
+    // Camera의 위치정보가 필요하므로 지우지 말 것
 	auto lights = SSB::I_Light.GetLightList();
 	for (auto light : lights)
 	{
-		light->SetMatrix(&Player::GetInstance().m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		light->SetMatrix(&m_pMainCamera->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	}
 
     return true;

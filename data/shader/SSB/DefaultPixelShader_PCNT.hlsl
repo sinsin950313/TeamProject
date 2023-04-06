@@ -5,7 +5,7 @@ PixelOutput PS(PixelShaderInput_PCNT input)
 {
 	PixelOutput output = (PixelOutput)0;
 
-	output.Position = input.Position;
+	output.Position = input.World;
 	output.Normal = input.Normal;
 	output.Color = Diffuse.Sample(Sampler, input.Diffuse);
 

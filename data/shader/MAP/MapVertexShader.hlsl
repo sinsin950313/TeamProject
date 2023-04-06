@@ -65,8 +65,11 @@ VS_OUTPUT vsmain(VS_INPUT input)
 	output.tex2.z = (vProj.x / vProj.w) * 0.5f + 0.5f;
 	output.tex2.w = (vProj.y / vProj.w) * 0.5f + 0.5f;
 
+	float4 worldNormal = mul(float4(input.normal.xyz, 0), matWorld);
+
 	output.position = vProj;
-	output.normal = input.normal;
+	output.normal = float4(worldNormal.xyz, 1);
+	//output.normal = input.normal;
 	output.tex = input.tex;
 	output.color = input.color;
 	return output;

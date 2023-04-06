@@ -267,7 +267,7 @@ namespace SSB
 	}
 	void Light::UpdateCameraBuffer()
 	{
-		//D3DXMatrixTranspose(&_objectToWorldTransformData.World, &m_matWorld);
+		D3DXMatrixTranspose(&_objectToWorldTransformData.World, &m_matWorld);
 		_dc->UpdateSubresource(_objectToWorldTransformBuffer, 0, nullptr, &m_matWorld, 0, 0);
 
 		D3DXMatrixTranspose(&_toViewSpaceTransformData.matView, &m_matView);
