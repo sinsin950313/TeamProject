@@ -39,18 +39,24 @@ namespace SSB
 		ID3D11DepthStencilView* _shadowDepthMapDepthStencilView;
 		ID3D11Buffer* _lightBufferForDepth;
 		ID3D11Buffer* _lightBufferForRender;
+		ID3D11Texture2D* _renderTargetTexture;
+		ID3D11RenderTargetView* _renderTargetView;
 
 	private:
 		void CreateDepthMap();
 		void CreateLightData();
 		bool CreateLightBuffer();
+		HRESULT CreateRenderTargetData();
 
 	private:
 		void UpdateLightBuffer();
 
 	protected:
-		ID3D11GeometryShader* _lightingShader = nullptr;
+		ID3D11GeometryShader* m_pGS = nullptr;
 		ID3DBlob* m_pGSCode = nullptr;
+
+		ID3D11PixelShader* m_pPS = nullptr;
+		ID3DBlob* m_pPSCode = nullptr;
 		virtual HRESULT CreateLightingShader() = 0;
 
 	public:

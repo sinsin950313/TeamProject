@@ -34,7 +34,8 @@ bool    SceneInGame::Init()
     SSB::DirectionalLight* light = new SSB::DirectionalLight;
     light->Initialize_SetDevice(m_pd3dDevice, m_pImmediateContext);
     light->Init();
-    light->SetLightDirection(TVector3(0, 0, 1));
+    light->SetLightDirection(TVector3(0, -1, 1));
+    light->SetLightPosition(TVector3(0, 100, -100));
     SSB::I_Light.GetInstance().SetLight(light);
 
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);

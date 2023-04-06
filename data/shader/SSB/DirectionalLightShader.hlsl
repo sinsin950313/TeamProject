@@ -11,17 +11,25 @@ cbuffer LightData : register(b9)
 	matrix LightProjMatrix;
 };
 
-[maxvertexcount(3)]
-void GS(triangle GSInput input[3], inout TriangleStream<GSInput> triStream)
+struct PSInput
 {
-	GSInput output;
+	float4 Projection : SV_POSITION;
+};
+
+[maxvertexcount(4)]
+void GS(triangle GSInput input[3], inout TriangleStream<PSInput> triStream)
+{
+	PSInput output;
 	for(int i = 0; i < 3; ++i)
 	{
 		output.Projection = input[i].Projection;
-		output.Position = input[i].Position;
 
 		triStream.Append(output);
 	}
 	triStream.RestartStrip();
+}
 
+float4 PS(PSInput input) : SV_TARGET
+{
+	return input.Projection;
 }

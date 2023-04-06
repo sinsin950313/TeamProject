@@ -1,6 +1,7 @@
 #include "Light.h"
 #include "TMath.h"
 #include <vector>
+#include "DXState.h"
 
 namespace SSB
 {
@@ -108,6 +109,33 @@ namespace SSB
 		}
 		return true;
 	}
+	HRESULT Light::CreateRenderTargetData()
+	{
+		HRESULT hr;
+
+		D3D11_TEXTURE2D_DESC desc;
+		desc.Width = (UINT)2048;
+		desc.Height = (UINT)2048;
+		desc.MipLevels = 1;
+		desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
+		desc.ArraySize = 1;
+
+		if (FAILED(hr = _device->CreateTexture2D(&desc, NULL, &_renderTargetTexture)))
+		{
+			return hr;
+		}
+
+		if (FAILED(hr = _device->CreateRenderTargetView(_renderTargetTexture, NULL, &_renderTargetView)))
+		{
+			return hr;
+		}
+	}
 	void Light::UpdateLightBuffer()
 	{
 		TVector3 up(0, 1, 0);
@@ -152,6 +180,7 @@ namespace SSB
 	}
 	void Light::Init()
 	{
+		CreateRenderTargetData();
 		CreateCameraBuffer();
 		CreateDepthMap();
 		CreateLightData();
@@ -163,14 +192,17 @@ namespace SSB
 	}
 	void Light::PreRender()
 	{
-		_dc->GSSetShader(_lightingShader, NULL, 0);
+		_dc->PSSetShader(m_pPS, NULL, 0);
+		_dc->GSSetShader(m_pGS, NULL, 0);
 
 		_dc->GSSetConstantBuffers(0, 1, &_lightBufferForDepth);
-		_dc->PSSetShader(NULL, NULL, 0);
 
-		ID3D11RenderTargetView* tmp = NULL;
-		// Maybe light need rendertarget
-		_dc->OMSetRenderTargets(1, &tmp, _shadowDepthMapDepthStencilView);
+		_dc->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
+		_dc->OMSetRenderTargets(1, &_renderTargetView, _shadowDepthMapDepthStencilView);
+
+		const FLOAT color[] = { 0, 0, 0, 0 };
+		_dc->ClearRenderTargetView(_renderTargetView, color);
+		_dc->ClearDepthStencilView(_shadowDepthMapDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 	void Light::Render()
 	{
@@ -212,11 +244,6 @@ namespace SSB
 			_lightBufferForRender = nullptr;
 		}
 
-		if (_lightingShader != nullptr)
-		{
-			_lightingShader = nullptr;
-		}
-
 		if (_toViewSpaceTransformBuffer != nullptr)
 		{
 			_toViewSpaceTransformBuffer->Release();
@@ -229,16 +256,40 @@ namespace SSB
 			_objectToWorldTransformBuffer = nullptr;
 		}
 
-		if (_lightingShader != nullptr)
+		if (m_pGS != nullptr)
 		{
-			_lightingShader->Release();
-			_lightingShader = nullptr;
+			m_pGS->Release();
+			m_pGS = nullptr;
 		}
 
 		if (m_pGSCode != nullptr)
 		{
 			m_pGSCode->Release();
 			m_pGSCode = nullptr;
+		}
+
+		if (m_pPS != nullptr)
+		{
+			m_pPS->Release();
+			m_pPS = nullptr;
+		}
+
+		if (m_pPSCode != nullptr)
+		{
+			m_pPSCode->Release();
+			m_pPSCode = nullptr;
+		}
+
+		if (_renderTargetTexture != nullptr)
+		{
+			_renderTargetTexture->Release();
+			_renderTargetTexture = nullptr;
+		}
+
+		if (_renderTargetView != nullptr)
+		{
+			_renderTargetView->Release();
+			_renderTargetView = nullptr;
 		}
 	}
 	void Light::CreateCameraBuffer()
