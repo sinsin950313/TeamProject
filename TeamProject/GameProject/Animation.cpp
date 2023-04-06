@@ -130,6 +130,12 @@ namespace SSB
 
 		return true;
 	}
+	bool Animation::PreRender()
+	{
+		m_pImmediateContext->VSSetConstantBuffers(3, 1, &_animatedFrameBuffer);
+
+		return true;
+	}
 	bool Animation::Render()
 	{
 		m_pImmediateContext->VSSetConstantBuffers(3, 1, &_animatedFrameBuffer);

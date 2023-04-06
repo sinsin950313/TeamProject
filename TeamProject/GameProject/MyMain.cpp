@@ -40,15 +40,15 @@ bool    MyMain::Frame()
 
 bool    MyMain::Render()
 {
-    //// Calculate Shadow Depth Map
-    //{
-    //    auto lights = SSB::I_Light.GetLightList();
-    //    for (auto light : lights)
-    //    {
-    //        light->PreRender();
-    //        I_Scene.PreRender();
-    //    }
-    //}
+    // Calculate Shadow Depth Map
+    {
+        auto lights = SSB::I_Light.GetLightList();
+        for (auto light : lights)
+        {
+            light->PreRender();
+            I_Scene.PreRender();
+        }
+    }
 
     // Calculate MRT data
     m_MRT.Render();

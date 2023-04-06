@@ -38,10 +38,10 @@ namespace SSB
 			m_MainLight->Frame();
 		}
 	}
-	//void LightManager::PreRender()
-	//{
-	//	m_MainLight->PreRender();
-	//}
+	void LightManager::PreRender()
+	{
+		m_MainLight->PreRender();
+	}
 	void LightManager::Render()
 	{
 		m_MainLight->Render();

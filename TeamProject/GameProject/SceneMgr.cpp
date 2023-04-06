@@ -93,17 +93,19 @@ bool	SceneMgr::Frame()
     return true;
 }
 
-//bool SceneMgr::PreRender()
-//{
-//    (*m_pCurrentScene)->PreRender();
-//    return true;
-//}
+bool SceneMgr::PreRender()
+{
+    (*m_pCurrentScene)->PreRender();
+    return true;
+}
 
 bool	SceneMgr::Render()
 {
     (*m_pCurrentScene)->Render();
-    // Should Fade be here?
+
+    // 꼭 있어야 하는 객체인가?
     //m_pFade->Render();
+
     return true;
 }
 

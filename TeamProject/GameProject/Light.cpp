@@ -130,10 +130,6 @@ namespace SSB
 			_dc->UpdateSubresource(_lightBufferForRender, 0, nullptr, &tmp, 0, 0);
 		}
 	}
-	void Light::RegisterLightingVertexShader()
-	{
-		_lightingShader = GetLightingShader();
-	}
 	void Light::Initialize_SetDevice(ID3D11Device* device, ID3D11DeviceContext* dc)
 	{
 		_device = device;
@@ -160,19 +156,22 @@ namespace SSB
 		CreateDepthMap();
 		CreateLightData();
 		CreateLightBuffer();
-		RegisterLightingVertexShader();
+		CreateLightingShader();
 	}
 	void Light::Frame()
 	{
 	}
-	//void Light::PreRender()
-	//{
-	//	_dc->VSSetShader(_lightingShader->m_pVS, NULL, 0);
-	//	_dc->VSSetConstantBuffers(0, 1, &_lightBufferForDepth);
+	void Light::PreRender()
+	{
+		_dc->GSSetShader(_lightingShader, NULL, 0);
 
-	//	ID3D11RenderTargetView* tmp = NULL;
-	//	_dc->OMSetRenderTargets(1, &tmp, _shadowDepthMapDepthStencilView);
-	//}
+		_dc->GSSetConstantBuffers(0, 1, &_lightBufferForDepth);
+		_dc->PSSetShader(NULL, NULL, 0);
+
+		ID3D11RenderTargetView* tmp = NULL;
+		// Maybe light need rendertarget
+		_dc->OMSetRenderTargets(1, &tmp, _shadowDepthMapDepthStencilView);
+	}
 	void Light::Render()
 	{
 		//_dc->PSSetShader(_lightingShader->m_pPS, NULL, 0);
@@ -228,6 +227,18 @@ namespace SSB
 		{
 			_objectToWorldTransformBuffer->Release();
 			_objectToWorldTransformBuffer = nullptr;
+		}
+
+		if (_lightingShader != nullptr)
+		{
+			_lightingShader->Release();
+			_lightingShader = nullptr;
+		}
+
+		if (m_pGSCode != nullptr)
+		{
+			m_pGSCode->Release();
+			m_pGSCode = nullptr;
 		}
 	}
 	void Light::CreateCameraBuffer()

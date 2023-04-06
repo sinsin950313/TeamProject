@@ -7,6 +7,6 @@ namespace SSB
     class DirectionalLight : public Light
     {
     private:
-		Shader* GetLightingShader() override;
+		HRESULT CreateLightingShader() override;
     };
 }

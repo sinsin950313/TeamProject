@@ -39,6 +39,9 @@ namespace SSB
 	public:
 		virtual TVector3 GetMinVertex() = 0;
 		virtual TVector3 GetMaxVertex() = 0;
+
+	public:
+		bool PreRender();
 	};
 
 	template<typename VertexType>

@@ -272,25 +272,31 @@ bool    SceneInGame::Frame()
     return true;
 }
 
-//bool SceneInGame::PreRender()
-//{
-//    m_pQuadTree->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-//    m_pQuadTree->PreRender();
-//
-//    Player::GetInstance().SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-//    Player::GetInstance().PreRender();
-//
-//    for (auto enemy : m_Enemies)
-//    {
-//        enemy->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-//        enemy->PreRender();
-//    }
-//
-//    return true;
-//}
+bool SceneInGame::PreRender()
+{
+	auto lights = SSB::I_Light.GetLightList();
+    for (auto light : lights)
+    {
+        //m_pQuadTree->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
+        //m_pQuadTree->PreRender();
+
+        Player::GetInstance().SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
+        Player::GetInstance().PreRender();
+
+        //for (auto enemy : m_Enemies)
+        //{
+        //    enemy->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
+        //    enemy->PreRender();
+        //}
+    }
+
+    return true;
+}
 
 bool    SceneInGame::Render()
 {
+    m_pImmediateContext->GSSetShader(NULL, NULL, 0);
+
     m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     m_pQuadTree->Render();
 

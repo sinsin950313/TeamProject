@@ -812,6 +812,12 @@ namespace SSB
 		offset += sizeof(float);
 	}
 
+	bool MeshInterface::PreRender()
+	{
+		Render();
+		return true;
+	}
+
 	/*
 	Box::Box(float width, float height, float depth)
 		: _width(width), _height(height), _depth(depth)

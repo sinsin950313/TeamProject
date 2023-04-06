@@ -9,7 +9,7 @@ namespace SSB
 {
 	class Light
 	{
-	private:
+	protected:
 		ID3D11Device* _device;
 		ID3D11DeviceContext* _dc;
 
@@ -39,7 +39,6 @@ namespace SSB
 		ID3D11DepthStencilView* _shadowDepthMapDepthStencilView;
 		ID3D11Buffer* _lightBufferForDepth;
 		ID3D11Buffer* _lightBufferForRender;
-		Shader* _lightingShader = nullptr;
 
 	private:
 		void CreateDepthMap();
@@ -48,10 +47,11 @@ namespace SSB
 
 	private:
 		void UpdateLightBuffer();
-		void RegisterLightingVertexShader();
 
 	protected:
-		virtual Shader* GetLightingShader() = 0;
+		ID3D11GeometryShader* _lightingShader = nullptr;
+		ID3DBlob* m_pGSCode = nullptr;
+		virtual HRESULT CreateLightingShader() = 0;
 
 	public:
 		void Initialize_SetDevice(ID3D11Device* device, ID3D11DeviceContext* dc);
@@ -62,7 +62,7 @@ namespace SSB
 	public:
 		void Init();
 		void Frame();
-		//void PreRender();
+		void PreRender();
 		void Render();
 		void Release();
 
@@ -83,7 +83,7 @@ namespace SSB
 		ObjectToWorldTransformData _objectToWorldTransformData;
 		ID3D11Buffer* _objectToWorldTransformBuffer;
 
-	private:
+	public:
 		TMatrix		m_matWorld = TMatrix::Identity;
 		TMatrix		m_matView = TMatrix::Identity;
 		TMatrix		m_matProj = TMatrix::Identity;
