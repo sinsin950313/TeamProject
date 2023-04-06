@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseObject.h"
+#include "Interface.h"
 
 enum E_SCENE
 {

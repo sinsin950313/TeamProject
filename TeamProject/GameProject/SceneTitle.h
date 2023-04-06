@@ -21,5 +21,7 @@ public:
     TestObj* m_pObj;
     InteractiveObject* m_pInteract;
 
+    Interface* m_pInter;
+
 };
 

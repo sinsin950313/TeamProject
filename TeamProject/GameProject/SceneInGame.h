@@ -6,7 +6,6 @@
 #include "FQuadTree.h"
 #include "CharacterStateManager.h"
 #include "EnemyNPCMob.h"
-#include "Interface.h"
 #include "BossMob.h"
 
 class SceneInGame : public Scene
