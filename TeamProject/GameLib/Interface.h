@@ -11,6 +11,12 @@ enum	E_UIState
 	UI_DIS,
 	UI_MAXSTATE
 };
+__declspec(align(16))
+struct ConstantData_UI
+{
+	float fTime;
+};
+
 class InterfaceWork;
 class Interface : public BaseObject
 {
@@ -19,7 +25,7 @@ public:
 	virtual bool Render() override;
 	virtual bool Release() override;
 	virtual bool SetAttribute(TVector3 vPos, TRectangle rc);
-	virtual bool SetAttribute(TVector3 vPos, TVector3 vScale, TColor color);
+	virtual bool SetAttribute(TVector3 vPos = {0, 0, 0}, TVector3 vScale = { 1, 1, 1 }, TColor color = { 1, 1, 1, 1 });
 	virtual bool SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV);
 	virtual void AddChild(Interface* pUI)
 	{
@@ -48,6 +54,11 @@ public:
 
 public:
 	bool	m_isUsing = true;
+	bool	m_bBillBoard = false;
+public:
+	ConstantData_UI m_ConstantData_UI;
+	ID3D11Buffer* m_pConstantBuffer_UI;
+	virtual void SetTime(float fTime);
 };
 
 
@@ -142,10 +153,10 @@ class InterfaceFadeIn : public InterfaceWork
 public:
 	bool	Frame(Interface* pInter)
 	{
-		m_fAlpha += g_fSecondPerFrame * 2.5f;
-		if (m_fAlpha >= 2.5f)
+		m_fAlpha += g_fSecondPerFrame * m_fFadeTime;
+		if (m_fAlpha >= m_fFadeTime)
 		{
-			m_fAlpha = 1.2f;
+			m_fAlpha = 1.0f;
 			m_isDone = true;
 		}
 
@@ -155,9 +166,14 @@ public:
 		}
 		return true;
 	}
-
+public:
+	InterfaceFadeIn(float fFadeTime = 2.5f)
+	{
+		m_fFadeTime = fFadeTime;
+	}
 public:
 	float m_fAlpha = 0.0f;
+	float m_fFadeTime = 2.5f;
 };
 
 class InterfaceFadeOut : public InterfaceWork
@@ -165,7 +181,7 @@ class InterfaceFadeOut : public InterfaceWork
 public:
 	bool	Frame(Interface* pInter)
 	{
-		m_fAlpha -= g_fSecondPerFrame * 2.5f;
+		m_fAlpha -= g_fSecondPerFrame * m_fFadeTime;
 		if (m_fAlpha <= 0.0f)
 		{
 			m_isDone = true;
@@ -177,9 +193,14 @@ public:
 		}
 		return true;
 	}
-
+public:
+	InterfaceFadeOut(float fFadeTime = 2.5f)
+	{
+		m_fFadeTime = fFadeTime;
+	}
 public:
 	float m_fAlpha = 1.2f;
+	float m_fFadeTime = 2.5f;
 };
 
 class InterfaceLoopFade : public InterfaceWork
@@ -259,4 +280,36 @@ public:
 public:
 	float	m_fScale;
 };
+
+//class InterfaceFadeClockwise : public InterfaceWork
+//{
+//public:
+//	bool Frame(Interface* pInter)
+//	{
+//		m_fAlpha += m_iSwitch * g_fSecondPerFrame * 2.5f;
+//		if (m_fAlpha >= 2.5f)
+//		{
+//			m_iSwitch = -1;
+//			m_fAlpha = 1.2f;
+//		}
+//		if (m_fAlpha <= 0.0f)
+//		{
+//			m_isDone = true;
+//		}
+//
+//		for (int i = 0; i < pInter->m_VertexList.size(); i++)
+//		{
+//			pInter->m_VertexList[i].c.w = m_fAlpha;
+//		}
+//		return true;
+//	}
+//
+//public:
+//	InterfaceFadeClockwise(float fScale)
+//	{
+//		
+//	}
+//public:
+//	
+//};
 

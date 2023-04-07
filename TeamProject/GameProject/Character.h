@@ -92,6 +92,7 @@ public:
     T_BOX   m_AttackBox;
 
 public:
+	int m_HealthPointMax = 100;
 	int m_HealthPoint = 100;
 	int m_Damage = 30;
 	std::set<Character*> m_DamagedCharacters;

@@ -32,17 +32,20 @@ bool Interface::Frame()
 	//		work->Frame(data);
 	//	}
 	//}
-	//for (auto data : m_pChildList)
-	//{
-	//	TVector3 pos = data->m_vPos + m_vOffsetPos;
-	//	data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);
-	//	data->Frame();
-	//}
+	for (auto data : m_pChildList)
+	{
+		/*TVector3 pos = data->m_vPos + m_vOffsetPos;
+		data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);*/
+		data->Frame();
+	}
 	//
 	//SetPosition(m_vPos, m_Box.m_vSize, m_vCameraPos);
 	//ScreenToNDC();
 
-	ToNDC();
+	if (!m_bBillBoard)
+	{
+		ToNDC();
+	}
 	UpdateVertexBuffer();
 	return true;
 }
@@ -51,7 +54,34 @@ bool	Interface::Render()
 {
 	if (!m_isUsing)
 		return false;
+	
+	if (m_bBillBoard)
+	{
+		TMatrix billboardMatrix;
 
+		// 뷰 매트릭스의 회전 부분만 추출합니다.
+		TMatrix viewRotationMatrix;
+		XMVECTOR rotation = XMVectorSet(m_matView._11, m_matView._12, m_matView._13, 0.0f);
+		XMVECTOR up = XMVectorSet(m_matView._21, m_matView._22, m_matView._23, 0.0f);
+		XMVECTOR direction = XMVectorSet(m_matView._31, m_matView._32, m_matView._33, 0.0f);
+
+		// 회전 부분의 행렬을 생성합니다.
+		XMStoreFloat4x4(&viewRotationMatrix, XMMATRIX(rotation, up, direction, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
+
+		// 회전 부분의 역행렬을 구합니다.
+		TMatrix viewRotationInverseMatrix = viewRotationMatrix.Invert();
+
+		// 빌보드 행렬을 생성합니다.
+		billboardMatrix = viewRotationInverseMatrix;
+
+		TQuaternion q;
+		D3DXQuaternionRotationMatrix(&q, &billboardMatrix);
+
+		D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &q, &m_vPos);
+		// 월드 행렬과 곱합니다.
+	}
+	SetTime(g_fGameTimer);
+	UpdateConstantBuffer();
 	m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
 	BaseObject::Render();
 
@@ -156,14 +186,14 @@ bool    Interface::SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV)
 void	Interface::ToNDC()
 {
 	// m_vPos 범위는 g_rcClient
-	g_rcClient;
+	//g_rcClient;
 	//m_pTexture->m_Desc.Width;
 	//m_pTexture->m_Desc.Height;
 
-	m_VertexList;
-	m_vScale;
+	/*m_VertexList;
+	m_vScale;*/
 	float width = m_pTexture->m_Desc.Width / (float)g_rcClient.right * m_vScale.x;
-	float height = m_pTexture->m_Desc.Height / (float)g_rcClient.bottom * m_vScale.x;
+	float height = m_pTexture->m_Desc.Height / (float)g_rcClient.bottom * m_vScale.y;
 
 	TVector3 pos = TVector3(((m_vPos.x / (float)g_rcClient.right) * 2 - 1), ((m_vPos.y / (float)g_rcClient.bottom) * 2 - 1) * -1, 0);
 	m_VertexList[0].p.x = pos.x;
@@ -190,4 +220,12 @@ void	Interface::ToNDC()
 	//	m_VertexList[i].p.x /= g_rcClient.right;
 	//	m_VertexList[i].p.y /= g_rcClient.bottom;
 	//}
+}
+
+void Interface::SetTime(float fTime)
+{
+	/*m_ConstantData_UI.fTime = fTime;*/
+	/*m_pConstantBuffer_UI = DX::CreateConstantBuffer(m_pd3dDevice, &m_ConstantData_UI, sizeof(m_ConstantData_UI));*/
+	m_cbData.vTemp = { 0, 0, 0 };
+	m_cbData.fTimer = fTime;
 }

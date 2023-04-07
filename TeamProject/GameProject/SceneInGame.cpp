@@ -99,6 +99,7 @@ bool    SceneInGame::Frame()
 	if (m_pMainCamera)
 	{
 		m_pMainCamera->Frame();
+		m_pQuadTree->Update();
 
 		int deadCount = 0;
 		for (auto enemy : m_Enemies)
@@ -123,7 +124,7 @@ bool    SceneInGame::Frame()
 	}
 
 	Player::GetInstance().Frame();
-	m_pQuadTree->Update();
+	
 
 	for (auto enemy : m_Enemies)
 	{
@@ -136,6 +137,7 @@ bool    SceneInGame::Frame()
 	}
 
 	//m_pEnemy->Frame();
+	m_pHP_Player->m_vScale = TVector3((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax, 1, 1);
 	m_pInter->Frame();
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
 	return true;
@@ -153,6 +155,10 @@ bool    SceneInGame::Render()
 	{
 		enemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		enemy->Render();
+		m_pHP_Enemy->m_matWorld = enemy->m_matWorld;
+		m_pHP_Enemy->m_matView = m_pMainCamera->m_matView;
+		m_pHP_Enemy->m_matProj = m_pMainCamera->m_matProj;
+		m_pHP_Enemy->Render();
 	}
 
 	if (m_pBoss)
@@ -222,6 +228,7 @@ bool    SceneInGame::Render()
 
 	Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	Player::GetInstance().m_pTrail->Render();
+	
 	m_pInter->Render();
 	return true;
 }
@@ -345,6 +352,7 @@ void    SceneInGame::CharacterLoad()
 			m_Enemies.push_back(enemy);
 
 			enemy->SetMap(m_pQuadTree->m_pMap);
+			m_pHP_Enemy->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y, enemy->m_vPos.z });
 		}
 	}
 }
@@ -352,13 +360,53 @@ void    SceneInGame::CharacterLoad()
 void    SceneInGame::UiLoad()
 {
 	m_pInter = new Interface();
-	m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/ui.png");
+	m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/frame2.dds");
 	m_pInter->m_vPos = TVector3(0, 0, 0);
 	m_pInter->m_vScale = TVector3(1, 1, 1);
 	//m_pInter->m_pWorkList.push_back(new InterfaceFade());
 	//m_pInter->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
 	//m_pInter->m_pWorkList.push_back(new InterfaceLifeTime(10.0f));
 	//m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
+	Interface* pInter_Skill_Q = new Interface();
+	pInter_Skill_Q->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_q.dds");
+	pInter_Skill_Q->SetAttribute(TVector3(728, 788, 0));
+	pInter_Skill_Q->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
+	m_pInter->AddChild(pInter_Skill_Q);
+
+	Interface* pInter_Skill_W = new Interface();
+	pInter_Skill_W->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_w.dds");
+	pInter_Skill_W->SetAttribute(TVector3(784, 788, 0));
+	m_pInter->AddChild(pInter_Skill_W);
+
+	Interface* pInter_Skill_E = new Interface();
+	pInter_Skill_E->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_e.dds");
+	pInter_Skill_E->SetAttribute(TVector3(839, 788, 0));
+	m_pInter->AddChild(pInter_Skill_E);
+
+	Interface* pInter_Skill_R = new Interface();
+	pInter_Skill_R->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_r.dds");
+	pInter_Skill_R->SetAttribute(TVector3(895, 788, 0));
+	m_pInter->AddChild(pInter_Skill_R);
+
+	m_pHP_Player = new Interface();
+	m_pHP_Player->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/player_hp.dds");
+	m_pHP_Player->SetAttribute(TVector3(686, 856, 0));
+	m_pInter->AddChild(m_pHP_Player);
+
+	Interface* pInter_Minimap = new Interface();
+	pInter_Minimap->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/minimap.dds");
+	pInter_Minimap->SetAttribute(TVector3(952, 778, 0));
+	m_pInter->AddChild(pInter_Minimap);
+
+	Interface* pInter_HP_Enemy = new Interface();
+	pInter_HP_Enemy->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
+	pInter_HP_Enemy->SetAttribute(TVector3(544, 35, 0));
+	m_pInter->AddChild(pInter_HP_Enemy);
+
+	m_pHP_Enemy = new Interface();
+	m_pHP_Enemy->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/UI_HP.hlsl", L"../../data/UI/enemy_hp.dds");
+	m_pHP_Enemy->m_bBillBoard = true;
+	m_pInter->AddChild(m_pHP_Enemy);
 }
 
 void    SceneInGame::FSMLoad()
@@ -552,8 +600,8 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-	m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_normal_1.map", m_pd3dDevice, m_pImmediateContext);
-	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
+	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_normal_1.map", m_pd3dDevice, m_pImmediateContext);
+	m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
 	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;

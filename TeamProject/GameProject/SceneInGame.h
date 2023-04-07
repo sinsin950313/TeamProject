@@ -35,6 +35,8 @@ public:
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
     //T_BOX       testBox;
     Interface* m_pInter;
+    Interface* m_pHP_Player;
+    Interface* m_pHP_Enemy;
 
     SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;
