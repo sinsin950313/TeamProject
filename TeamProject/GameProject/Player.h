@@ -35,6 +35,8 @@ private:
 public:
     Camera* m_pMainCamera;
 
+    Shader* m_pModelVS[2];
+    Shader* m_pModelPS[2];
     std::vector<TMatrix>     m_matInstancing;
     TVector4    m_vInstancingColor[12];
 

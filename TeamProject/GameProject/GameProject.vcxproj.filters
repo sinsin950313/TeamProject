@@ -144,6 +144,9 @@
     <ClInclude Include="BossStateService.h">
       <Filter>Ch\FSM</Filter>
     </ClInclude>
+    <ClInclude Include="Emitter.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -238,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="BossStateService.cpp">
       <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Emitter.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
