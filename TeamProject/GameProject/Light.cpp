@@ -2,6 +2,7 @@
 #include "TMath.h"
 #include <vector>
 #include "DXState.h"
+#include "Frustum.h"
 
 namespace SSB
 {
@@ -68,7 +69,7 @@ namespace SSB
 			D3DXMatrixOrthoOffCenterLH(&_lightDataForDepth.ProjMatrix, -fMaxViewDistance / 2, fMaxViewDistance / 2, -fMaxViewDistance / 2, fMaxViewDistance / 2, 0.0f, 100.0f);
 		}
 
-		_lightDataForRender.Color = TVector4(1, 1, 1, 1);
+		_lightColor = TVector4(1, 1, 1, 1);
 	}
 	bool Light::CreateLightBuffer()
 	{
@@ -138,13 +139,12 @@ namespace SSB
 	}
 	void Light::UpdateLightBuffer()
 	{
-		TVector3 up(0, 1, 0);
-		D3DXMatrixLookAtLH(&_lightDataForDepth.WorldMatrix, &m_vPos, &m_vLookAt, &up);
+		auto data = UpdateLightData();
 
 		LightLocationData locationData;
-		D3DXMatrixTranspose(&locationData.WorldMatrix, &_lightDataForDepth.WorldMatrix);
-		D3DXMatrixTranspose(&locationData.ViewMatrix, &_lightDataForDepth.ViewMatrix);
-		D3DXMatrixTranspose(&locationData.ProjMatrix, &_lightDataForDepth.ProjMatrix);
+		D3DXMatrixTranspose(&locationData.WorldMatrix, &data.WorldMatrix);
+		D3DXMatrixTranspose(&locationData.ViewMatrix, &data.ViewMatrix);
+		D3DXMatrixTranspose(&locationData.ProjMatrix, &data.ProjMatrix);
 
 		{
 			_dc->UpdateSubresource(_lightBufferForDepth, 0, nullptr, &locationData, 0, 0);
@@ -153,7 +153,7 @@ namespace SSB
 		{
 			LightDataForRender tmp;
 			tmp.LocationData = locationData;
-			tmp.Color = _lightDataForRender.Color;
+			tmp.Color = _lightColor;
 
 			_dc->UpdateSubresource(_lightBufferForRender, 0, nullptr, &tmp, 0, 0);
 		}
@@ -195,7 +195,7 @@ namespace SSB
 		_dc->PSSetShader(m_pPS, NULL, 0);
 		_dc->GSSetShader(m_pGS, NULL, 0);
 
-		_dc->GSSetConstantBuffers(0, 1, &_lightBufferForDepth);
+		_dc->GSSetConstantBuffers(9, 1, &_lightBufferForDepth);
 
 		_dc->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
 		_dc->OMSetRenderTargets(1, &_renderTargetView, _shadowDepthMapDepthStencilView);

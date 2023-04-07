@@ -13,17 +13,19 @@ namespace SSB
 		ID3D11Device* _device;
 		ID3D11DeviceContext* _dc;
 
-	private:
+	public:
 		TVector3	m_vPos = TVector3::Zero;
 		TVector3	m_vLookAt = TVector3::Zero;
 		TVector3	m_vScale = TVector3::One;
 
+	protected:
 		struct LightLocationData
 		{
 			TMatrix WorldMatrix;
 			TMatrix ViewMatrix;
 			TMatrix ProjMatrix;
 		};
+	private:
 		LightLocationData _lightDataForDepth;
 
 		struct LightDataForRender
@@ -32,6 +34,7 @@ namespace SSB
 			TVector4 Color;
 		};
 		LightDataForRender _lightDataForRender;
+		TVector4 _lightColor;
 
 	private:
 		ID3D11Texture2D* _shadowDepthMap;
@@ -48,6 +51,8 @@ namespace SSB
 		bool CreateLightBuffer();
 		HRESULT CreateRenderTargetData();
 
+	protected:
+		virtual LightLocationData UpdateLightData() = 0;
 	private:
 		void UpdateLightBuffer();
 

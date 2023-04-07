@@ -37,7 +37,7 @@ VertexOutput_PCNT VS(Vertex_PCNT_Skinning input)
 	float4 worldNormal = float4(normalize(mul(normal, WorldTransformMatrix)).xyz, 1);
 
 	output.p = proj;
-	output.w = world;
+	output.w = world.xyz;
 	output.n = worldNormal;
 	output.c = input.Color;
 	output.t = input.Diffuse;

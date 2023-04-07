@@ -91,4 +91,27 @@ namespace SSB
 
 		return hr;
 	}
+	Light::LightLocationData DirectionalLight::UpdateLightData()
+	{
+		Light::LightLocationData data;
+
+		TVector3 up(0, 1, 0);
+		{
+			D3DXMatrixLookAtLH(&data.WorldMatrix, &m_vPos, &m_vLookAt, &up);
+			TQuaternion q;
+			//D3DXQuaternionRotationYawPitchRoll(&q, m_vRotation.y, m_vRotation.x, m_vRotation.z);
+			D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &q, &m_vPos);
+		}
+
+		{
+			D3DXMatrixLookAtLH(&data.ViewMatrix, &m_vPos, &m_vLookAt, &up);
+		}
+
+		{
+			float fMaxViewDistance = 100.0f;
+			D3DXMatrixOrthoOffCenterLH(&data.ProjMatrix, -fMaxViewDistance / 2, fMaxViewDistance / 2, -fMaxViewDistance / 2, fMaxViewDistance / 2, 0.0f, 1000.0f);
+		}
+
+		return data;
+	}
 }

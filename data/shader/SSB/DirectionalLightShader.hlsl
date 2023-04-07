@@ -1,7 +1,7 @@
 struct GSInput
 {
 	float4 Projection : SV_POSITION;
-	float4 Position : TEXCOORD1;
+	float3 Position : TEXCOORD3;
 };
 
 cbuffer LightData : register(b9)
@@ -11,25 +11,27 @@ cbuffer LightData : register(b9)
 	matrix LightProjMatrix;
 };
 
-struct PSInput
+struct GSOut
 {
 	float4 Projection : SV_POSITION;
 };
 
 [maxvertexcount(4)]
-void GS(triangle GSInput input[3], inout TriangleStream<PSInput> triStream)
+void GS(triangle GSInput input[3], inout TriangleStream<GSOut> triStream)
 {
-	PSInput output;
+	GSOut output;
+
 	for(int i = 0; i < 3; ++i)
 	{
-		output.Projection = input[i].Projection;
+		float4 tmp = mul(float4(input[i].Position, 1), LightViewMatrix);
+		output.Projection = mul(tmp, LightProjMatrix);
 
 		triStream.Append(output);
 	}
 	triStream.RestartStrip();
 }
 
-float4 PS(PSInput input) : SV_TARGET
+float4 PS(float4 Projection : SV_POSITION) : SV_TARGET
 {
-	return input.Projection;
+	return Projection;
 }

@@ -8,5 +8,6 @@ namespace SSB
     {
     private:
 		HRESULT CreateLightingShader() override;
+        LightLocationData UpdateLightData() override;
     };
 }

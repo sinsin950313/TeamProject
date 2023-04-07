@@ -10,12 +10,12 @@ sampler TextureSamplerColor : register(s0);
 struct PS_INPUT
 {
 	float4 position : SV_POSITION;
+	float3 world : TEXCOORD3;
 	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL0;
 	float4 color : COLOR0;
 	float3 direction_to_camera : TEXCOORD1;
 	float4 m_light_direction : TEXCOORD2;
-	float3 world : TEXCOORD3;
 	float4 tex2 : TEXCOORD4;
 };
 

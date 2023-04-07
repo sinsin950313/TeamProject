@@ -287,7 +287,7 @@ void	FQuadTree::PreRender()
     //Setting For LightDepth;
     m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
     m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-    //m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
+    m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
     //m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
 
     UINT stride = sizeof(PTNC); //정점의크기

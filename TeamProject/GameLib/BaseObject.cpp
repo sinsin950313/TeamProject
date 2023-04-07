@@ -286,7 +286,6 @@ namespace DX
 		m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		m_pImmediateContext->VSSetShader(m_pShader->m_pVS, NULL, 0);
-		m_pImmediateContext->PSSetShader(m_pShader->m_pPS, NULL, 0);
 		m_pImmediateContext->IASetInputLayout(m_pVertexLayout);
 
 		m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTextureSRV);
@@ -298,18 +297,34 @@ namespace DX
 
 	bool BaseObject::Render()
 	{
-		PreRender();
-		PostRender();
+		UINT stride = sizeof(Vertex);
+		UINT offset = 0;
+
+		m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+		m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		m_pImmediateContext->VSSetShader(m_pShader->m_pVS, NULL, 0);
+		m_pImmediateContext->PSSetShader(m_pShader->m_pPS, NULL, 0);
+		m_pImmediateContext->IASetInputLayout(m_pVertexLayout);
+
+		m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTextureSRV);
+
+		m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+
+		if (m_pIndexBuffer == nullptr)
+			m_pImmediateContext->Draw(m_VertexList.size(), 0);
+		else
+			m_pImmediateContext->DrawIndexed(m_IndexList.size(), 0, 0);
 
 		return true;
 	}
 
 	bool BaseObject::PostRender()
 	{
-		if (m_pIndexBuffer == nullptr)
-			m_pImmediateContext->Draw(m_VertexList.size(), 0);
-		else
-			m_pImmediateContext->DrawIndexed(m_IndexList.size(), 0, 0);
+		//if (m_pIndexBuffer == nullptr)
+		//	m_pImmediateContext->Draw(m_VertexList.size(), 0);
+		//else
+		//	m_pImmediateContext->DrawIndexed(m_IndexList.size(), 0, 0);
 		return true;
 	}
 

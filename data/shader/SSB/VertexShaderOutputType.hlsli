@@ -7,7 +7,7 @@ struct VertexOutput_PC
 struct VertexOutput_PCNT
 {
 	float4 p : SV_POSITION;
-	float4 w : TEXCOORD1;
+	float3 w : TEXCOORD3;
 	float4 c : COLOR0;
 	float4 n : Normal;
 	float2 t : TEXCOORD0;
@@ -16,7 +16,7 @@ struct VertexOutput_PCNT
 struct VertexOutput_PCNT_P
 {
 	float4 p : SV_POSITION;
-	float4 w : TEXCOORD1;
+	float3 w : TEXCOORD3;
 	float4 c : COLOR0;
 	float4 n : Normal;
 	float2 t : TEXCOORD0;

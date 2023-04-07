@@ -35,7 +35,7 @@ bool    SceneInGame::Init()
     light->Initialize_SetDevice(m_pd3dDevice, m_pImmediateContext);
     light->Init();
     light->SetLightDirection(TVector3(0, -1, 1));
-    light->SetLightPosition(TVector3(0, 100, -100));
+    light->SetLightPosition(TVector3(0, 100, 100));
     SSB::I_Light.GetInstance().SetLight(light);
 
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -278,17 +278,21 @@ bool SceneInGame::PreRender()
 	auto lights = SSB::I_Light.GetLightList();
     for (auto light : lights)
     {
-        //m_pQuadTree->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-        //m_pQuadTree->PreRender();
+        Camera tmp;
+        tmp.CreateViewMatrix(light->m_vPos, light->m_vLookAt, TVector3(0, 1, 0));
+        tmp.CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
 
-        Player::GetInstance().SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
+        m_pQuadTree->SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
+        m_pQuadTree->PreRender();
+
+        Player::GetInstance().SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
         Player::GetInstance().PreRender();
 
-        //for (auto enemy : m_Enemies)
-        //{
-        //    enemy->SetMatrix(nullptr, &light->m_matView, &light->m_matProj);
-        //    enemy->PreRender();
-        //}
+        for (auto enemy : m_Enemies)
+        {
+            enemy->SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
+            enemy->PreRender();
+        }
     }
 
     return true;

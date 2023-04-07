@@ -39,6 +39,33 @@ SamplerState Sampler : register(s0);
 #include "LightBufferData.hlsli"
 #include "CameraBuffer.hlsli"
 
+bool IsInShadow(float2 uv)
+{
+	////const float	g_iNumKernel = 3;
+	//float4 vDiffuseColor = g_txDiffuse.Sample( g_samLinear, input.t );
+	//float fLightAmount=0.0f;
+	//float3 ShadowTexColor =input.TexShadow.xyz / input.TexShadow.w;
+
+	//const float fdelta = 1.0f / SMAP_SIZE;
+	//int iHalf = (g_iNumKernel - 1) / 2;
+	//for (int v = -iHalf; v <= iHalf; v++)
+	//{
+	//	for (int u = -iHalf; u <= iHalf; u++)
+	//	{
+	//		float2 vOffset = float2(u*fdelta, v*fdelta);	
+	//		fLightAmount += g_txDepthMap.SampleCmpLevelZero(g_samComShadowMap, 
+	//								ShadowTexColor.xy+vOffset, ShadowTexColor.z).r;
+	//	}											
+	//}		
+	//fLightAmount /= g_iNumKernel*g_iNumKernel;	
+	//float fColor = fLightAmount;
+	//float4 vFinalColor = vDiffuseColor*max(0.5f, fLightAmount);
+	//vFinalColor.a = 1.0f;
+	//return  vFinalColor;
+	
+	return false;
+}
+
 float4 GetDiffuse(float2 uv)
 {
 	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
@@ -78,7 +105,11 @@ float4 PS(PSInput input) : SV_TARGET0
 {
 	float4 diffuseColor = ColorMap.Sample(Sampler, input.TextureUV);
 
-	float4 ret = diffuseColor * (GetDiffuse(input.TextureUV) + GetSpecular(input.TextureUV) + GetAmbient());
+	float4 ret = diffuseColor * GetAmbient();
+	if(IsInShadow(input.TextureUV))
+	{
+		ret += diffuseColor * (GetDiffuse(input.TextureUV) + GetSpecular(input.TextureUV));
+	}
 
 	return float4(ret.xyz, 1);
 }
