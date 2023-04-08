@@ -6,13 +6,34 @@
 
 namespace SSB
 {
+	void Light::CreateRasterizerState()
+	{
+		D3D11_RASTERIZER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
+		desc.DepthClipEnable = TRUE;
+		desc.FillMode = D3D11_FILL_SOLID;
+		desc.CullMode = D3D11_CULL_BACK;
+		desc.DepthBias = 5000;
+		desc.DepthBiasClamp = 0.0f;
+		desc.SlopeScaledDepthBias = 1.0f;
+		_device->CreateRasterizerState(&desc, &_rsState);
+	}
+	void Light::CreateViewPort()
+	{
+		_viewPort.TopLeftX = 0;
+		_viewPort.TopLeftY = 0;
+		_viewPort.Width = _width;
+		_viewPort.Height = _height;
+		_viewPort.MinDepth = 0;
+		_viewPort.MaxDepth = 1;
+	}
 	void Light::CreateDepthMap()
 	{
 		{
 			D3D11_TEXTURE2D_DESC desc;
 			ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
-			desc.Width = 2048;
-			desc.Height = 2048;
+			desc.Width = _width;
+			desc.Height = _height;
 			desc.MipLevels = 1;
 			desc.ArraySize = 1;
 			desc.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -115,8 +136,8 @@ namespace SSB
 		HRESULT hr;
 
 		D3D11_TEXTURE2D_DESC desc;
-		desc.Width = (UINT)2048;
-		desc.Height = (UINT)2048;
+		desc.Width = (UINT)_width;
+		desc.Height = (UINT)_height;
 		desc.MipLevels = 1;
 		desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		desc.SampleDesc.Count = 1;
@@ -180,6 +201,8 @@ namespace SSB
 	}
 	void Light::Init()
 	{
+		CreateRasterizerState();
+		CreateViewPort();
 		CreateRenderTargetData();
 		CreateCameraBuffer();
 		CreateDepthMap();
@@ -192,6 +215,7 @@ namespace SSB
 	}
 	void Light::PreRender()
 	{
+		_dc->RSSetViewports(1, &_viewPort);
 		_dc->PSSetShader(m_pPS, NULL, 0);
 		_dc->GSSetShader(m_pGS, NULL, 0);
 
@@ -203,6 +227,7 @@ namespace SSB
 		const FLOAT color[] = { 0, 0, 0, 0 };
 		_dc->ClearRenderTargetView(_renderTargetView, color);
 		_dc->ClearDepthStencilView(_shadowDepthMapDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		_dc->RSSetState(_rsState);
 	}
 	void Light::Render()
 	{
@@ -290,6 +315,12 @@ namespace SSB
 		{
 			_renderTargetView->Release();
 			_renderTargetView = nullptr;
+		}
+
+		if (_rsState != nullptr)
+		{
+			_rsState->Release();
+			_rsState = nullptr;
 		}
 	}
 	void Light::CreateCameraBuffer()

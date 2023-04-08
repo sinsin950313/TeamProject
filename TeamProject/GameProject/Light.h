@@ -13,6 +13,9 @@ namespace SSB
 		ID3D11Device* _device;
 		ID3D11DeviceContext* _dc;
 
+		float _width = 2048 * 2;
+		float _height = 2048 * 2;
+
 	public:
 		TVector3	m_vPos = TVector3::Zero;
 		TVector3	m_vLookAt = TVector3::Zero;
@@ -44,8 +47,12 @@ namespace SSB
 		ID3D11Buffer* _lightBufferForRender;
 		ID3D11Texture2D* _renderTargetTexture;
 		ID3D11RenderTargetView* _renderTargetView;
+		D3D11_VIEWPORT _viewPort;
+		ID3D11RasterizerState* _rsState;
 
 	private:
+		void CreateRasterizerState();
+		void CreateViewPort();
 		void CreateDepthMap();
 		void CreateLightData();
 		bool CreateLightBuffer();

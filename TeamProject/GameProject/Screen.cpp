@@ -12,6 +12,24 @@ namespace SSB
 		m_fHeight = fHeight;
 	}
 
+	void Screen::CreatePCFComparisonState()
+	{
+		D3D11_SAMPLER_DESC SamDescShad =
+		{
+			D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT,// D3D11_FILTER Filter;
+			D3D11_TEXTURE_ADDRESS_BORDER, //D3D11_TEXTURE_ADDRESS_MODE AddressU;
+			D3D11_TEXTURE_ADDRESS_BORDER, //D3D11_TEXTURE_ADDRESS_MODE AddressV;
+			D3D11_TEXTURE_ADDRESS_BORDER, //D3D11_TEXTURE_ADDRESS_MODE AddressW;
+			0,//FLOAT MipLODBias;
+			0,//UINT MaxAnisotropy;
+			D3D11_COMPARISON_LESS , //D3D11_COMPARISON_FUNC ComparisonFunc;
+			0.0,0.0,0.0,0.0,//FLOAT BorderColor[ 4 ];
+			0,//FLOAT MinLOD;
+			0//FLOAT MaxLOD;   
+		};
+		m_pd3dDevice->CreateSamplerState(&SamDescShad, &_pcfSamplerState);
+	}
+
 	void Screen::ClearRenderTarget()
 	{
 		const FLOAT color[] = { 0, 0, 0, 0 };
@@ -192,6 +210,7 @@ namespace SSB
 
 	bool Screen::Init()
 	{
+		CreatePCFComparisonState();
 		CreateShader();
 		CreateVertexData();
 		CreateVertexBuffer();
@@ -231,6 +250,7 @@ namespace SSB
 
 		m_pImmediateContext->PSSetShaderResources(0, m_ReferecedTextureCount, m_ShaderResourceList);
 		m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
+		m_pImmediateContext->PSSetSamplers(1, 1, &_pcfSamplerState);
 
 		if (m_pIndexBuffer == nullptr)
 			m_pImmediateContext->Draw(m_VertexList.size(), 0);
@@ -273,6 +293,12 @@ namespace SSB
 		{
 			m_pRenderTargetView->Release();
 			m_pRenderTargetView = nullptr;
+		}
+
+		if (_pcfSamplerState != nullptr)
+		{
+			_pcfSamplerState->Release();
+			_pcfSamplerState = nullptr;
 		}
 
 		return true;

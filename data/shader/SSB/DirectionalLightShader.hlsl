@@ -16,7 +16,7 @@ struct GSOut
 	float4 Projection : SV_POSITION;
 };
 
-[maxvertexcount(4)]
+[maxvertexcount(3)]
 void GS(triangle GSInput input[3], inout TriangleStream<GSOut> triStream)
 {
 	GSOut output;

@@ -35,41 +35,45 @@ Texture2D LightShadowMap : register(t4);
 // Need Material Power Value Map
 
 SamplerState Sampler : register(s0);
+SamplerComparisonState PCFSampler : register(s1);
 
 #include "LightBufferData.hlsli"
 #include "CameraBuffer.hlsli"
 
-bool IsInShadow(float2 uv)
+float GetShadowRatio(float2 uv)
 {
-	////const float	g_iNumKernel = 3;
-	//float4 vDiffuseColor = g_txDiffuse.Sample( g_samLinear, input.t );
-	//float fLightAmount=0.0f;
-	//float3 ShadowTexColor =input.TexShadow.xyz / input.TexShadow.w;
+	float4 pos = PositionMap.Sample(Sampler, uv);
+	float4 vertexInLightCoordinate = mul(pos, LightViewMatrix);
+	vertexInLightCoordinate = mul(vertexInLightCoordinate, LightProjMatrix);
+	float vertexDistanceInLightCoordinate = vertexInLightCoordinate.z / vertexInLightCoordinate.w;
+	float2 depthMapUV = vertexInLightCoordinate.xy / vertexInLightCoordinate.w;
+	depthMapUV.x =  depthMapUV.x * 0.5 + 0.5;
+	depthMapUV.y = -depthMapUV.y * 0.5 + 0.5;
+	float depthInLightCoordinate = LightShadowMap.Sample(Sampler, depthMapUV).r;
 
-	//const float fdelta = 1.0f / SMAP_SIZE;
-	//int iHalf = (g_iNumKernel - 1) / 2;
-	//for (int v = -iHalf; v <= iHalf; v++)
-	//{
-	//	for (int u = -iHalf; u <= iHalf; u++)
-	//	{
-	//		float2 vOffset = float2(u*fdelta, v*fdelta);	
-	//		fLightAmount += g_txDepthMap.SampleCmpLevelZero(g_samComShadowMap, 
-	//								ShadowTexColor.xy+vOffset, ShadowTexColor.z).r;
-	//	}											
-	//}		
-	//fLightAmount /= g_iNumKernel*g_iNumKernel;	
-	//float fColor = fLightAmount;
-	//float4 vFinalColor = vDiffuseColor*max(0.5f, fLightAmount);
-	//vFinalColor.a = 1.0f;
-	//return  vFinalColor;
-	
-	return false;
+	const float	g_iNumKernel = 3;
+
+	float fLightAmount=0.0f;
+
+	const float SMAP_SIZE = 2048 * 2;
+	const float fdelta = 1.0f / SMAP_SIZE;
+	int iHalf = (g_iNumKernel - 1) / 2;
+	for (int v = -iHalf; v <= iHalf; v++)
+	{
+		for (int u = -iHalf; u <= iHalf; u++)
+		{
+			float2 vOffset = float2(u*fdelta, v*fdelta);	
+			fLightAmount += LightShadowMap.SampleCmpLevelZero(PCFSampler, depthMapUV.xy+vOffset, vertexDistanceInLightCoordinate).r;
+		}
+	}
+	fLightAmount /= g_iNumKernel*g_iNumKernel;	
+	return fLightAmount;
 }
 
 float4 GetDiffuse(float2 uv)
 {
 	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
-	float4 lightDirection = LightWorldMatrix._13_23_33_43;
+	float4 lightDirection = LightWorldMatrix._31_32_33_34;
 	float intensity = max(0, dot(normal, -lightDirection));
 	float Attenuation = 1;
 
@@ -81,7 +85,7 @@ float4 GetDiffuse(float2 uv)
 float4 GetSpecular(float2 uv)
 {
 	float4 normal = float4(NormalMap.Sample(Sampler, uv).xyz, 0);
-	float4 lightDirection = LightWorldMatrix._13_23_33_43;
+	float4 lightDirection = LightWorldMatrix._31_32_33_34;
 	float4 reflectVector = reflect(lightDirection, normal);
 
 	float4 eyePosition = CameraPosition._14_24_34_44;
@@ -98,7 +102,7 @@ float4 GetSpecular(float2 uv)
 
 float4 GetAmbient()
 {
-	return float4(0.4, 0.4, 0.4, 1);
+	return float4(0.2, 0.2, 0.2, 1);
 }
 
 float4 PS(PSInput input) : SV_TARGET0
@@ -106,10 +110,7 @@ float4 PS(PSInput input) : SV_TARGET0
 	float4 diffuseColor = ColorMap.Sample(Sampler, input.TextureUV);
 
 	float4 ret = diffuseColor * GetAmbient();
-	if(IsInShadow(input.TextureUV))
-	{
-		ret += diffuseColor * (GetDiffuse(input.TextureUV) + GetSpecular(input.TextureUV));
-	}
+	ret += diffuseColor * GetShadowRatio(input.TextureUV) * (GetDiffuse(input.TextureUV) + GetSpecular(input.TextureUV));
 
 	return float4(ret.xyz, 1);
 }

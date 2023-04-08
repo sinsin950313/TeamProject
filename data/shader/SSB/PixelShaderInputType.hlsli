@@ -17,7 +17,7 @@ struct PixelShaderInput_PC
 struct PixelShaderInput_PCNT
 {
 	float4 Position : SV_POSITION;
-	float3 World : TEXCOORD3;
+	float4 World : TEXCOORD3;
 	float4 Color : COLOR0;
 	float4 Normal : NORMAL;
 	float2 Diffuse : TEXCOORD0;
@@ -26,7 +26,7 @@ struct PixelShaderInput_PCNT
 struct PixelShaderInput_PCNT_P
 {
 	float4 Position : SV_POSITION;
-	float3 World : TEXCOORD3;
+	float4 World : TEXCOORD3;
 	float4 Color : COLOR0;
 	float4 Normal : NORMAL;
 	float2 Diffuse : TEXCOORD0;

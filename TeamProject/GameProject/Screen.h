@@ -41,8 +41,10 @@ namespace SSB
 		ID3D11Texture2D* m_pTexture = nullptr;
 		ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
 		ID3D11BlendState* m_pLightBlendState = nullptr;
+		ID3D11SamplerState* _pcfSamplerState;
 
 	private:
+		void CreatePCFComparisonState();
 		void ClearRenderTarget();
 		void	CreateVertexData();
 		HRESULT CreateVertexBuffer();
