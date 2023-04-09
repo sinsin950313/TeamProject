@@ -84,8 +84,8 @@ namespace DX
 		virtual HRESULT CreateIndexBuffer();
 		virtual HRESULT CreateConstantBuffer();
 		virtual HRESULT CreateVertexLayout();
-		virtual void		UpdateVertexBuffer();
-		virtual void		UpdateConstantBuffer();
+		virtual void	UpdateVertexBuffer();
+		virtual void	UpdateConstantBuffer();
 
 		virtual void	SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj);
 

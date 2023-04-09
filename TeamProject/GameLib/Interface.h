@@ -11,12 +11,6 @@ enum	E_UIState
 	UI_DIS,
 	UI_MAXSTATE
 };
-__declspec(align(16))
-struct ConstantData_UI
-{
-	float fTime;
-};
-
 class InterfaceWork;
 class Interface : public BaseObject
 {
@@ -24,6 +18,7 @@ public:
 	virtual bool Frame() override;
 	virtual bool Render() override;
 	virtual bool Release() override;
+	virtual void SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj) override;
 	virtual bool SetAttribute(TVector3 vPos, TRectangle rc);
 	virtual bool SetAttribute(TVector3 vPos = {0, 0, 0}, TVector3 vScale = { 1, 1, 1 }, TColor color = { 1, 1, 1, 1 });
 	virtual bool SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV);
@@ -42,7 +37,10 @@ public:
 
 		m_pTexture = m_pTexList[index];
 	}
+public:
+	void	SetUV(float u0, float v0, float u1, float v1);
 	void	ToNDC();
+	void	NormalizeToCenter();
 public:
 	E_UIState	m_CurrentState;
 
@@ -54,13 +52,17 @@ public:
 
 public:
 	bool	m_isUsing = true;
-	bool	m_bBillBoard = false;
 public:
-	ConstantData_UI m_ConstantData_UI;
-	ID3D11Buffer* m_pConstantBuffer_UI;
 	virtual void SetTime(float fTime);
 };
 
+class InterfaceBillboard : public Interface
+{
+public:
+	virtual void SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj) override;
+	virtual bool Frame() override;
+	virtual bool Render() override;
+};
 
 class InterfaceWork
 {

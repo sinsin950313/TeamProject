@@ -19,6 +19,9 @@ VS_out VS(VS_in input)
 	VS_out output = (VS_out)0;
 
 	output.p = float4(input.p, 1.0f);
+	output.p = mul(output.p, g_matWorld);
+	output.p = mul(output.p, g_matView);
+	output.p = mul(output.p, g_matProj);
 	output.n = input.n;
 	output.c = input.c;
 	output.t = input.t;

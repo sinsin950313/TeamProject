@@ -7,7 +7,7 @@
 
 //HeightMap
 class MeshMap;
-
+class InterfaceBillboard;
 class Character
 {
 protected:
@@ -30,6 +30,9 @@ protected:
 public:
 	ID3D11Device* m_pd3dDevice = nullptr;
 	ID3D11DeviceContext* m_pImmediateContext = nullptr;
+	
+public:
+	InterfaceBillboard* m_pGageHP;
 
 public:
 	virtual bool	Init();
