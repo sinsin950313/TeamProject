@@ -1,5 +1,5 @@
-m_pTexture:D:\sylProject\Project41\Assets\Textures\sand.jpg
-m_ListTextureSplatting:D:\sylProject\Project41\Assets\Textures\011.jpg, D:\sylProject\Project41\Assets\Textures\020.bmp, D:\sylProject\Project41\Assets\Textures\034.bmp, D:\sylProject\Project41\Assets\Textures\HR01.bmp,
+m_pTexture:..\..\Assets\Textures\sand.jpg
+m_ListTextureSplatting:..\..\Assets\Textures\011.jpg, ..\..\Assets\Textures\020.bmp, ..\..\Assets\Textures\034.bmp, ..\..\Assets\Textures\HR01.bmp, 
 m_Transform:position:0 0 0, rotation:0 0 0, scale:1 1 1
 m_iMaxDepth:2
 m_szVSName:MapVertexShader.hlsl

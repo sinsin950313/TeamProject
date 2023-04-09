@@ -27,7 +27,9 @@ public:
 	void	SetTransform(Transform transform);
 	void	SetTexture(Texture* pTexture);
 	void	SetShader(std::wstring vsPath, Shader* pVertexShader, std::wstring psPath, Shader* pPixelShader);
-	void	SetConstantData(constant_map cc);
+	void	SetConstantData(ConstantData_Transform constantData);
+	void	SetConstantData(ConstantData_Map constantData);
+	void	SetConstantData(ConstantData_Light constantData);
 	//UINT	SelectVertexList(T_BOX& box, std::vector<FNode*>& selectNodeList);
 	BOOL	AddObject(Object* pObj);
 	BOOL	DeleteObject(Object* pObj);
@@ -80,14 +82,19 @@ public:
 	
 	
 	Transform m_Transform;
-	constant_map m_constantDataMap;
-	ID3D11Buffer* m_pConstantBuffer;
+	ID3D11Buffer* m_pConstantBuffer_Transform;
+	ConstantData_Transform m_ConstantData_Transform;
+	ID3D11Buffer* m_pConstantBuffer_Map;
+	ConstantData_Map m_ConstantData_Map;
+	ID3D11Buffer* m_pConstantBuffer_Light;
+	ConstantData_Light m_ConstantData_Light;
 
 	std::wstring m_szVSPath;
 	Shader* m_pVertexShader;
 	std::wstring m_szPSPath;
 	Shader* m_pPixelShader;
 
+	std::vector<Transform> m_EnemySpawnList;
 	std::unordered_set<Object*> m_pAllObjectList;
 	std::vector<FNode*> m_pLeafNodeList;
 	std::vector<FNode*> m_pDrawLeafNodeList;

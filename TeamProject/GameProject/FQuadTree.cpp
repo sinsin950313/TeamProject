@@ -64,10 +64,22 @@ FQuadTree::FQuadTree(MeshMap* pMap, ID3D11Device* pDevice, ID3D11DeviceContext* 
     m_iMaxDepth = iMaxDepth;
     m_pRootNode = new FNode(nullptr, pMap, 0, m_pMap->m_dwNumColumns - 1, m_pMap->m_dwNumRows * (m_pMap->m_dwNumColumns - 1), m_pMap->m_dwNumRows * m_pMap->m_dwNumColumns - 1);
 
-    m_constantDataMap.matWorld = XMMatrixIdentity();
+    m_ConstantData_Transform.matWorld = XMMatrixIdentity();
+    m_ConstantData_Transform.matView = XMMatrixIdentity();
+    m_ConstantData_Transform.matProj = XMMatrixIdentity();
+    m_pConstantBuffer_Transform = DX::CreateConstantBuffer(pDevice, &m_ConstantData_Transform, sizeof(m_ConstantData_Transform));
+
+    m_ConstantData_Map.worldSize = XMFLOAT2(m_pMap->m_dwNumColumns, m_pMap->m_dwNumRows);
+    m_ConstantData_Map.cellDistance = m_pMap->m_fCellDistance;
+    //m_ConstantData_Map.tileCount
+    m_pConstantBuffer_Map = DX::CreateConstantBuffer(pDevice, &m_ConstantData_Map, sizeof(m_ConstantData_Map));
+
+    m_pConstantBuffer_Light = DX::CreateConstantBuffer(pDevice, &m_ConstantData_Light, sizeof(m_ConstantData_Light));
+
+  /*  m_constantDataMap.matWorld = XMMatrixIdentity();
     m_constantDataMap.matView = XMMatrixIdentity();
     m_constantDataMap.matProj = XMMatrixIdentity();
-    m_pConstantBuffer = DX::CreateConstantBuffer(pDevice, &m_constantDataMap, sizeof(m_constantDataMap));
+    m_pConstantBuffer = DX::CreateConstantBuffer(pDevice, &m_constantDataMap, sizeof(m_constantDataMap));*/
 
     CreateAlphaTexture(m_pMap->m_dwNumRows, m_pMap->m_dwNumColumns, fAlphaData);
     BuildTree(m_pRootNode, pMap);
@@ -114,7 +126,7 @@ void FQuadTree::SetTransform(Transform transform)
             XMConvertToRadians(rotateAngle.y),
             XMConvertToRadians(rotateAngle.z));
     XMVECTOR translation = m_Transform.position;
-    m_constantDataMap.matWorld = XMMatrixTransformation({ 0,0,0,1 }, { 0,0,0,1 }, scale, { 0,0,0,1 }, rotation, translation);
+    m_ConstantData_Transform.matWorld = XMMatrixTransformation({ 0,0,0,1 }, { 0,0,0,1 }, scale, { 0,0,0,1 }, rotation, translation);
 }
 
 void FQuadTree::SetTexture(Texture* pTexture)
@@ -130,11 +142,22 @@ void FQuadTree::SetShader(std::wstring vsPath, Shader* pVertexShader, std::wstri
     m_pPixelShader = pPixelShader;
 }
 
-
-void FQuadTree::SetConstantData(constant_map cc)
+void FQuadTree::SetConstantData(ConstantData_Transform constantData)
 {
-    m_constantDataMap = cc;
+    m_ConstantData_Transform = constantData;
 }
+
+
+void FQuadTree::SetConstantData(ConstantData_Map cc)
+{
+    m_ConstantData_Map = cc;
+}
+
+void FQuadTree::SetConstantData(ConstantData_Light constantData)
+{
+    //m_ConstantData_Light = constantData;
+}
+
 
 BOOL FQuadTree::AddObject(Object* pObj)
 {
@@ -209,7 +232,6 @@ void FQuadTree::Reset(FNode* pNode)
 
 FNode* FQuadTree::VisibleNode(FNode* pNode)
 {
-    m_pCurrentCamera->m_vFrustum;
     PLANE_COLTYPE dwRet = m_pCurrentCamera->m_vFrustum.ClassifyOBB(pNode->m_Box);
     if (P_FRONT == dwRet)// 완전포함.
     {
@@ -239,47 +261,43 @@ void	FQuadTree::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
     if (matWorld)
     {
         TMatrix world = *matWorld;
-        m_constantDataMap.matWorld = XMLoadFloat4x4(&world);
+        m_ConstantData_Transform.matWorld = XMLoadFloat4x4(&world);
         //m_constantDataMap.matWorld = XMMatrixTranspose(world);
     }
     if (matView)
     {
         TMatrix view = *matView;
-        m_constantDataMap.matView = XMLoadFloat4x4(&view);
+        m_ConstantData_Transform.matView = XMLoadFloat4x4(&view);
         //m_constantDataMap.matView = XMMatrixTranspose(view);
     }
     if (matProj)
     {
         TMatrix proj = *matProj;
-        m_constantDataMap.matProj = XMLoadFloat4x4(&proj);
+        m_ConstantData_Transform.matProj = XMLoadFloat4x4(&proj);
         //m_constantDataMap.matProj = XMMatrixTranspose(proj);
     }
-    m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, NULL, NULL, &m_constantDataMap, NULL, NULL);
+    m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Transform, NULL, NULL, &m_ConstantData_Transform, NULL, NULL);
 }
 
 void FQuadTree::Update()
 {
-    //m_constantDataMap.matView = _CameraSystem.GetCurrentCamera()->m_matCamera;
-    //m_constantDataMap.m_camera_position = XMFLOAT4(
-    //    XMVectorGetX(_CameraSystem.GetCurrentCamera()->m_matWorld.r[3]),
-    //    XMVectorGetY(_CameraSystem.GetCurrentCamera()->m_matWorld.r[3]),
-    //    XMVectorGetZ(_CameraSystem.GetCurrentCamera()->m_matWorld.r[3]),
-    //    XMVectorGetW(_CameraSystem.GetCurrentCamera()->m_matWorld.r[3]));
-    m_constantDataMap.m_world_size = XMFLOAT2(m_pMap->m_dwNumColumns, m_pMap->m_dwNumRows);
-    m_constantDataMap.m_cell_distance = m_pMap->m_fCellDistance;
-    //_EngineSystem.GetRenderSystem()->UpdateConstantBuffer(m_pConstantBuffer, &m_constantDataMap);
+    m_pSphereObject->Frame();
 
     m_pDrawLeafNodeList.clear();
+
+    m_ConstantData_Light.cameraPosition = XMFLOAT4(
+        XMVectorGetX(m_pCurrentCamera->m_matWorld.Forward()),
+        XMVectorGetY(m_pCurrentCamera->m_matWorld.Forward()),
+        XMVectorGetZ(m_pCurrentCamera->m_matWorld.Forward()),
+        XMVectorGetW(m_pCurrentCamera->m_matWorld.Forward()));
+
+    m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Map, NULL, NULL, &m_ConstantData_Map, NULL, NULL);
+    m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Light, NULL, NULL, &m_ConstantData_Light, NULL, NULL);
+
     VisibleNode(m_pRootNode); //재귀로 VisibleNode체크
-
-    //m_Select.SetMatrix(nullptr, &m_pCamera->m_matCamera, &m_pCamera->m_matProj);
-
-    m_pImmediateContext->UpdateSubresource(m_pConstantBuffer, NULL, NULL, &m_constantDataMap, NULL, NULL);
 
     for (const auto& object : m_pAllObjectList)
         object->Frame();
-
-    m_pSphereObject->Frame();
 }
 
 void	FQuadTree::PreRender()
@@ -326,10 +344,20 @@ void FQuadTree::Render()
 {
     m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
     m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);
+    m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+
+
+    m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->PSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+
+
     m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
     m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
 
-    UINT stride = sizeof(PTNC); //정점의크기
+    UINT stride = sizeof(PNCTVertex); //정점의크기
     UINT offset = 0;          //정점의오프셋
     m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer를 세팅, 1은 버퍼의갯수
     m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
@@ -349,8 +377,8 @@ void FQuadTree::Render()
         m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
     }
 
-    TMatrix view = TMatrix(m_constantDataMap.matView);
-    TMatrix proj = TMatrix(m_constantDataMap.matProj);
+    TMatrix view = TMatrix(m_ConstantData_Transform.matView);
+    TMatrix proj = TMatrix(m_ConstantData_Transform.matProj);
     for (const auto& object : m_pAllObjectList)
     {   
         object->SetMatrix(nullptr, &view, &proj);
@@ -397,10 +425,20 @@ void	FQuadTree::Release()
         delete m_pRootNode;
         m_pRootNode = nullptr;
     }
-    if (m_pConstantBuffer)
+    if (m_pConstantBuffer_Transform)
     {
-        m_pConstantBuffer->Release();
-        m_pConstantBuffer = nullptr;
+        m_pConstantBuffer_Transform->Release();
+        m_pConstantBuffer_Transform = nullptr;
+    }
+    if (m_pConstantBuffer_Map)
+    {
+        m_pConstantBuffer_Map->Release();
+        m_pConstantBuffer_Map = nullptr;
+    }
+    if (m_pConstantBuffer_Light)
+    {
+        m_pConstantBuffer_Light->Release();
+        m_pConstantBuffer_Light = nullptr;
     }
     if (m_pMap)
     {
@@ -412,7 +450,6 @@ void	FQuadTree::Release()
 namespace MAPLOAD
 {
 #define _DegreeToRadian(X) X*(XM_PI/180.0f)
-    constexpr auto _Epsilon = 0.001f;
     static XMFLOAT2 operator+(XMFLOAT2& a, XMFLOAT2& b)
     {
         return XMFLOAT2(a.x + b.x, a.y + b.y);
@@ -701,6 +738,7 @@ namespace MAPLOAD
 		std::wstring szPSPath;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
+        std::vector<Transform> spawnList;
 		std::unordered_set<Object*> allObjectList;
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
@@ -822,7 +860,7 @@ namespace MAPLOAD
                         float fRadius;
                         UINT iSliceCount;
                         UINT iStackCount;
-						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
+						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" || specifyMode == "OBJECT_TRIGGER" || specifyMode == "OBJECT_SPAWN")
 						{
 							// pos 값을 추출합니다.
 							size_t pos_start = texturesStream.str().find("m_fLength:") + strlen("m_fLength:");
@@ -855,7 +893,7 @@ namespace MAPLOAD
                             stack_stream >> iStackCount;
                         }
 
-                        if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER")
+                        if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" || specifyMode == "OBJECT_TRIGGER")
                         {
                             T_BOX mePeedBox;
 
@@ -880,6 +918,10 @@ namespace MAPLOAD
                             
                             mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
                             I_Collision.AddMapCollisionBox(mePeedBox);
+                        }
+                        else if (specifyMode == "OBJECT_SPAWN")
+                        {
+                            spawnList.push_back(transform);
                         }
                         else if (specifyMode == "OBJECT_SKYDOME")
                         {
@@ -969,10 +1011,10 @@ namespace MAPLOAD
 
 		is.close();
 
-		constant_map cc;
-		cc.matWorld = XMMatrixIdentity();
-		cc.matView = XMMatrixIdentity();
-		cc.matProj = XMMatrixIdentity();
+        ConstantData_Transform constantData_Transform;
+        constantData_Transform.matWorld = XMMatrixIdentity();
+        constantData_Transform.matView = XMMatrixIdentity();
+        constantData_Transform.matProj = XMMatrixIdentity();
 
     std::wstring DefaultShaderPath = L"../../data/shader/MAP/";
 		Shader* pVertexShader;
@@ -981,18 +1023,9 @@ namespace MAPLOAD
 		I_Shader.PSLoad(DefaultShaderPath + szPSPath, L"psmain", &pPixelShader);
 
 		pMapMesh->m_pVertexBuffer =
-			DX::CreateVertexBuffer(pd3dDevice, &pMapMesh->GetListVertex()[0], sizeof(PTNC), pMapMesh->GetListVertex().size());
-        D3D11_INPUT_ELEMENT_DESC layout[] =
-        {
-            //SEMANTIC NAME, SEMANTIC INDEX, FORMAT, INPUT SLOT, ALIGNED BYTE OFFSET, INPUT SLOT CLASS, INSTANCE DATA STEP RATE, 
-            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},		//POSITION0
-            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        };
+			DX::CreateVertexBuffer(pd3dDevice, &pMapMesh->GetListVertex()[0], sizeof(PNCTVertex), pMapMesh->GetListVertex().size());
 
-        UINT iSizeLayout = ARRAYSIZE(layout);
-        if (FAILED(pd3dDevice->CreateInputLayout(layout, iSizeLayout,
+        if (FAILED(pd3dDevice->CreateInputLayout(layoutPNCT, size_layoutPNCT,
             pVertexShader->m_pVSCode->GetBufferPointer(), 
             pVertexShader->m_pVSCode->GetBufferSize(), 
             &pMapMesh->m_pVertexInputLayout)))
@@ -1002,13 +1035,18 @@ namespace MAPLOAD
 			DX::CreateIndexBuffer(pd3dDevice, &pMapMesh->GetListIndex()[0], sizeof(DWORD), pMapMesh->GetListIndex().size());
 
 		FQuadTree* pQuadTree = new FQuadTree(pMapMesh, pd3dDevice, pContext, iMaxDepth, fAlphaData);
-		pQuadTree->SetConstantData(cc);
+		pQuadTree->SetConstantData(constantData_Transform);
 		pQuadTree->SetTransform({ mapTransform.position, mapTransform.rotation, mapTransform.scale });
 		pQuadTree->SetTexture(pTexture);
 		for (const auto& texture : pTexList)
 			pQuadTree->SetSplattingTexture(texture);
 		pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
 		//pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
+
+        for (const auto& transform : spawnList)
+        {
+            pQuadTree->m_EnemySpawnList.push_back(transform);
+        }
 
 		for (const auto& obj : allObjectList)
 		{
@@ -1027,7 +1065,7 @@ namespace MAPLOAD
     {
         //std::string::size_type pos = str.find("D:\\");
         std::string::size_type pos = 0;
-        std::string::size_type end = str.find("Asset");
+        std::string::size_type end = str.find("Assets");
         str.replace(pos, end - 1, "../../data");
 
         pos = str.find('\\');

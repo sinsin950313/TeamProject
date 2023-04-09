@@ -1,4 +1,5 @@
 #include "CharacterState.h"
+#include "Player.h"
 
 namespace SSB
 {
@@ -45,6 +46,20 @@ namespace SSB
 	}
 	void CharacterState::Run()
 	{
+		if (!m_pCharacter->m_bIsStateTransfer)
+		{
+			m_pCharacter->m_bIsStateTransfer = true;
+		}
+
+		if (!m_pCharacter->m_bSoundPlay)
+		{
+			m_pCharacter->_currentSound = _sound;
+			if (_sound)
+			{
+				m_pCharacter->_currentSound->Play(IsSoundLoop());
+				m_pCharacter->m_bSoundPlay = true;
+			}
+		}
         m_pCharacter->m_pModel->SetCurrentAnimation(GetStateAnimationName());
 	}
 }

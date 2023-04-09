@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseObject.h"
+#include "Interface.h"
 
 enum E_SCENE
 {
@@ -18,6 +18,8 @@ public:
     virtual bool PreRender();
     virtual bool    Render();
     virtual bool    Release();
+
+    virtual void    DataLoad() = 0;
 
     virtual E_SCENE     NextScene() = 0;
 

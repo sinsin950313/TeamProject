@@ -21,13 +21,14 @@ namespace SSB
 		{
 			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
 			{
-				if (TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition()) <= mob->GetSpotRange())
+                float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
+				if (fDistance <= mob->GetSpotRange())
 				{
 					transfer = true;
 					SetNextTransferName(kEnemyNPCMobMove);
 				}
 
-				if (TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+				if (fDistance <= mob->GetBattleRange())
 				{
 					transfer = true;
 					SetNextTransferName(kEnemyNPCMobAttack);

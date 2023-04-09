@@ -20,7 +20,7 @@ public:
 	void	SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 
 public:
-	std::vector<PTNC>& GetListVertex();
+	std::vector<PNCTVertex>& GetListVertex();
 	std::vector<DWORD>& GetListIndex();
 	float	GetHeightmap(int row, int col);
 	float	GetHeight(float fPosX, float fPosZ);
@@ -44,7 +44,7 @@ public:
 
 	ID3D11Buffer* m_pIndexBuffer;
 
-	std::vector<PTNC> m_ListVertex;	//정점정보
+	std::vector<PNCTVertex> m_ListVertex;	//정점정보
 	std::vector<DWORD> m_ListIndex; //인덱스정보
 	std::vector<float> m_fHeightList;	//높이맵의높이정보
 	std::vector<vertex_info> m_ListVertexInfo;	//정점법선노말

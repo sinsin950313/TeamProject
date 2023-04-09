@@ -2,6 +2,14 @@
 #include "Scene.h"
 #include "Interface.h"
 
+enum SCENE_LOADSTATE
+{
+	LOADSTART = 0,
+	LOADING,
+	LOADCOMPLETE,
+	LOADNONE
+};
+
 class SceneMgr : public Singleton<SceneMgr>
 {
 public:
@@ -20,6 +28,7 @@ public:
 	bool	Release();
 
 	void	SceneChange(E_SCENE s_type);
+
 private:
 	SceneMgr();
 public:
@@ -31,6 +40,10 @@ private:
 	E_SCENE m_CurScene;
 	E_SCENE m_NextScene;
 	bool    m_isChangingScene;
+
+	SCENE_LOADSTATE m_LoadState;
+
+	std::thread m_LoadThread;
 
 	Interface* m_pFade;
 };

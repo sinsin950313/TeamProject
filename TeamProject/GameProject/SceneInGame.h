@@ -6,11 +6,22 @@
 #include "FQuadTree.h"
 #include "CharacterStateManager.h"
 #include "EnemyNPCMob.h"
-#include "Interface.h"
+#include "BossMob.h"
 
 class SceneInGame : public Scene
 {
 public:
+    virtual bool    Init() override;
+    virtual bool    Frame() override;
+    virtual bool    Render() override;
+    virtual bool    Release() override;
+
+    virtual void DataLoad() override;
+    void    UiLoad();
+    void    CameraLoad();
+    void    FSMLoad();
+    void    CharacterLoad();
+    void    MapLoad();
     virtual bool    Init();
     virtual bool    Frame();
     virtual bool PreRender() override;
@@ -18,11 +29,6 @@ public:
     virtual bool    Release();
 
 private:
-    bool		ObjectInit();
-    bool		ObjectFrame();
-    bool		ObjectRender();
-    bool		ObjectRelease();
-
     E_SCENE NextScene();
 
 public:
@@ -31,7 +37,6 @@ public:
     bool m_Win = false;
     bool m_Defeat = false;
 
-    int m_EnemyCount = 3;
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
     //T_BOX       testBox;
     Interface* m_pInter;
@@ -45,5 +50,7 @@ public:
     FQuadTree* m_pQuadTree = nullptr;
 
     std::map<SSB::StateManagerName, SSB::CharacterStateManager*> m_StateManagerMap;
+
+    SSB::BossMob* m_pBoss = nullptr;
 };
 

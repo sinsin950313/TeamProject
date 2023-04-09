@@ -8,7 +8,7 @@ void	MeshMap::SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     m_pImmediateContext = pContext;
 }
 
-std::vector<PTNC>& MeshMap::GetListVertex()
+std::vector<PNCTVertex>& MeshMap::GetListVertex()
 {
     return m_ListVertex;
 }
@@ -251,12 +251,12 @@ std::ifstream& operator>>(std::ifstream& is, MeshMap* pMap)
             }
             else if (fieldName == "m_ListVertex")
             {
-                std::vector<PTNC> vertices;
+                std::vector<PNCTVertex> vertices;
                 std::string vertexLine;
                 while (std::getline(is, vertexLine) && vertexLine != "") {
                     if (vertexLine.find("m_pAllObjectList:") != std::string::npos)
                         break;
-                    PTNC vertex;
+                    PNCTVertex vertex;
                     std::istringstream vertexIss(vertexLine);
                     vertexIss >> vertex;
                     vertices.push_back(vertex);

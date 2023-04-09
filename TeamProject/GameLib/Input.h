@@ -23,7 +23,8 @@ public:
 	POINT	m_ptPrePos;
 	POINT	m_ptOffset;
 
-	bool		m_isMouse = false;
+private:
+	bool		m_isMouse = true;
 
 public:
 	bool	Init();
@@ -33,6 +34,8 @@ public:
 
 public:
 	DWORD GetKey(DWORD key);
+	void	SwitchShowMouse(bool bMouse);
+	bool	GetShowMouse();
 };
 
 #define I_Input Input::GetInstance()

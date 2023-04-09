@@ -195,6 +195,12 @@ void	Character::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
 	UpdateBuffer();
 }
 
+#include "MeshMap.h"
+void Character::SetMap(MeshMap* pMap)
+{
+	m_pMap = pMap;
+}
+
 void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 {
 	float frameTime = g_fSecondPerFrame;
@@ -232,7 +238,7 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	//m_vScale = TVector3(1, 1, 1);
 	float ry = charDirAngle - M_PI;
 	m_vRotation = TVector3(0, ry, 0);
-	m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
+	m_vPos = TVector3(XMVectorGetX(charPosition), m_pMap->GetHeight(m_vPos.x, m_vPos.z), XMVectorGetZ(charPosition));
 
 	// Set the characters old direction
 	m_vOldDirection = currCharDirection;
@@ -246,7 +252,7 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	if (CollisionMgr::GetInstance().IsCollide(&m_ColliderBox))
 	{
 		charPosition = charPosition - (destinationDirection * (speed + 0.1f));
-		m_vPos = TVector3(XMVectorGetX(charPosition), 0, XMVectorGetZ(charPosition));
+		m_vPos = TVector3(XMVectorGetX(charPosition), m_pMap->GetHeight(m_vPos.x, m_vPos.z), XMVectorGetZ(charPosition));
 		//oldCharDirection = currCharDirection;
 		//m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 	}
@@ -259,14 +265,7 @@ void Character::Initialize_SetPosition(TVector3 pos)
 
 TVector3 Character::GetPosition()
 {
-	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
-	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	charPosition = XMVector3TransformCoord(charPosition, world);
-
-	TVector3 pos;
-	XMStoreFloat3(&pos, charPosition);
-
-	return pos;
+	return m_vPos;
 }
 
 bool Character::IsDead()
@@ -316,4 +315,13 @@ float Character::GetStateElapseTime()
 float Character::GetStateTimeStamp()
 {
 	return m_fStateTImeStamp;
+}
+
+void Character::StateTransfer()
+{
+	m_bIsStateTransfer = true;
+
+	m_bSoundPlay = false;
+
+	ResetStateElapseTime();
 }

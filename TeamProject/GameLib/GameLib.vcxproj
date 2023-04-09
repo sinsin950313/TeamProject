@@ -115,8 +115,6 @@ copy "*.lib" "..\\..\\lib"</Command>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraTPS.h" />
-    <ClInclude Include="Button.h" />
-    <ClInclude Include="Dialog.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="DXDevice.h" />
     <ClInclude Include="DXState.h" />
@@ -144,8 +142,6 @@ copy "*.lib" "..\\..\\lib"</Command>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraTPS.cpp" />
-    <ClCompile Include="Button.cpp" />
-    <ClCompile Include="Dialog.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="DXDevice.cpp" />
     <ClCompile Include="DXState.cpp" />

@@ -377,6 +377,14 @@ namespace SSB
 
 		return true;
 	}
+	bool Mesh_Vertex_PCNT_Skinning::RenderInstancing(UINT iNum)
+	{
+		m_pImmediateContext->VSSetConstantBuffers(4, 1, &_boneSpaceTransformBuffer);
+
+		Mesh<Vertex_PCNT_Skinning>::RenderInstancing(iNum);
+
+		return true;
+	}
 
 	std::string Mesh_Vertex_PCNT_Skinning::Serialize()
 	{

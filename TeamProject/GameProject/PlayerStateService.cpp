@@ -153,14 +153,9 @@ namespace SSB
 		CharacterState::Run();
 
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 1.0f)
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->m_iPos = 0;
-			int size = Player::GetInstance().m_pTrail->m_IndexList.size();
-			int p = Player::GetInstance().m_pTrail->m_VertexList.size() - 1;
-			//for (int i = 0; i < size; i++)
-			//	Player::GetInstance().m_pTrail->m_IndexList[i] = p;
-			//int a = 4;
+			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -247,14 +242,9 @@ namespace SSB
 		CharacterState::Run();
 
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 1.0f)
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->m_iPos = 0;
-			int size = Player::GetInstance().m_pTrail->m_IndexList.size();
-			int p = Player::GetInstance().m_pTrail->m_VertexList.size() - 1;
-			//for (int i = 0; i < size; i++)
-			//	Player::GetInstance().m_pTrail->m_IndexList[i] = p;
-			//int a = 4;
+			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -341,14 +331,9 @@ namespace SSB
 		CharacterState::Run();
 
         //m_pCharacter->m_pModel->SetCurrentAnimation("Attack1");
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 1.0f)
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->m_iPos = 0;
-			int size = Player::GetInstance().m_pTrail->m_IndexList.size();
-			int p = Player::GetInstance().m_pTrail->m_VertexList.size() - 1;
-			//for (int i = 0; i < size; i++)
-			//	Player::GetInstance().m_pTrail->m_IndexList[i] = p;
-			//int a = 4;
+			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;

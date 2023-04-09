@@ -5,8 +5,12 @@
 #include <map>
 #include "Sound.h"
 
+//HeightMap
+class MeshMap;
+
 class Character
 {
+protected:
 	struct ToViewSpaceTransformData
 	{
 		TMatrix matWorld;
@@ -58,6 +62,9 @@ public:
 	XMVECTOR m_vOldDirection;
 
 public:
+	void	SetMap(MeshMap* pMap);
+	MeshMap* m_pMap;
+public:
     void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);
 
 public:
@@ -104,9 +111,12 @@ public:
 	void ResetStateElapseTime();
 	float GetStateElapseTime();
 	float GetStateTimeStamp();
+	void StateTransfer();
 
 public:
+	bool m_bIsStateTransfer = false;
 	bool m_bIsReserveState = false;;
 	std::string m_ReservedState;
+	bool m_bSoundPlay = false;
 };
 
