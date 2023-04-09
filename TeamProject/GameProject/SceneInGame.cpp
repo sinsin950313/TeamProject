@@ -59,37 +59,38 @@ void SceneInGame::DataLoad()
 bool    SceneInGame::Init()
 {
 	I_Input.SwitchShowMouse(false);
-    {
-        Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
-        Player::GetInstance().m_pMainCamera = m_pMainCamera;
-        ((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+	{
+		Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
+		Player::GetInstance().m_pMainCamera = m_pMainCamera;
+		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
-        //Idle, Attack1, Attack2, Attack3, Move, Dead
-        //I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
-        I_Model.Load("Yasuo", "Idle", &Player::GetInstance().m_pModel);
+		//Idle, Attack1, Attack2, Attack3, Move, Dead
+		//I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
+		I_Model.Load("Yasuo", "Idle", &Player::GetInstance().m_pModel);
 
-        Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
-        Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
-        Player::GetInstance().m_Damage = 100;
-        Player::GetInstance().Init();
-        Player::GetInstance().Scale(0.01f);
+		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
+		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
+		Player::GetInstance().m_Damage = 100;
+		Player::GetInstance().Init();
+		Player::GetInstance().Scale(0.01f);
 
-	//m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-	//m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+		//m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
+		//m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
-	//m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
-	//m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
+		//m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
+		//m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
 
-	//testBox.CreateOBBBox(40, 4, 4);
-	//m_debugBoxList.push_back(&testBox);
-	//I_Collision.AddStaticObjectBox(&testBox, NULL);
+		//testBox.CreateOBBBox(40, 4, 4);
+		//m_debugBoxList.push_back(&testBox);
+		//I_Collision.AddStaticObjectBox(&testBox, NULL);
 
-	m_pDebugBox = new DebugBox;
-	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
+		m_pDebugBox = new DebugBox;
+		m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
-	Sound* sound = I_Sound.Find(L"BGM.mp3");
-	sound->Play(true);
-	return true;
+		Sound* sound = I_Sound.Find(L"BGM.mp3");
+		sound->Play(true);
+		return true;
+	}
 }
 
 bool    SceneInGame::Frame()
@@ -346,7 +347,7 @@ void    SceneInGame::CharacterLoad()
 {
 	{
 		SSB::ObjectScriptIO io;
-		std::string filename = "PlayerGaren";
+		std::string filename = "Yasuo";
 		//std::string filename = "dummy";
 		//std::string str = io.Read(filename);
 

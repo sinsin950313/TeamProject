@@ -13,7 +13,6 @@ struct VS_OUTPUT
 	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL0;
 	float4 color : COLOR0;
-	float2 tex : TEXCOORD0;
 	float3 direction_to_camera : TEXCOORD1;
 	float4 m_light_direction : TEXCOORD2;
 	float4 tex2 : TEXCOORD4;

@@ -11,11 +11,6 @@
 class SceneInGame : public Scene
 {
 public:
-    virtual bool    Init() override;
-    virtual bool    Frame() override;
-    virtual bool    Render() override;
-    virtual bool    Release() override;
-
     virtual void DataLoad() override;
     void    UiLoad();
     void    CameraLoad();

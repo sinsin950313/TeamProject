@@ -302,20 +302,22 @@ void FQuadTree::Update()
 
 void	FQuadTree::PreRender()
 {
-    //Setting For LightDepth;
-    m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-    m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-    m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
-    //m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
+    m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
 
-    UINT stride = sizeof(PTNC); //정점의크기
+
+    m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->PSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+
+
+    m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
+
+    UINT stride = sizeof(PNCTVertex); //정점의크기
     UINT offset = 0;          //정점의오프셋
     m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer를 세팅, 1은 버퍼의갯수
     m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
-
-    //m_pImmediateContext->VSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
-    //m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
-    //m_pImmediateContext->PSSetShaderResources(1, 1, &m_pMaskAlphaSrv);
 
     //for (int idx = 0; idx < m_ListTextureSplatting.size(); idx++)
     //    m_pImmediateContext->PSSetShaderResources(2 + idx, 1, &m_ListTextureSplatting[idx]->m_pTextureSRV);
@@ -342,8 +344,6 @@ void	FQuadTree::PreRender()
 
 void FQuadTree::Render()
 {
-    m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
-    m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);
     m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
     m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
     m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
