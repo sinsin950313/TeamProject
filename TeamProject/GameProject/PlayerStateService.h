@@ -45,6 +45,55 @@ namespace SSB
 		void Run() override;
 	};
 
+	class PlayerAttackState4 : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+		void Run() override;
+	};
+
+	class PlayerSkillState1 : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+		void Run() override;
+	};
+
+	class PlayerSkillState2 : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+		void Run() override;
+	};
+
+	class PlayerSkillState3 : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+		void Run() override;
+	};
+
+	class PlayerSkillState4 : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+		void Run() override;
+	};
+
+	class PlayerSkillState5 : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+		void Run() override;
+	};
+
+	class PlayerDashState : public CharacterState
+	{
+	public:
+		bool IsTransfer() override;
+		void Run() override;
+	};
+
 	class PlayerDeadState : public CharacterState
 	{
 	public:

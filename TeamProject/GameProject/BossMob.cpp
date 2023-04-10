@@ -14,10 +14,6 @@ namespace SSB
 	{
 		return m_DashRange;
 	}
-	float BossMob::GetSkillCoolTime()
-	{
-		return m_SkillCoolTime;
-	}
 	float BossMob::GetLastSkillElapseTime()
 	{
 		return m_LastSkillElapseTime;

@@ -299,8 +299,8 @@ void Character::ResetStateElapseTime()
 	m_fStateTImeStamp = g_fGameTimer;
 	m_DamagedCharacters.clear();
 
-	m_bIsReserveState = false;
-	m_ReservedState.clear();
+	//m_bIsReserveState = false;
+	//m_ReservedState.clear();
 }
 
 float Character::GetStateElapseTime()
@@ -317,11 +317,37 @@ float Character::GetStateTimeStamp()
 	return m_fStateTImeStamp;
 }
 
-void Character::StateTransfer()
+void Character::Initialize_RegisterSkill(SkillPrimaryKey key, SkillCoolTime coolTime)
 {
-	m_bIsStateTransfer = true;
+	_skillCoolTimeList.insert(std::make_pair(key, coolTime));
+	_skillTimeStampList.insert(std::make_pair(key, 0));
+}
 
-	m_bSoundPlay = false;
+bool Character::IsCoolTimePassed(SkillPrimaryKey key, time_t elaspedGameTime)
+{
+	float skillCoolTime = _skillCoolTimeList.find(key)->second;
+	float lastSkillCalledTime = _skillTimeStampList.find(key)->second;
+	float elapsedTime = elaspedGameTime - lastSkillCalledTime;
+	return skillCoolTime <= elaspedGameTime;
+}
 
-	ResetStateElapseTime();
+SkillTimeStamp Character::GetRemainSkillCoolTime(SkillPrimaryKey key)
+{
+	float skillCoolTime = _skillCoolTimeList.find(key)->second;
+	float lastSkillCalledTime = _skillTimeStampList.find(key)->second;
+
+	float elaspedGameTime = g_fGameTimer;
+	float elapsedTime = elaspedGameTime - lastSkillCalledTime;
+
+	return max(0, skillCoolTime - elapsedTime);
+}
+
+SkillCoolTime Character::GetSkillCoolTime(SkillPrimaryKey key)
+{
+	return _skillCoolTimeList.find(key)->second;
+}
+
+void Character::ActiveSkill(SkillPrimaryKey key)
+{
+	_skillTimeStampList.find(key)->second = g_fGameTimer;
 }

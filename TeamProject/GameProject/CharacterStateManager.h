@@ -4,6 +4,7 @@
 #include <map>
 #include "CharacterState.h"
 #include "Character.h"
+#include "CharacterStateBlackboard.h"
 
 namespace SSB
 {
@@ -24,6 +25,9 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+
+	private:
+		CharacterStateBlackboardManager _blackboardManager;
 	};
 
 	const StateManagerName kPlayerStateManager = "PlayerStateManager";

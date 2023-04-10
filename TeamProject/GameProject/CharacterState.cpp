@@ -11,10 +11,10 @@ namespace SSB
 	{
 		m_StateAnimationName = name;
 	}
-	void CharacterState::Initialize_SetCoolTime(float cooltime)
-	{
-		m_Cooltime = cooltime;
-	}
+	//void CharacterState::Initialize_SetCoolTime(float cooltime)
+	//{
+	//	m_Cooltime = cooltime;
+	//}
 	void CharacterState::Initialize_SetEffectSound(Sound* sound, bool loop)
 	{
 		_sound = sound;
@@ -32,10 +32,15 @@ namespace SSB
 	{
 		return m_TransferStateName;
 	}
-	bool CharacterState::IsPassedRequireCoolTime(float elapseTime)
+	void CharacterState::PrepareForTransfer()
 	{
-		return m_Cooltime <= elapseTime;
+		m_pCharacter->StopCurrentSound();
+		m_pCharacter->ResetStateElapseTime();
 	}
+	//bool CharacterState::IsPassedRequireCoolTime(float elapseTime)
+	//{
+	//	return m_Cooltime <= elapseTime;
+	//}
 	Sound* CharacterState::GetSound()
 	{
 		return _sound;
@@ -46,20 +51,8 @@ namespace SSB
 	}
 	void CharacterState::Run()
 	{
-		if (!m_pCharacter->m_bIsStateTransfer)
-		{
-			m_pCharacter->m_bIsStateTransfer = true;
-		}
-
-		if (!m_pCharacter->m_bSoundPlay)
-		{
-			m_pCharacter->_currentSound = _sound;
-			if (_sound)
-			{
-				m_pCharacter->_currentSound->Play(IsSoundLoop());
-				m_pCharacter->m_bSoundPlay = true;
-			}
-		}
-        m_pCharacter->m_pModel->SetCurrentAnimation(GetStateAnimationName());
+		m_pCharacter->SetCurrentAnimation(GetStateAnimationName());
+		m_pCharacter->SetCurrentSound(_sound);
+		m_pCharacter->Run();
 	}
 }

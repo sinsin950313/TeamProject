@@ -15,7 +15,7 @@ namespace SSB
 	private:
 		StateName m_TransferStateName;
 		AnimationName m_StateAnimationName;
-		float m_Cooltime = 0;
+		//float m_Cooltime = 0;
 
 		Sound* _sound = nullptr;
 		bool _loop = false;
@@ -28,12 +28,13 @@ namespace SSB
 
 	public:
 		void Initialize_SetStateAnimation(AnimationName name);
-		void Initialize_SetCoolTime(float cooltime);
+		//void Initialize_SetCoolTime(float cooltime);
 		void Initialize_SetEffectSound(Sound* sound, bool loop = false);
 		void SetCharacter(Character* character);
 		AnimationName GetStateAnimationName();
 		StateName GetNextTransferStateName();
-		bool IsPassedRequireCoolTime(float elapseTime);
+		//bool IsPassedRequireCoolTime(float elapseTime);
+		void PrepareForTransfer();
 
 	public:
 		Sound* GetSound();
@@ -41,6 +42,7 @@ namespace SSB
 
 	public:
 		virtual bool IsTransfer() = 0;
+		virtual bool IsReservingNextState() = 0;
 		virtual void Run();
 	};
 }

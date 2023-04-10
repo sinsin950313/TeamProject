@@ -22,7 +22,6 @@ namespace SSB
         float GetBattleRange();
         float GetSpotRange();
         float GetDashRange();
-        float GetSkillCoolTime();
         float GetLastSkillElapseTime();
         void ResetSkillElapseTime();
 

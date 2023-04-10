@@ -161,6 +161,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="MultiRenderTarget.h" />
+    <ClInclude Include="CharacterStateBlackboard.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneEnd.h" />
     <ClInclude Include="SceneInGame.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="MultiRenderTarget.cpp" />
+    <ClCompile Include="CharacterStateBlackboard.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneEnd.cpp" />
     <ClCompile Include="SceneInGame.cpp" />

@@ -30,25 +30,18 @@ namespace SSB
 			CharacterState* state = iter.second;
 
 			state->SetCharacter(character);
+
 			state->Run();
+
+			if (state->IsReservingNextState())
+			{
+				_blackboard.Reserve(character, m_StateMap.find(state->GetNextTransferStateName())->second);
+			}
 
 			if (state->IsTransfer())
 			{
-				if (character->_currentSound != nullptr)
-				{
-					character->_currentSound->Stop();
-				}
-
-				CharacterState* newState = m_StateMap.find(state->GetNextTransferStateName())->second;
-				m_CharacterStateMap[character] = newState;
-				character->StateTransfer();
-			}
-			else
-			{
-				if (state->IsPassedRequireCoolTime(character->GetStateElapseTime()))
-				{
-					character->ResetStateElapseTime();
-				}
+				state->PrepareForTransfer();
+				m_CharacterStateMap[character] = _blackboard.GetReservedState(character);
 			}
 		}
 
