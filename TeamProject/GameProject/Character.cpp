@@ -273,16 +273,6 @@ bool Character::IsDead()
 	return m_HealthPoint <= 0;
 }
 
-void Character::DamagingCharacter(Character* character)
-{
-	m_DamagedCharacters.insert(character);
-}
-
-bool Character::IsAlreadyDamagedCurrentState(Character* character)
-{
-	return m_DamagedCharacters.find(character) != m_DamagedCharacters.end();
-}
-
 void Character::Damage(int damage)
 {
 	m_HealthPoint -= damage;
@@ -290,31 +280,6 @@ void Character::Damage(int damage)
 	{
 		_damagedSound->Play();
 	}
-}
-
-void Character::ResetStateElapseTime()
-{
-	m_fStateElapseTime = 0;
-	m_fBeforeTime = g_fGameTimer;
-	m_fStateTImeStamp = g_fGameTimer;
-	m_DamagedCharacters.clear();
-
-	//m_bIsReserveState = false;
-	//m_ReservedState.clear();
-}
-
-float Character::GetStateElapseTime()
-{
-	float elapseTime = g_fGameTimer - m_fBeforeTime;
-	m_fStateElapseTime += elapseTime;
-	m_fBeforeTime = g_fGameTimer;
-
-	return m_fStateElapseTime;
-}
-
-float Character::GetStateTimeStamp()
-{
-	return m_fStateTImeStamp;
 }
 
 void Character::Initialize_RegisterSkill(SkillPrimaryKey key, SkillCoolTime coolTime)
@@ -350,4 +315,9 @@ SkillCoolTime Character::GetSkillCoolTime(SkillPrimaryKey key)
 void Character::ActiveSkill(SkillPrimaryKey key)
 {
 	_skillTimeStampList.find(key)->second = g_fGameTimer;
+}
+
+void Character::SetCurrentAnimation(SSB::AnimationName animationName)
+{
+	m_pModel->SetCurrentAnimation(animationName);
 }

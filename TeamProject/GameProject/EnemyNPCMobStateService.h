@@ -12,26 +12,27 @@ namespace SSB
 	class EnemyNPCMobIdleState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
 	};
 
 	class EnemyNPCMobMoveState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class EnemyNPCMobAttackState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class EnemyNPCMobDeadState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 }

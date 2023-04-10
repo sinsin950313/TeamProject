@@ -5,44 +5,63 @@
 #include "Animation.h"
 #include "Character.h"
 #include "Sound.h"
+#include <map>
+#include "CharacterStateBlackboard.h"
 
 namespace SSB
 {
 	typedef std::string StateName;
+	typedef int StateTransferPriority;
 
 	class CharacterState
 	{
 	private:
-		StateName m_TransferStateName;
 		AnimationName m_StateAnimationName;
-		//float m_Cooltime = 0;
-
-		Sound* _sound = nullptr;
-		bool _loop = false;
-
-	protected:
-		Character* m_pCharacter = nullptr;
-
-	protected:
-		void SetNextTransferName(StateName transferStateName);
+		std::map<StateName, CharacterState*> _linkedState;
 
 	public:
 		void Initialize_SetStateAnimation(AnimationName name);
-		//void Initialize_SetCoolTime(float cooltime);
 		void Initialize_SetEffectSound(Sound* sound, bool loop = false);
-		void SetCharacter(Character* character);
-		AnimationName GetStateAnimationName();
-		StateName GetNextTransferStateName();
-		//bool IsPassedRequireCoolTime(float elapseTime);
-		void PrepareForTransfer();
+		void Initialize_LinkState(StateName stateName, CharacterState* state);
+
+	private:
+		Sound* _sound = nullptr;
+		bool _loop = false;
 
 	public:
 		Sound* GetSound();
 		bool IsSoundLoop();
 
+	protected:
+		Character* m_pCharacter = nullptr;
+		Blackboard* _blackboard;
+
 	public:
-		virtual bool IsTransfer() = 0;
-		virtual bool IsReservingNextState() = 0;
+		void SetData(Character* character, Blackboard* blackboard);
+		AnimationName GetStateAnimationName();
+
+	private:
+		CharacterState* _reservedState;
+		bool _isReservedTransfer = false;
+
+	protected:
+		void ReserveNextTransferName(StateName transferStateName);
+
+	public:
+		bool IsReservingNextState();
+		CharacterState* GetReservedState();
+
+	private:
+		bool _isTransfer;
+
+	protected:
+		void SetTransfer();
+
+	public:
+		bool IsTransfer();
+
+	public:
+		virtual StateTransferPriority GetPriority();
 		virtual void Run();
 	};
 }

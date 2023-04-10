@@ -15,6 +15,11 @@ namespace SSB
 	private:
 		std::map<StateName, CharacterState*> m_StateMap;
 		std::map<Character*, CharacterState*> m_CharacterStateMap;
+		std::map<Character*, CharacterState*> m_ReservedState;
+
+	private:
+		void RegisterReservedState(Blackboard* blackboard, Character* character, CharacterState* compareState);
+		void PrepareForTransfer(Blackboard* blackboard, Character* character);
 
 	public:
 		void Initialize_RegisterState(StateName name, CharacterState* state);

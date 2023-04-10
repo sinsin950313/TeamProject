@@ -2,7 +2,6 @@
 
 #include <map>
 #include "Character.h"
-#include "CharacterState.h"
 #include "Sound.h"
 
 namespace SSB
@@ -14,17 +13,18 @@ namespace SSB
 		float StateElapseTime = 0;
 		Sound* CurrentSound;
 		std::set<Character*> DamagedCharacters;
-		CharacterState* ReservedState;
 	};
 
 	class CharacterStateBlackboardManager
 	{
 	private:
-		std::map<Character*, Blackboard> _data;
+		std::map<Character*, Blackboard*> _data;
 
 	public:
-		void RegisterBlackboard(Blackboard blackboard);
-		Blackboard GetBlackBoard(Character* character);
-		void SetBlackboard(Character* character, Blackboard blackboard);
+		~CharacterStateBlackboardManager();
+
+	public:
+		void RegisterBlackboard(Character* character);
+		Blackboard* GetBlackBoard(Character* character);
 	};
 }

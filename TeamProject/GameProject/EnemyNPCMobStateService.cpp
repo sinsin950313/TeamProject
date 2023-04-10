@@ -7,40 +7,35 @@
 
 namespace SSB
 {
-    bool EnemyNPCMobIdleState::IsTransfer()
+    void EnemyNPCMobIdleState::Run()
     {
-        bool transfer = false;
+        CharacterState::Run();
 
 		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kEnemyNPCMobDead);
+            SetTransfer();
+            ReserveNextTransferName(kEnemyNPCMobDead);
 		}
 		else
 		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
+			float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
+			if (fDistance <= mob->GetSpotRange())
 			{
-                float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
-				if (fDistance <= mob->GetSpotRange())
-				{
-					transfer = true;
-					SetNextTransferName(kEnemyNPCMobMove);
-				}
+				SetTransfer();
+                ReserveNextTransferName(kEnemyNPCMobMove);
+			}
 
-				if (fDistance <= mob->GetBattleRange())
-				{
-					transfer = true;
-					SetNextTransferName(kEnemyNPCMobAttack);
-				}
+			if (fDistance <= mob->GetBattleRange())
+			{
+				SetTransfer();
+				ReserveNextTransferName(kEnemyNPCMobAttack);
 			}
 		}
-
-        return transfer;
     }
-    bool EnemyNPCMobMoveState::IsTransfer()
+    void EnemyNPCMobMoveState::Run()
     {
-        bool transfer = false;
+        CharacterState::Run();
 
 		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
@@ -64,11 +59,6 @@ namespace SSB
             }
         }
 
-        return transfer;
-    }
-    void EnemyNPCMobMoveState::Run()
-    {
-        CharacterState::Run();
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
         EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
         XMVECTOR dir = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
@@ -76,9 +66,13 @@ namespace SSB
 
         m_pCharacter->MoveChar(dir, world);
     }
-    bool EnemyNPCMobAttackState::IsTransfer()
+    StateTransferPriority EnemyNPCMobMoveState::GetPriority()
     {
-        bool transfer = false;
+        return 2;
+    }
+    void EnemyNPCMobAttackState::Run()
+    {
+        CharacterState::Run();
 
 		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
@@ -104,12 +98,6 @@ namespace SSB
                 }
             }
         }
-
-        return transfer;
-    }
-    void EnemyNPCMobAttackState::Run()
-    {
-        CharacterState::Run();
 
         // LookAt Target
         if(IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
@@ -150,8 +138,16 @@ namespace SSB
             }
         }
     }
-    bool EnemyNPCMobDeadState::IsTransfer()
+    StateTransferPriority EnemyNPCMobAttackState::GetPriority()
     {
-        return false;
+        return 1;
+    }
+    void EnemyNPCMobDeadState::Run()
+    {
+        CharacterState::Run();
+    }
+    StateTransferPriority EnemyNPCMobDeadState::GetPriority()
+    {
+        return 0;
     }
 }

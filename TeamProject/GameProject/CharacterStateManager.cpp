@@ -3,6 +3,36 @@
 
 namespace SSB
 {
+	void CharacterStateManager::RegisterReservedState(Blackboard* blackboard, Character* character, CharacterState* compareState)
+	{
+		CharacterState* currentReservedState = m_ReservedState.find(character)->second;
+		if (currentReservedState != nullptr)
+		{
+			StateTransferPriority currentPriority = currentReservedState->GetPriority();
+			StateTransferPriority comparePriority = compareState->GetPriority();
+			if (currentPriority < comparePriority)
+			{
+				m_ReservedState.find(character)->second = compareState;
+			}
+		}
+		else
+		{
+			m_ReservedState.find(character)->second = compareState;
+		}
+	}
+	void CharacterStateManager::PrepareForTransfer(Blackboard* blackboard, Character* character)
+	{
+		m_ReservedState.find(character)->second = nullptr;
+
+		if (blackboard->CurrentSound != nullptr)
+		{
+			blackboard->CurrentSound->Stop();
+		}
+		blackboard->DamagedCharacters.clear();
+		blackboard->BeforeTime = ;
+		blackboard->StateElapseTime = ;
+		blackboard->StateTImeStamp = ;
+	}
 	void CharacterStateManager::Initialize_RegisterState(StateName name, CharacterState* state)
 	{
 		m_StateMap.insert(std::make_pair(name, state));
@@ -27,21 +57,23 @@ namespace SSB
 		for (auto iter : m_CharacterStateMap)
 		{
 			Character* character = iter.first;
+			Blackboard* blackboard = _blackboardManager.GetBlackBoard(character);
 			CharacterState* state = iter.second;
 
-			state->SetCharacter(character);
-
+			state->SetData(character, blackboard);
 			state->Run();
 
 			if (state->IsReservingNextState())
 			{
-				_blackboard.Reserve(character, m_StateMap.find(state->GetNextTransferStateName())->second);
+				RegisterReservedState(blackboard, character, state);
 			}
 
 			if (state->IsTransfer())
 			{
-				state->PrepareForTransfer();
-				m_CharacterStateMap[character] = _blackboard.GetReservedState(character);
+				PrepareForTransfer(blackboard, character);
+
+				auto reservedState = m_ReservedState.find(character)->second;
+				m_CharacterStateMap[character] = reservedState;
 			}
 		}
 

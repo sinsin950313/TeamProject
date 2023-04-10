@@ -14,89 +14,91 @@ namespace SSB
 	class PlayerIdleState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerMoveState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerAttackState1 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerAttackState2 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerAttackState3 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerAttackState4 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerSkillState1 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerSkillState2 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerSkillState3 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerSkillState4 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerSkillState5 : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerDashState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class PlayerDeadState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 }

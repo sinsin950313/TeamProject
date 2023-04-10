@@ -57,9 +57,6 @@ public:
 
 	TVector3 GetCurSocketPos(std::string socket);
 
-	Sound* _currentSound = nullptr;
-	Sound* _damagedSound = nullptr;
-
 public:
 	float   m_fSpeed = 15;
 	TVector3 m_vDirection;
@@ -100,9 +97,10 @@ public:
 	int m_HealthPoint = 100;
 	int m_Damage = 30;
 
+private:
+	Sound* _damagedSound = nullptr;
+
 public:
-	void DamagingCharacter(Character* character);
-	bool IsAlreadyDamagedCurrentState(Character* character);
 	void Damage(int damage);
 
 private:
@@ -115,5 +113,8 @@ public:
 	SkillTimeStamp GetRemainSkillCoolTime(SkillPrimaryKey key);
     SkillCoolTime GetSkillCoolTime(SkillPrimaryKey key);
     void ActiveSkill(SkillPrimaryKey key);
+
+public:
+	void SetCurrentAnimation(SSB::AnimationName animationName);
 };
 

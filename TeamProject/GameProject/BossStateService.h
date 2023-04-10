@@ -20,67 +20,71 @@ namespace SSB
 	class BossMobIdleState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobAngryState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobMoveState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobAttack1State : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobAttack2State : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobDashStartState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobDashState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobDashEndState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobSkill1State : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
 		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	class BossMobSpawnState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 
 	//class BossMobStunState : public CharacterState
@@ -92,6 +96,7 @@ namespace SSB
 	class BossMobDeadState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void Run() override;
+		StateTransferPriority GetPriority() override;
 	};
 }
