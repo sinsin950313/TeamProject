@@ -17,6 +17,7 @@ public:
     virtual bool    Frame();
     virtual bool PreRender();
     virtual bool    Render();
+    virtual bool PostRender();
     virtual bool    Release();
 
     virtual void    DataLoad() = 0;

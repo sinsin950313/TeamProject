@@ -245,6 +245,7 @@ namespace SSB
 		m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		m_pImmediateContext->VSSetShader(m_pShader->m_pVS, NULL, 0);
+		m_pImmediateContext->GSSetShader(NULL, NULL, 0);
 		m_pImmediateContext->PSSetShader(m_pShader->m_pPS, NULL, 0);
 		m_pImmediateContext->IASetInputLayout(m_pVertexLayout);
 

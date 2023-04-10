@@ -142,6 +142,12 @@ namespace SSB
 
 		return true;
 	}
+	bool Animation::PostRender()
+	{
+		m_pImmediateContext->VSSetConstantBuffers(3, 1, &_animatedFrameBuffer);
+
+		return true;
+	}
 	bool Animation::Release()
 	{
 		for (auto pFrameInfo : _data)

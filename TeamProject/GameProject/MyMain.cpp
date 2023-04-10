@@ -65,9 +65,13 @@ bool    MyMain::Render()
         {
             light->Render();
             m_screen.Render();
-            m_pImmediateContext->CopyResource(m_RT.m_pTexture.Get(), m_screen.GetRenderTargetTexture());
         }
     }
+
+	m_pImmediateContext->CopyResource(m_RT.m_pTexture.Get(), m_screen.GetRenderTargetTexture());
+    m_pImmediateContext->OMSetRenderTargets(1, m_RT.m_pRenderTargetView.GetAddressOf(), m_RT.m_pDepthStencilView.Get());
+
+    I_Scene.PostRender();
 
     ClearD3D11DeviceContext();
 	return true;

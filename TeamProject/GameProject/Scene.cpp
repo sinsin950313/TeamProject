@@ -52,6 +52,11 @@ bool    Scene::Render()
     return true;
 }
 
+bool Scene::PostRender()
+{
+    return true;
+}
+
 bool    Scene::Release()
 {
     return true;

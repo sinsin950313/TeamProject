@@ -21,6 +21,7 @@ public:
     virtual bool    Frame();
     virtual bool PreRender() override;
     virtual bool    Render();
+    virtual bool PostRender() override;
     virtual bool    Release();
 
 private:

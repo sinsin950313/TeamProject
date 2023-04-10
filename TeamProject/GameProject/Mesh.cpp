@@ -168,6 +168,13 @@ namespace SSB
 		return true;
 	}
 
+	bool Mesh_Vertex_PCNT_Animatable::PostRender()
+	{
+		m_pImmediateContext->VSSetConstantBuffers(4, 1, &_meshBuffer);
+		Mesh<Vertex_PCNT>::PostRender();
+		return true;
+	}
+
 	bool Mesh_Vertex_PCNT_Animatable::Release()
 	{
 		if (_meshBuffer != nullptr)
@@ -382,6 +389,15 @@ namespace SSB
 		m_pImmediateContext->VSSetConstantBuffers(4, 1, &_boneSpaceTransformBuffer);
 
 		Mesh<Vertex_PCNT_Skinning>::RenderInstancing(iNum);
+
+		return true;
+	}
+
+	bool Mesh_Vertex_PCNT_Skinning::PostRender()
+	{
+		m_pImmediateContext->VSSetConstantBuffers(4, 1, &_boneSpaceTransformBuffer);
+
+		Mesh<Vertex_PCNT_Skinning>::PostRender();
 
 		return true;
 	}
@@ -606,6 +622,14 @@ namespace SSB
 		return true;
 	}
 
+	bool Mesh_Vertex_PCNTs_Animatable::PostRender()
+	{
+		m_pImmediateContext->VSSetConstantBuffers(4, 1, &_meshBuffer);
+
+		Mesh<Vertex_PCNTs>::PostRender();
+		return true;
+	}
+
 	bool Mesh_Vertex_PCNTs_Animatable::Release()
 	{
 		if (_meshBuffer != nullptr)
@@ -770,6 +794,15 @@ namespace SSB
 		m_pImmediateContext->VSSetConstantBuffers(4, 1, &_boneSpaceTransformBuffer);
 
 		Mesh<Vertex_PCNTs_Skinning>::Render();
+
+		return true;
+	}
+
+	bool Mesh_Vertex_PCNTs_Skinning::PostRender()
+	{
+		m_pImmediateContext->VSSetConstantBuffers(4, 1, &_boneSpaceTransformBuffer);
+
+		Mesh<Vertex_PCNTs_Skinning>::PostRender();
 
 		return true;
 	}
