@@ -23,7 +23,7 @@ public:
 public:
     virtual bool    Init();
     virtual bool    Frame();
-    virtual bool	Render();
+    virtual bool	PostRender();
     virtual bool    Release();
 
 private:

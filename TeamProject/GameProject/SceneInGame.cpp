@@ -11,6 +11,8 @@
 #include "EnemyNPCMobStateService.h"
 #include "CommonPath.h"
 #include "BossStateService.h"
+#include "DirectionalLight.h"
+#include "LightManager.h"
 
 E_SCENE SceneInGame::NextScene()
 {
@@ -30,7 +32,14 @@ E_SCENE SceneInGame::NextScene()
 
 void SceneInGame::DataLoad()
 {
-	I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
+    SSB::DirectionalLight* light = new SSB::DirectionalLight;
+    light->Initialize_SetDevice(m_pd3dDevice, m_pImmediateContext);
+    light->Init();
+    light->SetLightDirection(TVector3(0, -1, 1));
+    light->SetLightPosition(TVector3(0, 100, -100));
+    SSB::I_Light.GetInstance().SetLight(light);
+
+    I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
 
 	I_Sound.LoadDir(kTeamProjectSoundPath);
 	I_Sound.LoadAll(kTeamProjectSoundPath);
@@ -141,10 +150,37 @@ bool    SceneInGame::Frame()
 	return true;
 }
 
+bool SceneInGame::PreRender()
+{
+	auto lights = SSB::I_Light.GetLightList();
+    for (auto light : lights)
+    {
+        Camera tmp;
+        tmp.CreateViewMatrix(light->m_vPos, light->m_vLookAt, TVector3(0, 1, 0));
+        tmp.CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
+
+        m_pQuadTree->SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
+        m_pQuadTree->PreRender();
+
+        Player::GetInstance().SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
+        Player::GetInstance().PreRender();
+
+        for (auto enemy : m_Enemies)
+        {
+            enemy->SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
+            enemy->PreRender();
+        }
+    }
+
+    return true;
+}
+
 bool    SceneInGame::Render()
 {
-	m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_pQuadTree->Render();
+    m_pImmediateContext->GSSetShader(NULL, NULL, 0);
+
+    m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    m_pQuadTree->Render();
 
 	Player::GetInstance().SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	Player::GetInstance().Render();
@@ -220,9 +256,24 @@ bool    SceneInGame::Render()
 		//m_pDebugBox->Render();
 	}
 
-	Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	Player::GetInstance().m_pTrail->Render();
-	m_pInter->Render();
+    // Camera의 위치정보가 필요하므로 지우지 말 것
+	auto lights = SSB::I_Light.GetLightList();
+	for (auto light : lights)
+	{
+		light->SetMatrix(&m_pMainCamera->m_matWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	}
+
+    return true;
+}
+
+bool SceneInGame::PostRender()
+{
+	Player::GetInstance().PostRender();
+
+    Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+    Player::GetInstance().m_pTrail->Render();
+    m_pInter->Render();
+
 	return true;
 }
 
@@ -288,7 +339,7 @@ void    SceneInGame::CharacterLoad()
 {
 	{
 		SSB::ObjectScriptIO io;
-		std::string filename = "PlayerGaren";
+		std::string filename = "Yasuo";
 		//std::string filename = "dummy";
 		//std::string str = io.Read(filename);
 

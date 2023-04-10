@@ -313,6 +313,48 @@ void	FQuadTree::PreRender()
 
 
     m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
+
+    UINT stride = sizeof(PNCTVertex); //정점의크기
+    UINT offset = 0;          //정점의오프셋
+    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer를 세팅, 1은 버퍼의갯수
+    m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
+
+    //for (int idx = 0; idx < m_ListTextureSplatting.size(); idx++)
+    //    m_pImmediateContext->PSSetShaderResources(2 + idx, 1, &m_ListTextureSplatting[idx]->m_pTextureSRV);
+
+    for (int idx = 0;  idx < m_pDrawLeafNodeList.size(); idx++)
+    {
+        m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+        m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList를 Index로그린다
+        m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
+    }
+
+    //TMatrix view = TMatrix(m_constantDataMap.matView);
+    //TMatrix proj = TMatrix(m_constantDataMap.matProj);
+    for (const auto& object : m_pAllObjectList)
+    {   
+        //object->SetMatrix(nullptr, &view, &proj);
+        object->PreRender();
+    }
+
+    //m_pSphereObject->SetMatrix(nullptr, &view, &proj);
+    m_pSphereObject->PreRender();
+}
+
+void FQuadTree::Render()
+{
+    m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+
+
+    m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->PSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+
+
+    m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
     m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
 
     UINT stride = sizeof(PNCTVertex); //정점의크기
@@ -326,11 +368,7 @@ void	FQuadTree::PreRender()
 
     for (int idx = 0; idx < m_ListTextureSplatting.size(); idx++)
         m_pImmediateContext->PSSetShaderResources(2 + idx, 1, &m_ListTextureSplatting[idx]->m_pTextureSRV);
-}
 
-void FQuadTree::Render()
-{
-    PreRender();
     for (int idx = 0;  idx < m_pDrawLeafNodeList.size(); idx++)
     {
         m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

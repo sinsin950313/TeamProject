@@ -23,7 +23,9 @@ private:
 public:
 	bool	Init();
 	bool	Frame();
+	bool PreRender();
 	bool	Render();
+	bool PostRender();
 	bool	Release();
 
 	void	SceneChange(E_SCENE s_type);

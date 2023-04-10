@@ -15,7 +15,9 @@ public:
     virtual bool    SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
     virtual bool    Init();
     virtual bool    Frame();
+    virtual bool PreRender();
     virtual bool    Render();
+    virtual bool PostRender();
     virtual bool    Release();
 
     virtual void    DataLoad() = 0;

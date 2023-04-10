@@ -3,6 +3,7 @@
 class RenderTarget
 {
 public:
+	ComPtr<ID3D11Texture2D> m_pDSTexture = nullptr;
 	ComPtr<ID3D11RenderTargetView>		m_pRenderTargetView;
 	ComPtr<ID3D11DepthStencilView>		m_pDepthStencilView;
 	ComPtr<ID3D11ShaderResourceView>	m_pSRV;

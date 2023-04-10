@@ -34,6 +34,7 @@ public:
 public:
 	virtual bool	Init();
 	virtual bool	Frame();
+	virtual bool PreRender();
 	virtual bool	Render();
 	virtual bool	Release();
 

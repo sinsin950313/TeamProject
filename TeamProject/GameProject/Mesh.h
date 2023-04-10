@@ -41,6 +41,10 @@ namespace SSB
 	public:
 		virtual TVector3 GetMinVertex() = 0;
 		virtual TVector3 GetMaxVertex() = 0;
+
+	public:
+		bool PreRender();
+		virtual bool PostRender() = 0;
 	};
 
 	template<typename VertexType>
@@ -96,6 +100,7 @@ namespace SSB
 		bool Init() override;
 		bool Frame() override;
 		bool Render() override;
+		bool PostRender() override;
 		bool RenderInstancing(UINT iNum);
 		bool Release() override;
 
@@ -155,6 +160,7 @@ namespace SSB
 	public:
 		bool Init() override;
 		bool Render() override;
+		bool PostRender() override;
 		bool Release() override;
 
 	public:
@@ -190,6 +196,7 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool RenderInstancing(UINT iNum);
+		bool PostRender() override;
 		bool Release() override;
 
 	public:
@@ -232,6 +239,7 @@ namespace SSB
 	public:
 		bool Init() override;
 		bool Render() override;
+		bool PostRender() override;
 		bool Release() override;
 
 	public:
@@ -266,6 +274,7 @@ namespace SSB
 	public:
 		bool Init() override;
 		bool Render() override;
+		bool PostRender() override;
 		bool Release() override;
 
 	public:

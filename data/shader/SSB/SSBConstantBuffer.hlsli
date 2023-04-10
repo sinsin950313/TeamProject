@@ -11,7 +11,6 @@ cbuffer Camera : register(b0)
 	matrix ProjectionMatrix : packoffset(c8);
 };
 
-
 cbuffer Object : register(b1)
 {
 	matrix WorldTransformMatrix : packoffset(c0);

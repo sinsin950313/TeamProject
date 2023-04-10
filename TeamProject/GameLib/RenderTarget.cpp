@@ -13,7 +13,8 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	m_TexDesc.Width = (UINT)fWidth;
 	m_TexDesc.Height = (UINT)fHeight;
 	m_TexDesc.MipLevels = 1;
-	m_TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	//m_TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_TexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	m_TexDesc.SampleDesc.Count = 1;
 	m_TexDesc.SampleDesc.Quality = 0;
 	m_TexDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -36,7 +37,6 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	}
 
 	// Depth Buffer
-	ComPtr<ID3D11Texture2D> pDSTexture = nullptr;
 	D3D11_TEXTURE2D_DESC DescDepth;
 	DescDepth.Width = fWidth;
 	DescDepth.Height = fHeight;
@@ -49,7 +49,7 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	DescDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	DescDepth.CPUAccessFlags = 0;
 	DescDepth.MiscFlags = 0;
-	if (FAILED(hr = pd3dDevice->CreateTexture2D(&DescDepth, NULL, &pDSTexture)))
+	if (FAILED(hr = pd3dDevice->CreateTexture2D(&DescDepth, NULL, &m_pDSTexture)))
 	{
 		return hr;
 	}
@@ -57,7 +57,7 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	ZeroMemory(&dsvDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	if (FAILED(hr = pd3dDevice->CreateDepthStencilView(pDSTexture.Get(), &dsvDesc, &m_pDepthStencilView)))
+	if (FAILED(hr = pd3dDevice->CreateDepthStencilView(m_pDSTexture.Get(), &dsvDesc, &m_pDepthStencilView)))
 	{
 		return hr;
 	}
@@ -67,7 +67,7 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	if (FAILED(hr = pd3dDevice->CreateShaderResourceView(pDSTexture.Get(), &srvDesc, &m_pDsvSRV)))
+	if (FAILED(hr = pd3dDevice->CreateShaderResourceView(m_pDSTexture.Get(), &srvDesc, &m_pDsvSRV)))
 	{
 		return hr;
 	}

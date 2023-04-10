@@ -1,6 +1,13 @@
 #include "PixelShaderInputType.hlsli"
+#include "PixelShaderOutputType.hlsli"
 
-float4 PS(PixelShaderInput_PC input) : SV_TARGET
+PixelOutput PS(PixelShaderInput_PC input)
 {
-	return input.Color;
+	PixelOutput output = (PixelOutput)0;
+
+	output.Position = input.Position;
+	output.Normal = float4(0, 0, 1, 0);
+	output.Color = input.Color;
+
+	return output;
 }
