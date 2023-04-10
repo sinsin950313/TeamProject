@@ -147,6 +147,7 @@ namespace SSB
             {
                 Player::GetInstance().Damage(m_pCharacter->m_Damage);
                 m_pCharacter->DamagingCharacter(&Player::GetInstance());
+                Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax));
             }
         }
     }

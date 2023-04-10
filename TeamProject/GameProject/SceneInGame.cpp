@@ -126,11 +126,11 @@ bool    SceneInGame::Frame()
 
 	Player::GetInstance().Frame();
 	
-
 	for (auto enemy : m_Enemies)
 	{
 		enemy->Frame();
 		enemy->m_pGageHP->Frame();
+		enemy->m_pDamage->Frame();
 	}
 
 	if (m_pBoss)
@@ -139,8 +139,15 @@ bool    SceneInGame::Frame()
 	}
 
 	//m_pEnemy->Frame();
-	m_pHP_Player->SetUV(0, 0, (float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax, 1);
-	m_pInter->Frame();
+	/*m_pInter_PlayerHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax));*/
+	m_pInter_Ingame->Frame();
+
+	if (I_Input.GetKey('I') == KEY_PUSH)
+	{
+		m_pTestInter->m_pWorkList.push_back(new InterfaceDamageFloating(888, m_pTestInter));
+	}
+	m_pTestInter->Frame();
+
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
 	return true;
 }
@@ -160,6 +167,10 @@ bool    SceneInGame::Render()
 		enemy->m_pGageHP->SetMatrix(&enemy->m_matWorld, &enemy->m_matView, &enemy->m_matProj);
 		enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z });
 		enemy->m_pGageHP->Render();
+
+		enemy->m_pDamage->SetMatrix(&enemy->m_matWorld, &enemy->m_matView, &enemy->m_matProj);
+		enemy->m_pDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 5, enemy->m_vPos.z }, TVector3(0.5, 0.5, 0.5));
+		enemy->m_pDamage->Render();
 	}
 
 	if (m_pBoss)
@@ -228,18 +239,21 @@ bool    SceneInGame::Render()
 	Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	Player::GetInstance().m_pTrail->Render();
 
-	m_pInter->Render();
+	m_pTestInter->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	m_pTestInter->Render();
+	m_pInter_Ingame->Render();
 	return true;
 }
 
 bool    SceneInGame::Release()
 {
-	if (m_pInter)
+	if (m_pInter_Ingame)
 	{
-		m_pInter->Release();
-		delete m_pInter;
-		m_pInter = nullptr;
+		m_pInter_Ingame->Release();
+		delete m_pInter_Ingame;
+		m_pInter_Ingame = nullptr;
 	}
+	Player::GetInstance().m_pGageHP = nullptr;
 
 	if (m_pQuadTree)
 	{
@@ -314,6 +328,7 @@ void    SceneInGame::CharacterLoad()
 		m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
 
 		Player::GetInstance().SetMap(m_pQuadTree->m_pMap);
+		Player::GetInstance().m_pGageHP = m_pInter_PlayerHP;
 	}
 
 	{
@@ -347,63 +362,107 @@ void    SceneInGame::CharacterLoad()
 
 			m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
 
-			m_Enemies.push_back(enemy);
+			
 
 			enemy->SetMap(m_pQuadTree->m_pMap);
 
 			enemy->m_pGageHP = new InterfaceBillboard();
 			enemy->m_pGageHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
 			enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y+2, enemy->m_vPos.z });
-			enemy->m_pGageHP->SetUV(0, 0, 1.0f, 1.0f);
+
+			enemy->m_pDamage = m_pInter_DamageFont;
+			m_Enemies.push_back(enemy);
 		}
 	}
 }
 
 void    SceneInGame::UiLoad()
 {
-	m_pInter = new Interface();
-	m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/frame2.dds");
-	m_pInter->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_Ingame = new Interface();
+
+	Interface* pInter_Profile = new Interface();
+	pInter_Profile->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/profile.dds");
+	pInter_Profile->SetAttribute(TVector3(570, 787, 0));
+	m_pInter_Ingame->AddChild(pInter_Profile);
+
+	Interface* pInter_Frame = new Interface();
+	pInter_Frame->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/frame2.dds");
+	pInter_Frame->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_Ingame->AddChild(pInter_Frame);
 	//m_pInter->m_pWorkList.push_back(new InterfaceFade());
 	//m_pInter->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
 	//m_pInter->m_pWorkList.push_back(new InterfaceLifeTime(10.0f));
 	//m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
+	
+	m_pInter_Passive = new Interface();
+	m_pInter_Passive->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/passive.dds");
+	m_pInter_Passive->SetAttribute(TVector3(687, 788, 0));
+	m_pInter_Ingame->AddChild(m_pInter_Passive);
 
-	Interface* pInter_Skill_Q = new Interface();
-	pInter_Skill_Q->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_q.dds");
-	pInter_Skill_Q->SetAttribute(TVector3(726, 788, 0));
-	pInter_Skill_Q->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
-	m_pInter->AddChild(pInter_Skill_Q);
+	m_pInter_Skill_Q = new Interface();
+	m_pInter_Skill_Q->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_q.dds");
+	m_pInter_Skill_Q->SetAttribute(TVector3(726, 788, 0));
+	m_pInter_Skill_Q->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
+	m_pInter_Ingame->AddChild(m_pInter_Skill_Q);
 
-	Interface* pInter_Skill_W = new Interface();
-	pInter_Skill_W->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_w.dds");
-	pInter_Skill_W->SetAttribute(TVector3(780, 788, 0));
-	m_pInter->AddChild(pInter_Skill_W);
+	m_pInter_Skill_W = new Interface();
+	m_pInter_Skill_W->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_w.dds");
+	m_pInter_Skill_W->SetAttribute(TVector3(780, 788, 0));
+	m_pInter_Ingame->AddChild(m_pInter_Skill_W);
 
-	Interface* pInter_Skill_E = new Interface();
-	pInter_Skill_E->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_e.dds");
-	pInter_Skill_E->SetAttribute(TVector3(837, 788, 0));
-	m_pInter->AddChild(pInter_Skill_E);
+	m_pInter_Skill_E = new Interface();
+	m_pInter_Skill_E->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_e.dds");
+	m_pInter_Skill_E->SetAttribute(TVector3(837, 788, 0));
+	m_pInter_Ingame->AddChild(m_pInter_Skill_E);
 
-	Interface* pInter_Skill_R = new Interface();
-	pInter_Skill_R->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_r.dds");
-	pInter_Skill_R->SetAttribute(TVector3(892, 788, 0));
-	m_pInter->AddChild(pInter_Skill_R);
+	m_pInter_Skill_R = new Interface();
+	m_pInter_Skill_R->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_r.dds");
+	m_pInter_Skill_R->SetAttribute(TVector3(892, 788, 0));
+	m_pInter_Ingame->AddChild(m_pInter_Skill_R);
 
-	m_pHP_Player = new Interface();
-	m_pHP_Player->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/player_hp.dds");
-	m_pHP_Player->SetAttribute(TVector3(686, 856, 0));
-	m_pInter->AddChild(m_pHP_Player);
+	m_pInter_PlayerHP = new Interface();
+	m_pInter_PlayerHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/player_hp.dds");
+	m_pInter_PlayerHP->SetAttribute(TVector3(686, 856, 0));
+	m_pInter_Ingame->AddChild(m_pInter_PlayerHP);
 
-	Interface* pInter_Minimap = new Interface();
-	pInter_Minimap->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/minimap.dds");
-	pInter_Minimap->SetAttribute(TVector3(952, 778, 0));
-	m_pInter->AddChild(pInter_Minimap);
+	m_pInter_Minimap = new Interface();
+	m_pInter_Minimap->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/minimap.dds");
+	m_pInter_Minimap->SetAttribute(TVector3(952, 778, 0));
+	m_pInter_Ingame->AddChild(m_pInter_Minimap);
 
 	Interface* pInter_HP_Enemy = new Interface();
 	pInter_HP_Enemy->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
 	pInter_HP_Enemy->SetAttribute(TVector3(544, 35, 0));
-	m_pInter->AddChild(pInter_HP_Enemy);
+	m_pInter_Ingame->AddChild(pInter_HP_Enemy);
+
+	m_pInter_DamageFont = new InterfaceDamage();
+	m_pInter_DamageFont->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
+	m_pInter_DamageFont->SetAttribute(TVector3(0, 0, 0), TVector3(0.1, 0.1, 0.1));
+	m_pInter_DamageFont->SetDamageSprite(0, 3, 50, 30, 40);
+	m_pInter_DamageFont->SetDamageSprite(1, 41, 49, 22, 39);
+	m_pInter_DamageFont->SetDamageSprite(2, 72, 49, 29, 39);
+	m_pInter_DamageFont->SetDamageSprite(3, 107, 49, 29, 40);
+	m_pInter_DamageFont->SetDamageSprite(4, 140, 49, 31, 42);
+	m_pInter_DamageFont->SetDamageSprite(5, 176, 49, 28, 41);
+	m_pInter_DamageFont->SetDamageSprite(6, 211, 50, 30, 40);
+	m_pInter_DamageFont->SetDamageSprite(7, 247, 51, 27, 41);
+	m_pInter_DamageFont->SetDamageSprite(8, 280, 50, 31, 40);
+	m_pInter_DamageFont->SetDamageSprite(9, 315, 50, 30, 40);
+	//m_pInter_DamageFont->m_pWorkList.push_back(new InterfaceDamageFloating(123, m_pInter_DamageFont));
+
+	m_pTestInter = new InterfaceDamage();
+	m_pTestInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
+	m_pTestInter->SetAttribute(TVector3(5, 0, 0), TVector3(0.1,0.1,0.1));
+	m_pTestInter->SetDamageSprite(0, 3, 50, 30, 40);
+	m_pTestInter->SetDamageSprite(1, 41, 49, 22, 39);
+	m_pTestInter->SetDamageSprite(2, 72, 49, 29, 39);
+	m_pTestInter->SetDamageSprite(3, 107, 49, 29, 40);
+	m_pTestInter->SetDamageSprite(4, 140, 49, 31, 42);
+	m_pTestInter->SetDamageSprite(5, 176, 49, 28, 41);
+	m_pTestInter->SetDamageSprite(6, 211, 50, 30, 40);
+	m_pTestInter->SetDamageSprite(7, 247, 51, 27, 41);
+	m_pTestInter->SetDamageSprite(8, 280, 50, 31, 40);
+	m_pTestInter->SetDamageSprite(9, 315, 50, 30, 40);
 }
 
 void    SceneInGame::FSMLoad()

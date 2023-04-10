@@ -4,10 +4,11 @@
 #include "TSelect.h"
 #include <map>
 #include "Sound.h"
+#include "Interface.h"
 
 //HeightMap
 class MeshMap;
-class InterfaceBillboard;
+class Interface;
 class Character
 {
 protected:
@@ -32,8 +33,8 @@ public:
 	ID3D11DeviceContext* m_pImmediateContext = nullptr;
 	
 public:
-	InterfaceBillboard* m_pGageHP;
-
+	Interface* m_pGageHP;
+	InterfaceDamage* m_pDamage;
 public:
 	virtual bool	Init();
 	virtual bool	Frame();

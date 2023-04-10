@@ -1,6 +1,5 @@
 #include "Character.h"
 #include "CollisionMgr.h"
-#include "Interface.h"
 
 void	Character::SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -112,7 +111,6 @@ bool	Character::Frame()
 	UpdateMatrix();
 	UpdateBuffer();
 	UpdateBox();
-
 	return true;
 }
 

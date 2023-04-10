@@ -34,8 +34,7 @@ public:
 
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
     //T_BOX       testBox;
-    Interface* m_pInter;
-    Interface* m_pHP_Player;
+
 
     SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;
@@ -48,5 +47,18 @@ public:
     std::map<SSB::StateManagerName, SSB::CharacterStateManager*> m_StateManagerMap;
 
     SSB::BossMob* m_pBoss = nullptr;
+
+    Interface* m_pInter_Ingame;
+    Interface* m_pInter_PlayerHP;
+    Interface* m_pInter_Passive;
+    Interface* m_pInter_Skill_Q;
+    Interface* m_pInter_Skill_W;
+    Interface* m_pInter_Skill_E;
+    Interface* m_pInter_Skill_R;
+    Interface* m_pInter_Minimap;
+
+    InterfaceDamage* m_pInter_DamageFont;
+
+    InterfaceDamage* m_pTestInter;
 };
 

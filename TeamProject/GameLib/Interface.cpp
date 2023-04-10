@@ -41,8 +41,11 @@ bool Interface::Frame()
 	//
 	//SetPosition(m_vPos, m_Box.m_vSize, m_vCameraPos);
 	//ScreenToNDC();
-	ToNDC();
-	UpdateVertexBuffer();
+	if (m_pImmediateContext)
+	{
+		ToNDC();
+		UpdateVertexBuffer();
+	}
 	return true;
 }
 
@@ -50,8 +53,12 @@ bool	Interface::Render()
 {
 	if (!m_isUsing)
 		return false;
-	m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
-	BaseObject::Render();
+	if (m_pImmediateContext)
+	{
+		m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
+		BaseObject::Render();
+	}
+	
 
 	for (int iSub = 0; iSub < m_rcDrawList.size(); iSub++)
 	{
@@ -62,7 +69,11 @@ bool	Interface::Render()
 		m_pChildList[iChild]->SetMatrix(&this->m_matWorld, &this->m_matView, &this->m_matProj);
 		m_pChildList[iChild]->Render();
 	}
-	m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSSMirror);
+
+	if (m_pImmediateContext)
+	{
+		m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSSMirror);
+	}
 	return true;	
 }
 
@@ -86,14 +97,6 @@ bool Interface::Release()
 	}
 	BaseObject::Release();
 	return true;
-}
-
-void Interface::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
-{
-	m_matWorld = TMatrix::Identity;
-	m_matView = TMatrix::Identity;
-	m_matProj = TMatrix::Identity;
-	UpdateConstantBuffer();
 }
 
 bool Interface::SetAttribute(TVector3 vPos, TRectangle rc)
@@ -160,14 +163,6 @@ bool    Interface::SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV)
 	return true;
 }
 
-void Interface::SetUV(float u0, float v0, float u1, float v1)
-{
-	m_VertexList[0].t = { u0, v0 };
-	m_VertexList[1].t = { u1, v0 };
-	m_VertexList[2].t = { u0, v1 };
-	m_VertexList[3].t = { u1, v1 };
-}
-
 void	Interface::ToNDC()
 {
 	// m_vPos 범위는 g_rcClient
@@ -205,20 +200,22 @@ void	Interface::ToNDC()
 	//	m_VertexList[i].p.x /= g_rcClient.right;
 	//	m_VertexList[i].p.y /= g_rcClient.bottom;
 	//}
+
+	m_matWorld = m_matView = m_matProj = TMatrix::Identity;
 }
 
-void Interface::NormalizeToCenter()
+void Interface::NormalizeToCenter(TVector3 vPos)
 {
 	/*float centerX = g_rcClient.right / 2.0f;
 	float centerY = g_rcClient.bottom / 2.0f;*/
 
 	// 텍스쳐의 크기를 화면에 맞춰 정규화합니다.
-	float width = m_pTexture->m_Desc.Width / (float)g_rcClient.right * m_vScale.x;
-	float height = m_pTexture->m_Desc.Height / (float)g_rcClient.bottom * m_vScale.y;
+	float width = m_pTexture->m_Desc.Width / (float)g_rcClient.right * m_vScale.x / 2.0f;
+	float height = m_pTexture->m_Desc.Height / (float)g_rcClient.bottom * m_vScale.y / 2.0f;
 
 	// 왼쪽 상단 좌표를 계산합니다.
 	//TVector3 pos = TVector3(((0 - centerX) / centerX), ((centerY - 0) / centerY), 0);
-	TVector3 pos = TVector3(0, 0, 0);
+	TVector3 pos = vPos;
 	// 각 꼭지점의 위치를 계산합니다.
 	m_VertexList[0].p = pos + TVector3(-width, height, 0);
 
@@ -235,22 +232,6 @@ void Interface::SetTime(float fTime)
 {
 	m_cbData.vTemp = { 0, 0, 0 };
 	m_cbData.fTimer = fTime;
-}
-
-void InterfaceBillboard::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
-{
-	if (matWorld != nullptr)
-	{
-		m_matWorld = *matWorld;
-	}
-	if (matView != nullptr)
-	{
-		m_matView = *matView;
-	}
-	if (matProj != nullptr)
-	{
-		m_matProj = *matProj;
-	}
 }
 
 bool InterfaceBillboard::Frame()
@@ -298,8 +279,16 @@ bool InterfaceBillboard::Frame()
 	return true;
 }
 
-bool InterfaceBillboard::Render()
+void InterfaceBillboard::CreateBillboard()
 {
+	TMatrix bill = m_matView.Invert();
+	bill._41 = bill._42 = bill._43 = 0.0f;
+	TQuaternion qu;
+	D3DXQuaternionRotationMatrix(&qu, &bill);
+	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &qu, &m_vPos);
+	UpdateConstantBuffer();
+	return;
+
 	TMatrix billboardMatrix;
 
 	// 뷰 매트릭스의 회전 부분만 추출합니다.
@@ -323,8 +312,125 @@ bool InterfaceBillboard::Render()
 	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &q, &m_vPos);
 	// 월드 행렬과 곱합니다.
 	UpdateConstantBuffer();
+}
 
+bool InterfaceBillboard::Render()
+{
+	CreateBillboard();
 	Interface::Render();
 
 	return true;
+}
+
+bool InterfaceDamage::Frame()
+{
+	for (auto iter = m_pWorkList.begin(); iter != m_pWorkList.end();)
+	{
+		InterfaceWork* work = (*iter);
+		if (work->m_isDone)
+		{
+			iter = m_pWorkList.erase(iter);
+			if (work)
+			{
+				delete work;
+				work = nullptr;
+			}
+			continue;
+		}
+		else
+		{
+			work->Frame(this);
+			iter++;
+		}
+	}
+	//for (auto data : m_rcDrawList)
+	//{
+	//	TVector3 pos = data->m_vPos + m_vOffsetPos;
+	//	data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);
+	//	data->Frame();
+	//	for (auto work : m_pWorkList)
+	//	{
+	//		work->Frame(data);
+	//	}
+	//}
+	for (auto data : m_pChildList)
+	{
+		/*TVector3 pos = data->m_vPos + m_vOffsetPos;
+		data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);*/
+		data->Frame();
+	}
+	//CreateBillboard();
+	return true;
+}
+
+bool InterfaceDamage::Render()
+{
+
+	//if (!m_isUsing)
+	//	return false;
+	//if (m_pImmediateContext)
+	//{
+	//	m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
+	//	BaseObject::Render();
+	//}
+
+
+	//for (int iSub = 0; iSub < m_rcDrawList.size(); iSub++)
+	//{
+	//	m_rcDrawList[iSub]->Render();
+	//}
+	//for (int iChild = 0; iChild < m_pChildList.size(); iChild++)
+	//{
+	//	m_pChildList[iChild]->SetMatrix(&this->m_matWorld, &this->m_matView, &this->m_matProj);
+	//	m_pChildList[iChild]->Render();
+	//}
+
+	//if (m_pImmediateContext)
+	//{
+	//	m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSSMirror);
+	//}
+	//return true;
+
+	for (auto iter = m_pWorkList.begin(); iter != m_pWorkList.end();)
+	{
+		InterfaceWork* work = (*iter);
+		if (work->m_isDone)
+		{
+			iter = m_pWorkList.erase(iter);
+			if (work)
+			{
+				delete work;
+				work = nullptr;
+			}
+			continue;
+		}
+		else
+		{
+			CreateBillboard();
+			work->Render(this);
+			iter++;
+		}
+	}
+	//for (auto data : m_rcDrawList)
+	//{
+	//	TVector3 pos = data->m_vPos + m_vOffsetPos;
+	//	data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);
+	//	data->Frame();
+	//	for (auto work : m_pWorkList)
+	//	{
+	//		work->Frame(data);
+	//	}
+	//}
+	//for (auto data : m_pChildList)
+	//{
+	//	/*TVector3 pos = data->m_vPos + m_vOffsetPos;
+	//	data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);*/
+	//	data->Render();
+	//}
+	return true;
+}
+
+void InterfaceDamage::SetDamageSprite(int idx, float u0, float v0, float u1, float v1)
+{
+	m_DamageList.push_back(DamageFont(idx, u0, v0, u1, v1));
 }

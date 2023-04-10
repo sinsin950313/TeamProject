@@ -2,6 +2,8 @@
 //#include "CSprite.h"
 #include "BaseObject.h"
 #include "Input.h"
+
+
 enum	E_UIState
 {
 	UI_NORMAL,
@@ -18,7 +20,6 @@ public:
 	virtual bool Frame() override;
 	virtual bool Render() override;
 	virtual bool Release() override;
-	virtual void SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj) override;
 	virtual bool SetAttribute(TVector3 vPos, TRectangle rc);
 	virtual bool SetAttribute(TVector3 vPos = {0, 0, 0}, TVector3 vScale = { 1, 1, 1 }, TColor color = { 1, 1, 1, 1 });
 	virtual bool SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV);
@@ -38,9 +39,8 @@ public:
 		m_pTexture = m_pTexList[index];
 	}
 public:
-	void	SetUV(float u0, float v0, float u1, float v1);
 	void	ToNDC();
-	void	NormalizeToCenter();
+	void	NormalizeToCenter(TVector3 vPos = {0, 0, 0});
 public:
 	E_UIState	m_CurrentState;
 
@@ -59,16 +59,42 @@ public:
 class InterfaceBillboard : public Interface
 {
 public:
-	virtual void SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj) override;
+	virtual bool Frame() override;
+	virtual void CreateBillboard();
+	virtual bool Render() override;
+};
+
+struct DamageFont
+{
+	int m_iNum;
+	float m_u0;
+	float m_v0;
+	float m_u1;
+	float m_v1;
+	DamageFont(int iNum, float u0, float v0, float u1, float v1)
+	{
+		m_iNum = iNum;
+		m_u0 = u0;
+		m_v0 = v0;
+		m_u1 = u1;
+		m_v1 = v1;
+	}
+};
+class InterfaceDamage : public InterfaceBillboard
+{
+public:
 	virtual bool Frame() override;
 	virtual bool Render() override;
+public:
+	void SetDamageSprite(int idx, float u0, float v0, float u1, float v1);
+	std::vector<DamageFont> m_DamageList;
 };
 
 class InterfaceWork
 {
 public:
 	virtual bool Frame(Interface* pInter) { return true; }
-
+	virtual bool Render(Interface* pInter) { return true; }
 public:
 	bool	m_isDone = false;
 };
@@ -234,7 +260,7 @@ public:
 
 public:
 	int		m_iSwitch = 1;
-	float m_fAlpha = 0.0f;
+	float	m_fAlpha = 0.0f;
 	float	m_fFadeSpeed = 0.0f;
 };
 
@@ -281,6 +307,113 @@ public:
 	}
 public:
 	float	m_fScale;
+};
+
+class InterfaceSetGage : public InterfaceWork
+{
+public:
+	bool	Frame(Interface* pInter)
+	{
+		m_fRemain -= g_fSecondPerFrame;
+		if (m_fRemain <= 0.0f)
+		{
+			m_isDone = true;
+		}
+		float t = 1.0f - (m_fRemain / m_fDuration);
+		float diff = m_fGage - pInter->m_VertexList[1].t.x;
+		float delta = diff / m_fDuration * g_fSecondPerFrame;
+		pInter->m_VertexList[1].t.x += delta;
+		pInter->m_VertexList[3].t.x += delta;
+
+		/*std::string remainValue = "---";
+		remainValue += std::to_string(m_fRemain);
+		remainValue += "---";
+		remainValue += std::to_string(pInter->m_VertexList[1].t.x);
+		remainValue += "\n";
+		OutputDebugStringA(remainValue.c_str());*/
+		return true;
+	}
+public:
+	InterfaceSetGage(float fGage, float fDuration = 2.5f) : m_fGage(fGage), m_fDuration(fDuration), m_fRemain(fDuration)
+	{
+
+	}
+public:
+	float m_fGage;
+	float m_fDuration;
+	float m_fRemain;
+};
+
+class InterfaceDamageFloating : public InterfaceWork
+{
+public:
+	bool	Frame(Interface* pInter) override
+	{
+		//m_fDuration -= g_fSecondPerFrame;
+		if (m_fDuration <= 0.0f)
+		{
+			m_isDone = true;
+		}
+
+		return true;
+	}
+
+	bool	Render(Interface* pInter) override
+	{
+		pInter->m_VertexList[0].p.x = -m_fDamageSize / 2.0f;
+		pInter->m_VertexList[0].p.y = 15;
+		for (int idx = 0; idx < m_Damage.size(); idx++)
+		{
+			float width = m_Damage[idx].m_u1 * pInter->m_vScale.x;
+			float height = m_Damage[idx].m_v1 * pInter->m_vScale.y;
+
+			pInter->m_VertexList[1].p.x = pInter->m_VertexList[0].p.x + width;
+			pInter->m_VertexList[1].p.y = pInter->m_VertexList[0].p.y;
+
+			pInter->m_VertexList[2].p.x = pInter->m_VertexList[0].p.x;
+			pInter->m_VertexList[2].p.y = pInter->m_VertexList[0].p.y - height;
+	
+			pInter->m_VertexList[3].p.x = pInter->m_VertexList[1].p.x;
+			pInter->m_VertexList[3].p.y = pInter->m_VertexList[2].p.y;
+
+			float fWidth = (float)pInter->m_pTexture->m_Desc.Width;
+			float fHeight = (float)pInter->m_pTexture->m_Desc.Height;
+
+			pInter->m_VertexList[0].t.x = m_Damage[idx].m_u0 / fWidth;
+			pInter->m_VertexList[0].t.y = m_Damage[idx].m_v0 / fHeight;
+
+			pInter->m_VertexList[1].t.x = (m_Damage[idx].m_u0 + m_Damage[idx].m_u1) / fWidth;
+			pInter->m_VertexList[1].t.y = m_Damage[idx].m_v0 / fHeight;
+
+			pInter->m_VertexList[2].t.x = m_Damage[idx].m_u0 / fWidth;
+			pInter->m_VertexList[2].t.y = (m_Damage[idx].m_v0 + m_Damage[idx].m_v1) / fHeight;
+
+			pInter->m_VertexList[3].t.x = (m_Damage[idx].m_u0 + m_Damage[idx].m_u1) / fWidth;
+			pInter->m_VertexList[3].t.y = (m_Damage[idx].m_v0 + m_Damage[idx].m_v1) / fHeight;
+	
+			pInter->UpdateVertexBuffer();
+			pInter->UpdateConstantBuffer();
+			pInter->Interface::Render();
+			pInter->m_VertexList[0].p.x = pInter->m_VertexList[1].p.x;
+			pInter->m_VertexList[0].p.y = 15;
+		}
+
+		return true;
+	}
+public:
+	InterfaceDamageFloating(UINT iDamage, InterfaceDamage* pInter, float fDuration = 2.5f) : m_fDuration(fDuration)
+	{
+		std::string szDamage = std::to_string(iDamage);
+		for (int idx = 0; idx < szDamage.size(); idx++)
+		{
+			m_Damage.push_back(pInter->m_DamageList[szDamage[idx]-48]);
+			m_fDamageSize += m_Damage[idx].m_u1;
+		}
+	}
+public:
+	std::vector<DamageFont> m_Damage;
+	float m_fDamageSize;
+	float m_fDuration;
 };
 
 //class InterfaceFadeClockwise : public InterfaceWork
