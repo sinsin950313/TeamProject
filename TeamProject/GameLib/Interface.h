@@ -439,6 +439,7 @@ public:
 			m_isDone = true;
 		}
 		pInter->m_cbData.fTimer = 360.0f * m_fCurrent / m_fTime;
+		return true;
 	}
 
 public:

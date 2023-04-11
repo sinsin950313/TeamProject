@@ -7,7 +7,7 @@
 #include "CharacterStateManager.h"
 #include "EnemyNPCMob.h"
 #include "BossMob.h"
-
+#include "RenderTarget.h"
 class SceneInGame : public Scene
 {
 public:
@@ -55,8 +55,9 @@ public:
     Interface* m_pInter_Skill_W;
     Interface* m_pInter_Skill_E;
     Interface* m_pInter_Skill_R;
+    Interface* m_pMini;
     Interface* m_pInter_Minimap;
-
+    RenderTarget m_Minimap;
     std::vector<DamageFont> m_DamageFontList;
 };
 

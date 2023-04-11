@@ -72,7 +72,6 @@ bool    SceneInGame::Init()
 
 bool    SceneInGame::Frame()
 {
-
 	//if (m_Win)
 	//{
 	//    if (MessageBoxA(g_hWnd, "You Win!", "Win!", MB_OK))
@@ -141,22 +140,21 @@ bool    SceneInGame::Frame()
 		m_pBoss->Frame();
 	}
 
-	//m_pEnemy->Frame();
-	/*m_pInter_PlayerHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax));*/
 	m_pInter_Ingame->Frame();
-
-	/*if (I_Input.GetKey('I') == KEY_PUSH)
-	{
-		m_pTestInter->m_pWorkList.push_back(new InterfaceDamageFloating(888, m_pTestInter));
-	}
-	m_pTestInter->Frame();*/
-
+	m_pMini->Frame();
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
 	return true;
 }
 
 bool    SceneInGame::Render()
 {
+	//ID3D11DeviceContext::OMSetRenderTargets: Resource being set to OM RenderTarget slot 0 is still bound on input
+	m_pImmediateContext->OMGetRenderTargets(1, &m_Minimap.m_pOldRTV, &m_Minimap.m_pOldDSV);
+	UINT viewportCount = 1;
+	m_pImmediateContext->RSGetViewports(&viewportCount, m_Minimap.m_vpOld);
+
+	m_Minimap.Begin(m_pImmediateContext);
+
 	m_pQuadTree->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_pQuadTree->Render();
 
@@ -243,6 +241,12 @@ bool    SceneInGame::Render()
 	/*m_pTestInter->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_pTestInter->Render();*/
 	m_pInter_Ingame->Render();
+
+	m_Minimap.End(m_pImmediateContext);
+
+	//m_pInter_Ingame->Render();
+	m_pMini->m_pTextureSRV = m_Minimap.m_pSRV.Get();
+	m_pMini->Render();
 	return true;
 }
 
@@ -293,7 +297,7 @@ bool    SceneInGame::Release()
 		delete manager.second;
 	}
 	m_StateManagerMap.clear();
-
+	
 	return true;
 }
 
@@ -432,6 +436,9 @@ void    SceneInGame::UiLoad()
 	m_pInter_Minimap->SetAttribute(TVector3(952, 778, 0));
 	m_pInter_Ingame->AddChild(m_pInter_Minimap);
 
+	m_Minimap.Create(m_pd3dDevice, m_pImmediateContext, 300, 300);
+
+
 	Interface* pInter_HP_Enemy = new Interface();
 	pInter_HP_Enemy->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
 	pInter_HP_Enemy->SetAttribute(TVector3(544, 35, 0));
@@ -447,6 +454,10 @@ void    SceneInGame::UiLoad()
 	m_DamageFontList.push_back(DamageFont(7, 247, 51, 27, 41));
 	m_DamageFontList.push_back(DamageFont(8, 280, 50, 31, 40));
 	m_DamageFontList.push_back(DamageFont(9, 315, 50, 30, 40));
+
+	m_pMini = new Interface();
+	m_pMini->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/minimap.dds");
+	m_pMini->SetAttribute(TVector3(952, 778, 0));
 }
 
 void    SceneInGame::FSMLoad()
