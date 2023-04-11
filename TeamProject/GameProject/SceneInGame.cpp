@@ -129,7 +129,10 @@ bool    SceneInGame::Frame()
 	for (auto enemy : m_Enemies)
 	{
 		enemy->Frame();
+		enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.01, 0.01, 0.01});
 		enemy->m_pGageHP->Frame();
+
+		enemy->m_pDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, { 0.01, 0.01, 0.01 });
 		enemy->m_pDamage->Frame();
 	}
 
@@ -142,11 +145,11 @@ bool    SceneInGame::Frame()
 	/*m_pInter_PlayerHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax));*/
 	m_pInter_Ingame->Frame();
 
-	if (I_Input.GetKey('I') == KEY_PUSH)
+	/*if (I_Input.GetKey('I') == KEY_PUSH)
 	{
 		m_pTestInter->m_pWorkList.push_back(new InterfaceDamageFloating(888, m_pTestInter));
 	}
-	m_pTestInter->Frame();
+	m_pTestInter->Frame();*/
 
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
 	return true;
@@ -164,12 +167,10 @@ bool    SceneInGame::Render()
 	{
 		enemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		enemy->Render();
-		enemy->m_pGageHP->SetMatrix(&enemy->m_matWorld, &enemy->m_matView, &enemy->m_matProj);
-		enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z });
+		enemy->m_pGageHP->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
 		enemy->m_pGageHP->Render();
 
-		enemy->m_pDamage->SetMatrix(&enemy->m_matWorld, &enemy->m_matView, &enemy->m_matProj);
-		enemy->m_pDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 5, enemy->m_vPos.z }, TVector3(0.5, 0.5, 0.5));
+		enemy->m_pDamage->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
 		enemy->m_pDamage->Render();
 	}
 
@@ -239,8 +240,8 @@ bool    SceneInGame::Render()
 	Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	Player::GetInstance().m_pTrail->Render();
 
-	m_pTestInter->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_pTestInter->Render();
+	/*m_pTestInter->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	m_pTestInter->Render();*/
 	m_pInter_Ingame->Render();
 	return true;
 }
@@ -362,15 +363,15 @@ void    SceneInGame::CharacterLoad()
 
 			m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
 
-			
-
 			enemy->SetMap(m_pQuadTree->m_pMap);
 
 			enemy->m_pGageHP = new InterfaceBillboard();
 			enemy->m_pGageHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
-			enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y+2, enemy->m_vPos.z });
 
-			enemy->m_pDamage = m_pInter_DamageFont;
+			InterfaceDamage* pDamage = new InterfaceDamage();
+			pDamage->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
+			pDamage->SetDamageList(&m_DamageFontList);
+			enemy->m_pDamage = pDamage;
 			m_Enemies.push_back(enemy);
 		}
 	}
@@ -435,9 +436,18 @@ void    SceneInGame::UiLoad()
 	pInter_HP_Enemy->SetAttribute(TVector3(544, 35, 0));
 	m_pInter_Ingame->AddChild(pInter_HP_Enemy);
 
-	m_pInter_DamageFont = new InterfaceDamage();
-	m_pInter_DamageFont->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
-	m_pInter_DamageFont->SetAttribute(TVector3(0, 0, 0), TVector3(0.1, 0.1, 0.1));
+	m_DamageFontList.push_back(DamageFont(0, 3, 50, 30, 40));
+	m_DamageFontList.push_back(DamageFont(1, 41, 49, 22, 39));
+	m_DamageFontList.push_back(DamageFont(2, 72, 49, 29, 39));
+	m_DamageFontList.push_back(DamageFont(3, 107, 49, 29, 40));
+	m_DamageFontList.push_back(DamageFont(4, 140, 49, 31, 42));
+	m_DamageFontList.push_back(DamageFont(5, 176, 49, 28, 41));
+	m_DamageFontList.push_back(DamageFont(6, 211, 50, 30, 40));
+	m_DamageFontList.push_back(DamageFont(7, 247, 51, 27, 41));
+	m_DamageFontList.push_back(DamageFont(8, 280, 50, 31, 40));
+	m_DamageFontList.push_back(DamageFont(9, 315, 50, 30, 40));
+	
+	/*m_pInter_DamageFont->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
 	m_pInter_DamageFont->SetDamageSprite(0, 3, 50, 30, 40);
 	m_pInter_DamageFont->SetDamageSprite(1, 41, 49, 22, 39);
 	m_pInter_DamageFont->SetDamageSprite(2, 72, 49, 29, 39);
@@ -447,22 +457,7 @@ void    SceneInGame::UiLoad()
 	m_pInter_DamageFont->SetDamageSprite(6, 211, 50, 30, 40);
 	m_pInter_DamageFont->SetDamageSprite(7, 247, 51, 27, 41);
 	m_pInter_DamageFont->SetDamageSprite(8, 280, 50, 31, 40);
-	m_pInter_DamageFont->SetDamageSprite(9, 315, 50, 30, 40);
-	//m_pInter_DamageFont->m_pWorkList.push_back(new InterfaceDamageFloating(123, m_pInter_DamageFont));
-
-	m_pTestInter = new InterfaceDamage();
-	m_pTestInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
-	m_pTestInter->SetAttribute(TVector3(5, 0, 0), TVector3(0.1,0.1,0.1));
-	m_pTestInter->SetDamageSprite(0, 3, 50, 30, 40);
-	m_pTestInter->SetDamageSprite(1, 41, 49, 22, 39);
-	m_pTestInter->SetDamageSprite(2, 72, 49, 29, 39);
-	m_pTestInter->SetDamageSprite(3, 107, 49, 29, 40);
-	m_pTestInter->SetDamageSprite(4, 140, 49, 31, 42);
-	m_pTestInter->SetDamageSprite(5, 176, 49, 28, 41);
-	m_pTestInter->SetDamageSprite(6, 211, 50, 30, 40);
-	m_pTestInter->SetDamageSprite(7, 247, 51, 27, 41);
-	m_pTestInter->SetDamageSprite(8, 280, 50, 31, 40);
-	m_pTestInter->SetDamageSprite(9, 315, 50, 30, 40);
+	m_pInter_DamageFont->SetDamageSprite(9, 315, 50, 30, 40);*/
 }
 
 void    SceneInGame::FSMLoad()

@@ -130,6 +130,14 @@ bool	Character::Release()
 		delete m_pGageHP;
 		m_pGageHP = nullptr;
 	}
+
+	if (m_pDamage)
+	{
+		m_pDamage->Release();
+		delete m_pDamage;
+		m_pDamage = nullptr;
+	}
+
 	if (_objectToWorldTransformBuffer) _objectToWorldTransformBuffer->Release();
 	if (_toViewSpaceTransformBuffer) _toViewSpaceTransformBuffer->Release();
 	if (m_pModel)

@@ -34,7 +34,7 @@ public:
 	
 public:
 	Interface* m_pGageHP;
-	InterfaceDamage* m_pDamage;
+	Interface* m_pDamage;
 public:
 	virtual bool	Init();
 	virtual bool	Frame();

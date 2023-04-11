@@ -40,7 +40,7 @@ public:
 	}
 public:
 	void	ToNDC();
-	void	NormalizeToCenter(TVector3 vPos = {0, 0, 0});
+	void	AlignToPos(TVector3 vPos = {0, 0, 0});
 public:
 	E_UIState	m_CurrentState;
 
@@ -86,8 +86,8 @@ public:
 	virtual bool Frame() override;
 	virtual bool Render() override;
 public:
-	void SetDamageSprite(int idx, float u0, float v0, float u1, float v1);
-	std::vector<DamageFont> m_DamageList;
+	void SetDamageList(std::vector<DamageFont>* pDamageList);
+	std::vector<DamageFont>* m_pDamageList;
 };
 
 class InterfaceWork
@@ -181,10 +181,10 @@ class InterfaceFadeIn : public InterfaceWork
 public:
 	bool	Frame(Interface* pInter)
 	{
-		m_fAlpha += g_fSecondPerFrame * m_fFadeTime;
-		if (m_fAlpha >= m_fFadeTime)
+		m_fCurrentTime += g_fSecondPerFrame;
+		m_fAlpha = m_fCurrentTime / m_fFadeTime;
+		if (abs(m_fAlpha - 1.0f) < 0.001f)
 		{
-			m_fAlpha = 1.0f;
 			m_isDone = true;
 		}
 
@@ -202,6 +202,7 @@ public:
 public:
 	float m_fAlpha = 0.0f;
 	float m_fFadeTime = 2.5f;
+	float m_fCurrentTime = 0.0f;
 };
 
 class InterfaceFadeOut : public InterfaceWork
@@ -209,8 +210,9 @@ class InterfaceFadeOut : public InterfaceWork
 public:
 	bool	Frame(Interface* pInter)
 	{
-		m_fAlpha -= g_fSecondPerFrame * m_fFadeTime;
-		if (m_fAlpha <= 0.0f)
+		m_fCurrentTime += g_fSecondPerFrame;
+		m_fAlpha = 1.0f - (m_fCurrentTime / m_fFadeTime);
+		if (abs(m_fAlpha - 0.0f) < 0.001f)
 		{
 			m_isDone = true;
 		}
@@ -227,8 +229,9 @@ public:
 		m_fFadeTime = fFadeTime;
 	}
 public:
-	float m_fAlpha = 1.2f;
+	float m_fAlpha = 1.0f;
 	float m_fFadeTime = 2.5f;
+	float m_fCurrentTime = 0.0f;
 };
 
 class InterfaceLoopFade : public InterfaceWork
@@ -317,15 +320,17 @@ public:
 		m_fRemain -= g_fSecondPerFrame;
 		if (m_fRemain <= 0.0f)
 		{
+			pInter->m_VertexList[1].t.x = m_fGage;
+			pInter->m_VertexList[3].t.x = m_fGage;
 			m_isDone = true;
 		}
-		float t = 1.0f - (m_fRemain / m_fDuration);
+		float t = 1.0f - m_fRemain / m_fDuration;
 		float diff = m_fGage - pInter->m_VertexList[1].t.x;
-		float delta = diff / m_fDuration * g_fSecondPerFrame;
-		pInter->m_VertexList[1].t.x += delta;
-		pInter->m_VertexList[3].t.x += delta;
 
-		/*std::string remainValue = "---";
+		pInter->m_VertexList[1].t.x += diff * t;
+		pInter->m_VertexList[3].t.x = pInter->m_VertexList[1].t.x;
+
+	/*	std::string remainValue = "---";
 		remainValue += std::to_string(m_fRemain);
 		remainValue += "---";
 		remainValue += std::to_string(pInter->m_VertexList[1].t.x);
@@ -336,7 +341,7 @@ public:
 public:
 	InterfaceSetGage(float fGage, float fDuration = 2.5f) : m_fGage(fGage), m_fDuration(fDuration), m_fRemain(fDuration)
 	{
-
+		
 	}
 public:
 	float m_fGage;
@@ -349,8 +354,8 @@ class InterfaceDamageFloating : public InterfaceWork
 public:
 	bool	Frame(Interface* pInter) override
 	{
-		//m_fDuration -= g_fSecondPerFrame;
-		if (m_fDuration <= 0.0f)
+		m_fRemain -= g_fSecondPerFrame;
+		if (m_fRemain <= 0.0f)
 		{
 			m_isDone = true;
 		}
@@ -361,11 +366,11 @@ public:
 	bool	Render(Interface* pInter) override
 	{
 		pInter->m_VertexList[0].p.x = -m_fDamageSize / 2.0f;
-		pInter->m_VertexList[0].p.y = 15;
+		pInter->m_VertexList[0].p.y = m_Damage[0].m_v1 / 2.0f + (m_fFloatLength * (1.0f - m_fRemain/m_fDuration));
 		for (int idx = 0; idx < m_Damage.size(); idx++)
 		{
-			float width = m_Damage[idx].m_u1 * pInter->m_vScale.x;
-			float height = m_Damage[idx].m_v1 * pInter->m_vScale.y;
+			float width = m_Damage[idx].m_u1;
+			float height = m_Damage[idx].m_v1;
 
 			pInter->m_VertexList[1].p.x = pInter->m_VertexList[0].p.x + width;
 			pInter->m_VertexList[1].p.y = pInter->m_VertexList[0].p.y;
@@ -376,37 +381,36 @@ public:
 			pInter->m_VertexList[3].p.x = pInter->m_VertexList[1].p.x;
 			pInter->m_VertexList[3].p.y = pInter->m_VertexList[2].p.y;
 
-			float fWidth = (float)pInter->m_pTexture->m_Desc.Width;
-			float fHeight = (float)pInter->m_pTexture->m_Desc.Height;
+			float descWidth = (float)pInter->m_pTexture->m_Desc.Width;
+			float descHeight = (float)pInter->m_pTexture->m_Desc.Height;
 
-			pInter->m_VertexList[0].t.x = m_Damage[idx].m_u0 / fWidth;
-			pInter->m_VertexList[0].t.y = m_Damage[idx].m_v0 / fHeight;
+			pInter->m_VertexList[0].t.x = m_Damage[idx].m_u0 / descWidth;
+			pInter->m_VertexList[0].t.y = m_Damage[idx].m_v0 / descHeight;
 
-			pInter->m_VertexList[1].t.x = (m_Damage[idx].m_u0 + m_Damage[idx].m_u1) / fWidth;
-			pInter->m_VertexList[1].t.y = m_Damage[idx].m_v0 / fHeight;
+			pInter->m_VertexList[1].t.x = (m_Damage[idx].m_u0 + m_Damage[idx].m_u1) / descWidth;
+			pInter->m_VertexList[1].t.y = pInter->m_VertexList[0].t.y;
 
-			pInter->m_VertexList[2].t.x = m_Damage[idx].m_u0 / fWidth;
-			pInter->m_VertexList[2].t.y = (m_Damage[idx].m_v0 + m_Damage[idx].m_v1) / fHeight;
+			pInter->m_VertexList[2].t.x = pInter->m_VertexList[0].t.x;
+			pInter->m_VertexList[2].t.y = (m_Damage[idx].m_v0 + m_Damage[idx].m_v1) / descHeight;
 
-			pInter->m_VertexList[3].t.x = (m_Damage[idx].m_u0 + m_Damage[idx].m_u1) / fWidth;
-			pInter->m_VertexList[3].t.y = (m_Damage[idx].m_v0 + m_Damage[idx].m_v1) / fHeight;
+			pInter->m_VertexList[3].t.x = pInter->m_VertexList[1].t.x;
+			pInter->m_VertexList[3].t.y = pInter->m_VertexList[2].t.y;
 	
 			pInter->UpdateVertexBuffer();
 			pInter->UpdateConstantBuffer();
 			pInter->Interface::Render();
 			pInter->m_VertexList[0].p.x = pInter->m_VertexList[1].p.x;
-			pInter->m_VertexList[0].p.y = 15;
 		}
 
 		return true;
 	}
 public:
-	InterfaceDamageFloating(UINT iDamage, InterfaceDamage* pInter, float fDuration = 2.5f) : m_fDuration(fDuration)
+	InterfaceDamageFloating(UINT iDamage, Interface* pInter, float fDuration = 2.5f, float fFloatLength = 5.0f) : m_fDuration(fDuration), m_fRemain(fDuration), m_fFloatLength(fFloatLength)
 	{
 		std::string szDamage = std::to_string(iDamage);
 		for (int idx = 0; idx < szDamage.size(); idx++)
 		{
-			m_Damage.push_back(pInter->m_DamageList[szDamage[idx]-48]);
+			m_Damage.push_back(dynamic_cast<InterfaceDamage*>(pInter)->m_pDamageList->at(szDamage[idx]-48));
 			m_fDamageSize += m_Damage[idx].m_u1;
 		}
 	}
@@ -414,6 +418,8 @@ public:
 	std::vector<DamageFont> m_Damage;
 	float m_fDamageSize;
 	float m_fDuration;
+	float m_fRemain;
+	float m_fFloatLength;
 };
 
 //class InterfaceFadeClockwise : public InterfaceWork

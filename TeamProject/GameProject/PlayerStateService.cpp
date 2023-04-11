@@ -185,7 +185,7 @@ namespace SSB
 							obj->Damage(m_pCharacter->m_Damage); 
 							m_pCharacter->DamagingCharacter(obj);
 							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(9, obj->m_pDamage, 10.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 					}
 				}
@@ -276,6 +276,7 @@ namespace SSB
 							obj->Damage(m_pCharacter->m_Damage);
 							m_pCharacter->DamagingCharacter(obj);
 							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 					}
 				}
@@ -366,6 +367,7 @@ namespace SSB
 							obj->Damage(m_pCharacter->m_Damage);
 							m_pCharacter->DamagingCharacter(obj);
 							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 					}
 				}

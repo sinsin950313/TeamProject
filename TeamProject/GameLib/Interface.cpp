@@ -204,25 +204,18 @@ void	Interface::ToNDC()
 	m_matWorld = m_matView = m_matProj = TMatrix::Identity;
 }
 
-void Interface::NormalizeToCenter(TVector3 vPos)
+void Interface::AlignToPos(TVector3 vPos)
 {
-	/*float centerX = g_rcClient.right / 2.0f;
-	float centerY = g_rcClient.bottom / 2.0f;*/
+	float width = m_pTexture->m_Desc.Width;
+	float height = m_pTexture->m_Desc.Height;
 
-	// 텍스쳐의 크기를 화면에 맞춰 정규화합니다.
-	float width = m_pTexture->m_Desc.Width / (float)g_rcClient.right * m_vScale.x / 2.0f;
-	float height = m_pTexture->m_Desc.Height / (float)g_rcClient.bottom * m_vScale.y / 2.0f;
-
-	// 왼쪽 상단 좌표를 계산합니다.
-	//TVector3 pos = TVector3(((0 - centerX) / centerX), ((centerY - 0) / centerY), 0);
-	TVector3 pos = vPos;
 	// 각 꼭지점의 위치를 계산합니다.
-	m_VertexList[0].p = pos + TVector3(-width, height, 0);
+	m_VertexList[0].p = vPos + TVector3(-width / 2.0f, height / 2.0f , 0);
 
-	m_VertexList[1].p.x = m_VertexList[0].p.x + width * 2.0f * m_VertexList[1].t.x;
+	m_VertexList[1].p.x = m_VertexList[0].p.x + width * m_VertexList[1].t.x;
 	m_VertexList[1].p.y = m_VertexList[0].p.y;
 
-	m_VertexList[2].p = pos + TVector3(-width, -height, 0);
+	m_VertexList[2].p = vPos + TVector3(-width / 2.0f, -height / 2.0f , 0);
 
 	m_VertexList[3].p.x = m_VertexList[1].p.x;
 	m_VertexList[3].p.y = m_VertexList[2].p.y;
@@ -274,7 +267,7 @@ bool InterfaceBillboard::Frame()
 	//
 	//SetPosition(m_vPos, m_Box.m_vSize, m_vCameraPos);
 	//ScreenToNDC();
-	NormalizeToCenter();
+	AlignToPos();
 	UpdateVertexBuffer();
 	return true;
 }
@@ -359,7 +352,6 @@ bool InterfaceDamage::Frame()
 		data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);*/
 		data->Frame();
 	}
-	//CreateBillboard();
 	return true;
 }
 
@@ -430,7 +422,8 @@ bool InterfaceDamage::Render()
 	return true;
 }
 
-void InterfaceDamage::SetDamageSprite(int idx, float u0, float v0, float u1, float v1)
+
+void InterfaceDamage::SetDamageList(std::vector<DamageFont>* pDamageList)
 {
-	m_DamageList.push_back(DamageFont(idx, u0, v0, u1, v1));
+	m_pDamageList = pDamageList;
 }
