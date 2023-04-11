@@ -101,7 +101,7 @@ private:
 	Sound* _damagedSound = nullptr;
 
 public:
-	void Damage(int damage);
+	virtual void Damage(int damage);
 
 private:
 	std::map<SkillPrimaryKey, SkillCoolTime> _skillCoolTimeList;

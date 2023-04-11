@@ -11,7 +11,7 @@
 namespace SSB
 {
 	typedef std::string StateName;
-	typedef int StateTransferPriority;
+	typedef unsigned int StateTransferPriority;
 
 	class CharacterState
 	{
@@ -59,9 +59,31 @@ namespace SSB
 
 	public:
 		bool IsTransfer();
+		void Run();
 
 	public:
 		virtual StateTransferPriority GetPriority();
-		virtual void Run();
+
+	protected:
+		virtual void StateDecision() = 0;
+		virtual void Action() = 0;
+
+	public:
+		virtual std::vector<std::string> GetLinkedList() = 0;
+	};
+
+	class MinimumTransferCoolTimeRequireInterface
+	{
+	protected:
+		virtual float GetTransferRequireTime() = 0;
+
+	public:
+		bool IsPassedRequiredTime(float timeStamp);
+	};
+
+	class DamageTypeStateInterface
+	{
+	public:
+		void Damage(Blackboard* blackboard, Character* target, float damage);
 	};
 }

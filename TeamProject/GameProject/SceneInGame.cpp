@@ -352,7 +352,7 @@ void    SceneInGame::CharacterLoad()
 		I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
 
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
-		Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
+		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Init();
 		Player::GetInstance().Scale(0.01f);
@@ -379,7 +379,7 @@ void    SceneInGame::CharacterLoad()
 			enemy->Initialize_SetPosition({ pos.x, pos.y, pos.z });
 			enemy->m_Damage = 10;
 			enemy->m_fSpeed = 10;
-			enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
+			//enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
 			enemy->Init();
 			enemy->Scale(0.01f);
 			/*
@@ -420,46 +420,83 @@ void    SceneInGame::FSMLoad()
 
 		{
 			SSB::CharacterState* state = new SSB::PlayerIdleState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Idle");
 			manager->Initialize_RegisterState(SSB::kPlayerIdle, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerMoveState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Move");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenWalk.mp3"), true);
 			manager->Initialize_RegisterState(SSB::kPlayerMove, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerAttackState1;
-			state->Initialize_SetCoolTime(1.8f);
+			SSB::CharacterState* state = new SSB::PlayerAttackState1(1.8f);
 			state->Initialize_SetStateAnimation("Attack1");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerAttack1, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerAttackState2;
-			state->Initialize_SetCoolTime(1.8f);
+			SSB::CharacterState* state = new SSB::PlayerAttackState2(1.8f);
 			state->Initialize_SetStateAnimation("Attack2");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack2.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerAttack2, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerAttackState3;
-			state->Initialize_SetCoolTime(1.8f);
+			SSB::CharacterState* state = new SSB::PlayerAttackState3(1.8f);
 			state->Initialize_SetStateAnimation("Attack3");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack3.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerAttack3, state);
 		}
 		{
+			SSB::CharacterState* state = new SSB::PlayerAttackState4(1.8f);
+			state->Initialize_SetStateAnimation("Attack4");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerAttack4, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillState1(1.8f);
+			state->Initialize_SetStateAnimation("Skill1");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerSkill1, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillState2(1.8f);
+			state->Initialize_SetStateAnimation("Skill2");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerSkill2, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillState3(1.8f);
+			state->Initialize_SetStateAnimation("Skill3");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerSkill3, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillState4(1.8f);
+			state->Initialize_SetStateAnimation("Skill4");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerSkill4, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillState5(1.8f);
+			state->Initialize_SetStateAnimation("Skill5");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerSkill5, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerDashState(1.8f);
+			state->Initialize_SetStateAnimation("Dash");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerDash, state);
+		}
+		{
 			SSB::CharacterState* state = new SSB::PlayerDeadState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Dead");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerDead, state);
 		}
 
+		manager->Init();
 		m_StateManagerMap.insert(std::make_pair(SSB::kPlayerStateManager, manager));
 	}
 
@@ -467,32 +504,29 @@ void    SceneInGame::FSMLoad()
 		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
 		{
 			SSB::CharacterState* state = new SSB::EnemyNPCMobIdleState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Idle");
 			manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Move");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarWalk.mp3"), true);
 			manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState;
-			state->Initialize_SetCoolTime(1.5f);
+			SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState(1.5f);
 			state->Initialize_SetStateAnimation("Attack1");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
 			manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::EnemyNPCMobDeadState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Dead");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarDead.mp3"));
 			manager->Initialize_RegisterState(SSB::kEnemyNPCMobDead, state);
 		}
 
+		manager->Init();
 		m_StateManagerMap.insert(std::make_pair(SSB::kEnemyNPCMobStateManager, manager));
 	}
 
@@ -500,69 +534,59 @@ void    SceneInGame::FSMLoad()
 		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
 		{
 			SSB::CharacterState* state = new SSB::BossMobIdleState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Idle");
 			manager->Initialize_RegisterState(SSB::kBossMobIdle, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobAngryState;
-			state->Initialize_SetCoolTime(2);
+			SSB::CharacterState* state = new SSB::BossMobAngryState(2);
 			state->Initialize_SetStateAnimation("Angry");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossAngry.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobAngry, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::BossMobMoveState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Move");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossMove.mp3"), true);
 			manager->Initialize_RegisterState(SSB::kBossMobMove, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobAttack1State;
-			state->Initialize_SetCoolTime(1.5f);
+			SSB::CharacterState* state = new SSB::BossMobAttack1State(1.5f);
 			state->Initialize_SetStateAnimation("Attack1");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossAttack1.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobAttack1, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobAttack2State;
-			state->Initialize_SetCoolTime(1.5f);
+			SSB::CharacterState* state = new SSB::BossMobAttack2State(1.5f);
 			state->Initialize_SetStateAnimation("Attack2");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossAttack1.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobAttack2, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobDashStartState;
-			state->Initialize_SetCoolTime(2.5f);
+			SSB::CharacterState* state = new SSB::BossMobDashStartState(2.5f);
 			state->Initialize_SetStateAnimation("DashStart");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossDashStart.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobDashStart, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobDashState;
-			state->Initialize_SetCoolTime(1.5f);
+			SSB::CharacterState* state = new SSB::BossMobDashState(1.5f);
 			state->Initialize_SetStateAnimation("DashMove");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossDash.mp3"), true);
 			manager->Initialize_RegisterState(SSB::kBossMobDash, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobDashEndState;
-			state->Initialize_SetCoolTime(2.0f);
+			SSB::CharacterState* state = new SSB::BossMobDashEndState(2);
 			state->Initialize_SetStateAnimation("DashEnd");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossDashEnd.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobDashEnd, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobSkill1State;
-			state->Initialize_SetCoolTime(2.0f);
+			SSB::CharacterState* state = new SSB::BossMobSkill1State(2);
 			state->Initialize_SetStateAnimation("Skill1");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossSkill1.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobSkill1, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::BossMobSpawnState;
-			state->Initialize_SetCoolTime(2);
+			SSB::CharacterState* state = new SSB::BossMobSpawnState(2);
 			state->Initialize_SetStateAnimation("Spawn");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossSpawn.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobSpawn, state);
@@ -576,12 +600,12 @@ void    SceneInGame::FSMLoad()
 		//}
 		{
 			SSB::CharacterState* state = new SSB::BossMobDeadState;
-			state->Initialize_SetCoolTime(0);
 			state->Initialize_SetStateAnimation("Dead");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossDead.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobDead, state);
 		}
 
+		manager->Init();
 		m_StateManagerMap.insert(std::make_pair(SSB::kBossMobStateManager, manager));
 
 		// FMod가 1초 미만의 Sound를 Loop 시 Loop가 안되는 버그가 있음

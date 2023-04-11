@@ -12,27 +12,42 @@ namespace SSB
 	class EnemyNPCMobIdleState : public CharacterState
 	{
 	public:
-		void Run() override;
+		void StateDecision() override;
+		void Action() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
 	class EnemyNPCMobMoveState : public CharacterState
 	{
 	public:
-		void Run() override;
+		void StateDecision() override;
+		void Action() override;
 		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class EnemyNPCMobAttackState : public CharacterState
+	class EnemyNPCMobAttackState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		void Run() override;
+		EnemyNPCMobAttackState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
 		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
 	class EnemyNPCMobDeadState : public CharacterState
 	{
 	public:
-		void Run() override;
+		void StateDecision() override;
+		void Action() override;
 		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 }

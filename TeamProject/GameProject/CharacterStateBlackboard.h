@@ -10,7 +10,6 @@ namespace SSB
 	{
 		float StateTImeStamp = 0;
 		float BeforeTime = 0;
-		float StateElapseTime = 0;
 		Sound* CurrentSound;
 		std::set<Character*> DamagedCharacters;
 	};

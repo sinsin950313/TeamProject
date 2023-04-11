@@ -29,9 +29,7 @@ namespace SSB
 			blackboard->CurrentSound->Stop();
 		}
 		blackboard->DamagedCharacters.clear();
-		blackboard->BeforeTime = ;
-		blackboard->StateElapseTime = ;
-		blackboard->StateTImeStamp = ;
+		blackboard->StateTImeStamp = g_fGameTimer;
 	}
 	void CharacterStateManager::Initialize_RegisterState(StateName name, CharacterState* state)
 	{
@@ -40,15 +38,20 @@ namespace SSB
 	void CharacterStateManager::RegisterCharacter(Character* character, StateName initialStateName)
 	{
 		m_CharacterStateMap.insert(std::make_pair(character, m_StateMap.find(initialStateName)->second));
+		_blackboardManager.RegisterBlackboard(character);
+		m_ReservedState.insert(std::make_pair(character, nullptr));
 	}
 	bool CharacterStateManager::Init()
 	{
-		for (auto iter : m_StateMap)
+		for (auto stateIter : m_StateMap)
 		{
-			delete iter.second;
+			CharacterState* state = stateIter.second;
+			auto linkedStateList = state->GetLinkedList();
+			for (auto linkedState : linkedStateList)
+			{
+				state->Initialize_LinkState(linkedState, m_StateMap.find(linkedState)->second);
+			}
 		}
-		m_StateMap.clear();
-		m_CharacterStateMap.clear();
 
 		return true;
 	}
@@ -65,15 +68,15 @@ namespace SSB
 
 			if (state->IsReservingNextState())
 			{
-				RegisterReservedState(blackboard, character, state);
+				RegisterReservedState(blackboard, character, state->GetReservedState());
 			}
 
 			if (state->IsTransfer())
 			{
-				PrepareForTransfer(blackboard, character);
-
 				auto reservedState = m_ReservedState.find(character)->second;
 				m_CharacterStateMap[character] = reservedState;
+
+				PrepareForTransfer(blackboard, character);
 			}
 		}
 

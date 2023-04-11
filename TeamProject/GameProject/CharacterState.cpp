@@ -73,10 +73,25 @@ namespace SSB
 	}
 	StateTransferPriority CharacterState::GetPriority()
 	{
-		return 1000;
+		return -1;
 	}
 	void CharacterState::Run()
 	{
 		m_pCharacter->SetCurrentAnimation(GetStateAnimationName());
+
+		Action();
+		StateDecision();
+	}
+	bool MinimumTransferCoolTimeRequireInterface::IsPassedRequiredTime(float timeStamp)
+	{
+		return g_fGameTimer - timeStamp >= GetTransferRequireTime();
+	}
+	void DamageTypeStateInterface::Damage(Blackboard* blackboard, Character* target, float damage)
+	{
+		if (blackboard->DamagedCharacters.find(target) == blackboard->DamagedCharacters.end())
+		{
+			target->Damage(damage);
+			blackboard->DamagedCharacters.insert(&Player::GetInstance());
+		}
 	}
 }
