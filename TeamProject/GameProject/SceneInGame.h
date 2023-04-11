@@ -57,8 +57,6 @@ public:
     Interface* m_pInter_Skill_R;
     Interface* m_pInter_Minimap;
 
-    /*InterfaceDamage* m_pInter_DamageFont;*/
     std::vector<DamageFont> m_DamageFontList;
-    //InterfaceDamage* m_pTestInter;
 };
 

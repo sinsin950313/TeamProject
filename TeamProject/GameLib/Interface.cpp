@@ -53,13 +53,13 @@ bool	Interface::Render()
 {
 	if (!m_isUsing)
 		return false;
+	
 	if (m_pImmediateContext)
 	{
 		m_pImmediateContext->PSSetSamplers(0, 1, &DXState::g_pDefaultSS);
 		BaseObject::Render();
 	}
 	
-
 	for (int iSub = 0; iSub < m_rcDrawList.size(); iSub++)
 	{
 		m_rcDrawList[iSub]->Render();
@@ -221,12 +221,6 @@ void Interface::AlignToPos(TVector3 vPos)
 	m_VertexList[3].p.y = m_VertexList[2].p.y;
 }
 
-void Interface::SetTime(float fTime)
-{
-	m_cbData.vTemp = { 0, 0, 0 };
-	m_cbData.fTimer = fTime;
-}
-
 bool InterfaceBillboard::Frame()
 {
 	for (auto iter = m_pWorkList.begin(); iter != m_pWorkList.end();)
@@ -272,35 +266,31 @@ bool InterfaceBillboard::Frame()
 	return true;
 }
 
-void InterfaceBillboard::CreateBillboard()
+void InterfaceBillboard::CreateBillboardMatrix()
 {
-	TMatrix bill = m_matView.Invert();
+	/*TMatrix bill = m_matView.Invert();
 	bill._41 = bill._42 = bill._43 = 0.0f;
 	TQuaternion qu;
 	D3DXQuaternionRotationMatrix(&qu, &bill);
 	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &qu, &m_vPos);
 	UpdateConstantBuffer();
-	return;
+	return;*/
 
-	TMatrix billboardMatrix;
+	TMatrix matBillBoard;
 
-	// 뷰 매트릭스의 회전 부분만 추출합니다.
-	TMatrix viewRotationMatrix;
-	XMVECTOR rotation = XMVectorSet(m_matView._11, m_matView._12, m_matView._13, 0.0f);
-	XMVECTOR up = XMVectorSet(m_matView._21, m_matView._22, m_matView._23, 0.0f);
-	XMVECTOR direction = XMVectorSet(m_matView._31, m_matView._32, m_matView._33, 0.0f);
+	//// 뷰 매트릭스의 회전 부분만 추출합니다.
+	//TMatrix viewRotationMatrix;
+	//XMVECTOR rotation = XMVectorSet(m_matView._11, m_matView._12, m_matView._13, 0.0f);
+	//XMVECTOR up = XMVectorSet(m_matView._21, m_matView._22, m_matView._23, 0.0f);
+	//XMVECTOR direction = XMVectorSet(m_matView._31, m_matView._32, m_matView._33, 0.0f);
 
-	// 회전 부분의 행렬을 생성합니다.
-	XMStoreFloat4x4(&viewRotationMatrix, XMMATRIX(rotation, up, direction, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
+	//// 회전 부분의 행렬을 생성합니다.
+	//XMStoreFloat4x4(&viewRotationMatrix, XMMATRIX(rotation, up, direction, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
 
-	// 회전 부분의 역행렬을 구합니다.
-	TMatrix viewRotationInverseMatrix = viewRotationMatrix.Invert();
-
-	// 빌보드 행렬을 생성합니다.
-	billboardMatrix = viewRotationInverseMatrix;
-
+	matBillBoard = m_matView.Invert();
+	matBillBoard._41 = matBillBoard._42 = matBillBoard._43 = 0.0f;
 	TQuaternion q;
-	D3DXQuaternionRotationMatrix(&q, &billboardMatrix);
+	D3DXQuaternionRotationMatrix(&q, &matBillBoard);
 
 	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &q, &m_vPos);
 	// 월드 행렬과 곱합니다.
@@ -309,7 +299,7 @@ void InterfaceBillboard::CreateBillboard()
 
 bool InterfaceBillboard::Render()
 {
-	CreateBillboard();
+	CreateBillboardMatrix();
 	Interface::Render();
 
 	return true;
@@ -398,7 +388,7 @@ bool InterfaceDamage::Render()
 		}
 		else
 		{
-			CreateBillboard();
+			CreateBillboardMatrix();
 			work->Render(this);
 			iter++;
 		}

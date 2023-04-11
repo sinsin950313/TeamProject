@@ -21,7 +21,7 @@ public:
 	virtual bool Render() override;
 	virtual bool Release() override;
 	virtual bool SetAttribute(TVector3 vPos, TRectangle rc);
-	virtual bool SetAttribute(TVector3 vPos = {0, 0, 0}, TVector3 vScale = { 1, 1, 1 }, TColor color = { 1, 1, 1, 1 });
+	virtual bool SetAttribute(TVector3 vPos = { 0, 0, 0 }, TVector3 vScale = { 1, 1, 1 }, TColor color = { 1, 1, 1, 1 });
 	virtual bool SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV);
 	virtual void AddChild(Interface* pUI)
 	{
@@ -40,7 +40,7 @@ public:
 	}
 public:
 	void	ToNDC();
-	void	AlignToPos(TVector3 vPos = {0, 0, 0});
+	void	AlignToPos(TVector3 vPos = { 0, 0, 0 });
 public:
 	E_UIState	m_CurrentState;
 
@@ -53,14 +53,13 @@ public:
 public:
 	bool	m_isUsing = true;
 public:
-	virtual void SetTime(float fTime);
 };
 
 class InterfaceBillboard : public Interface
 {
 public:
 	virtual bool Frame() override;
-	virtual void CreateBillboard();
+	virtual void CreateBillboardMatrix();
 	virtual bool Render() override;
 };
 
@@ -173,7 +172,7 @@ public:
 public:
 	bool	m_isFade = false;
 	int		m_iSwitch = 1;
-	float m_fAlpha = 0.0f;
+	float	m_fAlpha = 0.0f;
 };
 
 class InterfaceFadeIn : public InterfaceWork
@@ -195,13 +194,14 @@ public:
 		return true;
 	}
 public:
-	InterfaceFadeIn(float fFadeTime = 2.5f)
+	InterfaceFadeIn(float fFadeTime = 1.0f)
 	{
 		m_fFadeTime = fFadeTime;
+		m_fCurrent = 0.0f;
 	}
 public:
 	float m_fAlpha = 0.0f;
-	float m_fFadeTime = 2.5f;
+	float m_fFadeTime = 1.0f;
 	float m_fCurrent = 0.0f;
 };
 
@@ -224,15 +224,15 @@ public:
 		return true;
 	}
 public:
-	InterfaceFadeOut(float fFadeTime = 2.5f)
+	InterfaceFadeOut(float fFadeTime = 1.0f)
 	{
 		m_fFadeTime = fFadeTime;
 		m_fRemain = fFadeTime;
 	}
 public:
 	float m_fAlpha = 1.0f;
-	float m_fFadeTime = 2.5f;
-	float m_fRemain = 2.5f;
+	float m_fFadeTime;
+	float m_fRemain;
 };
 
 class InterfaceLoopFade : public InterfaceWork
@@ -331,18 +331,18 @@ public:
 		pInter->m_VertexList[1].t.x += diff * t;
 		pInter->m_VertexList[3].t.x = pInter->m_VertexList[1].t.x;
 
-	/*	std::string remainValue = "---";
-		remainValue += std::to_string(m_fRemain);
-		remainValue += "---";
-		remainValue += std::to_string(pInter->m_VertexList[1].t.x);
-		remainValue += "\n";
-		OutputDebugStringA(remainValue.c_str());*/
+		/*	std::string remainValue = "---";
+			remainValue += std::to_string(m_fRemain);
+			remainValue += "---";
+			remainValue += std::to_string(pInter->m_VertexList[1].t.x);
+			remainValue += "\n";
+			OutputDebugStringA(remainValue.c_str());*/
 		return true;
 	}
 public:
 	InterfaceSetGage(float fGage, float fDuration = 2.5f) : m_fGage(fGage), m_fDuration(fDuration), m_fRemain(fDuration)
 	{
-		
+
 	}
 public:
 	float m_fGage;
@@ -371,7 +371,7 @@ public:
 	bool	Render(Interface* pInter) override
 	{
 		pInter->m_VertexList[0].p.x = -m_fDamageSize / 2.0f;
-		pInter->m_VertexList[0].p.y = m_Damage[0].m_v1 / 2.0f + (m_fFloatLength * (1.0f - m_fRemain/m_fDuration));
+		pInter->m_VertexList[0].p.y = m_Damage[0].m_v1 / 2.0f + (m_fFloatLength * (1.0f - m_fRemain / m_fDuration));
 		for (int idx = 0; idx < m_Damage.size(); idx++)
 		{
 			float width = m_Damage[idx].m_u1;
@@ -382,7 +382,7 @@ public:
 
 			pInter->m_VertexList[2].p.x = pInter->m_VertexList[0].p.x;
 			pInter->m_VertexList[2].p.y = pInter->m_VertexList[0].p.y - height;
-	
+
 			pInter->m_VertexList[3].p.x = pInter->m_VertexList[1].p.x;
 			pInter->m_VertexList[3].p.y = pInter->m_VertexList[2].p.y;
 
@@ -400,7 +400,7 @@ public:
 
 			pInter->m_VertexList[3].t.x = pInter->m_VertexList[1].t.x;
 			pInter->m_VertexList[3].t.y = pInter->m_VertexList[2].t.y;
-	
+
 			pInter->UpdateVertexBuffer();
 			pInter->UpdateConstantBuffer();
 			pInter->Interface::Render();
@@ -415,7 +415,7 @@ public:
 		std::string szDamage = std::to_string(iDamage);
 		for (int idx = 0; idx < szDamage.size(); idx++)
 		{
-			m_Damage.push_back(dynamic_cast<InterfaceDamage*>(pInter)->m_pDamageList->at(szDamage[idx]-48));
+			m_Damage.push_back(dynamic_cast<InterfaceDamage*>(pInter)->m_pDamageList->at(szDamage[idx] - 48));
 			m_fDamageSize += m_Damage[idx].m_u1;
 		}
 	}
@@ -428,35 +428,27 @@ public:
 	float m_fAlpha;
 };
 
-//class InterfaceFadeClockwise : public InterfaceWork
-//{
-//public:
-//	bool Frame(Interface* pInter)
-//	{
-//		m_fAlpha += m_iSwitch * g_fSecondPerFrame * 2.5f;
-//		if (m_fAlpha >= 2.5f)
-//		{
-//			m_iSwitch = -1;
-//			m_fAlpha = 1.2f;
-//		}
-//		if (m_fAlpha <= 0.0f)
-//		{
-//			m_isDone = true;
-//		}
-//
-//		for (int i = 0; i < pInter->m_VertexList.size(); i++)
-//		{
-//			pInter->m_VertexList[i].c.w = m_fAlpha;
-//		}
-//		return true;
-//	}
-//
-//public:
-//	InterfaceFadeClockwise(float fScale)
-//	{
-//		
-//	}
-//public:
-//	
-//};
+class InterfaceFadeClockwise : public InterfaceWork
+{
+public:
+	bool Frame(Interface* pInter)
+	{
+		m_fCurrent += g_fSecondPerFrame;
+		if (m_fCurrent >= m_fTime)
+		{
+			m_isDone = true;
+		}
+		pInter->m_cbData.fTimer = 360.0f * m_fCurrent / m_fTime;
+		return true;
+	}
+
+public:
+	InterfaceFadeClockwise(float fTime) : m_fTime(fTime)
+	{
+		m_fCurrent = 0.0f;
+	}
+public:
+	float m_fTime;
+	float m_fCurrent;
+};
 

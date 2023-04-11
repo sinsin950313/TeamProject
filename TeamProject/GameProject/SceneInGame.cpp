@@ -129,10 +129,10 @@ bool    SceneInGame::Frame()
 	for (auto enemy : m_Enemies)
 	{
 		enemy->Frame();
-		enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.01, 0.01, 0.01});
+		enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.005, 0.01, 0.01});
 		enemy->m_pGageHP->Frame();
 
-		enemy->m_pDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, { 0.01, 0.01, 0.01 });
+		enemy->m_pDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2.5f, enemy->m_vPos.z }, { 0.01, 0.01, 0.01 });
 		enemy->m_pDamage->Frame();
 	}
 
@@ -401,9 +401,10 @@ void    SceneInGame::UiLoad()
 	m_pInter_Ingame->AddChild(m_pInter_Passive);
 
 	m_pInter_Skill_Q = new Interface();
-	m_pInter_Skill_Q->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_q.dds");
+	m_pInter_Skill_Q->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_q.dds", L"VS", L"ANGLE_PS");
 	m_pInter_Skill_Q->SetAttribute(TVector3(726, 788, 0));
 	m_pInter_Skill_Q->m_pWorkList.push_back(new InterfaceLoopFade(1.0f));
+	m_pInter_Skill_Q->m_pWorkList.push_back(new InterfaceFadeClockwise(5.0f));
 	m_pInter_Ingame->AddChild(m_pInter_Skill_Q);
 
 	m_pInter_Skill_W = new Interface();
@@ -446,18 +447,6 @@ void    SceneInGame::UiLoad()
 	m_DamageFontList.push_back(DamageFont(7, 247, 51, 27, 41));
 	m_DamageFontList.push_back(DamageFont(8, 280, 50, 31, 40));
 	m_DamageFontList.push_back(DamageFont(9, 315, 50, 30, 40));
-	
-	/*m_pInter_DamageFont->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
-	m_pInter_DamageFont->SetDamageSprite(0, 3, 50, 30, 40);
-	m_pInter_DamageFont->SetDamageSprite(1, 41, 49, 22, 39);
-	m_pInter_DamageFont->SetDamageSprite(2, 72, 49, 29, 39);
-	m_pInter_DamageFont->SetDamageSprite(3, 107, 49, 29, 40);
-	m_pInter_DamageFont->SetDamageSprite(4, 140, 49, 31, 42);
-	m_pInter_DamageFont->SetDamageSprite(5, 176, 49, 28, 41);
-	m_pInter_DamageFont->SetDamageSprite(6, 211, 50, 30, 40);
-	m_pInter_DamageFont->SetDamageSprite(7, 247, 51, 27, 41);
-	m_pInter_DamageFont->SetDamageSprite(8, 280, 50, 31, 40);
-	m_pInter_DamageFont->SetDamageSprite(9, 315, 50, 30, 40);*/
 }
 
 void    SceneInGame::FSMLoad()
