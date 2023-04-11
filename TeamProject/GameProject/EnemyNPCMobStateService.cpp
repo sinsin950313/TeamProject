@@ -77,6 +77,12 @@ namespace SSB
 				SetTransfer();
 			}
 		}
+
+        if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+        {
+            _blackboard->StateTImeStamp = g_fGameTimer;
+            _blackboard->DamagedCharacters.clear();
+        }
     }
     void EnemyNPCMobAttackState::Action()
     {
@@ -113,11 +119,6 @@ namespace SSB
 			{
                 Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
 			}
-        }
-        else
-        {
-            _blackboard->StateTImeStamp = g_fGameTimer;
-            _blackboard->DamagedCharacters.clear();
         }
     }
     StateTransferPriority EnemyNPCMobAttackState::GetPriority()

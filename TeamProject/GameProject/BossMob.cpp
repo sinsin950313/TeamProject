@@ -26,4 +26,10 @@ namespace SSB
 	{
 		return m_LastSkillTimeStamp;
 	}
+	bool BossMob::Frame()
+	{
+		Character::Frame();
+
+		return true;
+	}
 }

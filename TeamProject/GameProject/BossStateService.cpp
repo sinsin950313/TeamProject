@@ -112,7 +112,7 @@ namespace SSB
 			SetTransfer();
 		}
 
-		if (mob->GetSkillCoolTime() < mob->GetLastSkillTimeStamp())
+		if (mob->GetSkillCoolTime() < g_fGameTimer - mob->GetLastSkillTimeStamp())
 		{
 			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetDashRange())
 			{
@@ -215,7 +215,7 @@ namespace SSB
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (mob->GetSkillCoolTime() < mob->GetLastSkillTimeStamp())
+			if (mob->GetSkillCoolTime() < g_fGameTimer - mob->GetLastSkillTimeStamp())
 			{
 				int ranVal = rand() % 2;
 
@@ -315,7 +315,7 @@ namespace SSB
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (mob->GetSkillCoolTime() < mob->GetLastSkillTimeStamp())
+			if (mob->GetSkillCoolTime() < g_fGameTimer - mob->GetLastSkillTimeStamp())
 			{
 				int ranVal = rand() % 2;
 
@@ -363,7 +363,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobAttack1State::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack1, kBossMobIdle };
+		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack2, kBossMobIdle };
 	}
 	void BossMobAttack2State::Action()
 	{

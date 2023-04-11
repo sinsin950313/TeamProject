@@ -121,7 +121,7 @@ namespace SSB
 			SetTransfer();
 		}
 
-		if (0.5f < _blackboard->StateTImeStamp - g_fGameTimer)
+		if (0.5f < g_fGameTimer - _blackboard->StateTImeStamp)
 		{
 			if (I_Input.GetKey(VK_LBUTTON) == KEY_PUSH ||
 				I_Input.GetKey(VK_LBUTTON) == KEY_HOLD)
@@ -202,7 +202,7 @@ namespace SSB
 			SetTransfer();
 		}
 
-		if (0.5f < _blackboard->StateTImeStamp - g_fGameTimer)
+		if (0.5f < g_fGameTimer - _blackboard->StateTImeStamp)
 		{
 			if (I_Input.GetKey(VK_LBUTTON) == KEY_PUSH ||
 				I_Input.GetKey(VK_LBUTTON) == KEY_HOLD)
@@ -283,7 +283,7 @@ namespace SSB
 			SetTransfer();
 		}
 
-		if (0.5f < _blackboard->StateTImeStamp - g_fGameTimer)
+		if (0.5f < g_fGameTimer - _blackboard->StateTImeStamp)
 		{
 			if (I_Input.GetKey(VK_LBUTTON) == KEY_PUSH ||
 				I_Input.GetKey(VK_LBUTTON) == KEY_HOLD)
@@ -378,12 +378,12 @@ namespace SSB
 			SetTransfer();
 		}
 
-		if (0.5f < _blackboard->StateTImeStamp - g_fGameTimer)
+		if (0.5f < g_fGameTimer - _blackboard->StateTImeStamp)
 		{
 			if (I_Input.GetKey(VK_LBUTTON) == KEY_PUSH ||
 				I_Input.GetKey(VK_LBUTTON) == KEY_HOLD)
 			{
-				ReserveNextTransferName(kPlayerAttack4);
+				ReserveNextTransferName(kPlayerAttack1);
 			}
 		}
 

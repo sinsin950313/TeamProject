@@ -398,6 +398,35 @@ void    SceneInGame::CharacterLoad()
 			enemy->SetMap(m_pQuadTree->m_pMap);
 		}
 	}
+	{
+		SSB::ObjectScriptIO io;
+
+		std::string str = "Herald";
+		//std::string str = io.Read("dummy");
+
+		m_pBoss = new SSB::BossMob();
+		m_pBoss->SetDevice(m_pd3dDevice, m_pImmediateContext);
+		I_Model.Load(str, "Spawn", &m_pBoss->m_pModel);
+
+		m_pBoss->Initialize_SetPosition({ 0, 0, -50 });
+		m_pBoss->m_Damage = 10;
+		m_pBoss->m_fSpeed = 10;
+		//enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
+		m_pBoss->Init();
+		m_pBoss->Scale(0.01f);
+		/*
+				std::string filename = "dummy";
+				std::string str = io.Read(filename);
+
+				m_pEnemy = new SSB::EnemyNPCMob();
+				m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
+		*/
+
+		m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
+
+		m_pBoss->SetMap(m_pQuadTree->m_pMap);
+	}
 }
 
 void    SceneInGame::UiLoad()

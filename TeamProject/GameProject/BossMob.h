@@ -20,5 +20,8 @@ namespace SSB
         float GetDashRange();
         void SetLastSkillTimeStamp();
         float GetLastSkillTimeStamp();
+
+    public:
+        bool Frame() override;
 	};
 }
