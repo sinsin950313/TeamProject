@@ -78,9 +78,26 @@ namespace SSB
 	void CharacterState::Run()
 	{
 		m_pCharacter->SetCurrentAnimation(GetStateAnimationName());
+		if (!_blackboard->Initialized)
+		{
+			_blackboard->CurrentSound.Play();
+		}
 
 		Action();
 		StateDecision();
+
+		if (_isTransfer)
+		{
+			if (this == _reservedState)
+			{
+				_isTransfer = false;
+			}
+		}
+
+		if (!_blackboard->Initialized)
+		{
+			_blackboard->Initialized = true;
+		}
 	}
 	bool MinimumTransferCoolTimeRequireInterface::IsPassedRequiredTime(float timeStamp)
 	{

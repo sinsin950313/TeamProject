@@ -191,6 +191,7 @@
     <ClInclude Include="Serializeable.h" />
     <ClInclude Include="SerializeableDataType.h" />
     <ClInclude Include="CharacterState.h" />
+    <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="TestObj.h" />
     <ClInclude Include="TrailEffect.h" />
   </ItemGroup>
@@ -231,6 +232,7 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Serializeable.cpp" />
     <ClCompile Include="CharacterState.cpp" />
+    <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="TestObj.cpp" />
     <ClCompile Include="TrailEffect.cpp" />
   </ItemGroup>

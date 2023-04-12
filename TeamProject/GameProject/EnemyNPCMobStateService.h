@@ -6,7 +6,8 @@ namespace SSB
 {
 	const StateName kEnemyNPCMobIdle = "Idle";
 	const StateName kEnemyNPCMobMove = "Move";
-	const StateName kEnemyNPCMobAttack = "Attack";
+	const StateName kEnemyNPCMobAttack1 = "Attack1";
+	const StateName kEnemyNPCMobAttack2 = "Attack2";
 	const StateName kEnemyNPCMobDead = "Dead";
 
 	class EnemyNPCMobIdleState : public CharacterState
@@ -26,13 +27,29 @@ namespace SSB
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class EnemyNPCMobAttackState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class EnemyNPCMobAttack1State : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
 	private:
 		float _transferRequireTime;
 
 	public:
-		EnemyNPCMobAttackState(float transferRequireTime);
+		EnemyNPCMobAttack1State(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class EnemyNPCMobAttack2State : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	{
+	private:
+		float _transferRequireTime;
+
+	public:
+		EnemyNPCMobAttack2State(float transferRequireTime);
 
 	public:
 		void StateDecision() override;

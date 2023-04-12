@@ -13,7 +13,6 @@ namespace SSB
 	void CharacterStateBlackboardManager::RegisterBlackboard(Character* character)
 	{
 		Blackboard* tmp = new Blackboard;
-		tmp->CurrentSound = nullptr;
 		_data.insert(std::make_pair(character, tmp));
 	}
 	Blackboard* CharacterStateBlackboardManager::GetBlackBoard(Character* character)

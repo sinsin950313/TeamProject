@@ -464,43 +464,43 @@ void    SceneInGame::FSMLoad()
 		{
 			SSB::CharacterState* state = new SSB::PlayerAttackState1(1.8f);
 			state->Initialize_SetStateAnimation("Attack1");
-			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack1.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoAttack1.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerAttack1, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerAttackState2(1.8f);
 			state->Initialize_SetStateAnimation("Attack2");
-			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack2.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoAttack2.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerAttack2, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerAttackState3(1.8f);
 			state->Initialize_SetStateAnimation("Attack3");
-			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack3.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoAttack3.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerAttack3, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerAttackState4(1.8f);
 			state->Initialize_SetStateAnimation("Attack4");
-			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoAttack4.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerAttack4, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerSkillState1(1.8f);
 			state->Initialize_SetStateAnimation("Skill1");
-			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill1.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerSkill1, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerSkillState2(1.8f);
 			state->Initialize_SetStateAnimation("Skill2");
-			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill2.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerSkill2, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerDashState(1.8f);
 			state->Initialize_SetStateAnimation("Dash");
-			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoDash.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerDash, state);
 		}
 		{
@@ -528,10 +528,16 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kEnemyNPCMobMove, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::EnemyNPCMobAttackState(1.5f);
+			SSB::CharacterState* state = new SSB::EnemyNPCMobAttack1State(1.5f);
 			state->Initialize_SetStateAnimation("Attack1");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
-			manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack, state);
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack1, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobAttack2State(1.5f);
+			state->Initialize_SetStateAnimation("Attack2");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack2.mp3"));
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobAttack2, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::EnemyNPCMobDeadState;

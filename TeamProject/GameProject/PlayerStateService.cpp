@@ -140,6 +140,10 @@ namespace SSB
 			player->MoveChar(desiredCharDir, world);
 		}
 	}
+	StateTransferPriority PlayerMoveState::GetPriority()
+	{
+		return PlayerMoveTypePriority;
+	}
 	std::vector<std::string> PlayerMoveState::GetLinkedList()
 	{
 		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerSkill1, kPlayerSkill2, kPlayerIdle };
@@ -463,7 +467,6 @@ namespace SSB
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().ActiveSkill(kPlayerSkill1);
-			_blackboard->Initialized = true;
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -533,7 +536,6 @@ namespace SSB
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().ActiveSkill(kPlayerSkill2);
-			_blackboard->Initialized = true;
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -602,7 +604,6 @@ namespace SSB
 		if (!_blackboard->Initialized)
 		{
 			player->ActiveSkill(kPlayerDash);
-			_blackboard->Initialized = true;
 
 			XMVECTOR desiredCharDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 

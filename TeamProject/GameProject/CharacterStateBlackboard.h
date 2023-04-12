@@ -2,7 +2,7 @@
 
 #include <map>
 #include "Character.h"
-#include "Sound.h"
+#include "SoundEffect.h"
 
 namespace SSB
 {
@@ -10,7 +10,7 @@ namespace SSB
 	{
 		float StateTImeStamp = 0;
 		bool Initialized = false;
-		Sound* CurrentSound;
+		SoundEffect CurrentSound;
 		std::set<Character*> DamagedCharacters;
 	};
 

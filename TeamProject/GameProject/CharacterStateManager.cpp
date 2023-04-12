@@ -24,10 +24,7 @@ namespace SSB
 	{
 		m_ReservedState.find(character)->second = nullptr;
 
-		if (blackboard->CurrentSound != nullptr)
-		{
-			blackboard->CurrentSound->Stop();
-		}
+		blackboard->CurrentSound.Stop();
 		blackboard->DamagedCharacters.clear();
 		blackboard->StateTImeStamp = g_fGameTimer;
 		blackboard->Initialized = false;
@@ -78,6 +75,7 @@ namespace SSB
 				m_CharacterStateMap[character] = reservedState;
 
 				PrepareForTransfer(blackboard, character);
+				blackboard->CurrentSound.SetSound(reservedState->GetSound(), reservedState->IsSoundLoop());
 			}
 		}
 

@@ -27,9 +27,8 @@ namespace SSB
 	{
 		return { kBossMobDead, kBossMobMove };
 	}
-	BossMobAngryState::BossMobAngryState(float transferRequireTime)
+	BossMobAngryState::BossMobAngryState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
-		_transferRequireTime = transferRequireTime;
 	}
 	void BossMobAngryState::StateDecision()
 	{
@@ -146,8 +145,6 @@ namespace SSB
 
 		if (!_blackboard->Initialized)
 		{
-			_blackboard->Initialized = true;
-
 			XMVECTOR dir = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
 			dir = XMVector3Normalize(dir);
 
@@ -352,9 +349,8 @@ namespace SSB
 			}
 		}
 	}
-	BossMobAttack1State::BossMobAttack1State(float transferRequireTime)
+	BossMobAttack1State::BossMobAttack1State(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
-		_transferRequireTime = transferRequireTime;
 	}
 	float BossMobAttack1State::GetTransferRequireTime()
 	{
@@ -539,9 +535,8 @@ namespace SSB
 	{
 		return std::vector<std::string>();
 	}
-	BossMobAttack2State::BossMobAttack2State(float transferRequireTime)
+	BossMobAttack2State::BossMobAttack2State(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
-		_transferRequireTime = transferRequireTime;
 	}
 	float BossMobAttack2State::GetTransferRequireTime()
 	{
@@ -551,9 +546,8 @@ namespace SSB
 	{
 		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack1, kBossMobIdle };
 	}
-	BossMobDashStartState::BossMobDashStartState(float transferRequireTime)
+	BossMobDashStartState::BossMobDashStartState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
-		_transferRequireTime = _transferRequireTime;
 	}
 	StateTransferPriority BossMobDashStartState::GetPriority()
 	{
@@ -567,9 +561,8 @@ namespace SSB
 	{
 		return { kBossMobDead, kBossMobDash };
 	}
-	BossMobDashState::BossMobDashState(float transferRequireTime)
+	BossMobDashState::BossMobDashState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
-		_transferRequireTime = transferRequireTime;
 	}
 	float BossMobDashState::GetTransferRequireTime()
 	{
@@ -579,9 +572,8 @@ namespace SSB
 	{
 		return { kBossMobDead, kBossMobDashEnd };
 	}
-	BossMobDashEndState::BossMobDashEndState(float transferRequireTime)
+	BossMobDashEndState::BossMobDashEndState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
-		_transferRequireTime = transferRequireTime;
 	}
 	float BossMobDashEndState::GetTransferRequireTime()
 	{
@@ -593,7 +585,7 @@ namespace SSB
 	}
 	BossMobSkill1State::BossMobSkill1State(float transferRequireTime)
 	{
-		_transferRequireTime = _transferRequireTime;
+		_transferRequireTime = transferRequireTime;
 	}
 	float BossMobSkill1State::GetTransferRequireTime()
 	{
