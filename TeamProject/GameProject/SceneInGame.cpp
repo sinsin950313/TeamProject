@@ -354,6 +354,9 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill1, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill2, 8);
 		Player::GetInstance().Init();
 		Player::GetInstance().Scale(0.01f);
 
@@ -493,24 +496,6 @@ void    SceneInGame::FSMLoad()
 			state->Initialize_SetStateAnimation("Skill2");
 			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerSkill2, state);
-		}
-		{
-			SSB::CharacterState* state = new SSB::PlayerSkillState3(1.8f);
-			state->Initialize_SetStateAnimation("Skill3");
-			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
-			manager->Initialize_RegisterState(SSB::kPlayerSkill3, state);
-		}
-		{
-			SSB::CharacterState* state = new SSB::PlayerSkillState4(1.8f);
-			state->Initialize_SetStateAnimation("Skill4");
-			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
-			manager->Initialize_RegisterState(SSB::kPlayerSkill4, state);
-		}
-		{
-			SSB::CharacterState* state = new SSB::PlayerSkillState5(1.8f);
-			state->Initialize_SetStateAnimation("Skill5");
-			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenAttack4.mp3"));
-			manager->Initialize_RegisterState(SSB::kPlayerSkill5, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerDashState(1.8f);

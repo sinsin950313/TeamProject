@@ -10,7 +10,7 @@ namespace SSB
 		{
 			StateTransferPriority currentPriority = currentReservedState->GetPriority();
 			StateTransferPriority comparePriority = compareState->GetPriority();
-			if (currentPriority < comparePriority)
+			if (comparePriority < currentPriority)
 			{
 				m_ReservedState.find(character)->second = compareState;
 			}
@@ -30,6 +30,7 @@ namespace SSB
 		}
 		blackboard->DamagedCharacters.clear();
 		blackboard->StateTImeStamp = g_fGameTimer;
+		blackboard->Initialized = false;
 	}
 	void CharacterStateManager::Initialize_RegisterState(StateName name, CharacterState* state)
 	{

@@ -144,12 +144,13 @@ namespace SSB
 	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 
-		if (_blackboard->StateTImeStamp == g_fGameTimer)
+		if (!_blackboard->Initialized)
 		{
+			_blackboard->Initialized = true;
+
 			XMVECTOR dir = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
 			dir = XMVector3Normalize(dir);
 
-			m_pCharacter->m_fSpeed = 20;
 			XMStoreFloat3(&mob->m_DashDirection, dir);
 		}
 
@@ -187,8 +188,6 @@ namespace SSB
 	}
 	void BossMobDashEndState::Action()
 	{
-		m_pCharacter->m_fSpeed = 15;
-
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
 			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
@@ -507,12 +506,15 @@ namespace SSB
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			ReserveNextTransferName(kBossMobDashEnd);
+			m_pCharacter->m_fSpeed = 15;
 			SetTransfer();
 		}
 	}
 	void BossMobDashState::Action()
 	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
+
+		mob->m_fSpeed = 20;
 
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
 		XMVECTOR dir = mob->m_DashDirection;

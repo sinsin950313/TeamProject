@@ -50,4 +50,7 @@ public:
 
 public:
 	void Damage(int damage) override;
+
+public:
+	TVector3 m_DashDirection;
 };

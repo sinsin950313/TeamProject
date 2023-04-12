@@ -5,19 +5,19 @@ namespace SSB
 {
 	void CharacterState::ReserveNextTransferName(StateName transferStateName)
 	{
-		CharacterState* compareState = _linkedState.find(transferStateName)->second;
+		CharacterState* transferCompareState = _linkedState.find(transferStateName)->second;
 		if (_reservedState != nullptr)
 		{
 			StateTransferPriority currentPriority = _reservedState->GetPriority();
-			StateTransferPriority comparePriority = compareState->GetPriority();
+			StateTransferPriority comparePriority = transferCompareState->GetPriority();
 			if (comparePriority < currentPriority)
 			{
-				_reservedState = compareState;
+				_reservedState = transferCompareState;
 			}
 		}
 		else
 		{
-			_reservedState = compareState;
+			_reservedState = transferCompareState;
 		}
 
 		_isReservedTransfer = true;

@@ -23,27 +23,47 @@ namespace SSB
 	const unsigned int PlayerSkillTypePriority = 2;
 	const unsigned int PlayerAttackTypePriority = 3;
 
-	class PlayerIdleState : public CharacterState
-	{
-	public:
-		void StateDecision() override;
-		void Action() override;
-		std::vector<std::string> GetLinkedList() override;
-	};
-
-	class PlayerMoveState : public CharacterState
-	{
-	public:
-		void StateDecision() override;
-		void Action() override;
-		std::vector<std::string> GetLinkedList() override;
-	};
-
-	class PlayerAttackState1 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class PlayerStateCommonMethodInterface : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
 	private:
 		float _transferRequireTime;
 
+	public:
+		PlayerStateCommonMethodInterface(float transferRequireTime = 0);
+
+	protected:
+		void Decision_IsDead();
+		void Decision_IsDash();
+		void Decision_IsSkill(SSB::StateName skillStateName, char key, float minimumRequiredTime);
+		void Decision_IsAttack(SSB::StateName nextAttackStateName, float minimumRequiredTime);
+		void Decision_IsMove();
+		void Decision_IsTransfer();
+
+	protected:
+		float GetTransferRequireTime() override;
+
+	protected:
+		//void Action_();
+	};
+
+	class PlayerIdleState : public PlayerStateCommonMethodInterface
+	{
+	public:
+		void StateDecision() override;
+		void Action() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerMoveState : public PlayerStateCommonMethodInterface
+	{
+	public:
+		void StateDecision() override;
+		void Action() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerAttackState1 : public PlayerStateCommonMethodInterface
+	{
 	public:
 		PlayerAttackState1(float transferRequireTime);
 
@@ -51,15 +71,11 @@ namespace SSB
 		void StateDecision() override;
 		void Action();
 		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerAttackState2 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class PlayerAttackState2 : public PlayerStateCommonMethodInterface
 	{
-	private:
-		float _transferRequireTime;
-
 	public:
 		PlayerAttackState2(float transferRequireTime);
 
@@ -67,15 +83,11 @@ namespace SSB
 		void StateDecision() override;
 		void Action();
 		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerAttackState3 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class PlayerAttackState3 : public PlayerStateCommonMethodInterface
 	{
-	private:
-		float _transferRequireTime;
-
 	public:
 		PlayerAttackState3(float transferRequireTime);
 
@@ -83,15 +95,11 @@ namespace SSB
 		void StateDecision() override;
 		void Action();
 		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerAttackState4 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class PlayerAttackState4 : public PlayerStateCommonMethodInterface
 	{
-	private:
-		float _transferRequireTime;
-
 	public:
 		PlayerAttackState4(float transferRequireTime);
 
@@ -99,15 +107,11 @@ namespace SSB
 		void StateDecision() override;
 		void Action();
 		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerSkillState1 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class PlayerSkillState1 : public PlayerStateCommonMethodInterface
 	{
-	private:
-		float _transferRequireTime;
-
 	public:
 		PlayerSkillState1(float transferRequireTime);
 
@@ -115,15 +119,11 @@ namespace SSB
 		void StateDecision() override;
 		void Action() override;
 		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerSkillState2 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class PlayerSkillState2 : public PlayerStateCommonMethodInterface
 	{
-	private:
-		float _transferRequireTime;
-
 	public:
 		PlayerSkillState2(float transferRequireTime);
 
@@ -131,63 +131,11 @@ namespace SSB
 		void StateDecision() override;
 		void Action() override;
 		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerSkillState3 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class PlayerDashState : public PlayerStateCommonMethodInterface
 	{
-	private:
-		float _transferRequireTime;
-
-	public:
-		PlayerSkillState3(float transferRequireTime);
-
-	public:
-		void StateDecision() override;
-		void Action() override;
-		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
-		std::vector<std::string> GetLinkedList() override;
-	};
-
-	class PlayerSkillState4 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
-	{
-	private:
-		float _transferRequireTime;
-
-	public:
-		PlayerSkillState4(float transferRequireTime);
-
-	public:
-		void StateDecision() override;
-		void Action() override;
-		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
-		std::vector<std::string> GetLinkedList() override;
-	};
-
-	class PlayerSkillState5 : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
-	{
-	private:
-		float _transferRequireTime;
-
-	public:
-		PlayerSkillState5(float transferRequireTime);
-
-	public:
-		void StateDecision() override;
-		void Action() override;
-		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
-		std::vector<std::string> GetLinkedList() override;
-	};
-
-	class PlayerDashState : public CharacterState, public MinimumTransferCoolTimeRequireInterface
-	{
-	private:
-		float _transferRequireTime;
-
 	public:
 		PlayerDashState(float transferRequireTime);
 
@@ -195,7 +143,6 @@ namespace SSB
 		void StateDecision() override;
 		void Action() override;
 		StateTransferPriority GetPriority() override;
-		float GetTransferRequireTime() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 

@@ -9,7 +9,7 @@ namespace SSB
 	struct Blackboard
 	{
 		float StateTImeStamp = 0;
-		float BeforeTime = 0;
+		bool Initialized = false;
 		Sound* CurrentSound;
 		std::set<Character*> DamagedCharacters;
 	};
