@@ -19,10 +19,11 @@ struct VS_out
 VS_out VS(VS_in input)
 {
 	VS_out output = (VS_out)0;
+
 	output.p = mul(input.p, g_matWorld);
 	output.p = mul(output.p, g_matView);
 	output.p = mul(output.p, g_matProj);
-	output.n = mul(input.p, g_matWorld);
+	output.w = mul(input.p, g_matWorld);
 	output.n = float4(input.n, 0);
 	output.c = input.c;
 	output.t = input.t;
@@ -33,8 +34,8 @@ struct PS_in
 {
 	float4 p : SV_POSITION;
 	float4 w : TEXCOORD3;
-	float4 n : NORMAL0;
 	float4 c : COLOR0;
+	float4 n : NORMAL0;
 	float2 t : TEXCOORD0;
 };
 
