@@ -481,9 +481,14 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+		// Damage Timing Á¶Á¤
+		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
 		{
-			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+			{
+				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 2);
+			}
 		}
 	}
 	StateTransferPriority BossMobSkill1State::GetPriority()
@@ -518,7 +523,7 @@ namespace SSB
 
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
-			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 0.5);
 		}
 	}
 	void BossMobDeadState::StateDecision()

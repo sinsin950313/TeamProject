@@ -26,6 +26,22 @@ namespace SSB
 	{
 		return m_LastSkillTimeStamp;
 	}
+	bool BossMob::Init()
+	{
+		Character::Init();
+
+		m_AttackBoxLocalMatrix = TMatrix(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 200, -400, 1
+		);
+		m_AttackBox.fExtent[0] = 2;
+		m_AttackBox.fExtent[1] = 2;
+		m_AttackBox.fExtent[2] = 1.5f;
+
+		return false;
+	}
 	bool BossMob::Frame()
 	{
 		Character::Frame();
