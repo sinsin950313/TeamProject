@@ -475,10 +475,12 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 1;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 1;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 1;
+			
 		}
 	}
 	void PlayerSkillState1::Action()
 	{
+		
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().ActiveSkill(kPlayerSkill1);
@@ -493,13 +495,14 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 2;
+			Player::GetInstance().m_pSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(GetStateAnimationName())));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
 			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
-
+		
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;
 		if (timer > 0.02f)
@@ -570,6 +573,7 @@ namespace SSB
 	}
 	void PlayerSkillState2::Action()
 	{
+		
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().ActiveSkill(kPlayerSkill2);
@@ -584,13 +588,13 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 0.5f;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 0.5f;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 2.0f;
+			Player::GetInstance().m_pSkillE->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(GetStateAnimationName())));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
 			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
 		}
-
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;
 		if (timer > 0.02f)
@@ -645,6 +649,8 @@ namespace SSB
 	}
 	void PlayerDashState::Action()
 	{
+		
+
 		Player* player = static_cast<Player*>(m_pCharacter);
 		player->m_IsDash = true;
 
@@ -655,6 +661,7 @@ namespace SSB
 
 		if (!_blackboard->Initialized)
 		{
+			Player::GetInstance().m_pSkillDash->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(GetStateAnimationName())));
 			player->ActiveSkill(kPlayerDash);
 
 			XMVECTOR desiredCharDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -686,7 +693,6 @@ namespace SSB
 			}
 			player->m_DashDirection = TVector3(XMVectorGetX(desiredCharDir), XMVectorGetY(desiredCharDir), XMVectorGetZ(desiredCharDir));
 		}
-
 		player->m_fSpeed = 20;
 		XMMATRIX world = XMLoadFloat4x4(&player->m_matWorld);
 		XMVECTOR dir = player->m_DashDirection;

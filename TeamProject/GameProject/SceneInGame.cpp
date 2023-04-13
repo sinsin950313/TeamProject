@@ -270,12 +270,12 @@ bool    SceneInGame::Render()
 	}
 
 
-	Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	Player::GetInstance().m_pTrail->Render();
+	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	//Player::GetInstance().m_pTrail->Render();
 
 	//RenderMinimap();
 
-	m_pInter_Ingame->Render();
+	//m_pInter_Ingame->Render();
 
     // Camera의 위치정보가 필요하므로 지우지 말 것
 	auto lights = SSB::I_Light.GetLightList();
@@ -393,9 +393,9 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill1, 8);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill2, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 3.0f);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill1, 5.0f);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill2, 3.0f);
 		Player::GetInstance().Init();
 		Player::GetInstance().Scale(0.01f);
 
@@ -404,6 +404,9 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().SetMap(m_pQuadTree->m_pMap);
 		Player::GetInstance().m_pGageHP = m_pInter_PlayerHP;
 		Player::GetInstance().m_pMinimapProfile = m_pInter_Minimap_player;
+		Player::GetInstance().m_pSkillQ = m_pInter_Skill_Q;
+		Player::GetInstance().m_pSkillDash = m_pInter_Skill_W;
+		Player::GetInstance().m_pSkillE = m_pInter_Skill_E;
 	}
 
 	{
@@ -505,17 +508,20 @@ void    SceneInGame::UiLoad()
 
 	m_pInter_Skill_Q = new Interface();
 	m_pInter_Skill_Q->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_q.dds", L"VS", L"ANGLE_PS");
+	m_pInter_Skill_Q->m_cbData.fTimer = 360.0f;
 	m_pInter_Skill_Q->SetAttribute(TVector3(726, 788, 0));
-	m_pInter_Skill_Q->m_pWorkList.push_back(new InterfaceFadeClockwise(5.0f));
+	/*m_pInter_Skill_Q->m_pWorkList.push_back(new InterfaceFadeClockwise(5.0f));*/
 	m_pInter_Ingame->AddChild(m_pInter_Skill_Q);
 
 	m_pInter_Skill_W = new Interface();
-	m_pInter_Skill_W->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_w.dds");
+	m_pInter_Skill_W->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_w.dds", L"VS", L"ANGLE_PS");
+	m_pInter_Skill_W->m_cbData.fTimer = 360.0f;
 	m_pInter_Skill_W->SetAttribute(TVector3(780, 788, 0));
 	m_pInter_Ingame->AddChild(m_pInter_Skill_W);
 
 	m_pInter_Skill_E = new Interface();
-	m_pInter_Skill_E->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_e.dds");
+	m_pInter_Skill_E->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_e.dds", L"VS", L"ANGLE_PS");
+	m_pInter_Skill_E->m_cbData.fTimer = 360.0f;
 	m_pInter_Skill_E->SetAttribute(TVector3(837, 788, 0));
 	m_pInter_Ingame->AddChild(m_pInter_Skill_E);
 
