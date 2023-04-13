@@ -183,7 +183,7 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -256,7 +256,7 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -331,7 +331,7 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -404,7 +404,7 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -497,7 +497,7 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -588,7 +588,7 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
