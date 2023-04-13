@@ -53,4 +53,5 @@ public:
 
 public:
 	TVector3 m_DashDirection;
+    bool m_IsDash = false;
 };

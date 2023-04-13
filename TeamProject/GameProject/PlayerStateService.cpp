@@ -460,6 +460,17 @@ namespace SSB
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 				pTrail->m_VertexList[i].c.w = 0.0f;
+
+			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 100, -200, 1
+			);
+
+			Player::GetInstance().m_AttackBox.fExtent[0] = 1;
+			Player::GetInstance().m_AttackBox.fExtent[1] = 1;
+			Player::GetInstance().m_AttackBox.fExtent[2] = 1;
 		}
 	}
 	void PlayerSkillState1::Action()
@@ -467,6 +478,17 @@ namespace SSB
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().ActiveSkill(kPlayerSkill1);
+
+			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1
+			);
+
+			Player::GetInstance().m_AttackBox.fExtent[0] = 2;
+			Player::GetInstance().m_AttackBox.fExtent[1] = 2;
+			Player::GetInstance().m_AttackBox.fExtent[2] = 2;
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -495,7 +517,7 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
-						Damage(_blackboard, obj, m_pCharacter->m_Damage);
+						Damage(_blackboard, obj, m_pCharacter->m_Damage * 0.5);
 					}
 				}
 			}
@@ -529,6 +551,17 @@ namespace SSB
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 				pTrail->m_VertexList[i].c.w = 0.0f;
+
+			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 100, -200, 1
+			);
+
+			Player::GetInstance().m_AttackBox.fExtent[0] = 1;
+			Player::GetInstance().m_AttackBox.fExtent[1] = 1;
+			Player::GetInstance().m_AttackBox.fExtent[2] = 1;
 		}
 	}
 	void PlayerSkillState2::Action()
@@ -536,6 +569,17 @@ namespace SSB
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().ActiveSkill(kPlayerSkill2);
+
+			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 100, -200, 1
+			);
+
+			Player::GetInstance().m_AttackBox.fExtent[0] = 0.5f;
+			Player::GetInstance().m_AttackBox.fExtent[1] = 0.5f;
+			Player::GetInstance().m_AttackBox.fExtent[2] = 2.0f;
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -564,7 +608,7 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
-						Damage(_blackboard, obj, m_pCharacter->m_Damage);
+						Damage(_blackboard, obj, m_pCharacter->m_Damage * 2);
 					}
 				}
 			}
@@ -590,11 +634,13 @@ namespace SSB
 			Player* player = static_cast<Player*>(m_pCharacter);
 			player->m_IsImmortal = false;
 			player->m_fSpeed = 15;
+			player->m_IsDash = false;
 		}
 	}
 	void PlayerDashState::Action()
 	{
 		Player* player = static_cast<Player*>(m_pCharacter);
+		player->m_IsDash = true;
 
 		if (player != nullptr)
 		{

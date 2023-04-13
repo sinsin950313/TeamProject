@@ -60,11 +60,17 @@ bool    SceneInGame::Init()
 {
 	I_Input.SwitchShowMouse(false);
 
-	//m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-	//m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+	m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
+	m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
-	//m_debugBoxList.push_back(&m_pEnemy->m_ColliderBox);
-	//m_debugBoxList.push_back(&m_pEnemy->m_AttackBox);
+	for (auto enemy : m_Enemies)
+	{
+		m_debugBoxList.push_back(&enemy->m_ColliderBox);
+		m_debugBoxList.push_back(&enemy->m_AttackBox);
+	}
+
+	m_debugBoxList.push_back(&m_pBoss->m_ColliderBox);
+	m_debugBoxList.push_back(&m_pBoss->m_AttackBox);
 
 	//testBox.CreateOBBBox(40, 4, 4);
 	//m_debugBoxList.push_back(&testBox);
@@ -340,7 +346,6 @@ void    SceneInGame::CharacterLoad()
 	{
 		SSB::ObjectScriptIO io;
 		std::string filename = "Yasuo";
-		//std::string filename = "dummy";
 		//std::string str = io.Read(filename);
 
 		Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -348,7 +353,6 @@ void    SceneInGame::CharacterLoad()
 		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
 		//Idle, Attack1, Attack2, Attack3, Move, Dead
-		//I_Model.Load(filename, str, "Idle", &Player::GetInstance().m_pModel);
 		I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
 
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
@@ -369,7 +373,6 @@ void    SceneInGame::CharacterLoad()
 		SSB::ObjectScriptIO io;
 
 		std::string str = "Alistar";
-		//std::string str = io.Read("dummy");
 
 		for (int i = 0; i < m_pQuadTree->m_EnemySpawnList.size(); ++i)
 		{
@@ -385,14 +388,6 @@ void    SceneInGame::CharacterLoad()
 			//enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
 			enemy->Init();
 			enemy->Scale(0.01f);
-			/*
-					std::string filename = "dummy";
-					std::string str = io.Read(filename);
-
-					m_pEnemy = new SSB::EnemyNPCMob();
-					m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-					I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
-			*/
 
 			m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);
 
@@ -405,7 +400,6 @@ void    SceneInGame::CharacterLoad()
 		SSB::ObjectScriptIO io;
 
 		std::string str = "Herald";
-		//std::string str = io.Read("dummy");
 
 		m_pBoss = new SSB::BossMob();
 		m_pBoss->SetDevice(m_pd3dDevice, m_pImmediateContext);
@@ -417,14 +411,6 @@ void    SceneInGame::CharacterLoad()
 		//enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
 		m_pBoss->Init();
 		m_pBoss->Scale(0.01f);
-		/*
-				std::string filename = "dummy";
-				std::string str = io.Read(filename);
-
-				m_pEnemy = new SSB::EnemyNPCMob();
-				m_pEnemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				I_Model.Load(filename, str, "Idle", &m_pEnemy->m_pModel);
-		*/
 
 		m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
 

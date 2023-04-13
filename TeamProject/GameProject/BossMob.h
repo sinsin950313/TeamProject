@@ -8,8 +8,8 @@ namespace SSB
 	{
     public:
         float m_BattleRange = 5;
-        float m_SpotRange = 30;
-        float m_DashRange = 10;
+        float m_SpotRange = 40;
+        float m_DashRange = 20;
         float m_LastSkillTimeStamp;
         TVector3 m_DashDirection;
 
@@ -22,6 +22,7 @@ namespace SSB
         float GetLastSkillTimeStamp();
 
     public:
+		bool Init() override;
         bool Frame() override;
 	};
 }

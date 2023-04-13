@@ -37,7 +37,7 @@ public:
     //T_BOX       testBox;
     Interface* m_pInter;
 
-    SSB::EnemyNPCMob* m_pEnemy = nullptr;
+    //SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;
 
     DebugBox* m_pDebugBox = nullptr;
