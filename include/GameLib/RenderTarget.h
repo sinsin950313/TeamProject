@@ -15,13 +15,12 @@ public:
 
 	ID3D11RenderTargetView* m_pOldRTV;
 	ID3D11DepthStencilView* m_pOldDSV;
-	D3D11_VIEWPORT	m_vpOld[D3D11_VIEWPORT_AND_SCISSORRECT_MAX_INDEX];
+	D3D11_VIEWPORT	m_vpOld[D3D11_VIEWPORT_AND_SCISSORRECT_MAX_INDEX] = { 0, };
 
 	bool	m_bWireFrame = false;
 
 public:
-	bool	Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext
-		, FLOAT fWidth = 1024.0f, FLOAT fHeight = 1024.0f);
+	bool	Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 1024.0f, FLOAT fHeight = 1024.0f);
 	bool	Begin(ID3D11DeviceContext* pContext);
 	void	End(ID3D11DeviceContext* pContext);
 	bool	Release();

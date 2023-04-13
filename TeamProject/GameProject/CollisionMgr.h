@@ -17,7 +17,7 @@ private:
 	*/
 	std::vector<T_BOX> m_MapCollisionList;
 	std::map<T_BOX*, Character*> m_StaticObjectList;
-	std::map<T_BOX*, Character*>	m_NpcList;
+	std::map<T_BOX*, Character*> m_NpcList;
 
 	// Character* -> NpcAttack : Attack 형식의 클래스로 변경예정..?
 	std::map<T_BOX*, Character*> m_NpcAttackList;

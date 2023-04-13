@@ -118,6 +118,7 @@ bool	GameCore::CorePreRender()
 	m_pImmediateContext->RSSetState(DXState::g_pDefaultRSSolid);
 	m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
 	m_pImmediateContext->OMSetDepthStencilState(DXState::g_pDefaultDepthStencil, 0xff);
+
 	return true;
 }
 

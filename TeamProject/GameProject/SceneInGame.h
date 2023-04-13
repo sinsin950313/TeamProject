@@ -7,7 +7,7 @@
 #include "CharacterStateManager.h"
 #include "EnemyNPCMob.h"
 #include "BossMob.h"
-
+#include "RenderTarget.h"
 class SceneInGame : public Scene
 {
 public:
@@ -17,6 +17,9 @@ public:
     void    FSMLoad();
     void    CharacterLoad();
     void    MapLoad();
+    
+    void    RenderMinimap();
+
     virtual bool    Init();
     virtual bool    Frame();
     virtual bool PreRender() override;
@@ -30,12 +33,13 @@ private:
 public:
     Camera* m_pMainCamera = nullptr;
 
+
     bool m_Win = false;
     bool m_Defeat = false;
 
     std::vector<SSB::EnemyNPCMob*> m_Enemies;
     //T_BOX       testBox;
-    Interface* m_pInter;
+
 
     //SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;
@@ -48,5 +52,20 @@ public:
     std::map<SSB::StateManagerName, SSB::CharacterStateManager*> m_StateManagerMap;
 
     SSB::BossMob* m_pBoss = nullptr;
+
+    std::vector<DamageFont> m_DamageFontList;
+    Interface* m_pInter_Ingame;
+    Interface* m_pInter_PlayerHP;
+    Interface* m_pInter_Passive;
+    Interface* m_pInter_Skill_Q;
+    Interface* m_pInter_Skill_W;
+    Interface* m_pInter_Skill_E;
+    Interface* m_pInter_Skill_R;
+
+    Camera* m_pMinimapCamera = nullptr;
+    RenderTarget m_RenderTargetMinimap;
+    Interface* m_pInter_Minimap;
+    InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
+    InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
 };
 

@@ -4,14 +4,14 @@
 #include "TSelect.h"
 #include <map>
 #include "Sound.h"
+#include "Interface.h"
 
 //HeightMap
 class MeshMap;
-
+class Interface;
 typedef std::string SkillPrimaryKey;
 typedef time_t SkillTimeStamp;
 typedef float SkillCoolTime;
-
 class Character
 {
 protected:
@@ -34,7 +34,11 @@ protected:
 public:
 	ID3D11Device* m_pd3dDevice = nullptr;
 	ID3D11DeviceContext* m_pImmediateContext = nullptr;
-
+	
+public:
+	Interface* m_pGageHP;
+	Interface* m_pDamage;
+	Interface* m_pMinimapProfile;
 public:
 	virtual bool	Init();
 	virtual bool	Frame();
@@ -95,6 +99,7 @@ public:
 	T_BOX   m_AttackBox;
 
 public:
+	int m_HealthPointMax = 100;
 	int m_HealthPoint = 100;
 	int m_Damage = 30;
 

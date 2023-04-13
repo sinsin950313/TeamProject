@@ -108,11 +108,9 @@ bool	Character::Frame()
 	//_toViewSpaceTransformData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
 	//_toViewSpaceTransformData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
 	m_pModel->Frame();
-
 	UpdateMatrix();
 	UpdateBuffer();
 	UpdateBox();
-
 	return true;
 }
 
@@ -134,6 +132,20 @@ bool	Character::Render()
 
 bool	Character::Release()
 {
+	if (m_pGageHP)
+	{
+		m_pGageHP->Release();
+		delete m_pGageHP;
+		m_pGageHP = nullptr;
+	}
+
+	if (m_pDamage)
+	{
+		m_pDamage->Release();
+		delete m_pDamage;
+		m_pDamage = nullptr;
+	}
+
 	if (_objectToWorldTransformBuffer) _objectToWorldTransformBuffer->Release();
 	if (_toViewSpaceTransformBuffer) _toViewSpaceTransformBuffer->Release();
 	if (m_pModel)
