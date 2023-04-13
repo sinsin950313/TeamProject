@@ -229,12 +229,10 @@ namespace SSB
             float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
             if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
             {
-                Player::GetInstance().Damage(m_pCharacter->m_Damage);
-                m_pCharacter->DamagingCharacter(&Player::GetInstance());
-                Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax, 1.0f));
                 if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
                 {
-                   Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                    Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                    Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax, 1.0f));
                 }
             }
         }

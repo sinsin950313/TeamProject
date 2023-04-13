@@ -280,14 +280,9 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
-						if (!m_pCharacter->IsAlreadyDamagedCurrentState(obj))
-						{
-							obj->Damage(m_pCharacter->m_Damage); 
-							m_pCharacter->DamagingCharacter(obj);
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
-						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
 			}
@@ -433,14 +428,9 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
-						if (!m_pCharacter->IsAlreadyDamagedCurrentState(obj))
-						{
-							obj->Damage(m_pCharacter->m_Damage);
-							m_pCharacter->DamagingCharacter(obj);
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
-						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
 			}
@@ -622,14 +612,9 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
-						if (!m_pCharacter->IsAlreadyDamagedCurrentState(obj))
-						{
-							obj->Damage(m_pCharacter->m_Damage);
-							m_pCharacter->DamagingCharacter(obj);
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
-						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage * 2);
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
 			}

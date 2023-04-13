@@ -49,7 +49,7 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	DescDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	DescDepth.CPUAccessFlags = 0;
 	DescDepth.MiscFlags = 0;
-	if (FAILED(hr = pd3dDevice->CreateTexture2D(&DescDepth, NULL, pDSTexture.GetAddressOf())))
+	if (FAILED(hr = pd3dDevice->CreateTexture2D(&DescDepth, NULL, m_pDSTexture.GetAddressOf())))
 	{
 		return hr;
 	}
@@ -58,7 +58,7 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	ZeroMemory(&dsvDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	if (FAILED(hr = pd3dDevice->CreateDepthStencilView(pDSTexture.Get(), &dsvDesc, m_pDepthStencilView.GetAddressOf())))
+	if (FAILED(hr = pd3dDevice->CreateDepthStencilView(m_pDSTexture.Get(), &dsvDesc, m_pDepthStencilView.GetAddressOf())))
 	{
 		return hr;
 	}
@@ -68,7 +68,7 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	if (FAILED(hr = pd3dDevice->CreateShaderResourceView(pDSTexture.Get(), &srvDesc, m_pDsvSRV.GetAddressOf())))
+	if (FAILED(hr = pd3dDevice->CreateShaderResourceView(m_pDSTexture.Get(), &srvDesc, m_pDsvSRV.GetAddressOf())))
 	{
 		return hr;
 	}

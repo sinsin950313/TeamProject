@@ -273,7 +273,7 @@ bool    SceneInGame::Render()
 	Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	Player::GetInstance().m_pTrail->Render();
 
-	RenderMinimap();
+	//RenderMinimap();
 
 	m_pInter_Ingame->Render();
 
@@ -293,7 +293,7 @@ bool SceneInGame::PostRender()
 
     Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().m_pTrail->Render();
-    m_pInter->Render();
+    m_pInter_Ingame->Render();
 
 	return true;
 }
@@ -534,7 +534,7 @@ void    SceneInGame::UiLoad()
 	pInter_HP_Enemy->SetAttribute(TVector3(544, 35, 0));
 	m_pInter_Ingame->AddChild(pInter_HP_Enemy);
 
-	m_RenderTargetMinimap.Create(m_pd3dDevice, m_pImmediateContext, 300, 300);
+	//m_RenderTargetMinimap.Create(m_pd3dDevice, m_pImmediateContext, 300, 300);
 	m_pInter_Minimap = new Interface();
 	m_pInter_Minimap->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/minimap.dds");
 	m_pInter_Minimap->SetAttribute(TVector3(952, 778, 0));
