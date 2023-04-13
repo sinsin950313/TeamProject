@@ -5,70 +5,76 @@
 
 namespace SSB
 {
-	bool BossMobIdleState::IsTransfer()
+	void BossMobIdleState::StateDecision()
 	{
-        bool transfer = false;
-
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
-		else
+
+		if (TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition()) <= mob->GetSpotRange())
 		{
-			if (TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition()) <= mob->GetSpotRange())
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobMove);
-			}
+            ReserveNextTransferName(kBossMobMove);
+            SetTransfer();
 		}
-
-        return transfer;
 	}
-	bool BossMobAngryState::IsTransfer()
+	void BossMobIdleState::Action()
 	{
-        bool transfer = false;
-
+	}
+	std::vector<std::string> BossMobIdleState::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobMove };
+	}
+	BossMobAngryState::BossMobAngryState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+	{
+	}
+	void BossMobAngryState::StateDecision()
+	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
-		else
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobIdle);
-			}
+            ReserveNextTransferName(kBossMobIdle);
+            SetTransfer();
 		}
-
-		return transfer;
 	}
-	bool BossMobSpawnState::IsTransfer()
+	void BossMobAngryState::Action()
 	{
-        bool transfer = false;
-
+	}
+	float BossMobAngryState::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobAngryState::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobIdle };
+	}
+	void BossMobSpawnState::StateDecision()
+	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
-		}
-		else
-		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobAngry);
-			}
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
 
-		return transfer;
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+            ReserveNextTransferName(kBossMobAngry);
+            SetTransfer();
+		}
 	}
-	//bool BossMobStunState::IsTransfer()
+	void BossMobSpawnState::Action()
+	{
+	}
+	//bool BossMobStunState::StateDecision()
 	//{
  //       bool transfer = false;
 
@@ -89,50 +95,39 @@ namespace SSB
 
 	//	return transfer;
 	//}
-	bool BossMobDeadState::IsTransfer()
+	void BossMobMoveState::StateDecision()
 	{
-		return false;
-	}
-	bool BossMobMoveState::IsTransfer()
-	{
-		bool transfer = false;
-
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
 		if (m_pCharacter->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
-		else
+
+		if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
 		{
-			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobAttack1);
-			}
+			ReserveNextTransferName(kBossMobAttack1);
+			SetTransfer();
+		}
 
-			if (mob->GetSkillCoolTime() < mob->GetLastSkillElapseTime())
+		if (mob->GetSkillCoolTime() < g_fGameTimer - mob->GetLastSkillTimeStamp())
+		{
+			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetDashRange())
 			{
-				if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetDashRange())
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobDashStart);
-				}
-			}
-
-			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobIdle);
+				ReserveNextTransferName(kBossMobDashStart);
+				SetTransfer();
 			}
 		}
 
-		return transfer;
+		if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+		{
+			ReserveNextTransferName(kBossMobIdle);
+			SetTransfer();
+		}
 	}
-	void BossMobMoveState::Run()
+	void BossMobMoveState::Action()
 	{
-		CharacterState::Run();
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		XMVECTOR dir = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
@@ -140,143 +135,124 @@ namespace SSB
 
 		m_pCharacter->MoveChar(dir, world);
 	}
-	bool BossMobDashStartState::IsTransfer()
+	std::vector<std::string> BossMobMoveState::GetLinkedList()
 	{
-		bool transfer = false;
-
+		return { kBossMobDead, kBossMobAttack1, kBossMobDashStart, kBossMobIdle };
+	}
+	void BossMobDashStartState::StateDecision()
+	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 
-		if (!mob->m_bDashCalled)
+		if (!_blackboard->Initialized)
 		{
-			mob->m_bDashCalled = true;
-			mob->ResetSkillElapseTime();
-
 			XMVECTOR dir = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
 			dir = XMVector3Normalize(dir);
 
-			m_pCharacter->m_fSpeed = 20;
 			XMStoreFloat3(&mob->m_DashDirection, dir);
 		}
 
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
-		else
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobDash);
-			}
+			ReserveNextTransferName(kBossMobDash);
+			SetTransfer();
 		}
-
-		return transfer;
 	}
-	bool BossMobDashEndState::IsTransfer()
+	void BossMobDashStartState::Action()
 	{
-		bool transfer = false;
-
+	}
+	void BossMobDashEndState::StateDecision()
+	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
-		else
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobIdle);
+            ReserveNextTransferName(kBossMobIdle);
+            SetTransfer();
 
-				mob->m_bSkillCalled = false;
-				mob->m_bDashCalled = false;
-			}
+			mob->SetLastSkillTimeStamp();
 		}
-
-		return transfer;
 	}
-	void BossMobDashEndState::Run()
+	void BossMobDashEndState::Action()
 	{
-		CharacterState::Run();
-
-		m_pCharacter->m_fSpeed = 15;
-
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
-			if (!m_pCharacter->IsAlreadyDamagedCurrentState(&Player::GetInstance()))
-			{
-				Player::GetInstance().Damage(m_pCharacter->m_Damage);
-				m_pCharacter->DamagingCharacter(&Player::GetInstance());
-			}
+			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
 		}
 	}
-	bool BossMobAttack1State::IsTransfer()
+	void BossMobAttack1State::StateDecision()
 	{
-		bool transfer = false;
-
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
-		else
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
+			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 			{
-				if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobMove);
-				}
-				else if (mob->GetSkillCoolTime() < mob->GetLastSkillElapseTime())
-				{
-					int ranVal = rand() % 2;
+				ReserveNextTransferName(kBossMobMove);
+				SetTransfer();
+			}
+		}
 
-					if (ranVal == 0)
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetSkillCoolTime() < g_fGameTimer - mob->GetLastSkillTimeStamp())
+			{
+				int ranVal = rand() % 2;
+
+				if (ranVal == 0)
+				{
+					if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetDashRange())
 					{
-						if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetDashRange())
-						{
-							transfer = true;
-							SetNextTransferName(kBossMobDashStart);
-						}
-					}
-					if(ranVal == 1)
-					{
-						transfer = true;
-						SetNextTransferName(kBossMobSkill1);
+						ReserveNextTransferName(kBossMobDashStart);
+						SetTransfer();
 					}
 				}
-
-				if (transfer == false)
+				if (ranVal == 1)
 				{
-					if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-					{
-						transfer = true;
-						SetNextTransferName(kBossMobAttack2);
-					}
-				}
-
-				if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobIdle);
+					ReserveNextTransferName(kBossMobSkill1);
+					SetTransfer();
 				}
 			}
 		}
 
-		return transfer;
-	}
-	void BossMobAttack1State::Run()
-	{
-		CharacterState::Run();
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+			{
+				ReserveNextTransferName(kBossMobAttack2);
+				SetTransfer();
+			}
+		}
 
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kBossMobIdle);
+				SetTransfer();
+			}
+		}
+	}
+	void BossMobAttack1State::Action()
+	{
 		// LookAt Target
-		if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
 			oldCharDirection = XMVector3Normalize(oldCharDirection);
@@ -307,77 +283,87 @@ namespace SSB
 
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
-			if (!m_pCharacter->IsAlreadyDamagedCurrentState(&Player::GetInstance()))
-			{
-				Player::GetInstance().Damage(m_pCharacter->m_Damage);
-				m_pCharacter->DamagingCharacter(&Player::GetInstance());
-			}
+			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
 		}
 	}
-	bool BossMobAttack2State::IsTransfer()
+	StateTransferPriority BossMobAttack1State::GetPriority()
 	{
-		bool transfer = false;
-
+		return BossAttackTypePriority;
+	}
+	void BossMobAttack2State::StateDecision()
+	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+            ReserveNextTransferName(kBossMobDead);
+            SetTransfer();
 		}
-		else
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
+			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 			{
-				if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobMove);
-				}
-				else if (mob->GetSkillCoolTime() < mob->GetLastSkillElapseTime())
-				{
-					int ranVal = rand() % 2;
+				ReserveNextTransferName(kBossMobMove);
+				SetTransfer();
+			}
+		}
 
-					if (ranVal == 0)
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetSkillCoolTime() < g_fGameTimer - mob->GetLastSkillTimeStamp())
+			{
+				int ranVal = rand() % 2;
+
+				if (ranVal == 0)
+				{
+					if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetDashRange())
 					{
-						if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetDashRange())
-						{
-							transfer = true;
-							SetNextTransferName(kBossMobDashStart);
-						}
-					}
-					if (ranVal == 1)
-					{
-						transfer = true;
-						SetNextTransferName(kBossMobSkill1);
+						ReserveNextTransferName(kBossMobDashStart);
+						SetTransfer();
 					}
 				}
-
-				if (transfer == false)
+				if (ranVal == 1)
 				{
-					if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-					{
-						transfer = true;
-						SetNextTransferName(kBossMobAttack1);
-					}
-				}
-
-				if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobIdle);
+					ReserveNextTransferName(kBossMobSkill1);
+					SetTransfer();
 				}
 			}
 		}
 
-		return transfer;
-	}
-	void BossMobAttack2State::Run()
-	{
-		CharacterState::Run();
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+			{
+				ReserveNextTransferName(kBossMobAttack1);
+				SetTransfer();
+			}
+		}
 
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kBossMobIdle);
+				SetTransfer();
+			}
+		}
+	}
+	BossMobAttack1State::BossMobAttack1State(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+	{
+	}
+	float BossMobAttack1State::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobAttack1State::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack2, kBossMobIdle };
+	}
+	void BossMobAttack2State::Action()
+	{
 		// LookAt Target
-		if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
 			oldCharDirection = XMVector3Normalize(oldCharDirection);
@@ -408,14 +394,14 @@ namespace SSB
 
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
-			if (!m_pCharacter->IsAlreadyDamagedCurrentState(&Player::GetInstance()))
-			{
-				Player::GetInstance().Damage(m_pCharacter->m_Damage);
-				m_pCharacter->DamagingCharacter(&Player::GetInstance());
-			}
+			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
 		}
 	}
-	bool BossMobSkill1State::IsTransfer()
+	StateTransferPriority BossMobAttack2State::GetPriority()
+	{
+		return BossAttackTypePriority;
+	}
+	void BossMobSkill1State::StateDecision()
 	{
 		bool transfer = false;
 
@@ -423,55 +409,50 @@ namespace SSB
 		Character* targetPlayer = &Player::GetInstance();
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
+			ReserveNextTransferName(kBossMobDead);
+			SetTransfer();
 		}
-		else
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
+			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
 			{
-				if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobAttack1);
+				ReserveNextTransferName(kBossMobAttack1);
+				SetTransfer();
 
-					mob->m_bSkillCalled = false;
-				}
-
-				if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobMove);
-
-					mob->m_bSkillCalled = false;
-				}
-
-				if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-				{
-					transfer = true;
-					SetNextTransferName(kBossMobIdle);
-
-					mob->m_bSkillCalled = false;
-				}
+				mob->SetLastSkillTimeStamp();
 			}
 		}
 
-		return transfer;
-	}
-	void BossMobSkill1State::Run()
-	{
-		CharacterState::Run();
-
-		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
-
-		if (!mob->m_bSkillCalled)
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			mob->m_bSkillCalled = true;
-			mob->ResetSkillElapseTime();
+			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kBossMobMove);
+				SetTransfer();
+
+				mob->SetLastSkillTimeStamp();
+			}
 		}
 
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kBossMobIdle);
+				SetTransfer();
+
+				mob->SetLastSkillTimeStamp();
+			}
+		}
+	}
+	void BossMobSkill1State::Action()
+	{
+		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
+
 		// LookAt Target
-		if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
 			oldCharDirection = XMVector3Normalize(oldCharDirection);
@@ -502,44 +483,34 @@ namespace SSB
 
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
-			if (!m_pCharacter->IsAlreadyDamagedCurrentState(&Player::GetInstance()))
-			{
-				Player::GetInstance().Damage(m_pCharacter->m_Damage);
-				m_pCharacter->DamagingCharacter(&Player::GetInstance());
-			}
+			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
 		}
 	}
-	bool BossMobDashState::IsTransfer()
+	StateTransferPriority BossMobSkill1State::GetPriority()
 	{
-		bool transfer = false;
-
+		return BossSkillTypePriority;
+	}
+	void BossMobDashState::StateDecision()
+	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kBossMobDead);
-		}
-		else
-		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-			{
-				transfer = true;
-				SetNextTransferName(kBossMobDashEnd);
-			}
+			ReserveNextTransferName(kBossMobDead);
+			SetTransfer();
 		}
 
-		return transfer;
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			ReserveNextTransferName(kBossMobDashEnd);
+			m_pCharacter->m_fSpeed = 15;
+			SetTransfer();
+		}
 	}
-	void BossMobDashState::Run()
+	void BossMobDashState::Action()
 	{
-		CharacterState::Run();
-
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
-		if (!mob->m_bSkillCalled)
-		{
-			mob->m_bSkillCalled = true;
-			mob->ResetSkillElapseTime();
-		}
+
+		mob->m_fSpeed = 20;
 
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
 		XMVECTOR dir = mob->m_DashDirection;
@@ -547,11 +518,93 @@ namespace SSB
 
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
-			if (!m_pCharacter->IsAlreadyDamagedCurrentState(&Player::GetInstance()))
-			{
-				Player::GetInstance().Damage(m_pCharacter->m_Damage);
-				m_pCharacter->DamagingCharacter(&Player::GetInstance());
-			}
+			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
 		}
+	}
+	void BossMobDeadState::StateDecision()
+	{
+	}
+	void BossMobDeadState::Action()
+	{
+	}
+	StateTransferPriority BossMobDeadState::GetPriority()
+	{
+		return BossDeadTypePriority;
+	}
+	std::vector<std::string> BossMobDeadState::GetLinkedList()
+	{
+		return std::vector<std::string>();
+	}
+	BossMobAttack2State::BossMobAttack2State(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+	{
+	}
+	float BossMobAttack2State::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobAttack2State::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack1, kBossMobIdle };
+	}
+	BossMobDashStartState::BossMobDashStartState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+	{
+	}
+	StateTransferPriority BossMobDashStartState::GetPriority()
+	{
+		return BossSkillTypePriority;
+	}
+	float BossMobDashStartState::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobDashStartState::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobDash };
+	}
+	BossMobDashState::BossMobDashState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+	{
+	}
+	float BossMobDashState::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobDashState::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobDashEnd };
+	}
+	BossMobDashEndState::BossMobDashEndState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+	{
+	}
+	float BossMobDashEndState::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobDashEndState::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobIdle };
+	}
+	BossMobSkill1State::BossMobSkill1State(float transferRequireTime)
+	{
+		_transferRequireTime = transferRequireTime;
+	}
+	float BossMobSkill1State::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobSkill1State::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobAttack1, kBossMobMove, kBossMobIdle };
+	}
+	BossMobSpawnState::BossMobSpawnState(float transferRequireTime)
+	{
+		_transferRequireTime = transferRequireTime;
+	}
+	float BossMobSpawnState::GetTransferRequireTime()
+	{
+		return _transferRequireTime;
+	}
+	std::vector<std::string> BossMobSpawnState::GetLinkedList()
+	{
+		return { kBossMobDead, kBossMobAngry };
 	}
 }

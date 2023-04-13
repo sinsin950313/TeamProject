@@ -8,6 +8,10 @@
 //HeightMap
 class MeshMap;
 
+typedef std::string SkillPrimaryKey;
+typedef time_t SkillTimeStamp;
+typedef float SkillCoolTime;
+
 class Character
 {
 protected:
@@ -53,19 +57,17 @@ public:
 
 	TVector3 GetCurSocketPos(std::string socket);
 
-	Sound* _currentSound = nullptr;
-	Sound* _damagedSound = nullptr;
-
 public:
-    float   m_fSpeed = 15;
-    TVector3 m_vDirection;
+	float   m_fSpeed = 15;
+	TVector3 m_vDirection;
 	XMVECTOR m_vOldDirection;
 
 public:
 	void	SetMap(MeshMap* pMap);
 	MeshMap* m_pMap;
 public:
-    void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);
+	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);
+	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, float speed);
 
 public:
 	SSB::Model* m_pModel = nullptr;
@@ -89,34 +91,31 @@ public:
 	bool IsDead();
 
 public:
-    TMatrix m_AttackBoxLocalMatrix;
-    T_BOX   m_AttackBox;
+	TMatrix m_AttackBoxLocalMatrix;
+	T_BOX   m_AttackBox;
 
 public:
 	int m_HealthPoint = 100;
 	int m_Damage = 30;
-	std::set<Character*> m_DamagedCharacters;
+
+private:
+	Sound* _damagedSound = nullptr;
 
 public:
-	void DamagingCharacter(Character* character);
-	bool IsAlreadyDamagedCurrentState(Character* character);
-	void Damage(int damage);
+	virtual void Damage(int damage);
+
+private:
+	std::map<SkillPrimaryKey, SkillCoolTime> _skillCoolTimeList;
+	std::map<SkillPrimaryKey, SkillTimeStamp> _skillTimeStampList;
 
 public:
-	float m_fStateTImeStamp = 0;
-	float m_fBeforeTime = 0;
-	float m_fStateElapseTime = 0;
+    void Initialize_RegisterSkill(SkillPrimaryKey key, SkillCoolTime coolTime);
+	bool IsCoolTimePassed(SkillPrimaryKey key, time_t elaspedGameTime);
+	SkillTimeStamp GetRemainSkillCoolTime(SkillPrimaryKey key);
+    SkillCoolTime GetSkillCoolTime(SkillPrimaryKey key);
+    void ActiveSkill(SkillPrimaryKey key);
 
 public:
-	void ResetStateElapseTime();
-	float GetStateElapseTime();
-	float GetStateTimeStamp();
-	void StateTransfer();
-
-public:
-	bool m_bIsStateTransfer = false;
-	bool m_bIsReserveState = false;;
-	std::string m_ReservedState;
-	bool m_bSoundPlay = false;
+	void SetCurrentAnimation(SSB::AnimationName animationName);
 };
 

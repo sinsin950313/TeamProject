@@ -135,3 +135,11 @@ void    Player::UpdateInstancingBuffer()
 
 	m_pImmediateContext->UpdateSubresource(m_pInstancingBuffer, 0, nullptr, &m_cbInstancingData, 0, 0);
 }
+
+void Player::Damage(int damage)
+{
+	if (!m_IsImmortal)
+	{
+		Character::Damage(damage);
+	}
+}

@@ -161,6 +161,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="MultiRenderTarget.h" />
+    <ClInclude Include="CharacterStateBlackboard.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneEnd.h" />
     <ClInclude Include="SceneInGame.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Serializeable.h" />
     <ClInclude Include="SerializeableDataType.h" />
     <ClInclude Include="CharacterState.h" />
+    <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="TestObj.h" />
     <ClInclude Include="TrailEffect.h" />
   </ItemGroup>
@@ -206,6 +208,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="MultiRenderTarget.cpp" />
+    <ClCompile Include="CharacterStateBlackboard.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneEnd.cpp" />
     <ClCompile Include="SceneInGame.cpp" />
@@ -229,6 +232,7 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Serializeable.cpp" />
     <ClCompile Include="CharacterState.cpp" />
+    <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="TestObj.cpp" />
     <ClCompile Include="TrailEffect.cpp" />
   </ItemGroup>

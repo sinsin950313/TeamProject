@@ -10,23 +10,18 @@ namespace SSB
         float m_BattleRange = 5;
         float m_SpotRange = 30;
         float m_DashRange = 10;
-        float m_SkillCoolTime = 5.0f;
-		float m_fBeforeTime = 0;
-        float m_LastSkillElapseTime = 0.0f;
-
-        bool m_bDashCalled = false;
-        bool m_bSkillCalled = false;
+        float m_LastSkillTimeStamp;
         TVector3 m_DashDirection;
 
     public:
+        float GetSkillCoolTime();
         float GetBattleRange();
         float GetSpotRange();
         float GetDashRange();
-        float GetSkillCoolTime();
-        float GetLastSkillElapseTime();
-        void ResetSkillElapseTime();
+        void SetLastSkillTimeStamp();
+        float GetLastSkillTimeStamp();
 
     public:
-		bool Frame() override;
+        bool Frame() override;
 	};
 }

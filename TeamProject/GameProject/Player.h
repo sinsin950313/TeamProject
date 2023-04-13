@@ -44,4 +44,13 @@ public:
     VS_INSTANCING_BUFFER m_cbInstancingData;
 
     TrailEffect* m_pTrail;
+
+public:
+    bool m_IsImmortal = false;
+
+public:
+	void Damage(int damage) override;
+
+public:
+	TVector3 m_DashDirection;
 };
