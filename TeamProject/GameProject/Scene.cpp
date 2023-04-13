@@ -41,9 +41,19 @@ bool    Scene::Frame()
     return true;
 }
 
+bool Scene::PreRender()
+{
+    return true;
+}
+
 bool    Scene::Render()
 {
     //m_Writer.Draw(0, 0, I_Timer.m_szTimer);
+    return true;
+}
+
+bool Scene::PostRender()
+{
     return true;
 }
 

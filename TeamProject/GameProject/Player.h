@@ -23,7 +23,7 @@ public:
 public:
     virtual bool    Init();
     virtual bool    Frame();
-    virtual bool	Render();
+    virtual bool	PostRender();
     virtual bool    Release();
 
 private:
@@ -35,6 +35,8 @@ private:
 public:
     Camera* m_pMainCamera;
 
+    Shader* m_pModelVS[2];
+    Shader* m_pModelPS[2];
     std::vector<TMatrix>     m_matInstancing;
     TVector4    m_vInstancingColor[12];
 
@@ -42,4 +44,14 @@ public:
     VS_INSTANCING_BUFFER m_cbInstancingData;
 
     TrailEffect* m_pTrail;
+
+public:
+    bool m_IsImmortal = false;
+
+public:
+	void Damage(int damage) override;
+
+public:
+	TVector3 m_DashDirection;
+    bool m_IsDash = false;
 };

@@ -31,6 +31,9 @@
     <Filter Include="Ch\FSM">
       <UniqueIdentifier>{32f353c1-d470-48d3-b4a5-c37d0feb2eb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Light">
+      <UniqueIdentifier>{6469766b-4acb-4e03-b716-687f29e208d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyMain.h">
@@ -144,6 +147,30 @@
     <ClInclude Include="BossStateService.h">
       <Filter>Ch\FSM</Filter>
     </ClInclude>
+    <ClInclude Include="Emitter.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiRenderTarget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterStateBlackboard.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEffect.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -238,6 +265,30 @@
     </ClCompile>
     <ClCompile Include="BossStateService.cpp">
       <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Emitter.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="LightManager.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiRenderTarget.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterStateBlackboard.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEffect.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

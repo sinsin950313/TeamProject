@@ -64,5 +64,12 @@ bool CameraTPS::Frame()
 	m_vRight = -m_vRight;
 
 	m_vFrustum.CreateFrustum(&m_matView, &m_matProj);
+
+	{
+		TQuaternion q;
+		D3DXQuaternionRotationYawPitchRoll(&q, m_vRotation.y, m_vRotation.x, m_vRotation.z);
+		D3DXMatrixAffineTransformation(&m_matWorld, 1, nullptr, &q, &m_vPos);
+	}
+
 	return true;
 }

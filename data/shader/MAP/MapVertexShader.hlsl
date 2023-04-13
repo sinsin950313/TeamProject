@@ -9,12 +9,12 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 position : SV_POSITION;
+	float3 world : TEXCOORD3;
+	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL0;
 	float4 color : COLOR0;
-	float2 tex : TEXCOORD0;
 	float3 direction_to_camera : TEXCOORD1;
 	float4 m_light_direction : TEXCOORD2;
-	float3 world : TEXCOORD3;
 	float4 tex2 : TEXCOORD4;
 };
 
@@ -74,8 +74,11 @@ VS_OUTPUT vsmain(VS_INPUT input)
 	output.tex2.z = (vProj.x / vProj.w) * 0.5f + 0.5f;
 	output.tex2.w = (vProj.y / vProj.w) * 0.5f + 0.5f;
 
+	float4 worldNormal = mul(float4(input.normal.xyz, 0), matWorld);
+
 	output.position = vProj;
-	output.normal = input.normal;
+	output.normal = float4(worldNormal.xyz, 1);
+	//output.normal = input.normal;
 	output.tex = input.tex;
 	output.color = input.color;
 	return output;

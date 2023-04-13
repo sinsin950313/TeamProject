@@ -2,6 +2,10 @@
 
 namespace SSB
 {
+	float BossMob::GetSkillCoolTime()
+	{
+		return 8;
+	}
 	float BossMob::GetBattleRange()
 	{
 		return m_BattleRange;
@@ -14,25 +18,33 @@ namespace SSB
 	{
 		return m_DashRange;
 	}
-	float BossMob::GetSkillCoolTime()
+	void BossMob::SetLastSkillTimeStamp()
 	{
-		return m_SkillCoolTime;
+		m_LastSkillTimeStamp = g_fGameTimer;
 	}
-	float BossMob::GetLastSkillElapseTime()
+	float BossMob::GetLastSkillTimeStamp()
 	{
-		return m_LastSkillElapseTime;
+		return m_LastSkillTimeStamp;
 	}
-	void BossMob::ResetSkillElapseTime()
+	bool BossMob::Init()
 	{
-		m_LastSkillElapseTime = 0.0f;
+		Character::Init();
+
+		m_AttackBoxLocalMatrix = TMatrix(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 200, -400, 1
+		);
+		m_AttackBox.fExtent[0] = 2;
+		m_AttackBox.fExtent[1] = 2;
+		m_AttackBox.fExtent[2] = 1.5f;
+
+		return false;
 	}
 	bool BossMob::Frame()
 	{
 		Character::Frame();
-
-		float elapseTime = g_fGameTimer - m_fBeforeTime;
-		m_LastSkillElapseTime += elapseTime;
-		m_fBeforeTime = g_fGameTimer;
 
 		return true;
 	}

@@ -17,70 +17,148 @@ namespace SSB
 	const StateName kBossMobStun = "Stun";
 	const StateName kBossMobDead = "Dead";
 
+	const unsigned int BossDeadTypePriority = 0;
+	const unsigned int BossSkillTypePriority = 1;
+	const unsigned int BossAttackTypePriority = 2;
+
 	class BossMobIdleState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void StateDecision() override;
+		void Action() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobAngryState : public CharacterState
+	class BossMobAngryState : public CharacterState, public MinimumTransferCoolTimeRequireInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
+		BossMobAngryState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
 	class BossMobMoveState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
-		void Run() override;
+		void StateDecision() override;
+		void Action() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobAttack1State : public CharacterState
+	class BossMobAttack1State : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
-		void Run() override;
+		BossMobAttack1State(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobAttack2State : public CharacterState
+	class BossMobAttack2State : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
-		void Run() override;
+		BossMobAttack2State(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobDashStartState : public CharacterState
+	class BossMobDashStartState : public CharacterState, public MinimumTransferCoolTimeRequireInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
+		BossMobDashStartState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobDashState : public CharacterState
+	class BossMobDashState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
-		void Run() override;
+		BossMobDashState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobDashEndState : public CharacterState
+	class BossMobDashEndState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
-		void Run() override;
+		BossMobDashEndState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobSkill1State : public CharacterState
+	class BossMobSkill1State : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
-		void Run() override;
+		BossMobSkill1State(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class BossMobSpawnState : public CharacterState
+	class BossMobSpawnState : public CharacterState, public MinimumTransferCoolTimeRequireInterface
 	{
+	private:
+		float _transferRequireTime;
+
 	public:
-		bool IsTransfer() override;
+		BossMobSpawnState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
 	//class BossMobStunState : public CharacterState
@@ -92,6 +170,9 @@ namespace SSB
 	class BossMobDeadState : public CharacterState
 	{
 	public:
-		bool IsTransfer() override;
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 }

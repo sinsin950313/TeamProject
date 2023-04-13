@@ -4,6 +4,8 @@ Texture2D DiffuseArray[16] : register(t0);
 Texture2D DiffuseMask : register(t1);
 Texture2D DiffuseMaskArray[16] : register(t1);
 
+Texture2D LightShadowMap : register(t2);
+
 SamplerState Sampler : register(s0);
 
 struct PixelShaderInput_PC
@@ -15,6 +17,7 @@ struct PixelShaderInput_PC
 struct PixelShaderInput_PCNT
 {
 	float4 Position : SV_POSITION;
+	float4 World : TEXCOORD3;
 	float4 Color : COLOR0;
 	float4 Normal : NORMAL;
 	float2 Diffuse : TEXCOORD0;
@@ -23,6 +26,7 @@ struct PixelShaderInput_PCNT
 struct PixelShaderInput_PCNT_P
 {
 	float4 Position : SV_POSITION;
+	float4 World : TEXCOORD3;
 	float4 Color : COLOR0;
 	float4 Normal : NORMAL;
 	float2 Diffuse : TEXCOORD0;

@@ -34,7 +34,29 @@ namespace SSB
 		return true;
 	}
 
+	bool Material::PreRender()
+	{
+		if (_textureArray[kDiffuse])
+		{
+			auto shaderResourceView = _textureArray[kDiffuse]->m_pTextureSRV;
+			m_pImmediateContext->PSSetShaderResources(_materialIndex, 1, &shaderResourceView);
+		}
+		
+		return true;
+	}
+
 	bool Material::Render()
+	{
+		if (_textureArray[kDiffuse])
+		{
+			auto shaderResourceView = _textureArray[kDiffuse]->m_pTextureSRV;
+			m_pImmediateContext->PSSetShaderResources(_materialIndex, 1, &shaderResourceView);
+		}
+		
+		return true;
+	}
+
+	bool Material::PostRender()
 	{
 		if (_textureArray[kDiffuse])
 		{

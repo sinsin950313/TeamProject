@@ -3,38 +3,57 @@
 
 namespace SSB
 {
-	void CharacterState::SetNextTransferName(StateName transferStateName)
+	void CharacterState::ReserveNextTransferName(StateName transferStateName)
 	{
-		m_TransferStateName = transferStateName;
+		CharacterState* transferCompareState = _linkedState.find(transferStateName)->second;
+		if (_reservedState != nullptr)
+		{
+			StateTransferPriority currentPriority = _reservedState->GetPriority();
+			StateTransferPriority comparePriority = transferCompareState->GetPriority();
+			if (comparePriority < currentPriority)
+			{
+				_reservedState = transferCompareState;
+			}
+		}
+		else
+		{
+			_reservedState = transferCompareState;
+		}
+
+		_isReservedTransfer = true;
+	}
+	bool CharacterState::IsReservingNextState()
+	{
+		return _isReservedTransfer;
 	}
 	void CharacterState::Initialize_SetStateAnimation(AnimationName name)
 	{
 		m_StateAnimationName = name;
-	}
-	void CharacterState::Initialize_SetCoolTime(float cooltime)
-	{
-		m_Cooltime = cooltime;
 	}
 	void CharacterState::Initialize_SetEffectSound(Sound* sound, bool loop)
 	{
 		_sound = sound;
 		_loop = loop;
 	}
-	void CharacterState::SetCharacter(Character* character)
+	void CharacterState::Initialize_LinkState(StateName stateName, CharacterState* state)
+	{
+		_linkedState.insert(std::make_pair(stateName, state));
+	}
+	void CharacterState::SetData(Character* character, Blackboard* blackboard)
 	{
 		m_pCharacter = character;
+		_reservedState = nullptr;
+		_isReservedTransfer = false;
+		_isTransfer = false;
+		_blackboard = blackboard;
 	}
 	AnimationName CharacterState::GetStateAnimationName()
 	{
 		return m_StateAnimationName;
 	}
-	StateName CharacterState::GetNextTransferStateName()
+	CharacterState* CharacterState::GetReservedState()
 	{
-		return m_TransferStateName;
-	}
-	bool CharacterState::IsPassedRequireCoolTime(float elapseTime)
-	{
-		return m_Cooltime <= elapseTime;
+		return _reservedState;
 	}
 	Sound* CharacterState::GetSound()
 	{
@@ -44,22 +63,52 @@ namespace SSB
 	{
 		return _loop;
 	}
+	void CharacterState::SetTransfer()
+	{
+		_isTransfer = true;
+	}
+	bool CharacterState::IsTransfer()
+	{
+		return _isTransfer;
+	}
+	StateTransferPriority CharacterState::GetPriority()
+	{
+		return -1;
+	}
 	void CharacterState::Run()
 	{
-		if (!m_pCharacter->m_bIsStateTransfer)
+		m_pCharacter->SetCurrentAnimation(GetStateAnimationName());
+		if (!_blackboard->Initialized)
 		{
-			m_pCharacter->m_bIsStateTransfer = true;
+			_blackboard->CurrentSound.Play();
 		}
 
-		if (!m_pCharacter->m_bSoundPlay)
+		Action();
+		StateDecision();
+
+		if (_isTransfer)
 		{
-			m_pCharacter->_currentSound = _sound;
-			if (_sound)
+			if (this == _reservedState)
 			{
-				m_pCharacter->_currentSound->Play(IsSoundLoop());
-				m_pCharacter->m_bSoundPlay = true;
+				_isTransfer = false;
 			}
 		}
-        m_pCharacter->m_pModel->SetCurrentAnimation(GetStateAnimationName());
+
+		if (!_blackboard->Initialized)
+		{
+			_blackboard->Initialized = true;
+		}
+	}
+	bool MinimumTransferCoolTimeRequireInterface::IsPassedRequiredTime(float timeStamp)
+	{
+		return g_fGameTimer - timeStamp >= GetTransferRequireTime();
+	}
+	void DamageTypeStateInterface::Damage(Blackboard* blackboard, Character* target, float damage)
+	{
+		if (blackboard->DamagedCharacters.find(target) == blackboard->DamagedCharacters.end())
+		{
+			target->Damage(damage);
+			blackboard->DamagedCharacters.insert(&Player::GetInstance());
+		}
 	}
 }

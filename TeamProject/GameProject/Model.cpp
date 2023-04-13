@@ -130,6 +130,22 @@ namespace SSB
 
 		return false;
 	}
+	bool Model::PreRender()
+	{
+		_currentAnimation->PreRender();
+
+		for (auto material : _materials)
+		{
+			material.second->PreRender();
+		}
+
+		for (auto mesh : _meshes)
+		{
+			mesh.second->PreRender();
+		}
+
+		return false;
+	}
 	bool Model::Render()
 	{
 		_currentAnimation->Render();
@@ -148,15 +164,29 @@ namespace SSB
 
 		return false;
 	}
-	bool Model::RenderInstancing(UINT iNum)
+	bool Model::PostRender()
 	{
-		_currentAnimation->Render();
-
-		m_pImmediateContext->PSSetShader(_ps->m_pPS, NULL, 0);
+		_currentAnimation->PostRender();
 
 		for (auto material : _materials)
 		{
-			material.second->Render();
+			material.second->PostRender();
+		}
+
+		for (auto mesh : _meshes)
+		{
+			mesh.second->PostRender();
+		}
+
+		return false;
+	}
+	bool Model::RenderInstancing(UINT iNum)
+	{
+		_currentAnimation->PostRender();
+
+		for (auto material : _materials)
+		{
+			material.second->PostRender();
 		}
 
 		for (auto mesh : _meshes)

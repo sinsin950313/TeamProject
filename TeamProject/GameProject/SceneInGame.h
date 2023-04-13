@@ -11,11 +11,6 @@
 class SceneInGame : public Scene
 {
 public:
-    virtual bool    Init() override;
-    virtual bool    Frame() override;
-    virtual bool    Render() override;
-    virtual bool    Release() override;
-
     virtual void DataLoad() override;
     void    UiLoad();
     void    CameraLoad();
@@ -24,6 +19,14 @@ public:
     void    MapLoad();
     
     void    RenderMinimap();
+
+    virtual bool    Init();
+    virtual bool    Frame();
+    virtual bool PreRender() override;
+    virtual bool    Render();
+    virtual bool PostRender() override;
+    virtual bool    Release();
+
 private:
     E_SCENE NextScene();
 
@@ -38,7 +41,7 @@ public:
     //T_BOX       testBox;
 
 
-    SSB::EnemyNPCMob* m_pEnemy = nullptr;
+    //SSB::EnemyNPCMob* m_pEnemy = nullptr;
     T_BOX       testBox;
 
     DebugBox* m_pDebugBox = nullptr;

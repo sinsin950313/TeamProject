@@ -7,68 +7,30 @@
 
 namespace SSB
 {
-    bool EnemyNPCMobIdleState::IsTransfer()
+    void EnemyNPCMobMoveState::StateDecision()
     {
-        bool transfer = false;
-
-		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
-		if (mob->IsDead())
-		{
-			transfer = true;
-			SetNextTransferName(kEnemyNPCMobDead);
-		}
-		else
-		{
-			if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-			{
-                float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
-				if (fDistance <= mob->GetSpotRange())
-				{
-					transfer = true;
-					SetNextTransferName(kEnemyNPCMobMove);
-				}
-
-				if (fDistance <= mob->GetBattleRange())
-				{
-					transfer = true;
-					SetNextTransferName(kEnemyNPCMobAttack);
-				}
-			}
-		}
-
-        return transfer;
-    }
-    bool EnemyNPCMobMoveState::IsTransfer()
-    {
-        bool transfer = false;
-
 		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
         if (m_pCharacter->IsDead())
         {
-			transfer = true;
-			SetNextTransferName(kEnemyNPCMobDead);
-        }
-        else
-        {
-            if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-            {
-                transfer = true;
-                SetNextTransferName(kEnemyNPCMobAttack);
-            }
+            ReserveNextTransferName(kEnemyNPCMobDead);
+            SetTransfer();
+		}
 
-            if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-            {
-                transfer = true;
-                SetNextTransferName(kEnemyNPCMobIdle);
-            }
-        }
+		if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+		{
+            ReserveNextTransferName(kEnemyNPCMobAttack1);
+            SetTransfer();
+		}
 
-        return transfer;
+		if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+		{
+            ReserveNextTransferName(kEnemyNPCMobIdle);
+            SetTransfer();
+		}
     }
-    void EnemyNPCMobMoveState::Run()
+    void EnemyNPCMobMoveState::Action()
     {
-        CharacterState::Run();
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
         EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
         XMVECTOR dir = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
@@ -76,43 +38,65 @@ namespace SSB
 
         m_pCharacter->MoveChar(dir, world);
     }
-    bool EnemyNPCMobAttackState::IsTransfer()
+    StateTransferPriority EnemyNPCMobMoveState::GetPriority()
     {
-        bool transfer = false;
-
+        return 2;
+    }
+    std::vector<std::string> EnemyNPCMobMoveState::GetLinkedList()
+    {
+        return { kEnemyNPCMobDead, kEnemyNPCMobAttack1, kEnemyNPCMobIdle };
+    }
+    EnemyNPCMobAttack1State::EnemyNPCMobAttack1State(float transferRequireTime)
+    {
+        _transferRequireTime = transferRequireTime;
+    }
+    void EnemyNPCMobAttack1State::StateDecision()
+    {
 		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
 		if (mob->IsDead())
 		{
-			transfer = true;
-			SetNextTransferName(kEnemyNPCMobDead);
+            ReserveNextTransferName(kEnemyNPCMobDead);
+            SetTransfer();
 		}
-        else
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+			{
+				ReserveNextTransferName(kEnemyNPCMobAttack2);
+				SetTransfer();
+			}
+		}
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kEnemyNPCMobMove);
+				SetTransfer();
+			}
+		}
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kEnemyNPCMobIdle);
+				SetTransfer();
+			}
+		}
+
+        if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
-            if (IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
-            {
-                if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-                {
-                    transfer = true;
-                    SetNextTransferName(kEnemyNPCMobMove);
-                }
-
-                if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-                {
-                    transfer = true;
-                    SetNextTransferName(kEnemyNPCMobIdle);
-                }
-            }
+            _blackboard->StateTImeStamp = g_fGameTimer;
+            _blackboard->DamagedCharacters.clear();
         }
-
-        return transfer;
     }
-    void EnemyNPCMobAttackState::Run()
+    void EnemyNPCMobAttack1State::Action()
     {
-        CharacterState::Run();
-
         // LookAt Target
-        if(IsPassedRequireCoolTime(m_pCharacter->GetStateElapseTime()))
+        if (!IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
             XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
             oldCharDirection = XMVector3Normalize(oldCharDirection);
@@ -139,20 +123,175 @@ namespace SSB
             TQuaternion q;
             D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
             D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
-        }
 
-		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+            // Damage Timing ��
+            float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+            if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+            {
+                if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+                {
+                    Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                }
+            }
+        }
+    }
+    StateTransferPriority EnemyNPCMobAttack1State::GetPriority()
+    {
+        return 1;
+    }
+    float EnemyNPCMobAttack1State::GetTransferRequireTime()
+    {
+        return _transferRequireTime;
+    }
+    std::vector<std::string> EnemyNPCMobAttack1State::GetLinkedList()
+    {
+        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobIdle, kEnemyNPCMobAttack2 };
+    }
+    EnemyNPCMobAttack2State::EnemyNPCMobAttack2State(float transferRequireTime)
+    {
+        _transferRequireTime = transferRequireTime;
+    }
+    void EnemyNPCMobAttack2State::StateDecision()
+    {
+		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
+		Character* targetPlayer = &Player::GetInstance();
+		if (mob->IsDead())
+		{
+            ReserveNextTransferName(kEnemyNPCMobDead);
+            SetTransfer();
+		}
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+			{
+				ReserveNextTransferName(kEnemyNPCMobAttack1);
+				SetTransfer();
+			}
+		}
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kEnemyNPCMobMove);
+				SetTransfer();
+			}
+		}
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
+			{
+				ReserveNextTransferName(kEnemyNPCMobIdle);
+				SetTransfer();
+			}
+		}
+
+        if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
-            if (!m_pCharacter->IsAlreadyDamagedCurrentState(&Player::GetInstance()))
+            _blackboard->StateTImeStamp = g_fGameTimer;
+            _blackboard->DamagedCharacters.clear();
+        }
+    }
+    void EnemyNPCMobAttack2State::Action()
+    {
+        // LookAt Target
+        if (!IsPassedRequiredTime(_blackboard->StateTImeStamp))
+        {
+            XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
+            oldCharDirection = XMVector3Normalize(oldCharDirection);
+
+            XMVECTOR destinationDirection = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
+            destinationDirection = XMVector3Normalize(destinationDirection);
+
+            if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
+                oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
+
+            XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection);	// Get the characters direction (based off time, old position, and desired
+            currCharDirection = XMVector3Normalize(currCharDirection);
+
+            XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+            float charDirAngle = XMVectorGetX(XMVector3AngleBetweenNormals(XMVector3Normalize(currCharDirection), XMVector3Normalize(DefaultForward)));
+            if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
+                charDirAngle = -charDirAngle;
+
+            m_pCharacter->m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
+
+            // Set the characters old direction
+            m_pCharacter->m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+
+            TQuaternion q;
+            D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
+            D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
+
+            // Damage Timing ��
+            float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+            if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
             {
                 Player::GetInstance().Damage(m_pCharacter->m_Damage);
                 m_pCharacter->DamagingCharacter(&Player::GetInstance());
                 Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax, 1.0f));
+                if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+                {
+                   Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                }
             }
         }
     }
-    bool EnemyNPCMobDeadState::IsTransfer()
+    StateTransferPriority EnemyNPCMobAttack2State::GetPriority()
     {
-        return false;
+        return 1;
+    }
+    float EnemyNPCMobAttack2State::GetTransferRequireTime()
+    {
+        return _transferRequireTime;
+    }
+    std::vector<std::string> EnemyNPCMobAttack2State::GetLinkedList()
+    {
+        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobIdle, kEnemyNPCMobAttack1 };
+    }
+    void EnemyNPCMobDeadState::StateDecision()
+    {
+    }
+    void EnemyNPCMobDeadState::Action()
+    {
+    }
+    StateTransferPriority EnemyNPCMobDeadState::GetPriority()
+    {
+        return 0;
+    }
+    std::vector<std::string> EnemyNPCMobDeadState::GetLinkedList()
+    {
+        return std::vector<std::string>();
+    }
+    void EnemyNPCMobIdleState::StateDecision()
+    {
+		EnemyNPCMob* mob = static_cast<EnemyNPCMob*>(m_pCharacter);
+		if (mob->IsDead())
+		{
+            ReserveNextTransferName(kEnemyNPCMobDead);
+			SetTransfer();
+		}
+
+		float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
+		if (fDistance <= mob->GetSpotRange())
+		{
+			ReserveNextTransferName(kEnemyNPCMobMove);
+			SetTransfer();
+		}
+
+		if (fDistance <= mob->GetBattleRange())
+		{
+			ReserveNextTransferName(kEnemyNPCMobAttack1);
+			SetTransfer();
+		}
+    }
+    void EnemyNPCMobIdleState::Action()
+    {
+    }
+    std::vector<std::string> EnemyNPCMobIdleState::GetLinkedList()
+    {
+        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobAttack1 };
     }
 }

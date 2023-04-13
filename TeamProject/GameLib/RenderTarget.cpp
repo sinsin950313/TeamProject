@@ -13,7 +13,8 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	m_TexDesc.Width = (UINT)fWidth;
 	m_TexDesc.Height = (UINT)fHeight;
 	m_TexDesc.MipLevels = 1;
-	m_TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	//m_TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_TexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	m_TexDesc.SampleDesc.Count = 1;
 	m_TexDesc.SampleDesc.Quality = 0;
 	m_TexDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -36,7 +37,6 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	}
 
 	// Depth Buffer
-	ComPtr<ID3D11Texture2D> pDSTexture = nullptr;
 	D3D11_TEXTURE2D_DESC DescDepth;
 	DescDepth.Width = fWidth;
 	DescDepth.Height = fHeight;
@@ -53,6 +53,7 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 	{
 		return hr;
 	}
+  
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 	ZeroMemory(&dsvDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;

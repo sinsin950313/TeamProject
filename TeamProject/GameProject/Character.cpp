@@ -114,6 +114,14 @@ bool	Character::Frame()
 	return true;
 }
 
+bool Character::PreRender()
+{
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, &_toViewSpaceTransformBuffer);
+	m_pImmediateContext->VSSetConstantBuffers(1, 1, &_objectToWorldTransformBuffer);
+	m_pModel->PreRender();
+	return true;
+}
+
 bool	Character::Render()
 {
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &_toViewSpaceTransformBuffer);
@@ -262,6 +270,63 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
 	}
 }
 
+void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, float speed)
+{
+	float frameTime = g_fSecondPerFrame;
+	//m_vOldDirection;
+
+	destinationDirection = XMVector3Normalize(destinationDirection);
+
+	if (XMVectorGetX(XMVector3Dot(destinationDirection, m_vOldDirection)) == -1)
+		m_vOldDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
+
+	XMVECTOR charPosition = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	charPosition = XMVector3TransformCoord(charPosition, worldMatrix);
+
+	float destDirLength = 20.0f * frameTime;
+
+	XMVECTOR currCharDirection = (m_vOldDirection)+(destinationDirection * destDirLength);	// Get the characters direction (based off time, old position, and desired
+	
+	currCharDirection = XMVector3Normalize(currCharDirection);
+
+	XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	float charDirAngle = XMVectorGetX(XMVector3AngleBetweenNormals(XMVector3Normalize(currCharDirection), XMVector3Normalize(DefaultForward)));
+	if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
+		charDirAngle = -charDirAngle;
+
+	float local = speed * frameTime;
+	charPosition = charPosition + (destinationDirection * local);
+
+	//// Update characters world matrix
+	//XMMATRIX rotationMatrix;
+	////XMMATRIX Scale = XMMatrixScaling(0.25f, 0.25f, 0.25f);
+	//XMMATRIX Scale = XMMatrixIdentity();
+	//XMMATRIX Translation = XMMatrixTranslation(XMVectorGetX(charPosition), 0.0f, XMVectorGetZ(charPosition));
+	//rotationMatrix = XMMatrixRotationY(charDirAngle - 3.14159265f);		// Subtract PI from angle so the character doesn't run backwards
+
+	//m_vScale = TVector3(1, 1, 1);
+	float ry = charDirAngle - M_PI;
+	m_vRotation = TVector3(0, ry, 0);
+	m_vPos = TVector3(XMVectorGetX(charPosition), m_pMap->GetHeight(m_vPos.x, m_vPos.z), XMVectorGetZ(charPosition));
+
+	// Set the characters old direction
+	m_vOldDirection = currCharDirection;
+	//m_vOldDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+	m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+
+	// Update our animation
+	float timeFactor = 1.0f;	// You can speed up or slow down time by changing this
+	//UpdateMD5Model(NewMD5Model, time * timeFactor, 0);
+
+	if (CollisionMgr::GetInstance().IsCollide(&m_ColliderBox))
+	{
+		charPosition = charPosition - (destinationDirection * (local + 0.1f));
+		m_vPos = TVector3(XMVectorGetX(charPosition), m_pMap->GetHeight(m_vPos.x, m_vPos.z), XMVectorGetZ(charPosition));
+		//oldCharDirection = currCharDirection;
+		//m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+	}
+}
+
 void Character::Initialize_SetPosition(TVector3 pos)
 {
 	m_vPos = pos;
@@ -277,55 +342,51 @@ bool Character::IsDead()
 	return m_HealthPoint <= 0;
 }
 
-void Character::DamagingCharacter(Character* character)
-{
-	m_DamagedCharacters.insert(character);
-}
-
-bool Character::IsAlreadyDamagedCurrentState(Character* character)
-{
-	return m_DamagedCharacters.find(character) != m_DamagedCharacters.end();
-}
-
 void Character::Damage(int damage)
 {
 	m_HealthPoint -= damage;
 	if (!IsDead())
 	{
-		_damagedSound->Play();
+		//_damagedSound->Play();
 	}
 }
 
-void Character::ResetStateElapseTime()
+void Character::Initialize_RegisterSkill(SkillPrimaryKey key, SkillCoolTime coolTime)
 {
-	m_fStateElapseTime = 0;
-	m_fBeforeTime = g_fGameTimer;
-	m_fStateTImeStamp = g_fGameTimer;
-	m_DamagedCharacters.clear();
-
-	m_bIsReserveState = false;
-	m_ReservedState.clear();
+	_skillCoolTimeList.insert(std::make_pair(key, coolTime));
+	_skillTimeStampList.insert(std::make_pair(key, 0));
 }
 
-float Character::GetStateElapseTime()
+bool Character::IsCoolTimePassed(SkillPrimaryKey key, time_t elaspedGameTime)
 {
-	float elapseTime = g_fGameTimer - m_fBeforeTime;
-	m_fStateElapseTime += elapseTime;
-	m_fBeforeTime = g_fGameTimer;
-
-	return m_fStateElapseTime;
+	float skillCoolTime = _skillCoolTimeList.find(key)->second;
+	float lastSkillCalledTime = _skillTimeStampList.find(key)->second;
+	float elapsedTime = elaspedGameTime - lastSkillCalledTime;
+	return skillCoolTime <= elaspedGameTime;
 }
 
-float Character::GetStateTimeStamp()
+SkillTimeStamp Character::GetRemainSkillCoolTime(SkillPrimaryKey key)
 {
-	return m_fStateTImeStamp;
+	float skillCoolTime = _skillCoolTimeList.find(key)->second;
+	float lastSkillCalledTime = _skillTimeStampList.find(key)->second;
+
+	float elaspedGameTime = g_fGameTimer;
+	float elapsedTime = elaspedGameTime - lastSkillCalledTime;
+
+	return max(0, skillCoolTime - elapsedTime);
 }
 
-void Character::StateTransfer()
+SkillCoolTime Character::GetSkillCoolTime(SkillPrimaryKey key)
 {
-	m_bIsStateTransfer = true;
+	return _skillCoolTimeList.find(key)->second;
+}
 
-	m_bSoundPlay = false;
+void Character::ActiveSkill(SkillPrimaryKey key)
+{
+	_skillTimeStampList.find(key)->second = g_fGameTimer;
+}
 
-	ResetStateElapseTime();
+void Character::SetCurrentAnimation(SSB::AnimationName animationName)
+{
+	m_pModel->SetCurrentAnimation(animationName);
 }

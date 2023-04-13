@@ -76,7 +76,9 @@ namespace SSB
 	public:
 		bool Init() override;
 		bool Frame() override;
+		bool PreRender();
 		bool Render() override;
+		bool PostRender();
 		bool RenderInstancing(UINT iNum);
 		bool Release() override;
 		std::string Serialize() override { return ""; }

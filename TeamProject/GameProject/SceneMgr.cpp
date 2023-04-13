@@ -116,10 +116,25 @@ bool	SceneMgr::Frame()
     return true;
 }
 
+bool SceneMgr::PreRender()
+{
+    if (!m_isChangingScene)
+		(*m_pCurrentScene)->PreRender();
+    return true;
+}
+
 bool	SceneMgr::Render()
 {
     if (!m_isChangingScene)
         (*m_pCurrentScene)->Render();
+
+    return true;
+}
+
+bool SceneMgr::PostRender()
+{
+    if (!m_isChangingScene)
+        (*m_pCurrentScene)->PostRender();
 
     m_pFade->Render();
     return true;

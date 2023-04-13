@@ -115,7 +115,11 @@ bool TrailEffect::PostRender()
 		//int iTriCnt = (m_iPos - 4);
 		int iTriCnt = min((m_iPos * 2 * m_iSampleNum), m_iCatmullRomSize) - 4;
 		if (iTriCnt > 1)
+		{
+			m_pImmediateContext->VSSetShader(m_pShader->m_pVS, NULL, 0);
+			m_pImmediateContext->PSSetShader(m_pShader->m_pPS, NULL, 0);
 			m_pImmediateContext->DrawIndexed(iTriCnt * 3, 0, 0);
+		}
 	}
 	m_pImmediateContext->RSSetState(DXState::g_pDefaultRSSolid);
 	return true;
