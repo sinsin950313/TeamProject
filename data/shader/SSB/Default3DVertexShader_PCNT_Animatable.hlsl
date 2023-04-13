@@ -6,6 +6,8 @@ VertexOutput_PCNT VS(Vertex_PCNT input)
 {
 	VertexOutput_PCNT output = (VertexOutput_PCNT)0;
 
+	float4 localNormal = float4(input.Normal.xyz, 0);
+
 	float4 pos = 0;
 	float4 normal = 0;
 	{
@@ -17,7 +19,7 @@ VertexOutput_PCNT VS(Vertex_PCNT input)
 	float4 view = mul(world, ViewMatrix);
 	float4 proj = mul(view, ProjectionMatrix);
 
-	float4 worldNormal = float4(normalize(mul(normal, WorldTransformMatrix)).xyz, 1);
+	float4 worldNormal = float4(normalize(mul(normal, WorldTransformMatrix).xyz), 1);
 
 	output.p = proj;
 	output.w = world;
@@ -26,5 +28,5 @@ VertexOutput_PCNT VS(Vertex_PCNT input)
 	output.t = input.Diffuse;
 
 	return output;
-	
+
 }
