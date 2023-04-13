@@ -22,12 +22,14 @@ public:
     void    FSMLoad();
     void    CharacterLoad();
     void    MapLoad();
-
+    
+    void    RenderMinimap();
 private:
     E_SCENE NextScene();
 
 public:
     Camera* m_pMainCamera = nullptr;
+
 
     bool m_Win = false;
     bool m_Defeat = false;
@@ -48,6 +50,7 @@ public:
 
     SSB::BossMob* m_pBoss = nullptr;
 
+    std::vector<DamageFont> m_DamageFontList;
     Interface* m_pInter_Ingame;
     Interface* m_pInter_PlayerHP;
     Interface* m_pInter_Passive;
@@ -55,9 +58,11 @@ public:
     Interface* m_pInter_Skill_W;
     Interface* m_pInter_Skill_E;
     Interface* m_pInter_Skill_R;
-    Interface* m_pMini;
+
+    Camera* m_pMinimapCamera = nullptr;
+    RenderTarget m_RenderTargetMinimap;
     Interface* m_pInter_Minimap;
-    RenderTarget m_Minimap;
-    std::vector<DamageFont> m_DamageFontList;
+    InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
+    InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
 };
 

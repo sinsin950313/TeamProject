@@ -22,7 +22,9 @@ public:
 	virtual bool Release() override;
 	virtual bool SetAttribute(TVector3 vPos, TRectangle rc);
 	virtual bool SetAttribute(TVector3 vPos = { 0, 0, 0 }, TVector3 vScale = { 1, 1, 1 }, TColor color = { 1, 1, 1, 1 });
+	virtual void SetNormalizeDesc();
 	virtual bool SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV);
+	virtual void ToNDC();
 	virtual void AddChild(Interface* pUI)
 	{
 		m_pChildList.push_back(pUI);
@@ -38,9 +40,7 @@ public:
 
 		m_pTexture = m_pTexList[index];
 	}
-public:
-	void	ToNDC();
-	void	AlignToPos(TVector3 vPos = { 0, 0, 0 });
+
 public:
 	E_UIState	m_CurrentState;
 
@@ -49,7 +49,7 @@ public:
 	std::vector<Interface*> m_rcDrawList;
 	std::vector<Interface*> m_pChildList;
 	std::vector<Texture*>	m_pTexList;
-
+	TVector2 m_NormalizeDesc;
 public:
 	bool	m_isUsing = true;
 public:
@@ -58,9 +58,10 @@ public:
 class InterfaceBillboard : public Interface
 {
 public:
-	virtual bool Frame() override;
+	virtual void SetNormalizeDesc() override;
 	virtual void CreateBillboardMatrix();
 	virtual bool Render() override;
+	virtual void ToNDC() override;
 };
 
 struct DamageFont
@@ -79,6 +80,7 @@ struct DamageFont
 		m_v1 = v1;
 	}
 };
+
 class InterfaceDamage : public InterfaceBillboard
 {
 public:
@@ -87,6 +89,23 @@ public:
 public:
 	void SetDamageList(std::vector<DamageFont>* pDamageList);
 	std::vector<DamageFont>* m_pDamageList;
+};
+
+class InterfaceMinimap : public Interface
+{
+public:
+	//virtual bool Frame() override;
+	//virtual bool Render() override;
+	virtual void SetNormalizeDesc() override;
+	virtual void ToNDC() override;
+
+public:
+	void SetMapDesc(float fWidth, float fHeight)
+	{
+		m_MapDesc.x = fWidth;
+		m_MapDesc.y = fHeight;
+	}
+	TVector2 m_MapDesc;
 };
 
 class InterfaceWork
@@ -185,6 +204,7 @@ public:
 		if (m_fCurrent >= m_fFadeTime)
 		{
 			m_isDone = true;
+			m_fAlpha = 1.0f;
 		}
 
 		for (int i = 0; i < pInter->m_VertexList.size(); i++)
@@ -215,6 +235,7 @@ public:
 		if (m_fRemain <= 0.0f)
 		{
 			m_isDone = true;
+			m_fAlpha = 0.0f;
 		}
 
 		for (int i = 0; i < pInter->m_VertexList.size(); i++)

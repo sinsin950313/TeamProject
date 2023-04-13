@@ -35,6 +35,7 @@ public:
 public:
 	Interface* m_pGageHP;
 	Interface* m_pDamage;
+	Interface* m_pMinimapProfile;
 public:
 	virtual bool	Init();
 	virtual bool	Frame();

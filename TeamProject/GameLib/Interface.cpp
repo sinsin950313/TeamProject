@@ -117,12 +117,19 @@ bool Interface::SetAttribute(TVector3 vPos, TVector3 vScale, TColor color)
 		m_VertexList[i].c = color.ToVector4();
 	}
 
+	SetNormalizeDesc();
 	//m_ptImageSize.x = m_pTexture->m_Desc.Width;
 	//m_ptImageSize.y = m_pTexture->m_Desc.Height;
 	//_CRect rc = { 0, 0, (float)m_ptImageSize.x, (float)m_ptImageSize.y };
 	//SetUVRect(rc);
 	//SetPosition(vPos, m_Box.m_vSize);
 	return true;
+}
+
+void Interface::SetNormalizeDesc()
+{
+	m_NormalizeDesc.x = m_pTexture->m_Desc.Width / (float)g_rcClient.right * m_vScale.x;
+	m_NormalizeDesc.y = m_pTexture->m_Desc.Height / (float)g_rcClient.bottom * m_vScale.z;
 }
 
 bool    Interface::SetDrawList(TRectangle rcScaleXY, TRectangle rcScaleUV)
@@ -172,8 +179,8 @@ void	Interface::ToNDC()
 
 	/*m_VertexList;
 	m_vScale;*/
-	float width = m_pTexture->m_Desc.Width / (float)g_rcClient.right * m_vScale.x;
-	float height = m_pTexture->m_Desc.Height / (float)g_rcClient.bottom * m_vScale.y;
+	float width = m_NormalizeDesc.x;
+	float height = m_NormalizeDesc.y;
 
 	TVector3 pos = TVector3(((m_vPos.x / (float)g_rcClient.right) * 2 - 1), ((m_vPos.y / (float)g_rcClient.bottom) * 2 - 1) * -1, 0);
 	m_VertexList[0].p.x = pos.x;
@@ -204,88 +211,16 @@ void	Interface::ToNDC()
 	m_matWorld = m_matView = m_matProj = TMatrix::Identity;
 }
 
-void Interface::AlignToPos(TVector3 vPos)
+void InterfaceBillboard::SetNormalizeDesc()
 {
-	float width = m_pTexture->m_Desc.Width;
-	float height = m_pTexture->m_Desc.Height;
-
-	// 각 꼭지점의 위치를 계산합니다.
-	m_VertexList[0].p = vPos + TVector3(-width / 2.0f, height / 2.0f , 0);
-
-	m_VertexList[1].p.x = m_VertexList[0].p.x + width * m_VertexList[1].t.x;
-	m_VertexList[1].p.y = m_VertexList[0].p.y;
-
-	m_VertexList[2].p = vPos + TVector3(-width / 2.0f, -height / 2.0f , 0);
-
-	m_VertexList[3].p.x = m_VertexList[1].p.x;
-	m_VertexList[3].p.y = m_VertexList[2].p.y;
-}
-
-bool InterfaceBillboard::Frame()
-{
-	for (auto iter = m_pWorkList.begin(); iter != m_pWorkList.end();)
-	{
-		InterfaceWork* work = (*iter);
-		if (work->m_isDone)
-		{
-			iter = m_pWorkList.erase(iter);
-			if (work)
-			{
-				delete work;
-				work = nullptr;
-			}
-			continue;
-		}
-		else
-		{
-			work->Frame(this);
-			iter++;
-		}
-	}
-	//for (auto data : m_rcDrawList)
-	//{
-	//	TVector3 pos = data->m_vPos + m_vOffsetPos;
-	//	data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);
-	//	data->Frame();
-	//	for (auto work : m_pWorkList)
-	//	{
-	//		work->Frame(data);
-	//	}
-	//}
-	for (auto data : m_pChildList)
-	{
-		/*TVector3 pos = data->m_vPos + m_vOffsetPos;
-		data->SetPosition(pos, data->m_Box.m_vSize, m_vCameraPos);*/
-		data->Frame();
-	}
-	//
-	//SetPosition(m_vPos, m_Box.m_vSize, m_vCameraPos);
-	//ScreenToNDC();
-	AlignToPos();
-	UpdateVertexBuffer();
-	return true;
+	m_NormalizeDesc.x = m_pTexture->m_Desc.Width;
+	m_NormalizeDesc.y = m_pTexture->m_Desc.Height;
 }
 
 void InterfaceBillboard::CreateBillboardMatrix()
 {
-	/*TMatrix bill = m_matView.Invert();
-	bill._41 = bill._42 = bill._43 = 0.0f;
-	TQuaternion qu;
-	D3DXQuaternionRotationMatrix(&qu, &bill);
-	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, nullptr, &qu, &m_vPos);
-	UpdateConstantBuffer();
-	return;*/
 
 	TMatrix matBillBoard;
-
-	//// 뷰 매트릭스의 회전 부분만 추출합니다.
-	//TMatrix viewRotationMatrix;
-	//XMVECTOR rotation = XMVectorSet(m_matView._11, m_matView._12, m_matView._13, 0.0f);
-	//XMVECTOR up = XMVectorSet(m_matView._21, m_matView._22, m_matView._23, 0.0f);
-	//XMVECTOR direction = XMVectorSet(m_matView._31, m_matView._32, m_matView._33, 0.0f);
-
-	//// 회전 부분의 행렬을 생성합니다.
-	//XMStoreFloat4x4(&viewRotationMatrix, XMMATRIX(rotation, up, direction, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)));
 
 	matBillBoard = m_matView.Invert();
 	matBillBoard._41 = matBillBoard._42 = matBillBoard._43 = 0.0f;
@@ -303,6 +238,23 @@ bool InterfaceBillboard::Render()
 	Interface::Render();
 
 	return true;
+}
+
+void InterfaceBillboard::ToNDC()
+{
+	float width = m_NormalizeDesc.x;
+	float height = m_NormalizeDesc.y;
+
+	// 각 꼭지점의 위치를 계산합니다.
+	m_VertexList[0].p = TVector3(-width / 2.0f, height / 2.0f, 0);
+
+	m_VertexList[1].p.x = m_VertexList[0].p.x + width * m_VertexList[1].t.x;
+	m_VertexList[1].p.y = m_VertexList[0].p.y;
+
+	m_VertexList[2].p = TVector3(-width / 2.0f, -height / 2.0f, 0);
+
+	m_VertexList[3].p.x = m_VertexList[1].p.x;
+	m_VertexList[3].p.y = m_VertexList[2].p.y;
 }
 
 bool InterfaceDamage::Frame()
@@ -412,8 +364,50 @@ bool InterfaceDamage::Render()
 	return true;
 }
 
-
 void InterfaceDamage::SetDamageList(std::vector<DamageFont>* pDamageList)
 {
 	m_pDamageList = pDamageList;
+}
+
+//bool InterfaceMinimap::Frame()
+//{
+//	return false;
+//}
+//
+//bool InterfaceMinimap::Render()
+//{
+//	return false;
+//}
+
+void InterfaceMinimap::SetNormalizeDesc()
+{
+	m_NormalizeDesc.x = m_pTexture->m_Desc.Width / (float)m_MapDesc.x * m_vScale.x;
+	m_NormalizeDesc.y = m_pTexture->m_Desc.Height / (float)m_MapDesc.y * m_vScale.z;
+}
+
+void InterfaceMinimap::ToNDC()
+{
+	float width = m_NormalizeDesc.x;
+	float height = m_NormalizeDesc.y;
+
+	/*TVector3 pos = TVector3(((m_vPos.x / (float)g_rcClient.right) * 2 - 1), ((m_vPos.y / (float)g_rcClient.bottom) * 2 - 1) * -1, 0);
+	m_VertexList[0].p.x = pos.x;
+	m_VertexList[0].p.y = pos.y;
+
+	m_VertexList[1].p = m_VertexList[0].p + TVector3(width * 2 * m_VertexList[1].t.x, 0, 0);
+	m_VertexList[2].p = m_VertexList[0].p + TVector3(0, -height * 2 * m_VertexList[2].t.y, 0);
+	m_VertexList[3].p = m_VertexList[0].p + TVector3(width * 2 * m_VertexList[3].t.x, -height * 2 * m_VertexList[3].t.y, 0);*/
+
+	// 각 꼭지점의 위치를 계산합니다.
+	m_VertexList[0].p.x = m_vPos.x / (float)m_MapDesc.x + (-width / 2.0f);
+	m_VertexList[0].p.y = m_vPos.z / (float)m_MapDesc.y + (height / 2.0f);
+
+	m_VertexList[1].p.x = m_VertexList[0].p.x + width * m_VertexList[1].t.x;
+	m_VertexList[1].p.y = m_VertexList[0].p.y;
+
+	m_VertexList[2].p.x = m_vPos.x / (float)m_MapDesc.x + (-width / 2.0f);
+	m_VertexList[2].p.y = m_vPos.z / (float)m_MapDesc.y + (-height / 2.0f);
+
+	m_VertexList[3].p.x = m_VertexList[1].p.x;
+	m_VertexList[3].p.y = m_VertexList[2].p.y;
 }
