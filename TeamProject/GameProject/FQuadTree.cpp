@@ -277,6 +277,13 @@ void	FQuadTree::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
         //m_constantDataMap.matProj = XMMatrixTranspose(proj);
     }
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Transform, NULL, NULL, &m_ConstantData_Transform, NULL, NULL);
+
+    for (const auto& object : m_pAllObjectList)
+    {   
+        object->SetMatrix(matWorld, matView, matProj);
+    }
+
+    m_pSphereObject->SetMatrix(matWorld, matView, matProj);
 }
 
 void FQuadTree::Update()
@@ -302,91 +309,85 @@ void FQuadTree::Update()
 
 void	FQuadTree::PreRender()
 {
-    //m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
-    //m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
-    //m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+    m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
 
 
-    //m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
-    //m_pImmediateContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
-    //m_pImmediateContext->PSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+    m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->PSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
 
 
-    //m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
+    m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
 
-    //UINT stride = sizeof(PNCTVertex); //정점의크기
-    //UINT offset = 0;          //정점의오프셋
-    //m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer를 세팅, 1은 버퍼의갯수
-    //m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
-
-    ////for (int idx = 0; idx < m_ListTextureSplatting.size(); idx++)
-    ////    m_pImmediateContext->PSSetShaderResources(2 + idx, 1, &m_ListTextureSplatting[idx]->m_pTextureSRV);
-
-    //for (int idx = 0;  idx < m_pDrawLeafNodeList.size(); idx++)
-    //{
-    //    m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-    //    m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList를 Index로그린다
-    //    m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
-    //}
-
-    TMatrix view = TMatrix(m_ConstantData_Transform.matView);
-    TMatrix proj = TMatrix(m_ConstantData_Transform.matProj);
-    for (const auto& object : m_pAllObjectList)
-    {   
-        object->SetMatrix(nullptr, &view, &proj);
-        object->PreRender();
-    }
-
-    //m_pSphereObject->SetMatrix(nullptr, &view, &proj);
-    //m_pSphereObject->PreRender();
-}
-
-void FQuadTree::Render()
-{
-    //m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
-    //m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
-    //m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
-
-
-    //m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
-    //m_pImmediateContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
-    //m_pImmediateContext->PSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
-
-
-    //m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
-    //m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
-
-    //UINT stride = sizeof(PNCTVertex); //정점의크기
-    //UINT offset = 0;          //정점의오프셋
-    //m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer를 세팅, 1은 버퍼의갯수
-    //m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
-
-    //m_pImmediateContext->VSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
-    //m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
-    //m_pImmediateContext->PSSetShaderResources(1, 1, &m_pMaskAlphaSrv);
+    UINT stride = sizeof(PNCTVertex); //정점의크기
+    UINT offset = 0;          //정점의오프셋
+    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer를 세팅, 1은 버퍼의갯수
+    m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
 
     //for (int idx = 0; idx < m_ListTextureSplatting.size(); idx++)
     //    m_pImmediateContext->PSSetShaderResources(2 + idx, 1, &m_ListTextureSplatting[idx]->m_pTextureSRV);
 
-    //for (int idx = 0;  idx < m_pDrawLeafNodeList.size(); idx++)
-    //{
-    //    m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+    for (int idx = 0;  idx < m_pDrawLeafNodeList.size(); idx++)
+    {
+        m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-    //    m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList를 Index로그린다
-    //    m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
-    //}
+        m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList를 Index로그린다
+        m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
+    }
 
-    TMatrix view = TMatrix(m_ConstantData_Transform.matView);
-    TMatrix proj = TMatrix(m_ConstantData_Transform.matProj);
     for (const auto& object : m_pAllObjectList)
     {   
-        object->SetMatrix(nullptr, &view, &proj);
+        object->PreRender();
+    }
+
+    //m_pSphereObject->SetMatrix(nullptr, &view, &proj);
+    m_pSphereObject->PreRender();
+}
+
+void FQuadTree::Render()
+{
+    m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+
+
+    m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
+    m_pImmediateContext->PSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
+    m_pImmediateContext->PSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+
+
+    m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
+    m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
+
+    UINT stride = sizeof(PNCTVertex); //정점의크기
+    UINT offset = 0;          //정점의오프셋
+    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pMap->m_pVertexBuffer, &stride, &offset);	// VertexBuffer를 세팅, 1은 버퍼의갯수
+    m_pImmediateContext->IASetInputLayout(m_pMap->m_pVertexInputLayout);
+
+    m_pImmediateContext->VSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
+    m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTexture->m_pTextureSRV);
+    m_pImmediateContext->PSSetShaderResources(1, 1, &m_pMaskAlphaSrv);
+
+    for (int idx = 0; idx < m_ListTextureSplatting.size(); idx++)
+        m_pImmediateContext->PSSetShaderResources(2 + idx, 1, &m_ListTextureSplatting[idx]->m_pTextureSRV);
+
+    for (int idx = 0;  idx < m_pDrawLeafNodeList.size(); idx++)
+    {
+        m_pImmediateContext->IASetIndexBuffer(m_pDrawLeafNodeList[idx]->m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+        m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		//TrangleList를 Index로그린다
+        m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
+    }
+
+    for (const auto& object : m_pAllObjectList)
+    {   
         object->Render();
     }
 
     //m_pSphereObject->SetMatrix(nullptr, &view, &proj);
-    //m_pSphereObject->Render();
+    m_pSphereObject->Render();
 }
 
 void	FQuadTree::Release()
