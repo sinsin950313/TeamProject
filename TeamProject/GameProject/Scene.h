@@ -27,6 +27,9 @@ public:
 public:
     ID3D11Device* m_pd3dDevice = nullptr;// 디바이스 객체
     ID3D11DeviceContext* m_pImmediateContext = nullptr;
+
+public:
+    virtual ~Scene();
 };
 
 Scene* CreateScene(E_SCENE s_type);
