@@ -153,6 +153,7 @@ void	TrailEffect::AddTrailPos(TVector3 low, TVector3 high)
 	
 	size_t minSize = min(m_vLowCatmullRomList.size(), m_vHighCatmullRomList.size());
 	m_iCatmullRomSize = minSize * 2;
+	m_iMaxCurveSize = max(m_iMaxCurveSize, m_iCatmullRomSize);
 
 	int start = max(((m_iPos - 2) * m_iSampleNum), 0);
 	for (int i = start; i < minSize; i++)
@@ -169,7 +170,7 @@ void	TrailEffect::AddTrailPos(TVector3 low, TVector3 high)
 	}
 }
 
-void	TrailEffect::StartTrail(TMatrix* matWorld)
+void	TrailEffect::ResetTrail(TMatrix* matWorld)
 {
 	m_matWorld = *matWorld;
 	m_iPos = 0;
