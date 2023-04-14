@@ -67,5 +67,8 @@ public:
     Interface* m_pInter_Minimap;
     InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
     InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
+
+public:
+    ~SceneInGame();
 };
 

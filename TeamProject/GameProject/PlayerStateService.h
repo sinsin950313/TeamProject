@@ -136,6 +136,18 @@ namespace SSB
 		std::vector<std::string> GetLinkedList() override;
 	};
 
+	class PlayerUltimateSkillState : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerUltimateSkillState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
 	class PlayerDashState : public PlayerStateCommonMethodInterface
 	{
 	public:
