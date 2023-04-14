@@ -10,11 +10,12 @@ namespace SSB
 	const StateName kPlayerAttack2 = "Attack2";
 	const StateName kPlayerAttack3 = "Attack3";
 	const StateName kPlayerAttack4 = "Attack4";
-	const StateName kPlayerSkill1 = "Skill1";
-	const StateName kPlayerSkill2 = "Skill2";
-	const StateName kPlayerSkill3 = "Skill3";
-	const StateName kPlayerSkill4 = "Skill4";
-	const StateName kPlayerSkill5 = "Skill5";
+	const StateName kPlayerPierce = "Pierce";
+	const StateName kPlayerPierce1 = "Pierce1";
+	const StateName kPlayerPierce2 = "Pierce2";
+	const StateName kPlayerPierce3 = "Pierce3";
+	const StateName kPlayerRotate = "Rotate";
+	const StateName kPlayerUltimate = "Ultimate";
 	const StateName kPlayerDash = "Dash";
 	const StateName kPlayerDead = "Dead";
 
@@ -112,10 +113,10 @@ namespace SSB
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerSkillState1 : public PlayerStateCommonMethodInterface
+	class PlayerSkillPierceState : public PlayerStateCommonMethodInterface
 	{
 	public:
-		PlayerSkillState1(float transferRequireTime);
+		PlayerSkillPierceState();
 
 	public:
 		void StateDecision() override;
@@ -124,10 +125,46 @@ namespace SSB
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class PlayerSkillState2 : public PlayerStateCommonMethodInterface
+	class PlayerSkillPierceState1 : public PlayerStateCommonMethodInterface
 	{
 	public:
-		PlayerSkillState2(float transferRequireTime);
+		PlayerSkillPierceState1(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerSkillPierceState2 : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerSkillPierceState2(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerSkillPierceState3 : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerSkillPierceState3(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerSkillRotate : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerSkillRotate(float transferRequireTime);
 
 	public:
 		void StateDecision() override;

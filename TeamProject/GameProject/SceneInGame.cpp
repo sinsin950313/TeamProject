@@ -398,8 +398,8 @@ void    SceneInGame::CharacterLoad()
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill1, 8);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill2, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
 		Player::GetInstance().Init();
 		Player::GetInstance().Scale(0.01f);
 
@@ -599,16 +599,34 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kPlayerAttack4, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerSkillState1(1.0f);
-			state->Initialize_SetStateAnimation("Skill1");
-			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill1.mp3"));
-			manager->Initialize_RegisterState(SSB::kPlayerSkill1, state);
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState();
+			state->Initialize_SetStateAnimation("");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill1.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerPierce, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerSkillState2(1.0f);
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState1(1.0f);
 			state->Initialize_SetStateAnimation("Skill2");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill2.mp3"));
-			manager->Initialize_RegisterState(SSB::kPlayerSkill2, state);
+			manager->Initialize_RegisterState(SSB::kPlayerPierce1, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState2(1.0f);
+			state->Initialize_SetStateAnimation("Skill3");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill2.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerPierce2, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState3(1.0f);
+			state->Initialize_SetStateAnimation("Skill4");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill2.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerPierce3, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillRotate(1.0f);
+			state->Initialize_SetStateAnimation("Skill1");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill1.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerRotate, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerDashState(0.5f);

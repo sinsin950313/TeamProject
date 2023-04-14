@@ -54,4 +54,15 @@ public:
 public:
 	TVector3 m_DashDirection;
     bool m_IsDash = false;
+
+private:
+    const int m_kMaxUltimateSkillStackCount = 3;
+    int m_UltimateSkillStack = 0;
+    float m_stackingTimeStamp = 0.0f;
+
+public:
+    void UltimateSkillStacking(float timeStamp);
+    int GetUltimateSkillStack();
+    bool IsAbleToCallUltimateSkill();
+    void CallUltimateSkill();
 };

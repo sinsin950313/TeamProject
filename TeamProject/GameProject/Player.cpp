@@ -146,3 +146,32 @@ void Player::Damage(int damage)
 		Character::Damage(damage);
 	}
 }
+
+void Player::UltimateSkillStacking(float timeStampe)
+{
+	if (m_stackingTimeStamp != timeStampe)
+	{
+		m_stackingTimeStamp = timeStampe;
+		m_UltimateSkillStack = min(m_kMaxUltimateSkillStackCount, m_UltimateSkillStack + 1);
+	}
+
+	if (m_UltimateSkillStack == m_kMaxUltimateSkillStackCount)
+	{
+		m_UltimateSkillStack = 0;
+	}
+}
+
+int Player::GetUltimateSkillStack()
+{
+	return m_UltimateSkillStack;
+}
+
+bool Player::IsAbleToCallUltimateSkill()
+{
+	return m_kMaxUltimateSkillStackCount == m_UltimateSkillStack;
+}
+
+void Player::CallUltimateSkill()
+{
+	m_UltimateSkillStack = 0;
+}
