@@ -36,6 +36,8 @@ float4 PS(VS_out input) : SV_Target
 	float4 vColor = g_txTexA.Sample(g_SampleWrap , input.t);
 	if(vColor.r < 0.1)
 		discard;
+	if(input.c.w < 0.1)
+		discard;
 	return vColor * input.c;
 }
 
