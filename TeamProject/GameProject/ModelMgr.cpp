@@ -11,7 +11,7 @@ HRESULT ModelMgr::Load(std::string name, std::string anim, SSB::Model** retModel
 {
 	if (retModel)
 	{
-		*retModel = nullptr;
+		delete* retModel;
 	}
 	else if (!retModel)
 	{

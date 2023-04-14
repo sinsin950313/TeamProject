@@ -8,6 +8,7 @@ m_pMap:
 m_dwNumRows:65
 m_dwNumColumns:65
 m_fCellDistance:2
+m_iTileCount:1
 m_ListVertex:
 vertex:position:-64 5.19155 64, normal:-0.222501 0.959261 0.174101, color:1 1 1 1, texcoord:0 0
 vertex:position:-62 5.65545 64, normal:-0.220264 0.959116 0.177706, color:1 1 1 1, texcoord:0.015625 0
