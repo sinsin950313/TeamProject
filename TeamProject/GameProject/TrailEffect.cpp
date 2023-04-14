@@ -73,7 +73,6 @@ bool TrailEffect::Frame()
 	// m_iTransPos의 값을 0으로 초기화 해줄 부분이 필요
 	// 
 
-	m_VertexList = m_VertexCatmullRomList;
 	int iHalfSize = m_iCatmullRomSize / 2;
 	for (int i = 0; i < iHalfSize; i++)
 	{
@@ -88,10 +87,7 @@ bool TrailEffect::Frame()
 		m_VertexCatmullRomList[low].c.w -= g_fSecondPerFrame * 4;
 		m_VertexCatmullRomList[high].c.w -= g_fSecondPerFrame * 4;
 	}
-	for (int i = m_iCatmullRomSize; i < m_iMaxCurveSize; i++)
-	{
-		m_VertexCatmullRomList[i].c.w -= g_fSecondPerFrame * 4;
-	}
+	m_VertexList = m_VertexCatmullRomList;
 
 	return BaseObject::Frame();
 }

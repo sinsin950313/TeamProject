@@ -178,7 +178,7 @@ namespace SSB
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 			{
 				//pTrail->m_VertexList[i].c.w = 0.0f;
-				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
 		}
 	}
@@ -254,7 +254,7 @@ namespace SSB
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 			{
 				//pTrail->m_VertexList[i].c.w = 0.0f;
-				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
 		}
 	}
@@ -332,7 +332,7 @@ namespace SSB
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 			{
 				//pTrail->m_VertexList[i].c.w = 0.0f;
-				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
 		}
 	}
@@ -408,7 +408,7 @@ namespace SSB
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 			{
 				//pTrail->m_VertexList[i].c.w = 0.0f;
-				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
 		}
 	}
@@ -477,7 +477,7 @@ namespace SSB
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 			{
 				//pTrail->m_VertexList[i].c.w = 0.0f;
-				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
 
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
@@ -571,7 +571,7 @@ namespace SSB
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 			{
 				//pTrail->m_VertexList[i].c.w = 0.0f;
-				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
 
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
@@ -731,7 +731,7 @@ namespace SSB
 		for (int i = 0; i < pTrail->m_VertexList.size(); i++)
 		{
 			//pTrail->m_VertexList[i].c.w = 0.0f;
-			pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 		}
 	}
 	StateTransferPriority PlayerDeadState::GetPriority()
