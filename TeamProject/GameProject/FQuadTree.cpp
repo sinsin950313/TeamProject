@@ -277,6 +277,13 @@ void	FQuadTree::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
         //m_constantDataMap.matProj = XMMatrixTranspose(proj);
     }
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Transform, NULL, NULL, &m_ConstantData_Transform, NULL, NULL);
+
+    for (const auto& object : m_pAllObjectList)
+    {   
+        object->SetMatrix(matWorld, matView, matProj);
+    }
+
+    m_pSphereObject->SetMatrix(matWorld, matView, matProj);
 }
 
 void FQuadTree::Update()
@@ -330,11 +337,8 @@ void	FQuadTree::PreRender()
         m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
     }
 
-    //TMatrix view = TMatrix(m_constantDataMap.matView);
-    //TMatrix proj = TMatrix(m_constantDataMap.matProj);
     for (const auto& object : m_pAllObjectList)
     {   
-        //object->SetMatrix(nullptr, &view, &proj);
         object->PreRender();
     }
 
@@ -377,15 +381,12 @@ void FQuadTree::Render()
         m_pImmediateContext->DrawIndexed(m_pDrawLeafNodeList[idx]->m_IndexList.size(), 0, 0);
     }
 
-    TMatrix view = TMatrix(m_ConstantData_Transform.matView);
-    TMatrix proj = TMatrix(m_ConstantData_Transform.matProj);
     for (const auto& object : m_pAllObjectList)
     {   
-        object->SetMatrix(nullptr, &view, &proj);
         object->Render();
     }
 
-    m_pSphereObject->SetMatrix(nullptr, &view, &proj);
+    //m_pSphereObject->SetMatrix(nullptr, &view, &proj);
     m_pSphereObject->Render();
 }
 

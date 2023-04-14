@@ -176,7 +176,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState1::Action()
@@ -249,7 +252,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState2::Action()
@@ -324,7 +330,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState3::Action()
@@ -397,7 +406,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState4::Action()
@@ -463,7 +475,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
 				1, 0, 0, 0,
@@ -554,7 +569,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
 				1, 0, 0, 0,
@@ -711,7 +729,10 @@ namespace SSB
 		// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 		auto pTrail = Player::GetInstance().m_pTrail;
 		for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-			pTrail->m_VertexList[i].c.w = 0.0f;
+		{
+			//pTrail->m_VertexList[i].c.w = 0.0f;
+			pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+		}
 	}
 	StateTransferPriority PlayerDeadState::GetPriority()
 	{

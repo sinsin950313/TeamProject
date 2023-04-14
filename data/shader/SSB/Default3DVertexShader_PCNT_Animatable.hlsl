@@ -6,11 +6,13 @@ VertexOutput_PCNT VS(Vertex_PCNT input)
 {
 	VertexOutput_PCNT output = (VertexOutput_PCNT)0;
 
+	float4 localNormal = float4(input.Normal.xyz, 0);
+
 	float4 pos = 0;
 	float4 normal = 0;
 	{
 		pos = mul(input.Position, MeshAnimationMatrix[MeshIndex]);
-		normal = mul(input.Normal, MeshAnimationMatrix[MeshIndex]);
+		normal = mul(localNormal, MeshAnimationMatrix[MeshIndex]);
 	}
 
 	float4 world = mul(pos, WorldTransformMatrix);
@@ -26,5 +28,5 @@ VertexOutput_PCNT VS(Vertex_PCNT input)
 	output.t = input.Diffuse;
 
 	return output;
-	
+
 }

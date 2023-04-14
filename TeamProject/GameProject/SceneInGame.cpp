@@ -212,62 +212,62 @@ bool    SceneInGame::Render()
 		m_pBoss->Render();
 	}
 
-	if (m_pDebugBox)
-	{
-		//for (auto box : I_Collision.GetMapCollisionList())
-		//{
-		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//    m_pDebugBox->SetBox(box);
-		//    m_pDebugBox->SetColor({1, 0, 0, 1});
-		//    m_pDebugBox->UpdateBuffer();
-		//    m_pDebugBox->Render();
-		//}
+	//if (m_pDebugBox)
+	//{
+	//	//for (auto box : I_Collision.GetMapCollisionList())
+	//	//{
+	//	//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	//	//    m_pDebugBox->SetBox(box);
+	//	//    m_pDebugBox->SetColor({1, 0, 0, 1});
+	//	//    m_pDebugBox->UpdateBuffer();
+	//	//    m_pDebugBox->Render();
+	//	//}
 
-		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		TColor color = TColor(0, 0, 1, 1);
-		for (T_BOX* box : m_debugBoxList)
-		{
-			m_pDebugBox->SetBox(*box);
-			m_pDebugBox->SetColor(color);
-			m_pDebugBox->UpdateBuffer();
-			m_pDebugBox->Render();
-		}
+	//	m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	//	TColor color = TColor(0, 0, 1, 1);
+	//	for (T_BOX* box : m_debugBoxList)
+	//	{
+	//		m_pDebugBox->SetBox(*box);
+	//		m_pDebugBox->SetColor(color);
+	//		m_pDebugBox->UpdateBuffer();
+	//		m_pDebugBox->Render();
+	//	}
 
-		T_BOX b;
-		b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
-		m_pDebugBox->SetBox(b);
-		m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-		m_pDebugBox->UpdateBuffer();
-		//m_pDebugBox->Render();
+	//	T_BOX b;
+	//	b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+	//	m_pDebugBox->SetBox(b);
+	//	m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+	//	m_pDebugBox->UpdateBuffer();
+	//	//m_pDebugBox->Render();
 
-		TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
-		TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
-		float ex = D3DXVec3Length(&l);
+	//	TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
+	//	TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
+	//	float ex = D3DXVec3Length(&l);
 
-		TVector3 axis[3];
-		axis[0] = -l;
-		D3DXVec3Normalize(&axis[0], &axis[0]);
+	//	TVector3 axis[3];
+	//	axis[0] = -l;
+	//	D3DXVec3Normalize(&axis[0], &axis[0]);
 
-		TVector3 B;
-		D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
-		if (B == TVector3::Zero)
-		{
-			D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
-		}
-		TVector3 C;
-		D3DXVec3Cross(&C, &axis[0], &B);
+	//	TVector3 B;
+	//	D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
+	//	if (B == TVector3::Zero)
+	//	{
+	//		D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
+	//	}
+	//	TVector3 C;
+	//	D3DXVec3Cross(&C, &axis[0], &B);
 
-		b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
-		m_pDebugBox->SetBox(b);
-		m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-		m_pDebugBox->UpdateBuffer();
-		//m_pDebugBox->Render();
+	//	b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
+	//	m_pDebugBox->SetBox(b);
+	//	m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+	//	m_pDebugBox->UpdateBuffer();
+	//	//m_pDebugBox->Render();
 
-		//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
-		//T_BOX box;
-		//box.CreateOBBBox();
-		//m_pDebugBox->Render();
-	}
+	//	//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
+	//	//T_BOX box;
+	//	//box.CreateOBBBox();
+	//	//m_pDebugBox->Render();
+	//}
 
 
 	Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
