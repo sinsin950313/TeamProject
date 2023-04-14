@@ -13,6 +13,8 @@ PixelOutput PS(PixelShaderInput_PCNT input)
 	output.Position = input.World;
 	output.Normal = input.Normal;
 	output.Color = Diffuse.Sample(Sampler, input.Diffuse);
+	if(output.Color.w < 0.1)
+		discard;
 
 	return output;
 }
