@@ -569,17 +569,17 @@ namespace SSB
 
 		if (!(0 < m_pCharacter->GetRemainSkillCoolTime(kPlayerPierce)))
 		{
-			if (Player::GetInstance().GetUltimateSkillStack() == 0)
-			{
-				ReserveNextTransferName(kPlayerPierce1);
-				SetTransfer();
-			}
-			if (Player::GetInstance().GetUltimateSkillStack() == 1)
-			{
-				ReserveNextTransferName(kPlayerPierce2);
-				SetTransfer();
-			}
-			if (Player::GetInstance().GetUltimateSkillStack() == 2)
+			//if (Player::GetInstance().GetUltimateSkillStack() == 0)
+			//{
+			//	ReserveNextTransferName(kPlayerPierce1);
+			//	SetTransfer();
+			//}
+			//if (Player::GetInstance().GetUltimateSkillStack() == 1)
+			//{
+			//	ReserveNextTransferName(kPlayerPierce2);
+			//	SetTransfer();
+			//}
+			//if (Player::GetInstance().GetUltimateSkillStack() == 2)
 			{
 				ReserveNextTransferName(kPlayerPierce3);
 				SetTransfer();
@@ -592,10 +592,6 @@ namespace SSB
 	}
 	void PlayerSkillPierceState::Action()
 	{
-		if (!_blackboard->Initialized)
-		{
-			Player::GetInstance().ActiveSkill(kPlayerPierce);
-		}
 	}
 	StateTransferPriority PlayerSkillPierceState::GetPriority()
 	{
@@ -741,6 +737,7 @@ namespace SSB
 	{
 		if (!_blackboard->Initialized)
 		{
+			Player::GetInstance().ActiveSkill(kPlayerPierce);
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
 				1, 0, 0, 0,
 				0, 1, 0, 0,
@@ -836,6 +833,7 @@ namespace SSB
 	{
 		if (!_blackboard->Initialized)
 		{
+			Player::GetInstance().ActiveSkill(kPlayerPierce);
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
 				1, 0, 0, 0,
 				0, 1, 0, 0,
@@ -914,33 +912,15 @@ namespace SSB
 				//pTrail->m_VertexList[i].c.w = 0.0f;
 				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
-
-			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 100, -200, 1
-			);
-
-			Player::GetInstance().m_AttackBox.fExtent[0] = 1;
-			Player::GetInstance().m_AttackBox.fExtent[1] = 1;
-			Player::GetInstance().m_AttackBox.fExtent[2] = 1;
 		}
 	}
 	void PlayerSkillPierceState3::Action()
 	{
 		if (!_blackboard->Initialized)
 		{
-			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 100, -200, 1
-			);
-
-			Player::GetInstance().m_AttackBox.fExtent[0] = 0.5f;
-			Player::GetInstance().m_AttackBox.fExtent[1] = 0.5f;
-			Player::GetInstance().m_AttackBox.fExtent[2] = 2.0f;
+			Player::GetInstance().ActiveSkill(kPlayerPierce);
+			Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
+			Player::GetInstance().ShotTornado(_blackboard->StateTImeStamp);
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -955,27 +935,6 @@ namespace SSB
 			Player::GetInstance().m_pTrail->AddTrailPos(
 				Player::GetInstance().GetCurSocketPos("WeaponLow"), Player::GetInstance().GetCurSocketPos("WeaponHigh"));
 			timer = 0.0f;
-		}
-
-		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
-		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
-		{
-			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
-			{
-				auto list = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);
-				for (auto obj : list)
-				{
-					if (obj != m_pCharacter)
-					{
-						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
-						Damage(_blackboard, obj, m_pCharacter->m_Damage * 2);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
-					}
-				}
-			}
 		}
 	}
 	StateTransferPriority PlayerSkillPierceState3::GetPriority()

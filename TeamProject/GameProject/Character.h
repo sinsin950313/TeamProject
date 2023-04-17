@@ -67,7 +67,7 @@ public:
 	XMVECTOR m_vOldDirection;
 
 public:
-	void	SetMap(MeshMap* pMap);
+	virtual void	SetMap(MeshMap* pMap);
 	MeshMap* m_pMap;
 public:
 	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);

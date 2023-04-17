@@ -101,7 +101,22 @@ void GS(in point VS_OUT vIn[1], inout TriangleStream<G_OUT> vOut)
 	//vOut.Append(vVertex);
 }
 
-float4 PS(VS_OUT input) : SV_Target
+struct PixelOutput
 {
-	return input.c;
+	float4 Position : SV_TARGET0;
+	float4 Normal : SV_TARGET1;
+	float4 Color : SV_TARGET2;
+};
+
+PixelOutput PS(VS_OUT input)
+{
+	PixelOutput output = (PixelOutput)0;
+
+	output.Position = input.p;
+	output.Normal = float4(0, 0, 0, 0);
+	output.Color = input.c;
+	if(output.Color.w < 0.1)
+		discard;
+
+	return output;
 }
