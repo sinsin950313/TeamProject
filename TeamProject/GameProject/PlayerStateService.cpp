@@ -210,6 +210,14 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
+						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
+						{
+							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							if (currentHp <= 0)
+								currentHp = 0;
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -286,9 +294,15 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
+						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
+						{
+							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							if (currentHp <= 0)
+								currentHp = 0;
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
 			}
@@ -364,6 +378,14 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
+						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
+						{
+							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							if (currentHp <= 0)
+								currentHp = 0;
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -440,9 +462,15 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
+						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
+						{
+							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							if (currentHp <= 0)
+								currentHp = 0;
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
 			}
@@ -539,7 +567,15 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
-						Damage(_blackboard, obj, m_pCharacter->m_Damage * 0.5);
+						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
+						{
+							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							if (currentHp <= 0)
+								currentHp = 0;
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+						}
+						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
 			}
@@ -634,9 +670,15 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
-						Damage(_blackboard, obj, m_pCharacter->m_Damage * 2);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
-						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
+						{
+							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							if (currentHp <= 0)
+								currentHp = 0;
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+						}
+						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
 			}

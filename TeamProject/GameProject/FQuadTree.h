@@ -91,6 +91,7 @@ public:
 
 	std::wstring m_szVSPath;
 	Shader* m_pVertexShader;
+	
 	std::wstring m_szPSPath;
 	Shader* m_pPixelShader;
 

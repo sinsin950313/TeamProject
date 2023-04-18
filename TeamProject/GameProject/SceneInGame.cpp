@@ -39,10 +39,6 @@ SceneInGame::~SceneInGame()
 {
 }
 
-SceneInGame::~SceneInGame()
-{
-}
-
 void SceneInGame::DataLoad()
 {
     SSB::DirectionalLight* light = new SSB::DirectionalLight;
@@ -216,11 +212,6 @@ bool    SceneInGame::Render()
 	{
 		enemy->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		enemy->Render();
-		enemy->m_pGageHP->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
-		enemy->m_pGageHP->Render();
-
-		enemy->m_pDamage->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
-		enemy->m_pDamage->Render();
 	}
 
 	/*if (m_pBoss)
@@ -290,8 +281,6 @@ bool    SceneInGame::Render()
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//Player::GetInstance().m_pTrail->Render();
 
-	RenderMinimap();
-
 	//m_pInter_Ingame->Render();
 
     // Camera의 위치정보가 필요하므로 지우지 말 것
@@ -310,6 +299,17 @@ bool SceneInGame::PostRender()
 
     Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().m_pTrail->Render();
+
+	RenderMinimap();
+
+	for (auto enemy : m_Enemies)
+	{
+		enemy->m_pGageHP->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
+		enemy->m_pGageHP->Render();
+
+		enemy->m_pDamage->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
+		enemy->m_pDamage->Render();
+	}
     m_pInter_Ingame->Render();
 
 	return true;
@@ -505,6 +505,7 @@ void    SceneInGame::CharacterLoad()
 
 	//	m_pBoss->SetMap(m_pQuadTree->m_pMap);
 	//}
+	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Object.hlsl", L"psmain", &m_pMinimapPS_Object);
 }
 
 void    SceneInGame::UiLoad()
@@ -802,21 +803,44 @@ void    SceneInGame::MapLoad()
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
 	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
+
+	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Map.hlsl", L"psmain", &m_pMinimapPS_Quadtree);
 }
 
 void SceneInGame::RenderMinimap()
 {
+	Shader* pPSOrigin_Map = nullptr;
+	std::map<Object*, Shader*> pPSOrigin_Objects;
+	Shader* pPSOrigin_SkyDome = nullptr;
 	// OMGetRenderTargets를 사용시 Interface의 참조수가 하나씩 증가한다고 함. 현 구조에서 이 코드의 필요 용도를 알 수 없으므로 일단 주석처리하지만 필요하다면 이를 고려하여 다시 구성할 것.
 	// https://learn.microsoft.com/ko-kr/windows/win32/api/d3d11/nf-d3d11-id3d11devicecontext-omgetrendertargets
-	//m_pImmediateContext->OMGetRenderTargets(1, &m_RenderTargetMinimap.m_pOldRTV, &m_RenderTargetMinimap.m_pOldDSV);
-
+	/*m_pImmediateContext->OMGetRenderTargets(1, &m_RenderTargetMinimap.m_pOldRTV, &m_RenderTargetMinimap.m_pOldDSV);*/
 	UINT viewportCount = 1;
-	m_pImmediateContext->RSGetViewports(&viewportCount, m_RenderTargetMinimap.m_vpOld);
+	m_RenderTargetMinimap.m_pOldRTVS = m_pCurrentRenderTargetViews;
+	m_RenderTargetMinimap.m_iOldRTVCount = m_iCurrentRTVCount;
+	m_RenderTargetMinimap.m_pOldDSV = m_pCurrentDepthStencilView;
+	m_RenderTargetMinimap.m_vpOld[0] = *m_pCurrentViewport;
 	if(m_RenderTargetMinimap.Begin(m_pImmediateContext))
 	{
+		Shader* pPSOrigin_Map = m_pQuadTree->m_pPixelShader;
+		m_pQuadTree->m_pPixelShader = m_pMinimapPS_Quadtree;
+		for (auto iter : m_pQuadTree->m_pAllObjectList)
+		{
+			pPSOrigin_Objects.insert(std::make_pair(iter, iter->m_pModel->_ps));
+			iter->m_pModel->_ps = m_pMinimapPS_Object;
+		}
+		/*pPSOrigin_SkyDome = m_pQuadTree->m_pSphereObject->m_pShader;
+		m_pQuadTree->m_pSphereObject->m_pShader = m_pMinimapPS_Object;*/
+
 		m_pQuadTree->SetMatrix(nullptr, &m_pMinimapCamera->m_matView, &m_pMinimapCamera->m_matProj);
 		m_pQuadTree->Render();
 
+		m_pQuadTree->m_pPixelShader = pPSOrigin_Map;
+		for (auto iter : m_pQuadTree->m_pAllObjectList)
+		{
+			iter->m_pModel->_ps = pPSOrigin_Objects.find(iter)->second;
+		}
+		//m_pQuadTree->m_pSphereObject->m_pShader = pPSOrigin_SkyDome;
 		/*Player::GetInstance().m_pMinimapProfile->SetAttribute(Player::GetInstance().GetPosition(), { 0.2f, 0.2f, 0.2f });
 		for (auto enemy : m_Enemies)
 		{
@@ -860,7 +884,6 @@ void SceneInGame::RenderMinimap()
 				m_pDebugBox->Render();
 			}
 		}
-		
 		m_RenderTargetMinimap.End(m_pImmediateContext);
 	}
 	if (m_RenderTargetMinimap.m_pSRV)

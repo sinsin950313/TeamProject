@@ -14,6 +14,8 @@ public:
 	D3D11_VIEWPORT	m_Viewport;
 
 	ID3D11RenderTargetView* m_pOldRTV;
+	ID3D11RenderTargetView** m_pOldRTVS;
+	UINT m_iOldRTVCount;
 	ID3D11DepthStencilView* m_pOldDSV;
 	D3D11_VIEWPORT	m_vpOld[D3D11_VIEWPORT_AND_SCISSORRECT_MAX_INDEX] = { 0, };
 

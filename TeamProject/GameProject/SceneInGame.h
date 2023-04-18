@@ -66,6 +66,10 @@ public:
 
     Camera* m_pMinimapCamera = nullptr;
     RenderTarget m_RenderTargetMinimap;
+
+    Shader* m_pMinimapPS_Quadtree;
+    Shader* m_pMinimapPS_Object;
+
     Interface* m_pInter_Minimap;
     InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
     InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();

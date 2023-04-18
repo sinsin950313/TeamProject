@@ -108,7 +108,7 @@ namespace SSB
 		if (blackboard->DamagedCharacters.find(target) == blackboard->DamagedCharacters.end())
 		{
 			target->Damage(damage);
-			blackboard->DamagedCharacters.insert(&Player::GetInstance());
+			blackboard->DamagedCharacters.insert(target);
 		}
 	}
 }

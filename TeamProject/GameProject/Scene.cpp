@@ -65,6 +65,14 @@ bool    Scene::Release()
     return true;
 }
 
+void Scene::SetCurrentRTT(ID3D11RenderTargetView** pRTVS, UINT iRtvCount, ID3D11DepthStencilView* pDSV, D3D11_VIEWPORT* pViewport)
+{
+    m_pCurrentRenderTargetViews = pRTVS;
+    m_iCurrentRTVCount = iRtvCount;
+    m_pCurrentDepthStencilView = pDSV;
+    m_pCurrentViewport = pViewport;
+}
+
 Scene::~Scene()
 {
 }
