@@ -78,7 +78,7 @@ private:
         TVector3 m_Position;
         TVector3 m_Direction;
         float m_TimeStamp;
-        float m_Cooltime = 1;
+        float m_Livetime = 3;
         bool m_IsAlive = false;
         float m_Speed = 20;
         float m_Damage = 10;
@@ -86,13 +86,16 @@ private:
     public:
         Tornado(Character* owner);
 
+    private:
+        std::vector<Character*> GetHitList();
+
     public:
         void Initialize_SetPosition(TVector3 position);
         void Initialize_SetDirection(TVector3 direction);
         void Initialize_SetTimestamp(float timestamp);
         bool IsHit();
-        std::vector<Character*> GetHitList();
         bool IsFinished();
+        std::vector<Character*> GetAirborneList();
 
     public:
         bool Init() override;
@@ -108,4 +111,6 @@ private:
 public:
 	void	SetMap(MeshMap* pMap) override;
     void ShotTornado(float timestamp);
+    bool IsUlitmateSkillCallable();
+    std::vector<Character*> GetUltimateSkillTargetList();
 };

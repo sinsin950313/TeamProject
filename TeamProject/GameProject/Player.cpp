@@ -228,6 +228,16 @@ void Player::ShotTornado(float timestamp)
 	m_Tornado.Init();
 }
 
+bool Player::IsUlitmateSkillCallable()
+{
+	return !m_Tornado.GetAirborneList().empty();
+}
+
+std::vector<Character*> Player::GetUltimateSkillTargetList()
+{
+	return m_Tornado.GetAirborneList();
+}
+
 Player::Tornado::Tornado(Character* owner) : m_Owner(owner)
 {
 	m_pDebugBox = new DebugBox;
@@ -269,7 +279,17 @@ std::vector<Character*> Player::Tornado::GetHitList()
 
 bool Player::Tornado::IsFinished()
 {
-	return g_fGameTimer > m_TimeStamp + m_Cooltime;
+	return g_fGameTimer > m_TimeStamp + m_Livetime;
+}
+
+std::vector<Character*> Player::Tornado::GetAirborneList()
+{
+	std::vector<Character*> ret;
+	for (auto elem : m_DamagedCharacters)
+	{
+		ret.push_back(elem);
+	}
+	return ret;
 }
 
 bool Player::Tornado::Init()
@@ -303,11 +323,25 @@ bool Player::Tornado::Frame()
 			{
 				m_DamagedCharacters.insert(obj);
 				obj->Damage(m_Damage);
+				obj->SetAirborne();
 				//obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
 				//obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_Damage, obj->m_pDamage, 0.5f, 10.0f));
-				// Make Airborne
 			}
 		}
+	}
+
+	std::vector<Character*> erased;
+	for (auto obj : m_DamagedCharacters)
+	{
+		if (!obj->IsAirborne())
+		{
+			erased.push_back(obj);
+		}
+	}
+
+	for (auto erase : erased)
+	{
+		m_DamagedCharacters.erase(erase);
 	}
 
 	return true;

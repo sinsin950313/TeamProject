@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Player.h"
 #include "CollisionMgr.h"
+#include "CameraTPS.h"
 
 namespace SSB
 {
@@ -81,6 +82,11 @@ namespace SSB
 
 		Decision_IsSkill(kPlayerRotate, 'E', 0);
 
+		if (Player::GetInstance().IsUlitmateSkillCallable())
+		{
+			Decision_IsSkill(kPlayerUltimate, 'R', 0);
+		}
+
 		Decision_IsTransfer();
 	}
 	void PlayerIdleState::Action()
@@ -88,7 +94,7 @@ namespace SSB
 	}
 	std::vector<std::string> PlayerIdleState::GetLinkedList()
 	{
-		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle };
+		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate };
 	}
 	void PlayerMoveState::StateDecision()
 	{
@@ -103,6 +109,11 @@ namespace SSB
 		Decision_IsSkill(kPlayerPierce, 'Q', 0);
 
 		Decision_IsSkill(kPlayerRotate, 'E', 0);
+
+		if (Player::GetInstance().IsUlitmateSkillCallable())
+		{
+			Decision_IsSkill(kPlayerUltimate, 'R', 0);
+		}
 
 		Decision_IsTransfer();
 	}
@@ -146,7 +157,7 @@ namespace SSB
 	}
 	std::vector<std::string> PlayerMoveState::GetLinkedList()
 	{
-		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle };
+		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate };
 	}
 	PlayerAttackState1::PlayerAttackState1(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
 	{
@@ -900,6 +911,11 @@ namespace SSB
 
 		Decision_IsTransfer();
 
+		if (Player::GetInstance().IsUlitmateSkillCallable())
+		{
+			Decision_IsSkill(kPlayerUltimate, 'R', 0);
+		}
+
 		if (IsTransfer())
 		{
 			// 어택 타이머 > 0, isAttack != true, 애니메이션의 끝 알림등의 조건이 추가될 필요 있음
@@ -943,6 +959,64 @@ namespace SSB
 	}
 	std::vector<std::string> PlayerSkillPierceState3::GetLinkedList()
 	{
-		return { kPlayerDead, kPlayerIdle, kPlayerDash };
+		return { kPlayerDead, kPlayerIdle, kPlayerDash, kPlayerUltimate };
+	}
+	PlayerUltimateSkillState::PlayerUltimateSkillState(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
+	{
+	}
+	void PlayerUltimateSkillState::StateDecision()
+	{
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			XMVECTOR tmp;
+			XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
+			m_pCharacter->MoveChar(tmp, world);
+
+			((CameraTPS*)((Player*)m_pCharacter)->m_pMainCamera)->m_CharCamDist = 10;
+
+			for (auto elem : _blackboard->DamagedCharacters)
+			{
+				elem->Damage(100);
+			}
+
+			ReserveNextTransferName(kPlayerIdle);
+			SetTransfer();
+		}
+	}
+	void PlayerUltimateSkillState::Action()
+	{
+		Player* player = static_cast<Player*>(m_pCharacter);
+		if (!_blackboard->Initialized)
+		{
+			Player::GetInstance().ActiveSkill(kPlayerPierce);
+
+			((CameraTPS*)player->m_pMainCamera)->m_CharCamDist = 30;
+
+			auto targets = player->GetUltimateSkillTargetList();
+			Player::GetInstance().m_vPos = targets[0]->GetPosition();
+			Player::GetInstance().m_vPos.y = 0;
+
+			auto list = player->GetUltimateSkillTargetList();
+			for (auto elem : list)
+			{
+				_blackboard->DamagedCharacters.insert(elem);
+			}
+		}
+
+		auto list = player->GetUltimateSkillTargetList();
+		for (auto elem : list)
+		{
+			elem->SetPoundState(true);
+			elem->m_vPos.y = 3;
+		}
+	}
+	StateTransferPriority PlayerUltimateSkillState::GetPriority()
+	{
+		return PlayerSkillTypePriority;
+	}
+	std::vector<std::string> PlayerUltimateSkillState::GetLinkedList()
+	{
+		return { kPlayerIdle };
 	}
 }
+;

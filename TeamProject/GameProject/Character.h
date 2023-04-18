@@ -122,5 +122,22 @@ public:
 
 public:
 	void SetCurrentAnimation(SSB::AnimationName animationName);
+
+private:
+	float _airborneTimeStamp = 0;
+	const float _kAirborneActiveTime = 1.0f;
+	bool _airborne = false;
+
+public:
+	void SetAirborne();
+	bool IsAirborne();
+	float GetAirborneActiveTime();
+
+private:
+	bool _pound = false;
+
+public:
+	void SetPoundState(bool state);
+	bool IsPoundState();
 };
 

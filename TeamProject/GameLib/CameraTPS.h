@@ -7,6 +7,7 @@ public:
     virtual bool Frame();
 
 public:
+	float m_CharCamDist = 10.0f;
     TVector3* m_vFollowPos = nullptr;
 };
 

@@ -400,6 +400,7 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 8);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 30);
 		Player::GetInstance().Init();
 		Player::GetInstance().Scale(0.01f);
 
@@ -559,6 +560,7 @@ void    SceneInGame::UiLoad()
 
 void    SceneInGame::FSMLoad()
 {
+	const float kUltimateSkillActiveTime = 1.3f;
 	// Register State Manager
 	{
 		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
@@ -629,6 +631,12 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kPlayerRotate, state);
 		}
 		{
+			SSB::CharacterState* state = new SSB::PlayerUltimateSkillState(kUltimateSkillActiveTime);
+			state->Initialize_SetStateAnimation("Skill5");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill3.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerUltimate, state);
+		}
+		{
 			SSB::CharacterState* state = new SSB::PlayerDashState(0.5f);
 			state->Initialize_SetStateAnimation("Dash");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoDash.mp3"));
@@ -651,6 +659,16 @@ void    SceneInGame::FSMLoad()
 			SSB::CharacterState* state = new SSB::EnemyNPCMobIdleState;
 			state->Initialize_SetStateAnimation("Idle");
 			manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobAirBorneState;
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobAirborne, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobPoundState(kUltimateSkillActiveTime);
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobPound, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
@@ -699,6 +717,16 @@ void    SceneInGame::FSMLoad()
 			state->Initialize_SetStateAnimation("Angry");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossAngry.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobAngry, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::BossMobAirBorneState;
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kBossMobAirborne, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::BossMobPoundState(kUltimateSkillActiveTime);
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kBossMobPound, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::BossMobMoveState;

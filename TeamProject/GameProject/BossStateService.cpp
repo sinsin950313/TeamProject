@@ -14,6 +14,12 @@ namespace SSB
             SetTransfer();
 		}
 
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
+
 		if (TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition()) <= mob->GetSpotRange())
 		{
             ReserveNextTransferName(kBossMobMove);
@@ -25,7 +31,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobIdleState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobMove };
+		return { kBossMobDead, kBossMobMove, kBossMobAirborne };
 	}
 	BossMobAngryState::BossMobAngryState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
@@ -105,6 +111,12 @@ namespace SSB
             SetTransfer();
 		}
 
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
+
 		if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
 		{
 			ReserveNextTransferName(kBossMobAttack1);
@@ -137,7 +149,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobMoveState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobAttack1, kBossMobDashStart, kBossMobIdle };
+		return { kBossMobDead, kBossMobAttack1, kBossMobDashStart, kBossMobIdle, kBossMobAirborne };
 	}
 	void BossMobDashStartState::StateDecision()
 	{
@@ -150,6 +162,12 @@ namespace SSB
 
 			XMStoreFloat3(&mob->m_DashDirection, dir);
 		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
 
 		if (mob->IsDead())
 		{
@@ -175,6 +193,12 @@ namespace SSB
             SetTransfer();
 		}
 
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
+
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
             ReserveNextTransferName(kBossMobIdle);
@@ -199,6 +223,12 @@ namespace SSB
             ReserveNextTransferName(kBossMobDead);
             SetTransfer();
 		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
@@ -300,6 +330,12 @@ namespace SSB
             SetTransfer();
 		}
 
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
+
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
@@ -358,7 +394,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobAttack1State::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack2, kBossMobIdle };
+		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack2, kBossMobIdle, kBossMobAirborne };
 	}
 	void BossMobAttack2State::Action()
 	{
@@ -412,6 +448,12 @@ namespace SSB
 			ReserveNextTransferName(kBossMobDead);
 			SetTransfer();
 		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
@@ -504,6 +546,12 @@ namespace SSB
 			SetTransfer();
 		}
 
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kBossMobAirborne);
+			SetTransfer();
+        }
+
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			ReserveNextTransferName(kBossMobDashEnd);
@@ -549,7 +597,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobAttack2State::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack1, kBossMobIdle };
+		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack1, kBossMobIdle, kBossMobAirborne };
 	}
 	BossMobDashStartState::BossMobDashStartState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
@@ -564,7 +612,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobDashStartState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobDash };
+		return { kBossMobDead, kBossMobDash, kBossMobAirborne };
 	}
 	BossMobDashState::BossMobDashState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
@@ -575,7 +623,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobDashState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobDashEnd };
+		return { kBossMobDead, kBossMobDashEnd, kBossMobAirborne };
 	}
 	BossMobDashEndState::BossMobDashEndState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
@@ -586,7 +634,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobDashEndState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobIdle };
+		return { kBossMobDead, kBossMobIdle, kBossMobAirborne };
 	}
 	BossMobSkill1State::BossMobSkill1State(float transferRequireTime)
 	{
@@ -598,7 +646,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobSkill1State::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobAttack1, kBossMobMove, kBossMobIdle };
+		return { kBossMobDead, kBossMobAttack1, kBossMobMove, kBossMobIdle, kBossMobAirborne };
 	}
 	BossMobSpawnState::BossMobSpawnState(float transferRequireTime)
 	{
@@ -612,4 +660,72 @@ namespace SSB
 	{
 		return { kBossMobDead, kBossMobAngry };
 	}
+    void BossMobAirBorneState::StateDecision()
+    {
+        if (m_pCharacter->IsPoundState())
+        {
+			ReserveNextTransferName(kBossMobPound);
+			SetTransfer();
+        }
+
+        if(!m_pCharacter->IsAirborne())
+		{
+			ReserveNextTransferName(kBossMobIdle);
+			SetTransfer();
+		}
+    }
+    void BossMobAirBorneState::Action()
+    {
+        if (!m_pCharacter->IsPoundState())
+        {
+            float halfTransferTime = m_pCharacter->GetAirborneActiveTime() * 0.5f;
+            float elapseTime = g_fGameTimer - _blackboard->StateTImeStamp;
+            float height;
+            if (elapseTime > halfTransferTime)
+            {
+                // Going Down
+                height = _airborneHeight * (1.0f - (elapseTime - halfTransferTime) / halfTransferTime);
+            }
+            else
+            {
+                //Going Up
+                height = _airborneHeight * (elapseTime / halfTransferTime);
+            }
+            m_pCharacter->m_vPos.y = height;
+        }
+    }
+    StateTransferPriority BossMobAirBorneState::GetPriority()
+    {
+        return BossAirborneTypePriority;
+    }
+    std::vector<std::string> BossMobAirBorneState::GetLinkedList()
+    {
+        return { kBossMobIdle, kBossMobPound };
+    }
+	BossMobPoundState::BossMobPoundState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+    {
+    }
+    void BossMobPoundState::StateDecision()
+    {
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			XMVECTOR tmp;
+			XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
+			m_pCharacter->MoveChar(tmp, world);
+
+			ReserveNextTransferName(kBossMobIdle);
+			SetTransfer();
+		}
+    }
+    void BossMobPoundState::Action()
+    {
+    }
+    float BossMobPoundState::GetTransferRequireTime()
+    {
+        return _transferRequireTime;
+    }
+    std::vector<std::string> BossMobPoundState::GetLinkedList()
+    {
+        return { kBossMobIdle };
+    }
 }
