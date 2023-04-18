@@ -49,12 +49,12 @@ struct MRTOutput
 
 float4 GetTextureColor(float2 uv)
 {
-	float4 texelColor = TextureColor.Sample(TextureSamplerColor, uv);
+	float4 texelColor = TextureColor.Sample(TextureSamplerColor, uv * tileCount);
 	float4 mask = g_txMaskTex.Sample(TextureSamplerColor, uv);
-	float4 splatTex2 = g_txTex2.Sample(TextureSamplerColor, uv);
-	float4 splatTex3 = g_txTex3.Sample(TextureSamplerColor, uv);
-	float4 splatTex4 = g_txTex4.Sample(TextureSamplerColor, uv);
-	float4 splatTex5 = g_txTex5.Sample(TextureSamplerColor, uv);
+	float4 splatTex2 = g_txTex2.Sample(TextureSamplerColor, uv * tileCount);
+	float4 splatTex3 = g_txTex3.Sample(TextureSamplerColor, uv * tileCount);
+	float4 splatTex4 = g_txTex4.Sample(TextureSamplerColor, uv * tileCount);
+	float4 splatTex5 = g_txTex5.Sample(TextureSamplerColor, uv * tileCount);
 
 	// Calculate weights based on mask
 	float4 weights = mask.rgba;

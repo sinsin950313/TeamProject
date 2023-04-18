@@ -22,9 +22,9 @@ public:
 
     virtual bool    Init();
     virtual bool    Frame();
-    virtual bool PreRender() override;
+    virtual bool    PreRender() override;
     virtual bool    Render();
-    virtual bool PostRender() override;
+    virtual bool    PostRender() override;
     virtual bool    Release();
 
 private:
@@ -33,11 +33,13 @@ private:
 public:
     Camera* m_pMainCamera = nullptr;
 
-
+    bool m_bInteractNextStage = false;
     bool m_Win = false;
     bool m_Defeat = false;
 
-    std::vector<SSB::EnemyNPCMob*> m_Enemies;
+    //std::vector<SSB::EnemyNPCMob*> m_Enemies;
+    std::vector<Character*> m_Enemies;
+    UINT m_iMobDeadCount = 0;
     //T_BOX       testBox;
 
 
@@ -69,6 +71,8 @@ public:
     InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
 
 public:
-    ~SceneInGame();
+
+    virtual ~SceneInGame();
+
 };
 

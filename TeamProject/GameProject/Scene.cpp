@@ -14,6 +14,9 @@ Scene* CreateScene(E_SCENE s_type)
     case E_SCENE::S_INGAME:
         pScene = new SceneInGame();
         break;
+    case E_SCENE::S_INGAME2:
+        pScene = new SceneInGame();
+        break;
     case E_SCENE::S_END:
         pScene = new SceneEnd();
         break;
@@ -60,8 +63,4 @@ bool Scene::PostRender()
 bool    Scene::Release()
 {
     return true;
-}
-
-Scene::~Scene()
-{
 }

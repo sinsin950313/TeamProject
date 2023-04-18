@@ -75,6 +75,7 @@ bool	SceneMgr::Frame()
             (*pScene) = nullptr;
 
             m_pSceneArray[m_CurScene] = CreateScene(m_CurScene);
+            m_pSceneArray[m_CurScene]->m_Scene = m_CurScene;
             m_pSceneArray[m_CurScene]->SetDevice(m_pd3dDevice, m_pImmediateContext);
             // Data Load Func() < Thread
 

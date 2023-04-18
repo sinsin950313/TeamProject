@@ -71,7 +71,7 @@ FQuadTree::FQuadTree(MeshMap* pMap, ID3D11Device* pDevice, ID3D11DeviceContext* 
 
     m_ConstantData_Map.worldSize = XMFLOAT2(m_pMap->m_dwNumColumns, m_pMap->m_dwNumRows);
     m_ConstantData_Map.cellDistance = m_pMap->m_fCellDistance;
-    //m_ConstantData_Map.tileCount
+    m_ConstantData_Map.tileCount = m_pMap->m_iTileCount;
     m_pConstantBuffer_Map = DX::CreateConstantBuffer(pDevice, &m_ConstantData_Map, sizeof(m_ConstantData_Map));
 
     m_pConstantBuffer_Light = DX::CreateConstantBuffer(pDevice, &m_ConstantData_Light, sizeof(m_ConstantData_Light));
@@ -739,7 +739,7 @@ namespace MAPLOAD
 		std::wstring szPSPath;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
-        std::vector<Transform> spawnList;
+        std::vector<std::pair<std::string, Transform>> spawnList;
 		std::unordered_set<Object*> allObjectList;
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
@@ -863,12 +863,12 @@ namespace MAPLOAD
                         UINT iStackCount;
 						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" || specifyMode == "OBJECT_TRIGGER" || specifyMode == "OBJECT_SPAWN")
 						{
-							// pos 값을 추출합니다.
-							size_t pos_start = texturesStream.str().find("m_fLength:") + strlen("m_fLength:");
-							size_t pos_end = texturesStream.str().find(",", pos_start);
-							std::string pos_str = texturesStream.str().substr(pos_start, pos_end - pos_start);
-							std::istringstream pos_stream(pos_str);
-							pos_stream >> length;
+							// length 값을 추출합니다.
+							size_t length_start = texturesStream.str().find("m_fLength:") + strlen("m_fLength:");
+							size_t length_end = texturesStream.str().find(",", length_start);
+							std::string length_str = texturesStream.str().substr(length_start, length_end - length_start);
+							std::istringstream length_stream(length_str);
+                            length_stream >> length;
 						}
                         else if (specifyMode == "OBJECT_SKYDOME")
                         {
@@ -894,7 +894,7 @@ namespace MAPLOAD
                             stack_stream >> iStackCount;
                         }
 
-                        if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" || specifyMode == "OBJECT_TRIGGER")
+                        if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" )
                         {
                             T_BOX mePeedBox;
 
@@ -920,9 +920,13 @@ namespace MAPLOAD
                             mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
                             I_Collision.AddMapCollisionBox(mePeedBox);
                         }
+                        else if (specifyMode == "OBJECT_TRIGGER")
+                        {
+                            //spawnList.push_back(transform);
+                        }
                         else if (specifyMode == "OBJECT_SPAWN")
                         {
-                            spawnList.push_back(transform);
+                            spawnList.push_back(std::make_pair(strName, transform));
                         }
                         else if (specifyMode == "OBJECT_SKYDOME")
                         {
@@ -1044,9 +1048,9 @@ namespace MAPLOAD
 		pQuadTree->SetShader(szVSPath, pVertexShader, szPSPath, pPixelShader);
 		//pQuadTree->SetDrawMode(DRAW_MODE::MODE_SOLID);
 
-        for (const auto& transform : spawnList)
+        for (const auto& spawn : spawnList)
         {
-            pQuadTree->m_EnemySpawnList.push_back(transform);
+            pQuadTree->m_EnemySpawnList.push_back(spawn);
         }
 
 		for (const auto& obj : allObjectList)

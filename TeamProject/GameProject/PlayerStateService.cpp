@@ -505,10 +505,12 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 1;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 1;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 1;
+			
 		}
 	}
 	void PlayerSkillRotate::Action()
 	{
+		
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().ActiveSkill(kPlayerRotate);
@@ -523,13 +525,14 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 2;
+			Player::GetInstance().m_pSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerRotate)));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
-
+		
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;
 		if (timer > 0.02f)
@@ -580,17 +583,17 @@ namespace SSB
 
 		if (!(0 < m_pCharacter->GetRemainSkillCoolTime(kPlayerPierce)))
 		{
-			//if (Player::GetInstance().GetUltimateSkillStack() == 0)
-			//{
-			//	ReserveNextTransferName(kPlayerPierce1);
-			//	SetTransfer();
-			//}
-			//if (Player::GetInstance().GetUltimateSkillStack() == 1)
-			//{
-			//	ReserveNextTransferName(kPlayerPierce2);
-			//	SetTransfer();
-			//}
-			//if (Player::GetInstance().GetUltimateSkillStack() == 2)
+			if (Player::GetInstance().GetUltimateSkillStack() == 0)
+			{
+				ReserveNextTransferName(kPlayerPierce1);
+				SetTransfer();
+			}
+			if (Player::GetInstance().GetUltimateSkillStack() == 1)
+			{
+				ReserveNextTransferName(kPlayerPierce2);
+				SetTransfer();
+			}
+			if (Player::GetInstance().GetUltimateSkillStack() == 2)
 			{
 				ReserveNextTransferName(kPlayerPierce3);
 				SetTransfer();
@@ -629,6 +632,8 @@ namespace SSB
 	}
 	void PlayerDashState::Action()
 	{
+		
+
 		Player* player = static_cast<Player*>(m_pCharacter);
 		player->m_IsDash = true;
 
@@ -639,6 +644,7 @@ namespace SSB
 
 		if (!_blackboard->Initialized)
 		{
+			Player::GetInstance().m_pSkillDash->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerDash)));
 			player->ActiveSkill(kPlayerDash);
 
 			XMVECTOR desiredCharDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -670,7 +676,6 @@ namespace SSB
 			}
 			player->m_DashDirection = TVector3(XMVectorGetX(desiredCharDir), XMVectorGetY(desiredCharDir), XMVectorGetZ(desiredCharDir));
 		}
-
 		player->m_fSpeed = 20;
 		XMMATRIX world = XMLoadFloat4x4(&player->m_matWorld);
 		XMVECTOR dir = player->m_DashDirection;
