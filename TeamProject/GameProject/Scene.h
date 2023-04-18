@@ -26,11 +26,13 @@ public:
     virtual E_SCENE     NextScene() = 0;
 
 public:
-    ID3D11Device* m_pd3dDevice = nullptr;// ����̽� ��ü
+    ID3D11Device* m_pd3dDevice = nullptr;// µð¹ÙÀÌ½º °´Ã¼
     ID3D11DeviceContext* m_pImmediateContext = nullptr;
+
     E_SCENE m_Scene = S_TITLE;
 public:
     virtual ~Scene() { };
+
 };
 
 Scene* CreateScene(E_SCENE s_type);

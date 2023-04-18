@@ -32,7 +32,7 @@ namespace SSB
 
 	void Screen::ClearRenderTarget()
 	{
-		const FLOAT color[] = { 0, 0, 0, 0 };
+		const FLOAT color[] = { 0.5, 0.5, 0.5, 1 };
 		m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, color);
 		m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}

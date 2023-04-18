@@ -71,6 +71,8 @@ public:
     InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
 
 public:
+
     virtual ~SceneInGame();
+
 };
 

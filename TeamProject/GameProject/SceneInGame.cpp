@@ -39,6 +39,10 @@ SceneInGame::~SceneInGame()
 {
 }
 
+SceneInGame::~SceneInGame()
+{
+}
+
 void SceneInGame::DataLoad()
 {
     SSB::DirectionalLight* light = new SSB::DirectionalLight;
@@ -286,7 +290,7 @@ bool    SceneInGame::Render()
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//Player::GetInstance().m_pTrail->Render();
 
-	//RenderMinimap();
+	RenderMinimap();
 
 	//m_pInter_Ingame->Render();
 
@@ -571,7 +575,8 @@ void    SceneInGame::UiLoad()
 	pInter_HP_Enemy->SetAttribute(TVector3(544, 35, 0));
 	m_pInter_Ingame->AddChild(pInter_HP_Enemy);
 
-	//m_RenderTargetMinimap.Create(m_pd3dDevice, m_pImmediateContext, 300, 300);
+	m_RenderTargetMinimap.Create(m_pd3dDevice, m_pImmediateContext, 300, 300);
+
 	m_pInter_Minimap = new Interface();
 	m_pInter_Minimap->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/minimap.dds");
 	m_pInter_Minimap->SetAttribute(TVector3(952, 778, 0));
@@ -801,7 +806,10 @@ void    SceneInGame::MapLoad()
 
 void SceneInGame::RenderMinimap()
 {
-	m_pImmediateContext->OMGetRenderTargets(1, &m_RenderTargetMinimap.m_pOldRTV, &m_RenderTargetMinimap.m_pOldDSV);
+	// OMGetRenderTargets를 사용시 Interface의 참조수가 하나씩 증가한다고 함. 현 구조에서 이 코드의 필요 용도를 알 수 없으므로 일단 주석처리하지만 필요하다면 이를 고려하여 다시 구성할 것.
+	// https://learn.microsoft.com/ko-kr/windows/win32/api/d3d11/nf-d3d11-id3d11devicecontext-omgetrendertargets
+	//m_pImmediateContext->OMGetRenderTargets(1, &m_RenderTargetMinimap.m_pOldRTV, &m_RenderTargetMinimap.m_pOldDSV);
+
 	UINT viewportCount = 1;
 	m_pImmediateContext->RSGetViewports(&viewportCount, m_RenderTargetMinimap.m_vpOld);
 	if(m_RenderTargetMinimap.Begin(m_pImmediateContext))

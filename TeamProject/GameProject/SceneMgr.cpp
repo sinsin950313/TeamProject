@@ -137,7 +137,7 @@ bool SceneMgr::PostRender()
     if (!m_isChangingScene)
         (*m_pCurrentScene)->PostRender();
 
-    m_pFade->Render();
+    //m_pFade->Render();
     return true;
 }
 

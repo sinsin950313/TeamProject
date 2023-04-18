@@ -73,7 +73,6 @@ bool TrailEffect::Frame()
 	// m_iTransPos의 값을 0으로 초기화 해줄 부분이 필요
 	// 
 
-	m_VertexList = m_VertexCatmullRomList;
 	int iHalfSize = m_iCatmullRomSize / 2;
 	for (int i = 0; i < iHalfSize; i++)
 	{
@@ -88,6 +87,7 @@ bool TrailEffect::Frame()
 		m_VertexCatmullRomList[low].c.w -= g_fSecondPerFrame * 4;
 		m_VertexCatmullRomList[high].c.w -= g_fSecondPerFrame * 4;
 	}
+	m_VertexList = m_VertexCatmullRomList;
 
 	return BaseObject::Frame();
 }
@@ -153,6 +153,7 @@ void	TrailEffect::AddTrailPos(TVector3 low, TVector3 high)
 	
 	size_t minSize = min(m_vLowCatmullRomList.size(), m_vHighCatmullRomList.size());
 	m_iCatmullRomSize = minSize * 2;
+	m_iMaxCurveSize = max(m_iMaxCurveSize, m_iCatmullRomSize);
 
 	int start = max(((m_iPos - 2) * m_iSampleNum), 0);
 	for (int i = start; i < minSize; i++)
@@ -169,7 +170,7 @@ void	TrailEffect::AddTrailPos(TVector3 low, TVector3 high)
 	}
 }
 
-void	TrailEffect::StartTrail(TMatrix* matWorld)
+void	TrailEffect::ResetTrail(TMatrix* matWorld)
 {
 	m_matWorld = *matWorld;
 	m_iPos = 0;

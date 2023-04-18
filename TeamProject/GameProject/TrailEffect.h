@@ -12,7 +12,7 @@ public:
 	virtual bool PostRender();
 
 	void	AddTrailPos(TVector3 low, TVector3 high);
-	void	StartTrail(TMatrix* matWorld);
+	void	ResetTrail(TMatrix* matWorld);
 
 public:	
 	const int		m_iCPSize = 100;
@@ -28,6 +28,7 @@ public:
 
 	std::vector<Vertex>		m_VertexCatmullRomList;
 	int									m_iCatmullRomSize;
+	int									m_iMaxCurveSize;
 };
 
 static void	InterpolateCatmullRom(const std::vector<TVector3>& controlPos, std::vector<TVector3>* CatmullRomList, size_t controlSize, int numSamples);

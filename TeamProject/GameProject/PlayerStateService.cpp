@@ -176,14 +176,17 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState1::Action()
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -249,14 +252,17 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState2::Action()
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -324,14 +330,17 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState3::Action()
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -397,14 +406,17 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 		}
 	}
 	void PlayerAttackState4::Action()
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
 		static float timer = 0.0f;
@@ -463,7 +475,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
 				1, 0, 0, 0,
@@ -500,7 +515,7 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 		
 		static float timer = 0.0f;
@@ -557,7 +572,10 @@ namespace SSB
 			// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 			auto pTrail = Player::GetInstance().m_pTrail;
 			for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-				pTrail->m_VertexList[i].c.w = 0.0f;
+			{
+				//pTrail->m_VertexList[i].c.w = 0.0f;
+				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+			}
 
 			Player::GetInstance().m_AttackBoxLocalMatrix = TMatrix(
 				1, 0, 0, 0,
@@ -593,7 +611,7 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
-			Player::GetInstance().m_pTrail->StartTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;
@@ -717,7 +735,10 @@ namespace SSB
 		// 현재의 애니메이션이 끝났나 안끝났나를 체크해야함
 		auto pTrail = Player::GetInstance().m_pTrail;
 		for (int i = 0; i < pTrail->m_VertexList.size(); i++)
-			pTrail->m_VertexList[i].c.w = 0.0f;
+		{
+			//pTrail->m_VertexList[i].c.w = 0.0f;
+			//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
+		}
 	}
 	StateTransferPriority PlayerDeadState::GetPriority()
 	{

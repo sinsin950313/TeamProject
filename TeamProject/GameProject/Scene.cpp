@@ -64,3 +64,7 @@ bool    Scene::Release()
 {
     return true;
 }
+
+Scene::~Scene()
+{
+}
