@@ -15,6 +15,7 @@ namespace SSB
 	const StateName kPlayerPierce2 = "Pierce2";
 	const StateName kPlayerPierce3 = "Pierce3";
 	const StateName kPlayerRotate = "Rotate";
+	const StateName kPlayerDrink = "Drink";
 	const StateName kPlayerUltimate = "Ultimate";
 	const StateName kPlayerDash = "Dash";
 	const StateName kPlayerDead = "Dead";
@@ -177,6 +178,18 @@ namespace SSB
 	{
 	public:
 		PlayerUltimateSkillState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerDrinkSkillState : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerDrinkSkillState(float transferRequireTime);
 
 	public:
 		void StateDecision() override;

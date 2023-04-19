@@ -28,6 +28,8 @@ namespace SSB
 		blackboard->DamagedCharacters.clear();
 		blackboard->StateTImeStamp = g_fGameTimer;
 		blackboard->Initialized = false;
+		blackboard->Damaged = false;
+		blackboard->HealthPoint = 0;
 	}
 	void CharacterStateManager::Initialize_RegisterState(StateName name, CharacterState* state)
 	{

@@ -143,6 +143,7 @@ namespace SSB
                 if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
                 {
                     Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                    Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
                 }
             }
         }
@@ -250,7 +251,7 @@ namespace SSB
                 if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
                 {
                     Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-                    Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax, 1.0f));
+                    Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
                 }
             }
         }

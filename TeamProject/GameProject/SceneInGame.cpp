@@ -397,18 +397,22 @@ void    SceneInGame::CharacterLoad()
 	{
 		Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
 		I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
-		Player::GetInstance().m_pMainCamera = m_pMainCamera;
-		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
 		//Idle, Attack1, Attack2, Attack3, Move, Dead
-		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
-		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
-		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 8);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 30);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDrink, 30);
 		Player::GetInstance().Init();
+	}
+
+	{
+		Player::GetInstance().m_pMainCamera = m_pMainCamera;
+		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
+		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
+		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Scale(0.01f);
 
 		m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
@@ -665,6 +669,12 @@ void    SceneInGame::FSMLoad()
 			state->Initialize_SetStateAnimation("Skill5");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill3.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerUltimate, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerDrinkSkillState(1.0f);
+			state->Initialize_SetStateAnimation("Drink");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoDrink.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerDrink, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerDashState(0.5f);

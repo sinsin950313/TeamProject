@@ -82,6 +82,8 @@ namespace SSB
 
 		Decision_IsSkill(kPlayerRotate, 'E', 0);
 
+		Decision_IsSkill(kPlayerDrink, 'F', 0);
+
 		if (Player::GetInstance().IsUlitmateSkillCallable())
 		{
 			Decision_IsSkill(kPlayerUltimate, 'R', 0);
@@ -94,7 +96,7 @@ namespace SSB
 	}
 	std::vector<std::string> PlayerIdleState::GetLinkedList()
 	{
-		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate };
+		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate, kPlayerDrink };
 	}
 	void PlayerMoveState::StateDecision()
 	{
@@ -109,6 +111,8 @@ namespace SSB
 		Decision_IsSkill(kPlayerPierce, 'Q', 0);
 
 		Decision_IsSkill(kPlayerRotate, 'E', 0);
+
+		Decision_IsSkill(kPlayerDrink, 'F', 0);
 
 		if (Player::GetInstance().IsUlitmateSkillCallable())
 		{
@@ -157,7 +161,7 @@ namespace SSB
 	}
 	std::vector<std::string> PlayerMoveState::GetLinkedList()
 	{
-		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate };
+		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate, kPlayerDrink };
 	}
 	PlayerAttackState1::PlayerAttackState1(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
 	{
@@ -222,7 +226,7 @@ namespace SSB
 					if (obj != m_pCharacter)
 					{
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
 						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
@@ -300,7 +304,7 @@ namespace SSB
 					if (obj != m_pCharacter)
 					{
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
 						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
@@ -378,7 +382,7 @@ namespace SSB
 					if (obj != m_pCharacter)
 					{
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
 						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
@@ -456,7 +460,7 @@ namespace SSB
 					if (obj != m_pCharacter)
 					{
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
 						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
@@ -555,7 +559,7 @@ namespace SSB
 					if (obj != m_pCharacter)
 					{
 						Damage(_blackboard, obj, m_pCharacter->m_Damage * 0.5);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
 						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
@@ -794,7 +798,7 @@ namespace SSB
 					{
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 						Damage(_blackboard, obj, m_pCharacter->m_Damage * 2);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
 						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
@@ -890,7 +894,7 @@ namespace SSB
 					{
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 						Damage(_blackboard, obj, m_pCharacter->m_Damage * 2);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
 						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
@@ -1020,6 +1024,53 @@ namespace SSB
 		return PlayerSkillTypePriority;
 	}
 	std::vector<std::string> PlayerUltimateSkillState::GetLinkedList()
+	{
+		return { kPlayerIdle };
+	}
+	PlayerDrinkSkillState::PlayerDrinkSkillState(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
+	{
+	}
+	void PlayerDrinkSkillState::StateDecision()
+	{
+		if (_blackboard->Damaged)
+		{
+			ReserveNextTransferName(kPlayerIdle);
+			SetTransfer();
+		}
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			ReserveNextTransferName(kPlayerIdle);
+			SetTransfer();
+		}
+
+		if (IsTransfer())
+		{
+			if (!_blackboard->Damaged)
+			{
+				m_pCharacter->m_HealthPoint = min(m_pCharacter->m_HealthPoint + 30, m_pCharacter->m_kHealthPointMax);
+				m_pCharacter->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)m_pCharacter->m_HealthPoint / m_pCharacter->m_kHealthPointMax, 1.0f));
+			}
+		}
+	}
+	void PlayerDrinkSkillState::Action()
+	{
+		if (!_blackboard->Initialized)
+		{
+			Player::GetInstance().ActiveSkill(kPlayerDrink);
+			_blackboard->HealthPoint = m_pCharacter->m_HealthPoint;
+		}
+
+		if (_blackboard->HealthPoint != m_pCharacter->m_HealthPoint)
+		{
+			_blackboard->Damaged = true;
+		}
+	}
+	StateTransferPriority PlayerDrinkSkillState::GetPriority()
+	{
+		return PlayerSkillTypePriority;
+	}
+	std::vector<std::string> PlayerDrinkSkillState::GetLinkedList()
 	{
 		return { kPlayerIdle };
 	}
