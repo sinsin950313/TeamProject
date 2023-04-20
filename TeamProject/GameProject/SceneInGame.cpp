@@ -671,7 +671,7 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kPlayerUltimate, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerDrinkSkillState(1.0f);
+			SSB::CharacterState* state = new SSB::PlayerDrinkSkillState(7.0f);
 			state->Initialize_SetStateAnimation("Drink");
 			//state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoDrink.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerDrink, state);
