@@ -1050,7 +1050,10 @@ namespace MAPLOAD
 
         for (const auto& spawn : spawnList)
         {
-            pQuadTree->m_EnemySpawnList.push_back(spawn);
+            if (spawn.first == "Player")
+                pQuadTree->m_PlayerSpawnPoint = spawn;
+            else
+                pQuadTree->m_EnemySpawnList.push_back(spawn);
         }
 
 		for (const auto& obj : allObjectList)

@@ -62,7 +62,6 @@ void SceneInGame::DataLoad()
 	FSMLoad();
 
 	CharacterLoad();
-
 }
 
 
@@ -156,7 +155,8 @@ bool    SceneInGame::Frame()
 	for (auto enemy : m_Enemies)
 	{
 		enemy->Frame();
-		enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.005, 0.01, 0.01});
+		if(typeid(*enemy->m_pGageHP) == typeid(InterfaceBillboard))
+			enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.005, 0.01, 0.01});
 		enemy->m_pGageHP->Frame();
 
 		enemy->m_pDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2.5f, enemy->m_vPos.z }, { 0.01, 0.01, 0.01 });
@@ -304,7 +304,8 @@ bool SceneInGame::PostRender()
 
 	for (auto enemy : m_Enemies)
 	{
-		enemy->m_pGageHP->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
+		if (typeid(*enemy->m_pGageHP) == typeid(InterfaceBillboard))
+			enemy->m_pGageHP->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
 		enemy->m_pGageHP->Render();
 
 		enemy->m_pDamage->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
@@ -395,6 +396,7 @@ void    SceneInGame::CameraLoad()
 
 void    SceneInGame::CharacterLoad()
 {
+	std::string PlayerStr = "Player";
 	SSB::ObjectScriptIO io;
 	std::string filename = "Yasuo";
 	if (!Player::GetInstance().m_pModel)
@@ -412,7 +414,9 @@ void    SceneInGame::CharacterLoad()
 		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 
 		//Idle, Attack1, Attack2, Attack3, Move, Dead
-		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
+		XMFLOAT3 playerSpawnPos;
+		XMStoreFloat3(&playerSpawnPos, m_pQuadTree->m_PlayerSpawnPoint.second.position);
+		Player::GetInstance().Initialize_SetPosition(TVector3(playerSpawnPos));
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Scale(0.01f);
@@ -431,7 +435,6 @@ void    SceneInGame::CharacterLoad()
 	/*if(m_Scene == S_INGAME)*/
 	{
 		SSB::ObjectScriptIO io;
-
 		std::string mobStr = "Alistar";
 		std::string bossStr = "Herald";
 
@@ -466,9 +469,19 @@ void    SceneInGame::CharacterLoad()
 			enemy->Scale(0.01f);
 
 			enemy->SetMap(m_pQuadTree->m_pMap);
-
-			enemy->m_pGageHP = new InterfaceBillboard();
-			enemy->m_pGageHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
+			if (m_pQuadTree->m_EnemySpawnList[i].first == mobStr)
+			{
+				enemy->m_pGageHP = new InterfaceBillboard();
+				enemy->m_pGageHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
+			}
+			else
+			{
+				m_pInter_BossHP = new Interface();
+				m_pInter_BossHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
+				m_pInter_BossHP->SetAttribute(TVector3(544, 35, 0));
+				//m_pInter_Ingame->AddChild(m_pInter_BossHP);
+				enemy->m_pGageHP = m_pInter_BossHP;
+			}
 
 			InterfaceDamage* pDamage = new InterfaceDamage();
 			pDamage->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
@@ -571,10 +584,10 @@ void    SceneInGame::UiLoad()
 	m_pInter_PlayerHP->SetAttribute(TVector3(686, 856, 0));
 	m_pInter_Ingame->AddChild(m_pInter_PlayerHP);
 
-	Interface* pInter_HP_Enemy = new Interface();
-	pInter_HP_Enemy->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
-	pInter_HP_Enemy->SetAttribute(TVector3(544, 35, 0));
-	m_pInter_Ingame->AddChild(pInter_HP_Enemy);
+	/*m_pInter_BossHP = new Interface();
+	m_pInter_BossHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
+	m_pInter_BossHP->SetAttribute(TVector3(544, 35, 0));
+	m_pInter_Ingame->AddChild(m_pInter_BossHP);*/
 
 	m_RenderTargetMinimap.Create(m_pd3dDevice, m_pImmediateContext, 300, 300);
 
@@ -798,7 +811,7 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-	m_pQuadTree = m_Scene == S_INGAME ? MAPLOAD::OpenMap(L"../../data/map/map_normal_1_2.map", m_pd3dDevice, m_pImmediateContext) : MAPLOAD::OpenMap(L"../../data/map/map_boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
+	m_pQuadTree = m_Scene == S_INGAME ? MAPLOAD::OpenMap(L"../../data/map/map_normal_1_3.map", m_pd3dDevice, m_pImmediateContext) : MAPLOAD::OpenMap(L"../../data/map/map_boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
@@ -870,6 +883,8 @@ void SceneInGame::RenderMinimap()
 			color = TColor(1, 0, 0, 1);
 			for (auto enemy : m_Enemies)
 			{
+				if (enemy->IsDead())
+					continue;
 				box.CreateOBBBox(5.0f, 5.0f, 5.0f, enemy->GetPosition());
 				m_pDebugBox->SetBox(box);
 				m_pDebugBox->SetColor(color);
