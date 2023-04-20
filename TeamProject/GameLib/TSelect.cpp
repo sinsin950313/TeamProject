@@ -5,7 +5,6 @@ bool T_PLANE::CreatePlane(TVector3 v0, TVector3 v1, TVector3 v2)
 {
 	TVector3 vEdge0 = v1 - v0;
 	TVector3 vEdge1 = v2 - v0;
-	TVector3 vNormal;
 	D3DXVec3Cross(&vNormal, &vEdge0, &vEdge1);
 	D3DXVec3Normalize(&vNormal, &vNormal);
 
@@ -36,7 +35,14 @@ void T_BOX::CreateOBBBox(float fExtentX, float fExtentY, float fExtentZ,
 	vAxis[0] = fExtent[0] * vDirX;
 	vAxis[1] = fExtent[1] * vDirY;
 	vAxis[2] = fExtent[2] * vDirZ;
-
+	/*
+	back 
+	5 6
+	4 7
+	front
+	1 2
+	0 3
+	*/
 	vPos[0] = this->vCenter - vAxis[0] - vAxis[1] - vAxis[2];
 	vPos[1] = this->vCenter - vAxis[0] + vAxis[1] - vAxis[2];
 	vPos[2] = this->vCenter + vAxis[0] + vAxis[1] - vAxis[2];
@@ -46,6 +52,12 @@ void T_BOX::CreateOBBBox(float fExtentX, float fExtentY, float fExtentZ,
 	vPos[6] = this->vCenter + vAxis[0] + vAxis[1] + vAxis[2];
 	vPos[7] = this->vCenter + vAxis[0] - vAxis[1] + vAxis[2];
 
+	plane[0].CreatePlane(vPos[0], vPos[1], vPos[2]); //front
+	plane[1].CreatePlane(vPos[4], vPos[6], vPos[5]); //back
+	plane[2].CreatePlane(vPos[3], vPos[2], vPos[6]); //right
+	plane[3].CreatePlane(vPos[4], vPos[5], vPos[1]); //left
+	plane[4].CreatePlane(vPos[1], vPos[5], vPos[6]); //top
+	plane[5].CreatePlane(vPos[4], vPos[0], vPos[3]); //back
 	vMax = vPos[0];
 	vMin = vPos[0];
 

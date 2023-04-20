@@ -5,6 +5,7 @@
 struct T_PLANE
 {
 	float	fA, fB, fC, fD;
+	TVector3 vNormal;
 	bool	CreatePlane(TVector3 v0, TVector3 v1, TVector3 v2);
 	bool	CreatePlane(TVector3 vNormal, TVector3 v0);
 	void	Normalize()
@@ -36,6 +37,7 @@ struct T_BOX
 	// Common
 	TVector3		vCenter;
 	TVector3		vPos[8];
+	T_PLANE			plane[6];
 	// AABB
 	TVector3		vMax;
 	TVector3		vMin;

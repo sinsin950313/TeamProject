@@ -36,7 +36,7 @@ public:
     bool m_bInteractNextStage = false;
     bool m_Win = false;
     bool m_Defeat = false;
-
+    
     //std::vector<SSB::EnemyNPCMob*> m_Enemies;
     std::vector<Character*> m_Enemies;
     UINT m_iMobDeadCount = 0;
@@ -58,6 +58,7 @@ public:
     std::vector<DamageFont> m_DamageFontList;
     Interface* m_pInter_Ingame;
     Interface* m_pInter_PlayerHP;
+    Interface* m_pInter_BossHP;
     Interface* m_pInter_Passive;
     Interface* m_pInter_Skill_Q;
     Interface* m_pInter_Skill_W;
@@ -66,6 +67,11 @@ public:
 
     Camera* m_pMinimapCamera = nullptr;
     RenderTarget m_RenderTargetMinimap;
+
+    Shader* m_pMinimapPS_Quadtree;
+    Shader* m_pMinimapPS_Object;
+    Shader* m_pMinimapPS_Skydome;
+
     Interface* m_pInter_Minimap;
     InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
     InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();

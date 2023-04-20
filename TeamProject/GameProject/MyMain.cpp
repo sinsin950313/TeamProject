@@ -22,7 +22,6 @@ bool    MyMain::Init()
 
     I_Scene.SetDevice(m_pd3dDevice, m_pImmediateContext);
     I_Scene.Init();
-
     return true;
 }
 
@@ -31,7 +30,8 @@ bool    MyMain::Frame()
     if (I_Input.GetKey(VK_ESCAPE) == KEY_PUSH)
         m_bGameRun = false;
 
-    m_MRT.Frame();
+    m_MRT.Frame(); 
+
     m_screen.Frame();
     
     I_Scene.Frame();
@@ -69,10 +69,12 @@ bool    MyMain::Render()
     }
 
 	m_pImmediateContext->CopyResource(m_RT.m_pTexture.Get(), m_screen.GetRenderTargetTexture());
+
     ID3D11ShaderResourceView* pSRVs[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
     m_pImmediateContext->PSSetShaderResources(0, 16, pSRVs);
     m_pImmediateContext->OMSetRenderTargets(
         1, m_RT.m_pRenderTargetView.GetAddressOf(), m_MRT.GetDepthStencilView());
+
     I_Scene.PostRender();
 
     ClearD3D11DeviceContext();

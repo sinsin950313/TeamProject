@@ -29,7 +29,7 @@ public:
 	bool	Release();
 
 	void	SceneChange(E_SCENE s_type);
-
+	void	SetCurrentRTT(ID3D11RenderTargetView** pRTVS, UINT iRtvCount, ID3D11DepthStencilView* pDSV, D3D11_VIEWPORT* pViewport);
 private:
 	SceneMgr();
 public:
