@@ -334,6 +334,11 @@ bool Player::Tornado::Frame()
 				m_DamagedCharacters.insert(obj);
 				obj->Damage(m_Damage);
 				obj->SetAirborne();
+				float currentHp = obj->m_HealthPoint - m_Damage;
+				if (currentHp <= 0)
+					currentHp = 0;
+				obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+				obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 				//obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
 				//obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 			}
