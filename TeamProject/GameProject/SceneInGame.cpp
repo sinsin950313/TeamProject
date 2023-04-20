@@ -308,7 +308,6 @@ bool SceneInGame::PostRender()
     Player::GetInstance().m_pTrail->Render();
 
 
-	RenderMinimap();
 
 	for (auto enemy : m_Enemies)
 	{
@@ -322,6 +321,7 @@ bool SceneInGame::PostRender()
 
 	I_Effect.Render();
 
+	RenderMinimap();
     m_pInter_Ingame->Render();
 
 	return true;
@@ -419,7 +419,7 @@ void    SceneInGame::CharacterLoad()
 
 		//Idle, Attack1, Attack2, Attack3, Move, Dead
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 3);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 30);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDrink, 30);
@@ -888,7 +888,7 @@ void    SceneInGame::MapLoad()
 
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Map.hlsl", L"psmain", &m_pMinimapPS_Quadtree);
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Skydome.hlsl", L"psmain", &m_pMinimapPS_Skydome);
-
+	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_DebugBox.hlsl", L"PS", &m_pMinimapPS_DebugBox);
 }
 
 void SceneInGame::RenderMinimap()
@@ -896,10 +896,7 @@ void SceneInGame::RenderMinimap()
 	Shader* pPSOrigin_Map = nullptr;
 	std::map<Object*, Shader*> pPSOrigin_Objects;
 	ID3D11PixelShader* pPSOrigin_SkyDome = nullptr;
-	// OMGetRenderTargets를 사용시 Interface의 참조수가 하나씩 증가한다고 함. 현 구조에서 이 코드의 필요 용도를 알 수 없으므로 일단 주석처리하지만 필요하다면 이를 고려하여 다시 구성할 것.
-	// https://learn.microsoft.com/ko-kr/windows/win32/api/d3d11/nf-d3d11-id3d11devicecontext-omgetrendertargets
-	/*m_pImmediateContext->OMGetRenderTargets(1, &m_RenderTargetMinimap.m_pOldRTV, &m_RenderTargetMinimap.m_pOldDSV);*/
-	UINT viewportCount = 1;
+	ID3D11PixelShader* pPSOrigin_DebugBox = nullptr;
 	m_RenderTargetMinimap.m_pOldRTVS = m_pCurrentRenderTargetViews;
 	m_RenderTargetMinimap.m_iOldRTVCount = m_iCurrentRTVCount;
 	m_RenderTargetMinimap.m_pOldDSV = m_pCurrentDepthStencilView;
@@ -939,6 +936,8 @@ void SceneInGame::RenderMinimap()
 
 		if (m_pDebugBox)
 		{
+			pPSOrigin_DebugBox = m_pDebugBox->m_pShader->m_pPS;
+			m_pDebugBox->m_pShader->m_pPS = m_pMinimapPS_DebugBox->m_pPS;
 			m_pDebugBox->SetMatrix(&m_pMinimapCamera->m_matView, &m_pMinimapCamera->m_matProj);
 			TColor color;
 			T_BOX box;
@@ -969,6 +968,7 @@ void SceneInGame::RenderMinimap()
 				m_pDebugBox->UpdateBuffer();
 				m_pDebugBox->Render();
 			}
+			m_pDebugBox->m_pShader->m_pPS = pPSOrigin_DebugBox;
 		}
 		m_RenderTargetMinimap.End(m_pImmediateContext);
 	}

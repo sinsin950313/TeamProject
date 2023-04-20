@@ -230,7 +230,7 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
@@ -316,7 +316,7 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
@@ -400,12 +400,10 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
-						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
 			}
@@ -486,7 +484,7 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
@@ -557,7 +555,7 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 2;
-			Player::GetInstance().m_pSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerRotate)));
+			Player::GetInstance().m_pSkillE->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerRotate)));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -591,7 +589,7 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
@@ -835,7 +833,7 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_HealthPointMax, 1.0f));
+							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
