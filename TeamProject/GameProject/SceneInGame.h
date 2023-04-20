@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "CameraDebug.h"
 #include "CameraTPS.h"
+#include "CameraCinema.h"
 #include "DebugBox.h"
 #include "FQuadTree.h"
 #include "CharacterStateManager.h"
@@ -77,6 +78,8 @@ public:
     InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
     InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
 
+    CameraCinema* m_pCinemaCamera = nullptr;
+    Camera* m_pCameraTemp = nullptr;
 public:
 
     virtual ~SceneInGame();

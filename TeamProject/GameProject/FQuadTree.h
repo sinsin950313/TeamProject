@@ -106,6 +106,11 @@ public:
 
 	//SkyDome
 	BaseObject* m_pSphereObject = nullptr;
+
+public:
+	CameraMove m_CamMove[4];
+	float m_fCamMoveDuration;
+	float m_fCamMoveCurrent = 0.0f;
 };
 
 

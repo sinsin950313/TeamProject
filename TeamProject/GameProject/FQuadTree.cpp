@@ -737,6 +737,8 @@ namespace MAPLOAD
 		UINT iMaxDepth = 0;
 		std::wstring szVSPath;
 		std::wstring szPSPath;
+        CameraMove CamMove[4];
+        float fCamMoveDuration = 0.0f;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
         std::vector<std::pair<std::string, Transform>> spawnList;
@@ -798,6 +800,26 @@ namespace MAPLOAD
 					std::getline(iss, str);
 					szPSPath = to_mw(str);
 				}
+                else if (fieldName == "m_CamMove0")
+                {
+                    iss >> CamMove[0];
+                }
+                else if (fieldName == "m_CamMove1")
+                {
+                    iss >> CamMove[1];
+                }
+                else if (fieldName == "m_CamMove2")
+                {
+                    iss >> CamMove[2];
+                }
+                else if (fieldName == "m_CamMove3")
+                {
+                    iss >> CamMove[3];
+                }
+                else if (fieldName == "m_fCamMoveDuration")
+                {
+                    iss >> fCamMoveDuration;
+                }
 				else if (fieldName == "m_pMap")
 				{
 					is >> pMapMesh;
@@ -1065,6 +1087,12 @@ namespace MAPLOAD
 
         if (pSphereObject)
             pQuadTree->m_pSphereObject = pSphereObject;
+
+        for (int idx = 0; idx < 4; idx++)
+        {
+            pQuadTree->m_CamMove[idx] = CamMove[idx];
+        }
+        pQuadTree->m_fCamMoveDuration = fCamMoveDuration;
 
 		return pQuadTree;
 	}

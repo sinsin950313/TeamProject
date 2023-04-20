@@ -122,6 +122,35 @@ bool    SceneInGame::Frame()
 		Player::GetInstance().SetBegin();
 	}
 
+	if (Player::GetInstance().IsBegin() && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_fCamMoveDuration)
+	{
+		XMFLOAT3 movePos;
+		XMFLOAT3 moveDir;
+		m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
+		m_pCinemaCamera->MoveCameraBezierSpline(m_pQuadTree->m_fCamMoveCurrent, m_pQuadTree->m_fCamMoveDuration,
+			{ m_pQuadTree->m_CamMove[0].camPos.x , m_pQuadTree->m_CamMove[0].camPos.y, m_pQuadTree->m_CamMove[0].camPos.z },
+			{ m_pQuadTree->m_CamMove[1].camPos.x , m_pQuadTree->m_CamMove[1].camPos.y, m_pQuadTree->m_CamMove[1].camPos.z },
+			{ m_pQuadTree->m_CamMove[2].camPos.x , m_pQuadTree->m_CamMove[2].camPos.y, m_pQuadTree->m_CamMove[2].camPos.z },
+			{ m_pQuadTree->m_CamMove[3].camPos.x , m_pQuadTree->m_CamMove[3].camPos.y, m_pQuadTree->m_CamMove[3].camPos.z },
+			{ m_pQuadTree->m_CamMove[0].fYaw , m_pQuadTree->m_CamMove[0].fPitch, m_pQuadTree->m_CamMove[0].fRoll },
+			{ m_pQuadTree->m_CamMove[1].fYaw , m_pQuadTree->m_CamMove[1].fPitch, m_pQuadTree->m_CamMove[1].fRoll },
+			{ m_pQuadTree->m_CamMove[2].fYaw , m_pQuadTree->m_CamMove[2].fPitch, m_pQuadTree->m_CamMove[2].fRoll },
+			{ m_pQuadTree->m_CamMove[3].fYaw , m_pQuadTree->m_CamMove[3].fPitch, m_pQuadTree->m_CamMove[3].fRoll }, movePos, moveDir);
+		m_pCinemaCamera->m_vPos = TVector3(movePos.x, movePos.y, movePos.z);
+		m_pCinemaCamera->m_fCameraYawAngle = moveDir.x;
+		m_pCinemaCamera->m_fCameraPitchAngle = moveDir.y;
+		m_pCinemaCamera->m_fCameraRollAngle = moveDir.z;
+	}
+	if (m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_fCamMoveDuration && m_pCinemaCamera)
+	{
+		m_pMainCamera = m_pCameraTemp;
+		m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
+		Player::GetInstance().m_pMainCamera = m_pMainCamera;
+		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+		delete m_pCinemaCamera;
+		m_pCinemaCamera = nullptr;
+	}
+
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
@@ -312,8 +341,6 @@ bool SceneInGame::PostRender()
     Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().m_pTrail->Render();
 
-
-
 	for (auto enemy : m_Enemies)
 	{
 		if (typeid(*enemy->m_pGageHP) == typeid(InterfaceBillboard))
@@ -341,6 +368,13 @@ bool    SceneInGame::Release()
 		m_pInter_MinimapContents->Release();
 		delete m_pInter_MinimapContents;
 		m_pInter_MinimapContents = nullptr;
+	}
+
+	if (m_pCinemaCamera)
+	{
+		m_pCinemaCamera->Release();
+		delete m_pCinemaCamera;
+		m_pCinemaCamera = nullptr;
 	}
 
 	if (m_pMinimapCamera)
@@ -403,13 +437,18 @@ bool    SceneInGame::Release()
 
 void    SceneInGame::CameraLoad()
 {
-	m_pMainCamera = new CameraTPS;
-	m_pMainCamera->CreateViewMatrix(TVector3(0, 10, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
-	m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
+	m_pCameraTemp = new CameraTPS;
+	m_pCameraTemp->CreateViewMatrix(TVector3(0, 10, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
+	m_pCameraTemp->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
 
 	m_pMinimapCamera = new Camera();
 	m_pMinimapCamera->CreateViewMatrix(TVector3(0, 400, 0), TVector3(0, 0, 0.1f), TVector3(0, 0, 1));
 	m_pMinimapCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, 300.0f/ 300.0f);
+
+	m_pCinemaCamera = new CameraCinema();
+	m_pCinemaCamera->CreateViewMatrix(TVector3(0, 400, 0), TVector3(0, 0, 0.1f), TVector3(0, 0, 1));
+	m_pCinemaCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
+	m_pMainCamera = m_pCinemaCamera;
 }
 
 void    SceneInGame::CharacterLoad()
@@ -432,8 +471,8 @@ void    SceneInGame::CharacterLoad()
 	}
 
 	{
-		Player::GetInstance().m_pMainCamera = m_pMainCamera;
-		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+		/*Player::GetInstance().m_pMainCamera = m_pMainCamera;
+		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;*/
     
 		//Idle, Attack1, Attack2, Attack3, Move, Dead
 		XMFLOAT3 playerSpawnPos;
@@ -452,6 +491,7 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().m_pSkillQ = m_pInter_Skill_Q;
 		Player::GetInstance().m_pSkillDash = m_pInter_Skill_W;
 		Player::GetInstance().m_pSkillE = m_pInter_Skill_E;
+		Player::GetInstance().m_pSkillR = m_pInter_Skill_R;
 	}
 
 
@@ -895,11 +935,28 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-	m_pQuadTree = m_Scene == S_INGAME ? MAPLOAD::OpenMap(L"../../data/map/map_normal_1_3.map", m_pd3dDevice, m_pImmediateContext) : MAPLOAD::OpenMap(L"../../data/map/map_boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
+	m_pQuadTree = m_Scene == S_INGAME ? MAPLOAD::OpenMap(L"../../data/map/map_normal_1_3_1.map", m_pd3dDevice, m_pImmediateContext) : MAPLOAD::OpenMap(L"../../data/map/map_boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
-	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
+	// 
+	m_pQuadTree->m_pCurrentCamera = m_pCinemaCamera;
+	m_pMainCamera->m_vPos = m_pQuadTree->m_CamMove[0].camPos;
+	m_pMainCamera->m_fCameraYawAngle = m_pQuadTree->m_CamMove[0].fYaw;
+	m_pMainCamera->m_fCameraPitchAngle = m_pQuadTree->m_CamMove[0].fPitch;
+	m_pMainCamera->m_fCameraRollAngle = m_pQuadTree->m_CamMove[0].fRoll;
+
+	((CameraTPS*)m_pCameraTemp)->m_vFollowPos = &Player::GetInstance().m_vPos;
+	XMFLOAT3 playerSpawnPos;
+	XMStoreFloat3(&playerSpawnPos, m_pQuadTree->m_PlayerSpawnPoint.second.position);
+	Player::GetInstance().Initialize_SetPosition(TVector3(playerSpawnPos));
+	m_pCameraTemp->Frame();
+	m_pQuadTree->m_CamMove[3].camPos.x = m_pCameraTemp->m_vPos.x;
+	m_pQuadTree->m_CamMove[3].camPos.y = m_pCameraTemp->m_vPos.y;
+	m_pQuadTree->m_CamMove[3].camPos.z = m_pCameraTemp->m_vPos.z;
+	m_pQuadTree->m_CamMove[3].fYaw = XMConvertToDegrees(m_pCameraTemp->m_fCameraYawAngle + XM_PI);
+	m_pQuadTree->m_CamMove[3].fPitch = XMConvertToDegrees(m_pCameraTemp->m_fCameraPitchAngle);
+	m_pQuadTree->m_CamMove[3].fRoll = XMConvertToDegrees(m_pCameraTemp->m_fCameraRollAngle);
 
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Map.hlsl", L"psmain", &m_pMinimapPS_Quadtree);
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Skydome.hlsl", L"psmain", &m_pMinimapPS_Skydome);
