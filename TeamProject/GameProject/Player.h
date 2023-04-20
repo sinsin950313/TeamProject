@@ -118,4 +118,11 @@ public:
     void ShotTornado(float timestamp);
     bool IsUlitmateSkillCallable();
     std::vector<Character*> GetUltimateSkillTargetList();
+
+private:
+    bool _isBegin = false;
+
+public:
+    void SetBegin();
+    bool IsBegin();
 };

@@ -1074,5 +1074,57 @@ namespace SSB
 	{
 		return { kPlayerIdle };
 	}
+	PlayerHoudgiStartState::PlayerHoudgiStartState(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
+	{
+	}
+	void PlayerHoudgiStartState::StateDecision()
+	{
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (Player::GetInstance().IsBegin())
+			{
+				ReserveNextTransferName(kPlayerHoudgiEnd);
+				SetTransfer();
+			}
+			else
+			{
+				ReserveNextTransferName(kPlayerHoudgiLoop);
+				SetTransfer();
+			}
+		}
+	}
+	void PlayerHoudgiStartState::Action()
+	{
+		if (_blackboard->Initialized)
+		{
+			Player::GetInstance().ActiveSkill(kPlayerRotate);
+		}
+	}
+	std::vector<std::string> PlayerHoudgiStartState::GetLinkedList()
+	{
+		return { kPlayerHoudgiLoop, kPlayerHoudgiEnd };
+	}
+	PlayerHoudgiEndState::PlayerHoudgiEndState(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
+	{
+	}
+	void PlayerHoudgiEndState::StateDecision()
+	{
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			ReserveNextTransferName(kPlayerIdle);
+			SetTransfer();
+		}
+	}
+	void PlayerHoudgiEndState::Action()
+	{
+		if (_blackboard->Initialized)
+		{
+			Player::GetInstance().ActiveSkill(kPlayerRotate);
+		}
+	}
+	std::vector<std::string> PlayerHoudgiEndState::GetLinkedList()
+	{
+		return { kPlayerIdle };
+	}
 }
 ;

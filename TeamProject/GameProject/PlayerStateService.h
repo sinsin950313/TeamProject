@@ -4,6 +4,8 @@
 
 namespace SSB
 {
+	const StateName kPlayerHoudgiLoop = "HoudgiBegin";
+	const StateName kPlayerHoudgiEnd = "HoudgiEnd";
 	const StateName kPlayerIdle = "Idle";
 	const StateName kPlayerMove = "Move";
 	const StateName kPlayerAttack1 = "Attack1";
@@ -47,6 +49,28 @@ namespace SSB
 
 	protected:
 		//void Action_();
+	};
+
+	class PlayerHoudgiStartState : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerHoudgiStartState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerHoudgiEndState : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerHoudgiEndState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		std::vector<std::string> GetLinkedList() override;
 	};
 
 	class PlayerIdleState : public PlayerStateCommonMethodInterface
