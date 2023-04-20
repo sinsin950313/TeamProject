@@ -238,6 +238,16 @@ std::vector<Character*> Player::GetUltimateSkillTargetList()
 	return m_Tornado.GetAirborneList();
 }
 
+void Player::SetBegin()
+{
+	_isBegin = true;
+}
+
+bool Player::IsBegin()
+{
+	return _isBegin;
+}
+
 Player::Tornado::Tornado(Character* owner) : m_Owner(owner)
 {
 	m_pDebugBox = new DebugBox;

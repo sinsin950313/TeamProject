@@ -117,6 +117,11 @@ bool    SceneInGame::Frame()
 		I_Effect.CreateEffect(L"path", Player::GetInstance().GetPosition());
 	}
 
+	if (I_Input.GetKey('O') == KEY_PUSH)
+	{
+		Player::GetInstance().SetBegin();
+	}
+
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
@@ -415,7 +420,7 @@ void    SceneInGame::CharacterLoad()
 	if (!Player::GetInstance().m_pModel)
 	{
 		Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
-		I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
+		I_Model.Load(filename, "HoudgiPlaying", &Player::GetInstance().m_pModel);
 
 		//Idle, Attack1, Attack2, Attack3, Move, Dead
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
@@ -439,7 +444,7 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Scale(0.01f);
 
-		m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerIdle);
+		m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerHoudgiLoop);
 
 		Player::GetInstance().SetMap(m_pQuadTree->m_pMap);
 		Player::GetInstance().m_pGageHP = m_pInter_PlayerHP;
@@ -633,6 +638,16 @@ void    SceneInGame::FSMLoad()
 	{
 		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
 
+		{
+			SSB::CharacterState* state = new SSB::PlayerHoudgiStartState(9.0f);
+			state->Initialize_SetStateAnimation("HoudgiPlaying");
+			manager->Initialize_RegisterState(SSB::kPlayerHoudgiLoop, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerHoudgiEndState(3.0f);
+			state->Initialize_SetStateAnimation("HoudgiEnd");
+			manager->Initialize_RegisterState(SSB::kPlayerHoudgiEnd, state);
+		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerIdleState;
 			state->Initialize_SetStateAnimation("Idle");
