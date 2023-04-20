@@ -76,6 +76,7 @@ VS_OUTPUT vsmain(VS_INPUT input)
 	float4 worldNormal = mul(float4(input.normal.xyz, 0), matWorld);
 
 	output.position = vProj;
+	output.world = vWorld;
 	output.normal = float4(worldNormal.xyz, 1);
 	//output.normal = input.normal;
 	output.tex = input.tex;

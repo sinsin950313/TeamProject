@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "TCollision.h"
 #include "TrailEffect.h"
+#include "DebugBox.h"
 
 struct VS_INSTANCING_BUFFER
 {
@@ -23,6 +24,7 @@ public:
 public:
     virtual bool    Init();
     virtual bool    Frame();
+    bool Render() override;
     virtual bool	PostRender();
     virtual bool    Release();
 
@@ -59,4 +61,61 @@ public:
 public:
 	TVector3 m_DashDirection;
     bool m_IsDash = false;
+
+private:
+    const int m_kMaxUltimateSkillStackCount = 3;
+    int m_UltimateSkillStack = 0;
+    float m_stackingTimeStamp = 0.0f;
+
+public:
+    void UltimateSkillStacking(float timeStamp);
+    int GetUltimateSkillStack();
+    bool IsAbleToCallUltimateSkill();
+    void CallUltimateSkill();
+
+private:
+    class Tornado : public Character
+    {
+    private:
+        Character* m_Owner;
+        std::set<Character*> m_DamagedCharacters;
+        T_BOX m_collideBox;
+        TVector3 m_Position;
+        TVector3 m_Direction;
+        float m_TimeStamp;
+        float m_Livetime = 3;
+        bool m_IsAlive = false;
+        float m_Speed = 20;
+        float m_Damage = 10;
+
+    public:
+        Tornado(Character* owner);
+
+    private:
+        std::vector<Character*> GetHitList();
+
+    public:
+        void Initialize_SetPosition(TVector3 position);
+        void Initialize_SetDirection(TVector3 direction);
+        void Initialize_SetTimestamp(float timestamp);
+        bool IsHit();
+        bool IsFinished();
+        std::vector<Character*> GetAirborneList();
+
+    public:
+        bool Init() override;
+        bool Frame() override;
+        bool Render() override;
+        bool Release() override;
+
+    private:
+		DebugBox* m_pDebugBox = nullptr;
+    };
+    Tornado m_Tornado;
+
+public:
+	void	SetMap(MeshMap* pMap) override;
+    void ShotTornado(float timestamp);
+    bool IsUlitmateSkillCallable();
+    std::vector<Character*> GetUltimateSkillTargetList();
 };

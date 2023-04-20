@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "CollisionMgr.h"
 
-Player::Player()
+Player::Player() : m_Tornado(this)
 {
 
 }
@@ -35,6 +35,8 @@ bool    Player::Init()
 	m_pTrail = new TrailEffect();
 	m_pTrail->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/TrailEffect.txt", L"../../data/swoosh.png");
 	m_pTrail->Init();
+
+	m_Tornado.SetDevice(m_pd3dDevice, m_pImmediateContext);
 
 	return true;
 }
@@ -74,7 +76,37 @@ bool    Player::Frame()
 	UpdateInstancingBuffer();
 	m_pTrail->Frame();
 
+	if (!m_Tornado.IsFinished())
+	{
+		m_Tornado.Frame();
+	}
+
 	return true;
+}
+
+bool Player::Render()
+{
+	Character::Render();
+
+	if (!m_Tornado.IsFinished())
+	{
+		if (&m_matWorld)
+		{
+			m_Tornado.m_matWorld = m_matWorld;
+		}
+		if (&m_matView)
+		{
+			m_Tornado.m_matView = m_matView;
+		}
+		if (&m_matProj)
+		{
+			m_Tornado.m_matProj = m_matProj;
+		}
+		m_Tornado.UpdateBuffer();
+		m_Tornado.Render();
+	}
+
+	return false;
 }
 
 bool	Player::PostRender()
@@ -120,6 +152,8 @@ bool	Player::Release()
 		m_pTrail = nullptr;
 	}
 
+	m_Tornado.Release();
+
 	Character::Release();
 
 	return true;
@@ -145,4 +179,198 @@ void Player::Damage(int damage)
 	{
 		Character::Damage(damage);
 	}
+}
+
+void Player::UltimateSkillStacking(float timeStampe)
+{
+	if (m_stackingTimeStamp != timeStampe)
+	{
+		m_stackingTimeStamp = timeStampe;
+		m_UltimateSkillStack = min(m_kMaxUltimateSkillStackCount, m_UltimateSkillStack + 1);
+	}
+
+	if (m_UltimateSkillStack == m_kMaxUltimateSkillStackCount)
+	{
+		m_UltimateSkillStack = 0;
+	}
+}
+
+int Player::GetUltimateSkillStack()
+{
+	return m_UltimateSkillStack;
+}
+
+bool Player::IsAbleToCallUltimateSkill()
+{
+	return m_kMaxUltimateSkillStackCount == m_UltimateSkillStack;
+}
+
+void Player::CallUltimateSkill()
+{
+	m_UltimateSkillStack = 0;
+}
+
+void Player::SetMap(MeshMap* pMap)
+{
+	Character::SetMap(pMap);
+	m_Tornado.SetMap(pMap);
+}
+
+void Player::ShotTornado(float timestamp)
+{
+	TVector3 position = { m_matWorld._41, m_matWorld._42, m_matWorld._43 };
+	m_Tornado.Initialize_SetPosition(position);
+
+	TVector3 dir = { -m_matWorld._31, -m_matWorld._32, -m_matWorld._33 };
+	m_Tornado.Initialize_SetDirection(dir);
+
+	m_Tornado.Initialize_SetTimestamp(timestamp);
+	m_Tornado.Init();
+}
+
+bool Player::IsUlitmateSkillCallable()
+{
+	return !m_Tornado.GetAirborneList().empty();
+}
+
+std::vector<Character*> Player::GetUltimateSkillTargetList()
+{
+	return m_Tornado.GetAirborneList();
+}
+
+Player::Tornado::Tornado(Character* owner) : m_Owner(owner)
+{
+	m_pDebugBox = new DebugBox;
+	m_collideBox.CreateOBBBox(2, 6, 2);
+}
+
+void Player::Tornado::Initialize_SetPosition(TVector3 position)
+{
+	m_vPos = position;
+}
+
+void Player::Tornado::Initialize_SetDirection(TVector3 direction)
+{
+	m_Direction = direction;
+}
+
+void Player::Tornado::Initialize_SetTimestamp(float timestamp)
+{
+	m_TimeStamp = timestamp;
+}
+
+bool Player::Tornado::IsHit()
+{
+	return IsFinished() ? false : I_Collision.ChkPlayerAttackToNpcList(&m_collideBox);
+}
+
+std::vector<Character*> Player::Tornado::GetHitList()
+{
+	if (!IsFinished())
+	{
+		if (I_Collision.ChkPlayerAttackToNpcList(&m_collideBox))
+		{
+			auto list = I_Collision.GetHitCharacterList(&m_collideBox);
+			return list;
+		}
+	}
+	return {};
+}
+
+bool Player::Tornado::IsFinished()
+{
+	return g_fGameTimer > m_TimeStamp + m_Livetime;
+}
+
+std::vector<Character*> Player::Tornado::GetAirborneList()
+{
+	std::vector<Character*> ret;
+	for (auto elem : m_DamagedCharacters)
+	{
+		ret.push_back(elem);
+	}
+	return ret;
+}
+
+bool Player::Tornado::Init()
+{
+	if (m_pDebugBox != nullptr)
+	{
+		m_pDebugBox->Release();
+	}
+	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
+	m_DamagedCharacters.clear();
+
+	return true;
+}
+
+bool Player::Tornado::Frame()
+{
+	UpdateMatrix();
+	UpdateBuffer();
+
+	XMVECTOR dir = m_Direction;
+	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
+	MoveChar(dir, world, m_Speed);
+	m_collideBox.UpdateBox(m_matWorld);
+
+	auto list = GetHitList();
+	for (auto obj : list)
+	{
+		if (obj != m_Owner)
+		{
+			if (m_DamagedCharacters.find(obj) == m_DamagedCharacters.end())
+			{
+				m_DamagedCharacters.insert(obj);
+				obj->Damage(m_Damage);
+				obj->SetAirborne();
+				//obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_HealthPointMax, 1.0f));
+				//obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+			}
+		}
+	}
+
+	std::vector<Character*> erased;
+	for (auto obj : m_DamagedCharacters)
+	{
+		if (!obj->IsAirborne())
+		{
+			erased.push_back(obj);
+		}
+	}
+
+	for (auto erase : erased)
+	{
+		m_DamagedCharacters.erase(erase);
+	}
+
+	return true;
+}
+
+bool Player::Tornado::Render()
+{
+	m_pDebugBox->SetMatrix(&m_matView, &m_matProj);
+	TColor color = TColor(1, 1, 1, 1);
+	{
+		m_pDebugBox->SetBox(m_collideBox);
+		m_pDebugBox->SetColor(color);
+		m_pDebugBox->UpdateBuffer();
+		m_pDebugBox->Render();
+	}
+
+	return true;
+}
+
+bool Player::Tornado::Release()
+{
+	if (m_pDebugBox)
+	{
+		m_pDebugBox->Release();
+		delete m_pDebugBox;
+		m_pDebugBox = nullptr;
+	}
+
+	Character::Release();
+
+	return true;
 }

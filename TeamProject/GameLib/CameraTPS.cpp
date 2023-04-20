@@ -8,8 +8,10 @@ bool CameraTPS::Frame()
 	// Check that the camera doesn't go over the top or under the player
 	if (m_fCameraPitchAngle > 0.85f)
 		m_fCameraPitchAngle = 0.85f;
-	if (m_fCameraPitchAngle < -0.85f)
-		m_fCameraPitchAngle = -0.85f;
+	//if (m_fCameraPitchAngle < -0.85f)
+	//	m_fCameraPitchAngle = -0.85f;
+	if (m_fCameraPitchAngle < 0.10f)
+		m_fCameraPitchAngle = 0.10f;
 
 	// Third Person Camera
 	// Set the cameras target to be looking at the character.
@@ -37,8 +39,8 @@ bool CameraTPS::Frame()
 	// Set our cameras position to rotate around the character. We need to add 5 to the characters
 	// position's y axis because i'm stupid and modeled the character in the 3d modeling program
 	// to be "standing" on (0,0,0), instead of centered around it ;) Well target her head here though
-	float charCamDist = 10.0f;
-	camPosition = (camPosition * charCamDist) + m_vTarget;
+	//m_CharCamDist = 10.0f;
+	camPosition = (camPosition * m_CharCamDist) + m_vTarget;
 
 	// We need to set our cameras forward and right vectors to lay
 	// in the worlds xz plane, since they are the vectors we will

@@ -39,10 +39,6 @@ SceneInGame::~SceneInGame()
 {
 }
 
-SceneInGame::~SceneInGame()
-{
-}
-
 void SceneInGame::DataLoad()
 {
     SSB::DirectionalLight* light = new SSB::DirectionalLight;
@@ -401,17 +397,19 @@ void    SceneInGame::CharacterLoad()
 	{
 		Player::GetInstance().SetDevice(m_pd3dDevice, m_pImmediateContext);
 		I_Model.Load(filename, "Idle", &Player::GetInstance().m_pModel);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 3.0f);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill1, 5.0f);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerSkill2, 3.0f);
+
+		//Idle, Attack1, Attack2, Attack3, Move, Dead
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 5);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 30);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDrink, 30);
 		Player::GetInstance().Init();
 	}
 
 	{
 		Player::GetInstance().m_pMainCamera = m_pMainCamera;
 		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
-
-		//Idle, Attack1, Attack2, Attack3, Move, Dead
 		Player::GetInstance().Initialize_SetPosition(TVector3(0, 0, 0));
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
@@ -596,6 +594,7 @@ void    SceneInGame::UiLoad()
 
 void    SceneInGame::FSMLoad()
 {
+	const float kUltimateSkillActiveTime = 1.3f;
 	// Register State Manager
 	{
 		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
@@ -636,16 +635,46 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kPlayerAttack4, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerSkillState1(1.0f);
-			state->Initialize_SetStateAnimation("Skill1");
-			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill1.mp3"));
-			manager->Initialize_RegisterState(SSB::kPlayerSkill1, state);
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState();
+			state->Initialize_SetStateAnimation("");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill1.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerPierce, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerSkillState2(1.0f);
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState1(1.0f);
 			state->Initialize_SetStateAnimation("Skill2");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill2.mp3"));
-			manager->Initialize_RegisterState(SSB::kPlayerSkill2, state);
+			manager->Initialize_RegisterState(SSB::kPlayerPierce1, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState2(1.0f);
+			state->Initialize_SetStateAnimation("Skill3");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill2.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerPierce2, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillPierceState3(1.0f);
+			state->Initialize_SetStateAnimation("Skill4");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill2.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerPierce3, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerSkillRotate(1.0f);
+			state->Initialize_SetStateAnimation("Skill1");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill1.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerRotate, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerUltimateSkillState(kUltimateSkillActiveTime);
+			state->Initialize_SetStateAnimation("Skill5");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill3.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerUltimate, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerDrinkSkillState(7.0f);
+			state->Initialize_SetStateAnimation("Drink");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoDrink.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerDrink, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::PlayerDashState(0.5f);
@@ -670,6 +699,16 @@ void    SceneInGame::FSMLoad()
 			SSB::CharacterState* state = new SSB::EnemyNPCMobIdleState;
 			state->Initialize_SetStateAnimation("Idle");
 			manager->Initialize_RegisterState(SSB::kEnemyNPCMobIdle, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobAirBorneState;
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobAirborne, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::EnemyNPCMobPoundState(kUltimateSkillActiveTime);
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kEnemyNPCMobPound, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::EnemyNPCMobMoveState;
@@ -718,6 +757,16 @@ void    SceneInGame::FSMLoad()
 			state->Initialize_SetStateAnimation("Angry");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"BossAngry.mp3"));
 			manager->Initialize_RegisterState(SSB::kBossMobAngry, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::BossMobAirBorneState;
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kBossMobAirborne, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::BossMobPoundState(kUltimateSkillActiveTime);
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kBossMobPound, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::BossMobMoveState;
