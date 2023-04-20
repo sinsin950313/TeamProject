@@ -981,7 +981,7 @@ namespace MAPLOAD
                             }
                          
                             PathChanger(strName);
-                            pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/SkyDomeShader.hlsl", mtw(strName));
+                            pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/MAP/SkyDomeShader.hlsl", mtw(strName));
                             pSphereObject->Init();
                         }
                         else
@@ -1050,7 +1050,10 @@ namespace MAPLOAD
 
         for (const auto& spawn : spawnList)
         {
-            pQuadTree->m_EnemySpawnList.push_back(spawn);
+            if (spawn.first == "Player")
+                pQuadTree->m_PlayerSpawnPoint = spawn;
+            else
+                pQuadTree->m_EnemySpawnList.push_back(spawn);
         }
 
 		for (const auto& obj : allObjectList)

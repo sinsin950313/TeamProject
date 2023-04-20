@@ -91,9 +91,11 @@ public:
 
 	std::wstring m_szVSPath;
 	Shader* m_pVertexShader;
+	
 	std::wstring m_szPSPath;
 	Shader* m_pPixelShader;
 
+	std::pair<std::string, Transform> m_PlayerSpawnPoint;
 	std::vector<std::pair<std::string, Transform>> m_EnemySpawnList;
 	std::unordered_set<Object*> m_pAllObjectList;
 	std::vector<FNode*> m_pLeafNodeList;

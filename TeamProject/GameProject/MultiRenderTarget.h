@@ -26,7 +26,7 @@ namespace SSB
 		ID3D11Texture2D* m_pColorTexture;
 		//ID3D11Texture2D* m_pDepthTexture;
 
-	private:
+	public:
 		ID3D11RenderTargetView* m_pPositionRenderTargetView;
 		ID3D11RenderTargetView* m_pNormalRenderTargetView;
 		ID3D11RenderTargetView* m_pColorRenderTargetView;
@@ -38,7 +38,7 @@ namespace SSB
 		ID3D11ShaderResourceView* m_pColorShaderResourceView;
 		//ID3D11ShaderResourceView* m_pDepthShaderResourceView;
 
-	private:
+	public:
 		D3D11_VIEWPORT	m_Viewport;
 		ID3D11BlendState* m_pBlendState = nullptr;
 		ID3D11DepthStencilView* m_pDepthStencilView;
