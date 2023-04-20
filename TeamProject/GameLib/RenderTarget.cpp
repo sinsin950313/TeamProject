@@ -93,7 +93,10 @@ bool	RenderTarget::Begin(ID3D11DeviceContext* pContext)
 void	RenderTarget::End(ID3D11DeviceContext* pContext)
 {
 	pContext->RSSetState(DXState::g_pDefaultRSSolid);
-	pContext->OMSetRenderTargets(1, &m_pOldRTV, m_pOldDSV);
+	if(m_iOldRTVCount > 0)
+		pContext->OMSetRenderTargets(m_iOldRTVCount, m_pOldRTVS, m_pOldDSV);
+	else
+		pContext->OMSetRenderTargets(1, &m_pOldRTV, m_pOldDSV);
 	pContext->RSSetViewports(1, m_vpOld);
 }
 bool	RenderTarget::Release()

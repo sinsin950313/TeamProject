@@ -25,13 +25,19 @@ public:
 
     virtual E_SCENE     NextScene() = 0;
 
+    virtual void SetCurrentRTT(ID3D11RenderTargetView** pRTVS, UINT iRtvCount, ID3D11DepthStencilView* pDSV, D3D11_VIEWPORT* pViewport);
+    ID3D11RenderTargetView** m_pCurrentRenderTargetViews = nullptr;
+    UINT m_iCurrentRTVCount = 0;
+    ID3D11DepthStencilView* m_pCurrentDepthStencilView = nullptr;
+    D3D11_VIEWPORT* m_pCurrentViewport = nullptr;
+
 public:
     ID3D11Device* m_pd3dDevice = nullptr;// µð¹ÙÀÌ½º °´Ã¼
     ID3D11DeviceContext* m_pImmediateContext = nullptr;
-
+   
     E_SCENE m_Scene = S_TITLE;
 public:
-    virtual ~Scene() { };
+    virtual ~Scene();
 
 };
 

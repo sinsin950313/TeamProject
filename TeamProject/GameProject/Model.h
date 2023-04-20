@@ -44,8 +44,8 @@ namespace SSB
 		std::map<AnimationName, Animation*> _animations;
 	public:
 		Animation* _currentAnimation;
-	private:
-
+	public:
+		//Using Minimap change to public
 		Shader* _ps;
 
 		OBBData _boundingVolume;

@@ -16,6 +16,12 @@ void	SceneMgr::SceneChange(E_SCENE s_type)
     m_NextScene = s_type;
 }
 
+void SceneMgr::SetCurrentRTT(ID3D11RenderTargetView** pRTVS, UINT iRtvCount, ID3D11DepthStencilView* pDSV, D3D11_VIEWPORT* pViewport)
+{
+    if (!m_isChangingScene)
+        m_pSceneArray[m_CurScene]->SetCurrentRTT(pRTVS, iRtvCount, pDSV, pViewport);
+}
+
 bool	SceneMgr::Init()
 {
     //for (int scene = S_TITLE; scene < MAX_SCENE; scene++)
