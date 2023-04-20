@@ -86,7 +86,7 @@ private:
         float m_Livetime = 3;
         bool m_IsAlive = false;
         float m_Speed = 20;
-        float m_Damage = 10;
+        float m_Damage = 100;
 
     public:
         Tornado(Character* owner);
