@@ -67,7 +67,7 @@ public:
 	XMVECTOR m_vOldDirection;
 
 public:
-	void	SetMap(MeshMap* pMap);
+	virtual void	SetMap(MeshMap* pMap);
 	MeshMap* m_pMap;
 public:
 	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);
@@ -99,7 +99,7 @@ public:
 	T_BOX   m_AttackBox;
 
 public:
-	int m_HealthPointMax = 100;
+	const int m_kHealthPointMax = 100;
 	int m_HealthPoint = 100;
 	int m_Damage = 30;
 
@@ -122,5 +122,22 @@ public:
 
 public:
 	void SetCurrentAnimation(SSB::AnimationName animationName);
+
+private:
+	float _airborneTimeStamp = 0;
+	const float _kAirborneActiveTime = 1.0f;
+	bool _airborne = false;
+
+public:
+	void SetAirborne();
+	bool IsAirborne();
+	float GetAirborneActiveTime();
+
+private:
+	bool _pound = false;
+
+public:
+	void SetPoundState(bool state);
+	bool IsPoundState();
 };
 

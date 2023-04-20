@@ -111,6 +111,15 @@ bool	Character::Frame()
 	UpdateMatrix();
 	UpdateBuffer();
 	UpdateBox();
+
+	if (_airborne)
+	{
+		if (_kAirborneActiveTime < g_fGameTimer - _airborneTimeStamp)
+		{
+			_airborne = false;
+		}
+	}
+
 	return true;
 }
 
@@ -389,4 +398,27 @@ void Character::ActiveSkill(SkillPrimaryKey key)
 void Character::SetCurrentAnimation(SSB::AnimationName animationName)
 {
 	m_pModel->SetCurrentAnimation(animationName);
+}
+void Character::SetAirborne()
+{
+	_airborneTimeStamp = g_fGameTimer;
+	_airborne = true;
+}
+bool Character::IsAirborne()
+{
+	return _airborne;
+}
+float Character::GetAirborneActiveTime()
+{
+	return _kAirborneActiveTime;
+}
+
+void Character::SetPoundState(bool state)
+{
+	_pound = state;
+}
+
+bool Character::IsPoundState()
+{
+	return _pound;
 }

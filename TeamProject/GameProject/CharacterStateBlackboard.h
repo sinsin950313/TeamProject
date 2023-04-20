@@ -12,6 +12,8 @@ namespace SSB
 		bool Initialized = false;
 		SoundEffect CurrentSound;
 		std::set<Character*> DamagedCharacters;
+		float HealthPoint;
+		bool Damaged;
 	};
 
 	class CharacterStateBlackboardManager

@@ -11,6 +11,7 @@
 #include <codecvt>
 #include <tchar.h>
 #include <thread>
+#include <random>
 #include <wrl.h> // windows runtime c++ templace library(wrl)
 #include "TMath.h"
 
@@ -51,6 +52,14 @@ public:
 		static T instance;
 		return instance;
 	}
+};
+
+static double RandomStep(double min, double max = 1.0)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<>	 dist(min, max);
+	return dist(gen);
 };
 
 //#include <atlconv.h> // A2W

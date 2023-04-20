@@ -16,10 +16,13 @@ namespace SSB
 	const StateName kBossMobSpawn = "Spawn";
 	const StateName kBossMobStun = "Stun";
 	const StateName kBossMobDead = "Dead";
+	const StateName kBossMobAirborne = "Airborne";
+	const StateName kBossMobPound = "Pound";
 
 	const unsigned int BossDeadTypePriority = 0;
-	const unsigned int BossSkillTypePriority = 1;
-	const unsigned int BossAttackTypePriority = 2;
+	const unsigned int BossAirborneTypePriority = 1;
+	const unsigned int BossSkillTypePriority = 2;
+	const unsigned int BossAttackTypePriority = 3;
 
 	class BossMobIdleState : public CharacterState
 	{
@@ -36,6 +39,34 @@ namespace SSB
 
 	public:
 		BossMobAngryState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class BossMobAirBorneState : public CharacterState
+	{
+	private:
+		// If change this value, consider PlayerStateService::PlayerUltimateSkillState::Action::elem->m_vPos.y
+		float _airborneHeight = 3;
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class BossMobPoundState : public CharacterState, public MinimumTransferCoolTimeRequireInterface
+	{
+	private:
+		float _transferRequireTime;
+
+	public:
+		BossMobPoundState(float transferRequireTime);
 
 	public:
 		void StateDecision() override;

@@ -69,9 +69,12 @@ bool    MyMain::Render()
     }
 
 	m_pImmediateContext->CopyResource(m_RT.m_pTexture.Get(), m_screen.GetRenderTargetTexture());
-    m_pImmediateContext->OMSetRenderTargets(1, m_RT.m_pRenderTargetView.GetAddressOf(), m_RT.m_pDepthStencilView.Get());
 
-    I_Scene.SetCurrentRTT(m_RT.m_pRenderTargetView.GetAddressOf(), 1, m_RT.m_pDepthStencilView.Get(), &m_RT.m_Viewport);
+    ID3D11ShaderResourceView* pSRVs[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+    m_pImmediateContext->PSSetShaderResources(0, 16, pSRVs);
+    m_pImmediateContext->OMSetRenderTargets(
+        1, m_RT.m_pRenderTargetView.GetAddressOf(), m_MRT.GetDepthStencilView());
+
     I_Scene.PostRender();
 
     ClearD3D11DeviceContext();

@@ -76,3 +76,4 @@ void Scene::SetCurrentRTT(ID3D11RenderTargetView** pRTVS, UINT iRtvCount, ID3D11
 Scene::~Scene()
 {
 }
+

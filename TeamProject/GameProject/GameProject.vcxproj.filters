@@ -34,6 +34,9 @@
     <Filter Include="Light">
       <UniqueIdentifier>{6469766b-4acb-4e03-b716-687f29e208d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect\Trail">
+      <UniqueIdentifier>{e3fa1ace-fe97-4ddd-88c0-be56f4b11669}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyMain.h">
@@ -114,9 +117,6 @@
     <ClInclude Include="Object.h">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="TrailEffect.h">
-      <Filter>Effect</Filter>
-    </ClInclude>
     <ClInclude Include="CharacterState.h">
       <Filter>Ch\FSM</Filter>
     </ClInclude>
@@ -170,6 +170,24 @@
     </ClInclude>
     <ClInclude Include="SoundEffect.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectMgr.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="EmitterData.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="TrailEffect.h">
+      <Filter>Effect\Trail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -233,9 +251,6 @@
     <ClCompile Include="Object.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="TrailEffect.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterState.cpp">
       <Filter>Ch\FSM</Filter>
     </ClCompile>
@@ -289,6 +304,21 @@
     </ClCompile>
     <ClCompile Include="SoundEffect.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectMgr.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="TrailEffect.cpp">
+      <Filter>Effect\Trail</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

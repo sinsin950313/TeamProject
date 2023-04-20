@@ -2,13 +2,16 @@
 
 ID3D11SamplerState* DXState::g_pDefaultSS = nullptr;
 ID3D11SamplerState* DXState::g_pDefaultSSMirror = nullptr;
+
 ID3D11BlendState* DXState::g_pAlphaBlend = nullptr;
+ID3D11BlendState* DXState::g_pAddAlphaBlend = nullptr;
 
 ID3D11RasterizerState* DXState::g_pDefaultRSWireFrame = nullptr;
 ID3D11RasterizerState* DXState::g_pNonCullRSSolid = nullptr;
 ID3D11RasterizerState* DXState::g_pDefaultRSSolid = nullptr;
 
 ID3D11DepthStencilState* DXState::g_pDefaultDepthStencil = nullptr;
+ID3D11DepthStencilState* DXState::g_pDefaultDepthStencilAndNoWrite = nullptr;
 ID3D11DepthStencilState * DXState::g_pGreaterDepthStencil = nullptr;
 
 bool DXState::SetState(ID3D11Device* pd3dDevice)
@@ -71,6 +74,20 @@ bool DXState::SetState(ID3D11Device* pd3dDevice)
     bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
     pd3dDevice->CreateBlendState(&bd, &g_pAlphaBlend);
 
+    bd.AlphaToCoverageEnable = FALSE;
+    bd.IndependentBlendEnable = TRUE;
+    bd.RenderTarget[0].BlendEnable = TRUE;
+
+    bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;		 // SV_TARGET0
+    bd.RenderTarget[0].DestBlend = D3D11_BLEND_SRC1_COLOR; // SV_TARGET1
+
+    bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    pd3dDevice->CreateBlendState(&bd, &g_pAddAlphaBlend);
+
     D3D11_DEPTH_STENCIL_DESC dsd;
     ZeroMemory(&dsd, sizeof(dsd));
     dsd.DepthEnable = TRUE;
@@ -85,6 +102,8 @@ bool DXState::SetState(ID3D11Device* pd3dDevice)
     D3D11_DEPTH_STENCILOP_DESC BackFace; 
     */
     pd3dDevice->CreateDepthStencilState(&dsd, &g_pDefaultDepthStencil);
+    dsd.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    pd3dDevice->CreateDepthStencilState(&dsd, &g_pDefaultDepthStencilAndNoWrite);
     dsd.DepthFunc = D3D11_COMPARISON_GREATER; 
     pd3dDevice->CreateDepthStencilState(&dsd, &g_pGreaterDepthStencil);
 
@@ -123,10 +142,20 @@ bool DXState::Release()
         g_pAlphaBlend->Release();
         g_pAlphaBlend = nullptr;
     }
+    if (g_pAddAlphaBlend)
+    {
+        g_pAddAlphaBlend->Release();
+        g_pAddAlphaBlend = nullptr;
+    }
     if (g_pDefaultDepthStencil)
     {
         g_pDefaultDepthStencil->Release();
         g_pDefaultDepthStencil = nullptr;
+    }
+    if (g_pDefaultDepthStencilAndNoWrite)
+    {
+        g_pDefaultDepthStencilAndNoWrite->Release();
+        g_pDefaultDepthStencilAndNoWrite = nullptr;
     }
     if (g_pGreaterDepthStencil)
     {

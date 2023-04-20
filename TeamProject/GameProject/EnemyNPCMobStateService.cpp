@@ -17,6 +17,12 @@ namespace SSB
             SetTransfer();
 		}
 
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kEnemyNPCMobAirborne);
+			SetTransfer();
+        }
+
 		if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
 		{
             ReserveNextTransferName(kEnemyNPCMobAttack1);
@@ -40,11 +46,11 @@ namespace SSB
     }
     StateTransferPriority EnemyNPCMobMoveState::GetPriority()
     {
-        return 2;
+        return EnemyNPCMobMoveTypePriority;
     }
     std::vector<std::string> EnemyNPCMobMoveState::GetLinkedList()
     {
-        return { kEnemyNPCMobDead, kEnemyNPCMobAttack1, kEnemyNPCMobIdle };
+        return { kEnemyNPCMobDead, kEnemyNPCMobAttack1, kEnemyNPCMobIdle, kEnemyNPCMobAirborne };
     }
     EnemyNPCMobAttack1State::EnemyNPCMobAttack1State(float transferRequireTime)
     {
@@ -59,6 +65,12 @@ namespace SSB
             ReserveNextTransferName(kEnemyNPCMobDead);
             SetTransfer();
 		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kEnemyNPCMobAirborne);
+			SetTransfer();
+        }
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
@@ -131,13 +143,14 @@ namespace SSB
                 if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
                 {
                     Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                    Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
                 }
             }
         }
     }
     StateTransferPriority EnemyNPCMobAttack1State::GetPriority()
     {
-        return 1;
+        return EnemyNPCMobAttackTypePriority;
     }
     float EnemyNPCMobAttack1State::GetTransferRequireTime()
     {
@@ -145,7 +158,7 @@ namespace SSB
     }
     std::vector<std::string> EnemyNPCMobAttack1State::GetLinkedList()
     {
-        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobIdle, kEnemyNPCMobAttack2 };
+        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobIdle, kEnemyNPCMobAttack2, kEnemyNPCMobAirborne };
     }
     EnemyNPCMobAttack2State::EnemyNPCMobAttack2State(float transferRequireTime)
     {
@@ -160,6 +173,12 @@ namespace SSB
             ReserveNextTransferName(kEnemyNPCMobDead);
             SetTransfer();
 		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kEnemyNPCMobAirborne);
+			SetTransfer();
+        }
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
@@ -232,14 +251,14 @@ namespace SSB
                 if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
                 {
                     Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-                    Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_HealthPointMax, 1.0f));
+                    Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
                 }
             }
         }
     }
     StateTransferPriority EnemyNPCMobAttack2State::GetPriority()
     {
-        return 1;
+        return EnemyNPCMobAttackTypePriority;
     }
     float EnemyNPCMobAttack2State::GetTransferRequireTime()
     {
@@ -247,7 +266,7 @@ namespace SSB
     }
     std::vector<std::string> EnemyNPCMobAttack2State::GetLinkedList()
     {
-        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobIdle, kEnemyNPCMobAttack1 };
+        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobIdle, kEnemyNPCMobAttack1, kEnemyNPCMobAirborne };
     }
     void EnemyNPCMobDeadState::StateDecision()
     {
@@ -257,7 +276,7 @@ namespace SSB
     }
     StateTransferPriority EnemyNPCMobDeadState::GetPriority()
     {
-        return 0;
+        return EnemyNPCMobDeadTypePriority;
     }
     std::vector<std::string> EnemyNPCMobDeadState::GetLinkedList()
     {
@@ -271,6 +290,12 @@ namespace SSB
             ReserveNextTransferName(kEnemyNPCMobDead);
 			SetTransfer();
 		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kEnemyNPCMobAirborne);
+			SetTransfer();
+        }
 
 		float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
 		if (fDistance <= mob->GetSpotRange())
@@ -290,6 +315,74 @@ namespace SSB
     }
     std::vector<std::string> EnemyNPCMobIdleState::GetLinkedList()
     {
-        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobAttack1 };
+        return { kEnemyNPCMobDead, kEnemyNPCMobMove, kEnemyNPCMobAttack1, kEnemyNPCMobAirborne };
+    }
+    void EnemyNPCMobAirBorneState::StateDecision()
+    {
+        if (m_pCharacter->IsPoundState())
+        {
+			ReserveNextTransferName(kEnemyNPCMobPound);
+			SetTransfer();
+        }
+
+        if(!m_pCharacter->IsAirborne())
+		{
+			ReserveNextTransferName(kEnemyNPCMobIdle);
+			SetTransfer();
+		}
+    }
+    void EnemyNPCMobAirBorneState::Action()
+    {
+        if (!m_pCharacter->IsPoundState())
+        {
+            float halfTransferTime = m_pCharacter->GetAirborneActiveTime() * 0.5f;
+            float elapseTime = g_fGameTimer - _blackboard->StateTImeStamp;
+            float height;
+            if (elapseTime > halfTransferTime)
+            {
+                // Going Down
+                height = _airborneHeight * (1.0f - (elapseTime - halfTransferTime) / halfTransferTime);
+            }
+            else
+            {
+                //Going Up
+                height = _airborneHeight * (elapseTime / halfTransferTime);
+            }
+            m_pCharacter->m_vPos.y = height;
+        }
+    }
+    StateTransferPriority EnemyNPCMobAirBorneState::GetPriority()
+    {
+        return EnemyNPCMobAirborneTypePriority;
+    }
+    std::vector<std::string> EnemyNPCMobAirBorneState::GetLinkedList()
+    {
+        return { kEnemyNPCMobIdle, kEnemyNPCMobPound };
+    }
+    EnemyNPCMobPoundState::EnemyNPCMobPoundState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+    {
+    }
+    void EnemyNPCMobPoundState::StateDecision()
+    {
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			XMVECTOR tmp;
+			XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
+			m_pCharacter->MoveChar(tmp, world);
+
+			ReserveNextTransferName(kEnemyNPCMobIdle);
+			SetTransfer();
+		}
+    }
+    void EnemyNPCMobPoundState::Action()
+    {
+    }
+    float EnemyNPCMobPoundState::GetTransferRequireTime()
+    {
+        return _transferRequireTime;
+    }
+    std::vector<std::string> EnemyNPCMobPoundState::GetLinkedList()
+    {
+        return { kEnemyNPCMobIdle };
     }
 }
