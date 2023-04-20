@@ -273,6 +273,10 @@ namespace SSB
     }
     void EnemyNPCMobDeadState::Action()
     {
+        XMFLOAT4 tmpF(0, 0, 0, 0);
+        XMVECTOR tmp = XMLoadFloat4(&tmpF);
+		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
+		m_pCharacter->MoveChar(tmp, world);
     }
     StateTransferPriority EnemyNPCMobDeadState::GetPriority()
     {

@@ -81,8 +81,8 @@ bool    SceneInGame::Init()
 		m_debugBoxList.push_back(&enemy->m_AttackBox);
 	}
 
-	m_debugBoxList.push_back(&m_pBoss->m_ColliderBox);
-	m_debugBoxList.push_back(&m_pBoss->m_AttackBox);
+	//m_debugBoxList.push_back(&m_pBoss->m_ColliderBox);
+	//m_debugBoxList.push_back(&m_pBoss->m_AttackBox);
 
 	//testBox.CreateOBBBox(40, 4, 4);
 	//m_debugBoxList.push_back(&testBox);
@@ -253,34 +253,34 @@ bool    SceneInGame::Render()
 	//		m_pDebugBox->Render();
 	//	}
 
-	//	T_BOX b;
-	//	b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
-	//	m_pDebugBox->SetBox(b);
-	//	m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-	//	m_pDebugBox->UpdateBuffer();
-	//	//m_pDebugBox->Render();
+	//	//T_BOX b;
+	//	//b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+	//	//m_pDebugBox->SetBox(b);
+	//	//m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+	//	//m_pDebugBox->UpdateBuffer();
+	//	////m_pDebugBox->Render();
 
-	//	TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
-	//	TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
-	//	float ex = D3DXVec3Length(&l);
+	//	//TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
+	//	//TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
+	//	//float ex = D3DXVec3Length(&l);
 
-	//	TVector3 axis[3];
-	//	axis[0] = -l;
-	//	D3DXVec3Normalize(&axis[0], &axis[0]);
+	//	//TVector3 axis[3];
+	//	//axis[0] = -l;
+	//	//D3DXVec3Normalize(&axis[0], &axis[0]);
 
-	//	TVector3 B;
-	//	D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
-	//	if (B == TVector3::Zero)
-	//	{
-	//		D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
-	//	}
-	//	TVector3 C;
-	//	D3DXVec3Cross(&C, &axis[0], &B);
+	//	//TVector3 B;
+	//	//D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
+	//	//if (B == TVector3::Zero)
+	//	//{
+	//	//	D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
+	//	//}
+	//	//TVector3 C;
+	//	//D3DXVec3Cross(&C, &axis[0], &B);
 
-	//	b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
-	//	m_pDebugBox->SetBox(b);
-	//	m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-	//	m_pDebugBox->UpdateBuffer();
+	//	//b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
+	//	//m_pDebugBox->SetBox(b);
+	//	//m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+	//	//m_pDebugBox->UpdateBuffer();
 	//	//m_pDebugBox->Render();
 
 	//	//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);

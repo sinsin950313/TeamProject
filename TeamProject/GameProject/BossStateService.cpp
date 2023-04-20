@@ -212,6 +212,7 @@ namespace SSB
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
 			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+			Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
 		}
 	}
 	void BossMobAttack1State::StateDecision()
@@ -311,9 +312,14 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
 		{
-			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+			{
+				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+				Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+			}
 		}
 	}
 	StateTransferPriority BossMobAttack1State::GetPriority()
@@ -428,9 +434,14 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
 		{
-			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+			{
+				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+				Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+			}
 		}
 	}
 	StateTransferPriority BossMobAttack2State::GetPriority()
@@ -530,6 +541,7 @@ namespace SSB
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
 				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 2);
+			Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
 			}
 		}
 	}
@@ -572,6 +584,7 @@ namespace SSB
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
 			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 0.5);
+			Player::GetInstance().m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
 		}
 	}
 	void BossMobDeadState::StateDecision()
@@ -579,6 +592,10 @@ namespace SSB
 	}
 	void BossMobDeadState::Action()
 	{
+        XMFLOAT4 tmpF(0, 0, 0, 0);
+        XMVECTOR tmp = XMLoadFloat4(&tmpF);
+		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
+		m_pCharacter->MoveChar(tmp, world);
 	}
 	StateTransferPriority BossMobDeadState::GetPriority()
 	{
@@ -709,7 +726,8 @@ namespace SSB
     {
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			XMVECTOR tmp;
+			XMFLOAT4 tmpF(0, 0, 0, 0);
+			XMVECTOR tmp = XMLoadFloat4(&tmpF);
 			XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
 			m_pCharacter->MoveChar(tmp, world);
 
