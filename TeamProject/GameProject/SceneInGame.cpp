@@ -13,6 +13,7 @@
 #include "BossStateService.h"
 #include "DirectionalLight.h"
 #include "LightManager.h"
+#include "EffectMgr.h"
 
 E_SCENE SceneInGame::NextScene()
 {
@@ -54,6 +55,8 @@ void SceneInGame::DataLoad()
 	I_Sound.LoadAll(kTeamProjectSoundPath);
 
 	CameraLoad();
+	I_Effect.SetDevice(m_pd3dDevice, m_pImmediateContext);
+	I_Effect.SetCamera(m_pMainCamera);
 
 	MapLoad();
 	
@@ -110,7 +113,10 @@ bool    SceneInGame::Frame()
 	//        m_bGameRun = false;
 	//    }
 	//}
-
+	if (I_Input.GetKey('P') == KEY_PUSH)
+	{
+		I_Effect.CreateEffect(L"path", Player::GetInstance().GetPosition());
+	}
 
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
@@ -167,6 +173,7 @@ bool    SceneInGame::Frame()
 	//{
 	//	m_pBoss->Frame();
 	//}
+	I_Effect.Frame();
 	m_pInter_MinimapContents->Frame();
 	m_pInter_Ingame->Frame();
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
@@ -306,6 +313,7 @@ bool SceneInGame::PostRender()
 
     Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
     Player::GetInstance().m_pTrail->Render();
+	I_Effect.Render();
     m_pInter_Ingame->Render();
 
 	return true;
@@ -313,6 +321,8 @@ bool SceneInGame::PostRender()
 
 bool    SceneInGame::Release()
 {
+	I_Effect.Release();
+
 	if (m_pInter_MinimapContents)
 	{
 		m_pInter_MinimapContents->Release();

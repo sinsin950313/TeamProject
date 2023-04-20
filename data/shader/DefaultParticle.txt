@@ -1,0 +1,62 @@
+#include "ConstantHeader.txt"
+
+struct VS_in
+{
+	float3 p : POSITION;
+	float3 n : NORMAL;
+	float4 c : COLOR;
+	float2 t : TEXCOORD;
+	uint iVID : SV_InstanceID;
+};
+struct VS_out
+{
+	float4 p : SV_POSITION;
+	float3 n : NORMAL;
+	float4 c : COLOR0;
+	float2 t : TEXCOORD0;
+	float3 w : TEXCOORD1;
+};
+
+cbuffer InstancingData : register(b8)
+{
+	matrix g_mInstancing[500];
+	float4 g_vInstColor[500];
+};
+
+VS_out VS(VS_in input)
+{
+	VS_out output = (VS_out)0;
+
+	float4 pos = 0;
+	float4 normal = 0;
+
+	float4 vLocal = float4(input.p, 1.0f);
+	float4 vWorld = mul(vLocal, g_mInstancing[input.iVID]);
+	float4 vView = mul(vWorld, g_matView);
+	float4 vProj = mul(vView, g_matProj);
+
+	output.p = vProj;
+	output.n = normal;
+	output.c = g_vInstColor[input.iVID];
+	output.t = input.t;
+
+	return output;
+}
+
+struct PS_OUT
+{
+	float4 vColor :SV_TARGET0;//add(+)
+	float4 vBlack :SV_TARGET1;//multiply(*)
+};
+
+PS_OUT PS(VS_out input) : SV_Target
+{
+	PS_OUT vOut;
+	vOut.vColor = g_txTexA.Sample(g_SampleWrap, input.t);
+	float4 color = g_txTexA.Sample(g_SampleWrap, input.t);
+	//float white = (color.x + color.y + color.z) / 1.0f;
+	float white = max(max(color.r, color.g), color.b);
+	vOut.vBlack = float4(1 - white, 1 - white, 1 - white, 1);
+	vOut.vColor = color * input.c;
+	return vOut;
+}

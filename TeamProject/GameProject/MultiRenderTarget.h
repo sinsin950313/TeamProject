@@ -61,6 +61,8 @@ namespace SSB
 		bool	Initialize_SetData(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 2048.0f, FLOAT fHeight = 2048.0f);
 		MultiRenderTargetResult GetResult();
 
+		ID3D11DepthStencilView* GetDepthStencilView() { return m_pDepthStencilView; }
+
 	public:
 		virtual bool Init();
 		virtual bool Frame();
