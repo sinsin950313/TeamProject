@@ -69,6 +69,7 @@ public:
 
     Shader* m_pMinimapPS_Quadtree;
     Shader* m_pMinimapPS_Object;
+    Shader* m_pMinimapPS_Skydome;
 
     Interface* m_pInter_Minimap;
     InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();

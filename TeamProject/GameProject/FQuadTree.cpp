@@ -981,7 +981,7 @@ namespace MAPLOAD
                             }
                          
                             PathChanger(strName);
-                            pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/SkyDomeShader.hlsl", mtw(strName));
+                            pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/MAP/SkyDomeShader.hlsl", mtw(strName));
                             pSphereObject->Init();
                         }
                         else

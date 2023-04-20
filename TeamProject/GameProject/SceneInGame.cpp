@@ -805,13 +805,15 @@ void    SceneInGame::MapLoad()
 	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Map.hlsl", L"psmain", &m_pMinimapPS_Quadtree);
+	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Skydome.hlsl", L"psmain", &m_pMinimapPS_Skydome);
+
 }
 
 void SceneInGame::RenderMinimap()
 {
 	Shader* pPSOrigin_Map = nullptr;
 	std::map<Object*, Shader*> pPSOrigin_Objects;
-	Shader* pPSOrigin_SkyDome = nullptr;
+	ID3D11PixelShader* pPSOrigin_SkyDome = nullptr;
 	// OMGetRenderTargets를 사용시 Interface의 참조수가 하나씩 증가한다고 함. 현 구조에서 이 코드의 필요 용도를 알 수 없으므로 일단 주석처리하지만 필요하다면 이를 고려하여 다시 구성할 것.
 	// https://learn.microsoft.com/ko-kr/windows/win32/api/d3d11/nf-d3d11-id3d11devicecontext-omgetrendertargets
 	/*m_pImmediateContext->OMGetRenderTargets(1, &m_RenderTargetMinimap.m_pOldRTV, &m_RenderTargetMinimap.m_pOldDSV);*/
@@ -829,8 +831,8 @@ void SceneInGame::RenderMinimap()
 			pPSOrigin_Objects.insert(std::make_pair(iter, iter->m_pModel->_ps));
 			iter->m_pModel->_ps = m_pMinimapPS_Object;
 		}
-		/*pPSOrigin_SkyDome = m_pQuadTree->m_pSphereObject->m_pShader;
-		m_pQuadTree->m_pSphereObject->m_pShader = m_pMinimapPS_Object;*/
+		pPSOrigin_SkyDome = m_pQuadTree->m_pSphereObject->m_pShader->m_pPS;
+		m_pQuadTree->m_pSphereObject->m_pShader->m_pPS = m_pMinimapPS_Skydome->m_pPS;
 
 		m_pQuadTree->SetMatrix(nullptr, &m_pMinimapCamera->m_matView, &m_pMinimapCamera->m_matProj);
 		m_pQuadTree->Render();
@@ -840,7 +842,7 @@ void SceneInGame::RenderMinimap()
 		{
 			iter->m_pModel->_ps = pPSOrigin_Objects.find(iter)->second;
 		}
-		//m_pQuadTree->m_pSphereObject->m_pShader = pPSOrigin_SkyDome;
+		m_pQuadTree->m_pSphereObject->m_pShader->m_pPS = pPSOrigin_SkyDome;
 		/*Player::GetInstance().m_pMinimapProfile->SetAttribute(Player::GetInstance().GetPosition(), { 0.2f, 0.2f, 0.2f });
 		for (auto enemy : m_Enemies)
 		{
@@ -859,7 +861,7 @@ void SceneInGame::RenderMinimap()
 			TColor color;
 			T_BOX box;
 			color = TColor(0, 1, 0, 1);
-			box.CreateOBBBox(10.0f, 10.0f, 10.0f, Player::GetInstance().GetPosition());
+			box.CreateOBBBox(5.0f, 5.0f, 5.0f, Player::GetInstance().GetPosition());
 			m_pDebugBox->SetBox(box);
 			m_pDebugBox->SetColor(color);
 			m_pDebugBox->UpdateBuffer();
@@ -868,7 +870,7 @@ void SceneInGame::RenderMinimap()
 			color = TColor(1, 0, 0, 1);
 			for (auto enemy : m_Enemies)
 			{
-				box.CreateOBBBox(10.0f, 10.0f, 10.0f, enemy->GetPosition());
+				box.CreateOBBBox(5.0f, 5.0f, 5.0f, enemy->GetPosition());
 				m_pDebugBox->SetBox(box);
 				m_pDebugBox->SetColor(color);
 				m_pDebugBox->UpdateBuffer();
@@ -877,7 +879,7 @@ void SceneInGame::RenderMinimap()
 			color = TColor(1, 1, 0, 1);
 			if (m_pBoss)
 			{
-				box.CreateOBBBox(10.0f, 10.0f, 10.0f, m_pBoss->GetPosition());
+				box.CreateOBBBox(5.0f, 5.0f, 5.0f, m_pBoss->GetPosition());
 				m_pDebugBox->SetBox(box);
 				m_pDebugBox->SetColor(color);
 				m_pDebugBox->UpdateBuffer();
