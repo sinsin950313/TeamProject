@@ -215,8 +215,11 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
@@ -299,8 +302,11 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
@@ -383,8 +389,11 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
@@ -467,8 +476,11 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
@@ -572,8 +584,11 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.4f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
@@ -818,8 +833,11 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.4f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
@@ -921,8 +939,11 @@ namespace SSB
 
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.4f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
@@ -1058,7 +1079,9 @@ namespace SSB
 			auto targets = player->GetUltimateSkillTargetList();
 			Player::GetInstance().m_vPos = targets[0]->GetPosition();
 			Player::GetInstance().m_vPos.y = 0;
+
 			Player::GetInstance().m_pInterSkillR->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerUltimate)));
+
 			auto list = player->GetUltimateSkillTargetList();
 			for (auto elem : list)
 			{
