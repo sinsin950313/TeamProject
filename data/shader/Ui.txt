@@ -57,7 +57,7 @@ float4 ANGLE_PS(VS_out input) : SV_Target
 	{
     		alpha = color.a * 0.3f;
 	}
-    	return float4(color.rgb, alpha);
+    	return float4(color.rgb, alpha) * input.c;
 }
 
 float4 COLOR_PS(VS_out input) : SV_Target

@@ -13,6 +13,7 @@ enum	E_UIState
 	UI_DIS,
 	UI_MAXSTATE
 };
+
 class InterfaceWork;
 class Interface : public BaseObject
 {
@@ -40,10 +41,20 @@ public:
 
 		m_pTexture = m_pTexList[index];
 	}
+	void SetAllAlpha(float fAlpha)
+	{
+		for (int i = 0; i < m_VertexList.size(); i++)
+		{
+			m_VertexList[i].c.w = fAlpha;
+		}
+		for (int iChild = 0; iChild < m_pChildList.size(); iChild++)
+		{
+			m_pChildList[iChild]->SetAllAlpha(fAlpha);
+		}
+	}
 
 public:
 	E_UIState	m_CurrentState;
-
 public:
 	std::list<InterfaceWork*> m_pWorkList;
 	std::vector<Interface*> m_rcDrawList;
@@ -52,7 +63,6 @@ public:
 	TVector2 m_NormalizeDesc;
 public:
 	bool	m_isUsing = true;
-public:
 };
 
 class InterfaceBillboard : public Interface
@@ -107,7 +117,6 @@ public:
 	}
 	TVector2 m_MapDesc;
 };
-
 class InterfaceWork
 {
 public:
@@ -433,6 +442,8 @@ public:
 public:
 	InterfaceDamageFloating(UINT iDamage, Interface* pInter, float fDuration = 2.5f, float fFloatLength = 5.0f) : m_fDuration(fDuration), m_fRemain(fDuration), m_fFloatLength(fFloatLength)
 	{
+		m_iDamage = iDamage;
+		m_pInter = pInter;
 		std::string szDamage = std::to_string(iDamage);
 		for (int idx = 0; idx < szDamage.size(); idx++)
 		{
@@ -442,6 +453,8 @@ public:
 	}
 public:
 	std::vector<DamageFont> m_Damage;
+	UINT m_iDamage;
+	Interface* m_pInter;
 	float m_fDamageSize;
 	float m_fDuration;
 	float m_fRemain;
