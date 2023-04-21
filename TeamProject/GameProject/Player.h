@@ -46,11 +46,12 @@ public:
     VS_INSTANCING_BUFFER m_cbInstancingData;
 
     TrailEffect* m_pTrail;
-    Interface* m_pSkillQ;
-    Interface* m_pSkillDash;
-    Interface* m_pSkillE;
-    Interface* m_pSkillR;
-    Interface* m_pSkillPassive;
+    Interface* m_pInterSkillQ;
+    Interface* m_pInterSkillDash;
+    Interface* m_pInterSkillE;
+    Interface* m_pInterSkillR;
+    Interface* m_pInterSkillPassive;
+    Interface* m_pInterDamageBlood;
 
 public:
     bool m_IsImmortal = false;

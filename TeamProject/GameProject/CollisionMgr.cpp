@@ -83,9 +83,27 @@ bool CollisionMgr::IsCollide(T_BOX* box)
 	return false;
 }
 
+bool CollisionMgr::IsCollideTrigger(T_BOX* box)
+{
+	for (auto iter : m_MapTriggerList)
+	{
+		if (TCollision::ChkOBBToOBB(*box, iter))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CollisionMgr::AddMapCollisionBox(T_BOX tBox)
 {
 	m_MapCollisionList.push_back(tBox);
+}
+
+void CollisionMgr::AddMapTriggerBox(T_BOX tBox)
+{
+	m_MapTriggerList.push_back(tBox);
 }
 
 std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()

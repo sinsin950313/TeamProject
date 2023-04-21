@@ -29,7 +29,7 @@ E_SCENE SceneInGame::NextScene()
 	//    }
 	//}
 	
-	if (m_bInteractNextStage)
+	if (m_bInteractNextStage && I_Collision.IsCollideTrigger(&Player::GetInstance().m_ColliderBox))
 	{
 		m_Scene = S_INGAME2;
 	}
@@ -172,9 +172,10 @@ bool    SceneInGame::Frame()
 				++m_iMobDeadCount;
 			}
 		}
-		if (!m_Enemies.empty() && m_iMobDeadCount == m_Enemies.size())
+		if (!m_Enemies.empty() && m_iMobDeadCount == m_Enemies.size() && !m_bInteractNextStage)
 		{
 			m_bInteractNextStage = true;
+			I_Collision.AddMapTriggerBox(m_pQuadTree->m_Trigger);
 		}
 
 		if (m_pBoss)
@@ -195,12 +196,12 @@ bool    SceneInGame::Frame()
 	for (auto enemy : m_Enemies)
 	{
 		enemy->Frame();
-		if(typeid(*enemy->m_pGageHP) == typeid(InterfaceBillboard))
-			enemy->m_pGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.005, 0.01, 0.01});
-		enemy->m_pGageHP->Frame();
+		if(typeid(*enemy->m_pInterGageHP) == typeid(InterfaceBillboard))
+			enemy->m_pInterGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.005, 0.01, 0.01});
+		enemy->m_pInterGageHP->Frame();
 
-		enemy->m_pDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2.5f, enemy->m_vPos.z }, { 0.01, 0.01, 0.01 });
-		enemy->m_pDamage->Frame();
+		enemy->m_pInterDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2.5f, enemy->m_vPos.z }, { 0.01, 0.01, 0.01 });
+		enemy->m_pInterDamage->Frame();
 	}
 
 	//if (m_pBoss)
@@ -261,68 +262,67 @@ bool    SceneInGame::Render()
 		m_pBoss->Render();
 	}*/
 
-	//if (m_pDebugBox)
-	//{
-	//	//for (auto box : I_Collision.GetMapCollisionList())
-	//	//{
-	//	//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	//	//    m_pDebugBox->SetBox(box);
-	//	//    m_pDebugBox->SetColor({1, 0, 0, 1});
-	//	//    m_pDebugBox->UpdateBuffer();
-	//	//    m_pDebugBox->Render();
-	//	//}
+	if (m_pDebugBox)
+	{
 
-	//	m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	//	TColor color = TColor(0, 0, 1, 1);
-	//	for (T_BOX* box : m_debugBoxList)
-	//	{
-	//		m_pDebugBox->SetBox(*box);
-	//		m_pDebugBox->SetColor(color);
-	//		m_pDebugBox->UpdateBuffer();
-	//		m_pDebugBox->Render();
-	//	}
+		//for (auto box : I_Collision.GetMapCollisionList())
+		//{
+		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(box);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
 
-	//	T_BOX b;
-	//	b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
-	//	m_pDebugBox->SetBox(b);
-	//	m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-	//	m_pDebugBox->UpdateBuffer();
-	//	//m_pDebugBox->Render();
+		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//TColor color = TColor(0, 0, 1, 1);
+		//for (T_BOX* box : m_debugBoxList)
+		//{
+		//	m_pDebugBox->SetBox(*box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
 
-	//	TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
-	//	TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
-	//	float ex = D3DXVec3Length(&l);
+		//T_BOX b;
+		//b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
+		//m_pDebugBox->SetBox(b);
+		//m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+		//m_pDebugBox->UpdateBuffer();
+		////m_pDebugBox->Render();
 
-	//	TVector3 axis[3];
-	//	axis[0] = -l;
-	//	D3DXVec3Normalize(&axis[0], &axis[0]);
+		//TVector3 cen = (Player::GetInstance().GetCurSocketPos("WeaponLow") + b.vCenter) * 0.5;
+		//TVector3 l = (Player::GetInstance().GetCurSocketPos("WeaponLow") - cen);
+		//float ex = D3DXVec3Length(&l);
 
-	//	TVector3 B;
-	//	D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
-	//	if (B == TVector3::Zero)
-	//	{
-	//		D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
-	//	}
-	//	TVector3 C;
-	//	D3DXVec3Cross(&C, &axis[0], &B);
+		//TVector3 axis[3];
+		//axis[0] = -l;
+		//D3DXVec3Normalize(&axis[0], &axis[0]);
 
-	//	b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
-	//	m_pDebugBox->SetBox(b);
-	//	m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
-	//	m_pDebugBox->UpdateBuffer();
-	//	//m_pDebugBox->Render();
+		//TVector3 B;
+		//D3DXVec3Cross(&B, &axis[0], &TVector3::UnitX);
+		//if (B == TVector3::Zero)
+		//{
+		//	D3DXVec3Cross(&B, &axis[0], &TVector3::UnitY);
+		//}
+		//TVector3 C;
+		//D3DXVec3Cross(&C, &axis[0], &B);
 
-	//	//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
-	//	//T_BOX box;
-	//	//box.CreateOBBBox();
-	//	//m_pDebugBox->Render();
-	//}
+		//b.CreateOBBBox(ex, 0.3, 0.3, cen, axis[0], B, C);
+		//m_pDebugBox->SetBox(b);
+		//m_pDebugBox->SetColor(TColor(1, 1, 1, 1));
+		//m_pDebugBox->UpdateBuffer();
+		//m_pDebugBox->Render();
+
+		//m_pDebugBox->SetBox(TVector3(0, 0, 0), TVector3::Zero, TVector3::One);
+		//T_BOX box;
+		//box.CreateOBBBox();
+		//m_pDebugBox->Render();
+	}
 
 
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//Player::GetInstance().m_pTrail->Render();
-
-	//m_pInter_Ingame->Render();
 
     // Camera의 위치정보가 필요하므로 지우지 말 것
 	auto lights = SSB::I_Light.GetLightList();
@@ -343,12 +343,12 @@ bool SceneInGame::PostRender()
 
 	for (auto enemy : m_Enemies)
 	{
-		if (typeid(*enemy->m_pGageHP) == typeid(InterfaceBillboard))
-			enemy->m_pGageHP->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
-		enemy->m_pGageHP->Render();
+		if (typeid(*enemy->m_pInterGageHP) == typeid(InterfaceBillboard))
+			enemy->m_pInterGageHP->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
+		enemy->m_pInterGageHP->Render();
 
-		enemy->m_pDamage->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
-		enemy->m_pDamage->Render();
+		enemy->m_pInterDamage->SetMatrix(nullptr, &enemy->m_matView, &enemy->m_matProj);
+		enemy->m_pInterDamage->Render();
 	}
 
 	I_Effect.Render();
@@ -391,7 +391,7 @@ bool    SceneInGame::Release()
 		m_pInter_Ingame = nullptr;
 	}
 
-	Player::GetInstance().m_pGageHP = nullptr;
+	Player::GetInstance().m_pInterGageHP = nullptr;
 
 	if (m_pQuadTree)
 	{
@@ -448,7 +448,6 @@ void    SceneInGame::CameraLoad()
 	m_pCinemaCamera = new CameraCinema();
 	m_pCinemaCamera->CreateViewMatrix(TVector3(0, 400, 0), TVector3(0, 0, 0.1f), TVector3(0, 0, 1));
 	m_pCinemaCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
-	m_pMainCamera = m_pCinemaCamera;
 }
 
 void    SceneInGame::CharacterLoad()
@@ -471,6 +470,7 @@ void    SceneInGame::CharacterLoad()
 	}
 
 	{
+		//move to mapload
 		/*Player::GetInstance().m_pMainCamera = m_pMainCamera;
 		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;*/
     
@@ -486,12 +486,13 @@ void    SceneInGame::CharacterLoad()
 		m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerHoudgiLoop);
 
 		Player::GetInstance().SetMap(m_pQuadTree->m_pMap);
-		Player::GetInstance().m_pGageHP = m_pInter_PlayerHP;
-		Player::GetInstance().m_pMinimapProfile = m_pInter_Minimap_player;
-		Player::GetInstance().m_pSkillQ = m_pInter_Skill_Q;
-		Player::GetInstance().m_pSkillDash = m_pInter_Skill_W;
-		Player::GetInstance().m_pSkillE = m_pInter_Skill_E;
-		Player::GetInstance().m_pSkillR = m_pInter_Skill_R;
+		Player::GetInstance().m_pInterGageHP = m_pInter_PlayerHP;
+		Player::GetInstance().m_pInterMinimapProfile = m_pInter_Minimap_player;
+		Player::GetInstance().m_pInterSkillQ = m_pInter_Skill_Q;
+		Player::GetInstance().m_pInterSkillDash = m_pInter_Skill_W;
+		Player::GetInstance().m_pInterSkillE = m_pInter_Skill_E;
+		Player::GetInstance().m_pInterSkillR = m_pInter_Skill_R;
+		Player::GetInstance().m_pInterDamageBlood = m_pInter_Damage_blood;
 	}
 
 
@@ -534,8 +535,8 @@ void    SceneInGame::CharacterLoad()
 			enemy->SetMap(m_pQuadTree->m_pMap);
 			if (m_pQuadTree->m_EnemySpawnList[i].first == mobStr)
 			{
-				enemy->m_pGageHP = new InterfaceBillboard();
-				enemy->m_pGageHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
+				enemy->m_pInterGageHP = new InterfaceBillboard();
+				enemy->m_pInterGageHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
 			}
 			else
 			{
@@ -543,19 +544,19 @@ void    SceneInGame::CharacterLoad()
 				m_pInter_BossHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
 				m_pInter_BossHP->SetAttribute(TVector3(544, 35, 0));
 				//m_pInter_Ingame->AddChild(m_pInter_BossHP);
-				enemy->m_pGageHP = m_pInter_BossHP;
+				enemy->m_pInterGageHP = m_pInter_BossHP;
 			}
 
 			InterfaceDamage* pDamage = new InterfaceDamage();
 			pDamage->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_font.dds");
 			pDamage->SetDamageList(&m_DamageFontList);
-			enemy->m_pDamage = pDamage;
+			enemy->m_pInterDamage = pDamage;
 			
 			InterfaceMinimap* pMinimapEnemy = new InterfaceMinimap();
 			pMinimapEnemy->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/skill_q.dds");
 			pMinimapEnemy->SetMapDesc(m_pQuadTree->m_pMap->m_dwNumColumns, m_pQuadTree->m_pMap->m_dwNumRows);
 			m_pInter_MinimapContents->AddChild(pMinimapEnemy);
-			enemy->m_pMinimapProfile = pMinimapEnemy;
+			enemy->m_pInterMinimapProfile = pMinimapEnemy;
 
 			m_Enemies.push_back(enemy);
 		}
@@ -669,6 +670,15 @@ void    SceneInGame::UiLoad()
 	pInter_MinimapFrame->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/minimap.dds");
 	pInter_MinimapFrame->SetAttribute(TVector3(952, 778, 0));
 	m_pInter_Ingame->AddChild(pInter_MinimapFrame);
+
+	m_pInter_Damage_blood = new Interface();
+	m_pInter_Damage_blood->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_blood.dds");
+	m_pInter_Damage_blood->SetAttribute(TVector3(0, 0, 0));
+	for (int i = 0; i < m_pInter_Damage_blood->m_VertexList.size(); i++)
+	{
+		m_pInter_Damage_blood->m_VertexList[i].c.w = 0.0f;
+	}
+	m_pInter_Ingame->AddChild(m_pInter_Damage_blood);
 }
 
 void    SceneInGame::FSMLoad()
@@ -939,18 +949,21 @@ void    SceneInGame::MapLoad()
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
-	// 
-	m_pQuadTree->m_pCurrentCamera = m_pCinemaCamera;
+	
+	m_pMainCamera = m_pCinemaCamera;
+	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 	m_pMainCamera->m_vPos = m_pQuadTree->m_CamMove[0].camPos;
 	m_pMainCamera->m_fCameraYawAngle = m_pQuadTree->m_CamMove[0].fYaw;
 	m_pMainCamera->m_fCameraPitchAngle = m_pQuadTree->m_CamMove[0].fPitch;
 	m_pMainCamera->m_fCameraRollAngle = m_pQuadTree->m_CamMove[0].fRoll;
 
+	//마지막 카메라이동의 followpos를 받아오기위함
 	((CameraTPS*)m_pCameraTemp)->m_vFollowPos = &Player::GetInstance().m_vPos;
 	XMFLOAT3 playerSpawnPos;
 	XMStoreFloat3(&playerSpawnPos, m_pQuadTree->m_PlayerSpawnPoint.second.position);
 	Player::GetInstance().Initialize_SetPosition(TVector3(playerSpawnPos));
 	m_pCameraTemp->Frame();
+
 	m_pQuadTree->m_CamMove[3].camPos.x = m_pCameraTemp->m_vPos.x;
 	m_pQuadTree->m_CamMove[3].camPos.y = m_pCameraTemp->m_vPos.y;
 	m_pQuadTree->m_CamMove[3].camPos.z = m_pCameraTemp->m_vPos.z;

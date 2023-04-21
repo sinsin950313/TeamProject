@@ -97,6 +97,7 @@ public:
 
 	std::pair<std::string, Transform> m_PlayerSpawnPoint;
 	std::vector<std::pair<std::string, Transform>> m_EnemySpawnList;
+	T_BOX m_Trigger;
 	std::unordered_set<Object*> m_pAllObjectList;
 	std::vector<FNode*> m_pLeafNodeList;
 	std::vector<FNode*> m_pDrawLeafNodeList;

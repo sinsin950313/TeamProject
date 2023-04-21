@@ -65,6 +65,7 @@ public:
     Interface* m_pInter_Skill_W;
     Interface* m_pInter_Skill_E;
     Interface* m_pInter_Skill_R;
+    Interface* m_pInter_Damage_blood;
 
     Camera* m_pMinimapCamera = nullptr;
     RenderTarget m_RenderTargetMinimap;
