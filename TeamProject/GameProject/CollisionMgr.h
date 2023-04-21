@@ -19,9 +19,6 @@ private:
 	std::map<T_BOX*, Character*> m_StaticObjectList;
 	std::map<T_BOX*, Character*> m_NpcList;
 
-	// Character* -> NpcAttack : Attack 형식의 클래스로 변경예정..?
-	std::map<T_BOX*, Character*> m_NpcAttackList;
-
 public:
 	bool	ChkPlayerAttackToNpcList(T_BOX* box);
 	bool	ChkCharacterToStaticObjList(T_BOX* box);
@@ -36,6 +33,14 @@ public:
 public:
 	void	AddMapCollisionBox(T_BOX tBox);
 	std::vector<T_BOX>& GetMapCollisionList();
+
+private:
+	bool IsPenetratable(T_PLANE plane, TVector3 vertex);
+	bool IsPenetrate(T_PLANE plane, TVector3 start, TVector3 end);
+
+public:
+	std::vector<T_BOX*> GetCollideBoxList(T_BOX* collider);
+	std::vector<TVector3> GetCollideNormal(T_BOX* source, TVector3 delta, T_BOX* dest);
 
 private:
 	CollisionMgr();

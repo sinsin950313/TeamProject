@@ -93,6 +93,58 @@ std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()
 	return m_MapCollisionList;
 }
 
+std::vector<T_BOX*> CollisionMgr::GetCollideBoxList(T_BOX* source)
+{
+	std::vector<T_BOX*> ret;
+
+	for (auto dest : m_StaticObjectList)
+	{
+		if (TCollision::ChkOBBToOBB(*source, *dest.first))
+		{
+			ret.push_back(dest.first);
+		}
+	}
+	for (auto dest : m_MapCollisionList)
+	{
+		if (TCollision::ChkOBBToOBB(*source, dest))
+		{
+			ret.push_back(&dest);
+		}
+	}
+	for (auto dest : m_NpcList)
+	{
+		if (TCollision::ChkOBBToOBB(*source, *dest.first))
+		{
+			ret.push_back(dest.first);
+		}
+	}
+
+	return ret;
+}
+
+std::vector<TVector3> CollisionMgr::GetCollideNormal(T_BOX* source, TVector3 delta, T_BOX* dest)
+{
+	std::vector<TVector3> ret;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		TVector3 start = source->vPos[i];
+		TVector3 end = source->vPos[i] + delta;
+
+		for (int j = 0; j < 6; ++j)
+		{
+			T_PLANE plane = dest->plane[j];
+			if (IsPenetratable(plane, start) && IsPenetratable(plane, end) && IsPenetrate(plane, start, end))
+			{
+				TVector3 normal(dest->plane[j].fA, dest->plane[j].fB, dest->plane[j].fC);
+				ret.push_back(normal);
+			}
+		}
+	}
+
+	return ret;
+}
+
 void	CollisionMgr::AddStaticObjectBox(T_BOX* box, Character* pChar)
 {
 	if (m_StaticObjectList.find(box) == m_StaticObjectList.end())
