@@ -141,18 +141,18 @@ bool	Character::Render()
 
 bool	Character::Release()
 {
-	if (m_pGageHP)
+	if (m_pInterGageHP)
 	{
-		m_pGageHP->Release();
-		delete m_pGageHP;
-		m_pGageHP = nullptr;
+		m_pInterGageHP->Release();
+		delete m_pInterGageHP;
+		m_pInterGageHP = nullptr;
 	}
 
-	if (m_pDamage)
+	if (m_pInterDamage)
 	{
-		m_pDamage->Release();
-		delete m_pDamage;
-		m_pDamage = nullptr;
+		m_pInterDamage->Release();
+		delete m_pInterDamage;
+		m_pInterDamage = nullptr;
 	}
 
 	if (_objectToWorldTransformBuffer) _objectToWorldTransformBuffer->Release();

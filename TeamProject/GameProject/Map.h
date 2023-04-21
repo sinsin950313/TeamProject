@@ -209,3 +209,56 @@ struct PNCTVertex
 		return is;
 	}
 };
+
+struct CameraMove
+{
+	XMFLOAT3 camPos;
+	float fYaw;
+	float fPitch;
+	float fRoll;
+	friend std::ostream& operator<<(std::ostream& os, const CameraMove& camMove)
+	{
+		os << "camPos:" << camMove.camPos.x << " " << camMove.camPos.y << " " << camMove.camPos.z << ", ";
+		os << "fYaw:" << camMove.fYaw << ", ";
+		os << "fPitch:" << camMove.fPitch << ", ";
+		os << "fRoll:" << camMove.fRoll;
+		return os;
+	}
+
+	friend std::istringstream& operator>>(std::istringstream& is, CameraMove& camMove)
+	{
+		// "pos: x y z, tex: x y, normal: x y z, color: r g b a"와 같은 형태의 문자열에서 필드 값을 추출합니다.
+		std::string line;
+		std::getline(is, line);
+
+		// camPos 값을 추출합니다.
+		size_t pos_start = line.find("camPos:") + strlen("camPos:");
+		size_t pos_end = line.find(",", pos_start);
+		std::string pos_str = line.substr(pos_start, pos_end - pos_start);
+		std::istringstream pos_stream(pos_str);
+		pos_stream >> camMove.camPos.x >> camMove.camPos.y >> camMove.camPos.z;
+
+		// fYaw 값을 추출합니다.
+		size_t yaw_start = line.find("fYaw:") + strlen("fYaw:");
+		size_t yaw_end = line.find(",", yaw_start);
+		std::string yaw_str = line.substr(yaw_start, yaw_end - yaw_start);
+		std::istringstream yaw_stream(yaw_str);
+		yaw_stream >> camMove.fYaw;
+
+		// fPitch 값을 추출합니다.
+		size_t pitch_start = line.find("fPitch:") + strlen("fPitch:");
+		size_t pitch_end = line.find(",", pitch_start);
+		std::string pitch_str = line.substr(pitch_start, pitch_end - pitch_start);
+		std::istringstream pitch_stream(pitch_str);
+		pitch_stream >> camMove.fPitch;
+
+		// fRoll 값을 추출합니다.
+		size_t roll_start = line.find("fRoll:") + strlen("fRoll:");
+		size_t roll_end = line.find(",", roll_start);
+		std::string roll_str = line.substr(roll_start, roll_end - roll_start);
+		std::istringstream roll_stream(roll_str);
+		roll_stream >> camMove.fRoll;
+
+		return is;
+	}
+};

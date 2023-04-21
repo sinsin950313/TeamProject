@@ -113,6 +113,7 @@ copy "*.lib" "..\\..\\lib"</Command>
     <ClInclude Include="ArcBall.h" />
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraCinema.h" />
     <ClInclude Include="CameraDebug.h" />
     <ClInclude Include="CameraTPS.h" />
     <ClInclude Include="Interface.h" />
@@ -140,6 +141,7 @@ copy "*.lib" "..\\..\\lib"</Command>
     <ClCompile Include="ArcBall.cpp" />
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraCinema.cpp" />
     <ClCompile Include="CameraDebug.cpp" />
     <ClCompile Include="CameraTPS.cpp" />
     <ClCompile Include="Interface.cpp" />
