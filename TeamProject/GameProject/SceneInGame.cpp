@@ -122,6 +122,11 @@ bool    SceneInGame::Frame()
 		Player::GetInstance().SetBegin();
 	}
 
+	if (I_Input.GetKey('V') == KEY_PUSH)
+	{
+		Player::GetInstance().SetVictory();
+	}
+
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
@@ -736,6 +741,18 @@ void    SceneInGame::FSMLoad()
 			state->Initialize_SetStateAnimation("Dead");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerDead, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerVictoryStartState(3.0f);
+			state->Initialize_SetStateAnimation("RecallStart");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerVictoryStart, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerVictoryLoopState;
+			state->Initialize_SetStateAnimation("RecallLoop");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerVictoryLoop, state);
 		}
 
 		manager->Init();

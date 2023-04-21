@@ -125,4 +125,11 @@ private:
 public:
     void SetBegin();
     bool IsBegin();
+
+private:
+    bool _isVictory = false;
+
+public:
+    void SetVictory();
+    bool IsVictory();
 };

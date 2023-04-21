@@ -248,6 +248,16 @@ bool Player::IsBegin()
 	return _isBegin;
 }
 
+void Player::SetVictory()
+{
+	_isVictory = true;
+}
+
+bool Player::IsVictory()
+{
+	return _isVictory;
+}
+
 Player::Tornado::Tornado(Character* owner) : m_Owner(owner)
 {
 	m_pDebugBox = new DebugBox;
