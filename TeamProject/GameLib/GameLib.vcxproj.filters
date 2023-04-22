@@ -114,9 +114,6 @@
     <ClInclude Include="Interface.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="CameraCinema.h">
-      <Filter>Camera</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArcBall.cpp">
@@ -190,9 +187,6 @@
     </ClCompile>
     <ClCompile Include="Interface.cpp">
       <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraCinema.cpp">
-      <Filter>Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
