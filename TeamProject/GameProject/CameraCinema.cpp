@@ -17,6 +17,17 @@ void CameraCinema::MoveCameraBezierSpline(float time, float duration, std::vecto
 		pos.y += basis * camMoveList[i].camPos.y;
 		pos.z += basis * camMoveList[i].camPos.z;
 
+		//XMFLOAT3 rotation(camMoveList[i].fPitch, camMoveList[i].fYaw, camMoveList[i].fRoll);
+		//XMFLOAT4 quatRotation;
+		//XMStoreFloat4(&quatRotation, XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)));
+		//XMFLOAT3 initialDir(0.0f, 0.0f, 1.0f);
+		//// 회전 행렬 계산
+		//XMFLOAT3 rotatedDir;
+		//XMStoreFloat3(&rotatedDir, XMVector3Rotate(XMLoadFloat3(&initialDir), XMLoadFloat4(&quatRotation)));
+		// 최종 방향 벡터 계산
+		/*dir.x += basis * rotatedDir.x;
+		dir.y += basis * rotatedDir.y;
+		dir.z += basis * rotatedDir.z;*/
 		dir.x += basis * camMoveList[i].fYaw;
 		dir.y += basis * camMoveList[i].fPitch;
 		dir.z += basis * camMoveList[i].fRoll;
@@ -60,6 +71,7 @@ bool CameraCinema::Frame()
 	m_vTarget.Normalize();
 
 	m_vFrustum.CreateFrustum(&m_matView, &m_matProj);
+
     return true;
 }
 

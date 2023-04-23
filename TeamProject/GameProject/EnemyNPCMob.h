@@ -13,5 +13,7 @@ namespace SSB
     public:
         float GetBattleRange();
         float GetSpotRange();
+    public:
+        virtual ~EnemyNPCMob() {}
     };
 }

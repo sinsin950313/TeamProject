@@ -87,7 +87,7 @@ bool CollisionMgr::IsCollideTrigger(T_BOX* box)
 {
 	for (auto iter : m_MapTriggerList)
 	{
-		if (TCollision::ChkOBBToOBB(*box, iter))
+		if (TCollision::ChkOBBToOBB(*box, iter.second))
 		{
 			return true;
 		}
@@ -101,9 +101,16 @@ void CollisionMgr::AddMapCollisionBox(T_BOX tBox)
 	m_MapCollisionList.push_back(tBox);
 }
 
-void CollisionMgr::AddMapTriggerBox(T_BOX tBox)
+void CollisionMgr::AddMapTriggerBox(std::wstring szName, T_BOX tBox)
 {
-	m_MapTriggerList.push_back(tBox);
+	m_MapTriggerList.insert(std::make_pair(szName, tBox));
+}
+
+void CollisionMgr::DeleteTriggerBox(std::wstring szName)
+{
+	auto iter = m_MapTriggerList.find(szName);
+	if (iter != m_MapTriggerList.end())
+		m_MapTriggerList.erase(iter);
 }
 
 std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()

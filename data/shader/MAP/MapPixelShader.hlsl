@@ -17,6 +17,8 @@ struct PS_INPUT
 	float3 direction_to_camera : TEXCOORD1;
 	float4 m_light_direction : TEXCOORD2;
 	float4 tex2 : TEXCOORD4;
+	//float linearFogAmount : LINEAR_FOG_AMOUNT;
+	//float expFogAmount : EXP_FOG_AMOUNT;
 };
 
 //if using row_major, not transpose in cpp
@@ -75,6 +77,15 @@ MRTOutput psmain(PS_INPUT input) : SV_TARGET
 
 	output.Position = float4(input.world, 1);
 	output.Normal = float4(input.normal, 1);
+	////fog
+	//float4 fogColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
+
+	//// 선형 Fog와 지수 Fog의 양을 결합하여 최종 Fog 양을 계산
+	//float fogAmount = lerp(input.linearFogAmount, input.expFogAmount, 0.0f);
+
+	//// 개체의 색상에 Fog를 적용
+	//fogColor.rgb = lerp(GetTextureColor(input.tex).rgb, fogColor, fogAmount);
+
 	output.Color = GetTextureColor(input.tex);
 
 	return output;

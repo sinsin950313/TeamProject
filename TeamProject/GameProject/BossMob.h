@@ -24,5 +24,7 @@ namespace SSB
     public:
 		bool Init() override;
         bool Frame() override;
+    public:
+        virtual ~BossMob() {}
 	};
 }

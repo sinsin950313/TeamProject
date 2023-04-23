@@ -37,6 +37,12 @@ Texture2D LightShadowMap : register(t4);
 SamplerState Sampler : register(s0);
 SamplerComparisonState PCFSampler : register(s1);
 
+//cbuffer constant : register(b11)
+//{
+//	float linearFogStart;
+//	float linearFogEnd;
+//	float expFogDensity;
+//};
 #include "LightBufferData.hlsli"
 #include "CameraBuffer.hlsli"
 

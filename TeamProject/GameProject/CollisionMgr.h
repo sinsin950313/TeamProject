@@ -16,7 +16,7 @@ private:
 	NpcAttackList
 	*/
 	std::vector<T_BOX> m_MapCollisionList;
-	std::vector<T_BOX> m_MapTriggerList;
+	std::map<std::wstring, T_BOX> m_MapTriggerList;
 	std::map<T_BOX*, Character*> m_StaticObjectList;
 	std::map<T_BOX*, Character*> m_NpcList;
 
@@ -37,7 +37,8 @@ public:
 
 public:
 	void	AddMapCollisionBox(T_BOX tBox);
-	void	AddMapTriggerBox(T_BOX tBox);
+	void	AddMapTriggerBox(std::wstring szName, T_BOX tBox);
+	void	DeleteTriggerBox(std::wstring szName);
 	std::vector<T_BOX>& GetMapCollisionList();
 
 private:
