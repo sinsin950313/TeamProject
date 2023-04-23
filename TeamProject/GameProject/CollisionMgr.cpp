@@ -60,17 +60,17 @@ std::vector<Character*> CollisionMgr::GetHitCharacterList(T_BOX* attackBox)
 bool CollisionMgr::IsCollide(T_BOX* box)
 {
 	// NPC간의 충돌 시 문제가 있음
-	//for (auto iter : m_NpcList)
-	//{
-	//	T_BOX* npcBox = iter.first;
-	//	if (npcBox != box)
-	//	{
-	//		if (TCollision::ChkOBBToOBB(*box, *npcBox))
-	//		{
-	//			return true;
-	//		}
-	//	}
-	//}
+	for (auto iter : m_NpcList)
+	{
+		T_BOX* npcBox = iter.first;
+		if (npcBox != box)
+		{
+			if (TCollision::ChkOBBToOBB(*box, *npcBox))
+			{
+				return true;
+			}
+		}
+	}
 
 	for (auto iter : m_MapCollisionList)
 	{
@@ -93,51 +93,159 @@ std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()
 	return m_MapCollisionList;
 }
 
-std::vector<T_BOX*> CollisionMgr::GetCollideBoxList(T_BOX* source)
+bool CollisionMgr::IsPenetratable(std::vector<TVector3> planeVertice, T_PLANE plane, TVector3 vertex)
 {
-	std::vector<T_BOX*> ret;
+	planeVertice.push_back(planeVertice[0]);
+
+	TVector3 edge1 = planeVertice[1] - planeVertice[0];
+	TVector3 edge2 = vertex - planeVertice[0];
+
+	TVector3 planeNormal(plane.fA, plane.fB, plane.fC);
+	planeNormal.Normalize();
+	TVector3 tmpVal = planeNormal * planeNormal.Dot(edge2);
+	edge2 = edge2 - tmpVal;
+
+	TVector3 standard = edge2.Cross(edge1);
+	standard.Normalize();
+
+	for (int i = 0; i < 4; ++i)
+	{
+		TVector3 edge1 = planeVertice[i + 1] - planeVertice[i];
+		TVector3 edge2 = vertex - planeVertice[i];
+
+		TVector3 tmpVal = planeNormal * planeNormal.Dot(edge2);
+		edge2 = edge2 - tmpVal;
+
+		TVector3 out = edge2.Cross(edge1);
+		out.Normalize();
+
+		if (out.Dot(standard) < 0)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool CollisionMgr::IsPenetrate(T_PLANE plane, TVector3 start, TVector3 end)
+{
+	float startVal = plane.fA * start.x + plane.fB * start.y + plane.fC * start.z + plane.fD;
+	float endVal = plane.fA * end.x + plane.fB * end.y + plane.fC * end.z + plane.fD;
+	return startVal * endVal < 0;
+}
+
+std::vector<T_BOX> CollisionMgr::GetCollideBoxList(T_BOX* source)
+{
+	std::vector<T_BOX> ret;
 
 	for (auto dest : m_StaticObjectList)
 	{
 		if (TCollision::ChkOBBToOBB(*source, *dest.first))
 		{
-			ret.push_back(dest.first);
+			ret.push_back(*dest.first);
 		}
 	}
 	for (auto dest : m_MapCollisionList)
 	{
 		if (TCollision::ChkOBBToOBB(*source, dest))
 		{
-			ret.push_back(&dest);
+			ret.push_back(dest);
 		}
 	}
 	for (auto dest : m_NpcList)
 	{
-		if (TCollision::ChkOBBToOBB(*source, *dest.first))
+		if (dest.first != source)
 		{
-			ret.push_back(dest.first);
+			if (TCollision::ChkOBBToOBB(*source, *dest.first))
+			{
+				ret.push_back(*dest.first);
+			}
 		}
 	}
 
 	return ret;
 }
 
-std::vector<TVector3> CollisionMgr::GetCollideNormal(T_BOX* source, TVector3 delta, T_BOX* dest)
+std::vector<CollisionData> CollisionMgr::GetCollideData(T_BOX source, T_BOX dest)
 {
-	std::vector<TVector3> ret;
+	std::vector<CollisionData> ret;
 
+	std::vector<std::vector<TVector3>> planeVertice;
+	planeVertice.resize(6);
+	// Clockwise
+	planeVertice[0] = { dest.vPos[0], dest.vPos[1], dest.vPos[2], dest.vPos[3] };
+	planeVertice[1] = { dest.vPos[7], dest.vPos[6], dest.vPos[5], dest.vPos[4] };
+	planeVertice[2] = { dest.vPos[3], dest.vPos[2], dest.vPos[6], dest.vPos[7] };
+	planeVertice[3] = { dest.vPos[4], dest.vPos[5], dest.vPos[1], dest.vPos[0] };
+	planeVertice[4] = { dest.vPos[1], dest.vPos[5], dest.vPos[6], dest.vPos[2] };
+	planeVertice[5] = { dest.vPos[4], dest.vPos[0], dest.vPos[3], dest.vPos[7] };
+
+	TVector3 vertice[8][3];
+	{
+		vertice[0][0] = source.vPos[1];
+		vertice[0][1] = source.vPos[4];
+		vertice[0][2] = source.vPos[3];
+
+		vertice[1][0] = source.vPos[0];
+		vertice[1][1] = source.vPos[5];
+		vertice[1][2] = source.vPos[2];
+
+		vertice[2][0] = source.vPos[1];
+		vertice[2][1] = source.vPos[3];
+		vertice[2][2] = source.vPos[6];
+
+		vertice[3][0] = source.vPos[0];
+		vertice[3][1] = source.vPos[2];
+		vertice[3][2] = source.vPos[7];
+
+		vertice[4][0] = source.vPos[0];
+		vertice[4][1] = source.vPos[5];
+		vertice[4][2] = source.vPos[7];
+
+		vertice[5][0] = source.vPos[1];
+		vertice[5][1] = source.vPos[4];
+		vertice[5][2] = source.vPos[6];
+
+		vertice[6][0] = source.vPos[5];
+		vertice[6][1] = source.vPos[2];
+		vertice[6][2] = source.vPos[7];
+
+		vertice[7][0] = source.vPos[3];
+		vertice[7][1] = source.vPos[4];
+		vertice[7][2] = source.vPos[6];
+	}
 	for (int i = 0; i < 8; ++i)
 	{
-		TVector3 start = source->vPos[i];
-		TVector3 end = source->vPos[i] + delta;
-
-		for (int j = 0; j < 6; ++j)
+		TVector3 start = source.vPos[i];
+		for (int k = 0; k < 3; ++k)
 		{
-			T_PLANE plane = dest->plane[j];
-			if (IsPenetratable(plane, start) && IsPenetratable(plane, end) && IsPenetrate(plane, start, end))
+			TVector3 end = vertice[i][k];
+
+			for (int j = 0; j < 4; ++j)
 			{
-				TVector3 normal(dest->plane[j].fA, dest->plane[j].fB, dest->plane[j].fC);
-				ret.push_back(normal);
+				std::vector<TVector3> plane = planeVertice[j];
+				if ((IsPenetratable(plane, dest.plane[j], start) || IsPenetratable(plane, dest.plane[j], end)) && IsPenetrate(dest.plane[j], start, end))
+				{
+					bool exist = false;
+					for (auto already : ret)
+					{
+						if (fabs(already.CollisionNormal.x - dest.plane[j].fA) < 0.001f &&
+							fabs(already.CollisionNormal.y - dest.plane[j].fB) < 0.001f &&
+							fabs(already.CollisionNormal.z - dest.plane[j].fC) < 0.001f)
+						{
+							exist = true;
+						}
+					}
+
+					if (!exist)
+					{
+						T_PLANE plane = dest.plane[j];
+						float val1 = plane.fA * end.x + plane.fB * end.y + plane.fC * end.z + plane.fD;
+						float val2 = plane.fA * start.x + plane.fB * start.y + plane.fC * start.z + plane.fD;
+						float val = min(val1, val2);
+						ret.push_back(CollisionData{TVector3(dest.plane[j].fA, dest.plane[j].fB, dest.plane[j].fC), abs(val)});
+					}
+				}
 			}
 		}
 	}

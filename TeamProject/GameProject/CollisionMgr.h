@@ -1,6 +1,12 @@
 #pragma once
 #include "Character.h"
 
+struct CollisionData
+{
+	TVector3 CollisionNormal;
+	float CollisionDepth;
+};
+
 class CollisionMgr : public Singleton<CollisionMgr>
 {
 private:
@@ -35,12 +41,12 @@ public:
 	std::vector<T_BOX>& GetMapCollisionList();
 
 private:
-	bool IsPenetratable(T_PLANE plane, TVector3 vertex);
+	bool IsPenetratable(std::vector<TVector3> planeVertice, T_PLANE plane, TVector3 vertex);
 	bool IsPenetrate(T_PLANE plane, TVector3 start, TVector3 end);
 
 public:
-	std::vector<T_BOX*> GetCollideBoxList(T_BOX* collider);
-	std::vector<TVector3> GetCollideNormal(T_BOX* source, TVector3 delta, T_BOX* dest);
+	std::vector<T_BOX> GetCollideBoxList(T_BOX* collider);
+	std::vector<CollisionData> GetCollideData(T_BOX source, T_BOX dest);
 
 private:
 	CollisionMgr();

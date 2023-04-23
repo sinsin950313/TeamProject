@@ -1,5 +1,6 @@
 #include "Character.h"
 #include "CollisionMgr.h"
+#include "MeshMap.h"
 
 void	Character::SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -216,7 +217,6 @@ void	Character::SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj)
 	UpdateBuffer();
 }
 
-#include "MeshMap.h"
 void Character::SetMap(MeshMap* pMap)
 {
 	m_pMap = pMap;
@@ -257,37 +257,78 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, 
 	m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 
 	float local = speed * frameTime;
-	charPosition = charPosition + (destinationDirection * local);
 
 	float timeFactor = 1.0f;	// You can speed up or slow down time by changing this
 
-	if (CollisionMgr::GetInstance().IsCollide(&m_ColliderBox))
+	XMVECTOR destinationVector = destinationDirection * local;
+	T_BOX testBox;
+	{
+		XMVECTOR testVector = charPosition + destinationVector;
+
+		float x = XMVectorGetX(testVector);
+		float z = XMVectorGetZ(testVector);
+		TVector3 testPos = TVector3(x, m_pMap->GetHeight(x, z), z);
+
+		TVector3 testRotation = TVector3(0, ry, 0);
+
+		TMatrix testMatrix;
+		TQuaternion q;
+		D3DXQuaternionRotationYawPitchRoll(&q, testRotation.y, testRotation.x, testRotation.z);
+		D3DXMatrixAffineTransformation(&testMatrix, &m_vScale, nullptr, &q, &testPos);
+
+		auto bv = m_pModel->GetBoundingVolume();
+		testBox.CreateOBBBox(bv.Width, bv.Height, bv.Depth);
+		TMatrix local = TMatrix::Identity;
+		local._41 = bv.Position.x;
+		local._42 = bv.Position.y;
+		local._43 = bv.Position.z;
+		TMatrix world = local * testMatrix;
+		testBox.UpdateBox(world);
+	}
+
+	if (CollisionMgr::GetInstance().IsCollide(&testBox))
 	{
 		TVector3 collideNormal(0, 0, 0);
-		std::vector<T_BOX*> collideBoxList = CollisionMgr::GetInstance().GetCollideBoxList(&m_ColliderBox);
+		std::vector<T_BOX> collideBoxList = CollisionMgr::GetInstance().GetCollideBoxList(&testBox);
+		float collisionDepth = 0;
+		int collisionBoxCount = 0;
 		for (auto collideBox : collideBoxList)
 		{
-			XMFLOAT3 delta;
-			XMStoreFloat3(&delta, destinationDirection * local);
-			auto tmp = CollisionMgr::GetInstance().GetCollideNormal(&m_ColliderBox, delta, collideBox);
-			for (auto normal : tmp)
+			if (
+				fabs(m_ColliderBox.vCenter.x - collideBox.vCenter.x) < 0.001f &&
+				fabs(m_ColliderBox.vCenter.y - collideBox.vCenter.y) < 0.001f &&
+				fabs(m_ColliderBox.vCenter.z - collideBox.vCenter.z) < 0.001f
+				)
 			{
-				collideNormal = collideNormal + normal;
+				// Same Character
 			}
+			else
+			{
+				XMFLOAT3 delta;
+				XMStoreFloat3(&delta, destinationVector);
+				auto tmp = CollisionMgr::GetInstance().GetCollideData(testBox, collideBox);
+				for (auto data : tmp)
+				{
+					collideNormal = collideNormal + data.CollisionNormal;
+					collisionDepth += data.CollisionDepth;
+					++collisionBoxCount;
+				}
+				collisionDepth = collisionDepth / collisionBoxCount;
+			}
+			collideNormal.y = 0;
 		}
 		collideNormal.Normalize();
 
-		XMFLOAT3 tmp;
-		XMStoreFloat3(&tmp, destinationDirection);
-		TVector3 direction = tmp;
-		TVector3 reflectionNormalProperty = collideNormal * (collideNormal.Dot(-direction));
-
-		charPosition = charPosition + reflectionNormalProperty;
+		destinationVector = destinationVector + (collideNormal * collisionDepth);
 	}
+	charPosition = charPosition + destinationVector;
 
 	float x = XMVectorGetX(charPosition);
 	float z = XMVectorGetZ(charPosition);
 	m_vPos = TVector3(x, m_pMap->GetHeight(x, z), z);
+
+	UpdateMatrix();
+	UpdateBox();
 }
 
 void Character::Initialize_SetPosition(TVector3 pos)

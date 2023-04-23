@@ -118,6 +118,9 @@ void	T_BOX::UpdateBox(TMatrix& world)
 	vCenter.y = world._42;
 	vCenter.z = world._43;
 
+	axis[0].Normalize();
+	axis[1].Normalize();
+	axis[2].Normalize();
 	CreateOBBBox(fExtent[0], fExtent[1], fExtent[2], vCenter, axis[0], axis[1], axis[2]);
 }
 
