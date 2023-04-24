@@ -15,6 +15,8 @@
 #include "LightManager.h"
 #include "EffectMgr.h"
 
+XMFLOAT4 g_CurrentCameraPos;
+
 E_SCENE SceneInGame::NextScene()
 {
 	//if (m_pPlayer->m_iLife < 0)
@@ -33,6 +35,7 @@ E_SCENE SceneInGame::NextScene()
 	{
 		m_Scene = S_INGAME2;
 		I_Collision.GetMapCollisionList().clear();
+		I_Collision.GetMapTriggerList().clear();
 	}
 	return m_Scene;
 }
@@ -413,6 +416,7 @@ bool    SceneInGame::Frame()
 	m_pInter_Ingame->Frame();
 	//m_pInter_Title->Frame();
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
+	g_CurrentCameraPos = XMFLOAT4(m_pCameraCurrent->m_vPos.x, m_pCameraCurrent->m_vPos.y, m_pCameraCurrent->m_vPos.z, 1.0f);
 	return true;
 }
 
@@ -567,7 +571,8 @@ bool SceneInGame::PostRender()
 bool    SceneInGame::Release()
 {
 	I_Effect.Release();
-
+	Player::GetInstance().m_pInterGageHP = nullptr;
+	m_pInter_BossHP = nullptr;
 	m_pCameraCurrent = nullptr;
 
 	if (m_pInter_Win)
@@ -596,8 +601,6 @@ bool    SceneInGame::Release()
 		delete m_pInter_Ingame;
 		m_pInter_Ingame = nullptr;
 	}
-
-	Player::GetInstance().m_pInterGageHP = nullptr;
 
 	if (m_pQuadTree)
 	{
@@ -697,7 +700,6 @@ void    SceneInGame::CharacterLoad()
 		XMFLOAT3 playerSpawnPos;
 		XMStoreFloat3(&playerSpawnPos, m_pQuadTree->m_PlayerSpawnPoint.find("Player")->second.position);
 		Player::GetInstance().Initialize_SetPosition(TVector3(playerSpawnPos));
-		//Player::GetInstance().m_vDirection = TVector3(0, -180, 0);
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Scale(0.01f);
@@ -762,7 +764,6 @@ void    SceneInGame::CharacterLoad()
 				m_pInter_BossHP = new Interface();
 				m_pInter_BossHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
 				m_pInter_BossHP->SetAttribute(TVector3(544, 35, 0));
-				//m_pInter_Ingame->AddChild(m_pInter_BossHP);
 				enemy->m_pInterGageHP = m_pInter_BossHP;
 			}
 
@@ -1187,7 +1188,6 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-	m_Scene = S_INGAME2;
 	m_pQuadTree = m_Scene == S_INGAME ? MAPLOAD::OpenMap(L"../../data/map/testcine_1.map", m_pd3dDevice, m_pImmediateContext) : MAPLOAD::OpenMap(L"../../data/map/map_boss_1_2_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);

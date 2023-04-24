@@ -118,6 +118,11 @@ std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()
 	return m_MapCollisionList;
 }
 
+std::map<std::wstring, T_BOX>& CollisionMgr::GetMapTriggerList()
+{
+	return m_MapTriggerList;
+}
+
 void	CollisionMgr::AddStaticObjectBox(T_BOX* box, Character* pChar)
 {
 	if (m_StaticObjectList.find(box) == m_StaticObjectList.end())

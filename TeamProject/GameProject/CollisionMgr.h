@@ -40,6 +40,7 @@ public:
 	void	AddMapTriggerBox(std::wstring szName, T_BOX tBox);
 	void	DeleteTriggerBox(std::wstring szName);
 	std::vector<T_BOX>& GetMapCollisionList();
+	std::map<std::wstring, T_BOX>& GetMapTriggerList();
 
 private:
 	CollisionMgr();

@@ -150,14 +150,15 @@ struct ConstantData_Light
 	XMFLOAT4 cameraPosition;
 };
 
-//__declspec(align(16))
-//struct ConstantData_Fog
-//{
-//	XMFLOAT3 cameraPosition;
-//	float linearFogStart;
-//	float linearFogEnd;
-//	float expFogDensity;
-//};
+__declspec(align(16))
+struct ConstantData_Fog
+{
+	XMFLOAT4 currentCameraPos;
+	float linearFogStart;
+	float linearFogEnd;
+	float expFogDensity;
+};
+extern XMFLOAT4 g_CurrentCameraPos;
 
 struct PNCTVertex
 {
