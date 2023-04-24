@@ -830,7 +830,7 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kPlayerDead, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::PlayerVictoryStartState(3.0f);
+			SSB::CharacterState* state = new SSB::PlayerVictoryStartState(6.7f);
 			state->Initialize_SetStateAnimation("RecallStart");
 			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerVictoryStart, state);

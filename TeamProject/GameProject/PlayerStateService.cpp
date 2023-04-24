@@ -1211,14 +1211,14 @@ namespace SSB
 	}
 	PlayerVictoryStartState::PlayerVictoryStartState(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
 	{
+	}
+	void PlayerVictoryStartState::StateDecision()
+	{
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			ReserveNextTransferName(kPlayerVictoryLoop);
 			SetTransfer();
 		}
-	}
-	void PlayerVictoryStartState::StateDecision()
-	{
 	}
 	void PlayerVictoryStartState::Action()
 	{
