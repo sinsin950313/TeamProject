@@ -122,7 +122,7 @@ std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()
 std::map<std::wstring, T_BOX>& CollisionMgr::GetMapTriggerList()
 {
 	return m_MapTriggerList;
-
+}
 bool CollisionMgr::IsPenetratable(std::vector<TVector3> planeVertice, T_PLANE plane, TVector3 vertex)
 {
 	planeVertice.push_back(planeVertice[0]);
