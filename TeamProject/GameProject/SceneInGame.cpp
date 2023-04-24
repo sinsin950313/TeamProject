@@ -131,12 +131,12 @@ bool    SceneInGame::Init()
 	I_Input.SwitchShowMouse(false);
 
 	m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-	m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+	//m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
 	for (auto enemy : m_Enemies)
 	{
 		m_debugBoxList.push_back(&enemy->m_ColliderBox);
-		m_debugBoxList.push_back(&enemy->m_AttackBox);
+		//m_debugBoxList.push_back(&enemy->m_AttackBox);
 	}
 
 	//m_debugBoxList.push_back(&m_pBoss->m_ColliderBox);
@@ -344,11 +344,22 @@ bool    SceneInGame::Frame()
 			}
 		}
 	}
+
 	
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
 		I_Effect.CreateEffect(L"path", Player::GetInstance().GetPosition());
 	}
+
+
+	if (I_Input.GetKey('V') == KEY_PUSH)
+	{
+		Player::GetInstance().SetVictory();
+	}
+
+	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
+		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
+
 
 	for (auto manager : m_StateManagerMap)
 	{
@@ -469,24 +480,32 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox)
 	{
-		/*for (auto box : I_Collision.GetMapCollisionList())
-		{
-		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(box);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}*/
+		//for (auto box : I_Collision.GetMapCollisionList())
+		//{
+		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(box);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
 
-		/*m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		TColor color = TColor(0, 0, 1, 1);
-		for (T_BOX* box : m_debugBoxList)
-		{
-			m_pDebugBox->SetBox(*box);
-			m_pDebugBox->SetColor(color);
-			m_pDebugBox->UpdateBuffer();
-			m_pDebugBox->Render();
-		}*/
+		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//TColor color = TColor(0, 0, 1, 1);
+		//for (T_BOX* box : m_debugBoxList)
+		//{
+		//	m_pDebugBox->SetBox(*box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
+
+		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
+		//{
+		//	m_pDebugBox->SetBox(box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
 
 		//T_BOX b;
 		//b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
@@ -523,7 +542,6 @@ bool    SceneInGame::Render()
 		//box.CreateOBBBox();
 		//m_pDebugBox->Render();
 	}
-
 
 
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
@@ -1029,6 +1047,18 @@ void    SceneInGame::FSMLoad()
 			state->Initialize_SetStateAnimation("Dead");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerDead, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerVictoryStartState(6.7f);
+			state->Initialize_SetStateAnimation("RecallStart");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerVictoryStart, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::PlayerVictoryLoopState;
+			state->Initialize_SetStateAnimation("RecallLoop");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
+			manager->Initialize_RegisterState(SSB::kPlayerVictoryLoop, state);
 		}
 
 		manager->Init();
