@@ -192,6 +192,9 @@
     <ClInclude Include="CameraCinema.h">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="FieldBoss.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -325,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="CameraCinema.cpp">
       <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldBoss.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

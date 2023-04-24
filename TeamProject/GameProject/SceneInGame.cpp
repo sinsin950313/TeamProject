@@ -519,32 +519,32 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox)
 	{
-		if (m_pBoss)
-		{
-			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}
-		for (auto box : I_Collision.GetMapCollisionList())
-		{
-		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(box);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}
+		//if (m_pBoss)
+		//{
+		//	m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
+		//for (auto box : I_Collision.GetMapCollisionList())
+		//{
+		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(box);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
 
-		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		TColor color = TColor(0, 0, 1, 1);
-		for (T_BOX* box : m_debugBoxList)
-		{
-			m_pDebugBox->SetBox(*box);
-			m_pDebugBox->SetColor(color);
-			m_pDebugBox->UpdateBuffer();
-			m_pDebugBox->Render();
-		}
+		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//TColor color = TColor(0, 0, 1, 1);
+		//for (T_BOX* box : m_debugBoxList)
+		//{
+		//	m_pDebugBox->SetBox(*box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
 
 		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
 		//{

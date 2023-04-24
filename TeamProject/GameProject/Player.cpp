@@ -321,6 +321,14 @@ bool Player::Tornado::Init()
 	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 	m_DamagedCharacters.clear();
 
+	m_pModel = new SSB::Model;
+	SSB::OBBData data;
+	data.Width = 2;
+	data.Height = 6;
+	data.Depth = 2;
+	m_pModel->Initialize_SetBoundingVolume(data);
+	m_pModel->Init();
+
 	return true;
 }
 
@@ -331,7 +339,7 @@ bool Player::Tornado::Frame()
 
 	XMVECTOR dir = m_Direction;
 	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
-	MoveChar(dir, world, m_Speed);
+	MoveChar(dir, world, m_Speed, true);
 	m_collideBox.UpdateBox(m_matWorld);
 
 	auto list = GetHitList();
