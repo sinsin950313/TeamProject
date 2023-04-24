@@ -226,14 +226,6 @@ void	EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
 	}
 	m_List.push_back(pEffect);
 
-//	for (auto e : m_List)
-//	{
-//		e->Release();
-//		delete e;
-//
-//	}
-//	m_List.clear();
-
 	is.close();
 }
 

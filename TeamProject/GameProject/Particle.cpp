@@ -49,7 +49,7 @@ bool	Particle::Frame(TMatrix* matView)
 	{
 		if (m_isDestroyLifeTime)
 		{
-			//m_isDone = true;
+			m_isDone = true;
 		}
 		
 	}

@@ -231,7 +231,7 @@ bool	Emitter::Frame()
 		}
 		else
 		{
-			//m_isDone = true;
+			m_isDone = true;
 		}
 	}
 
