@@ -37,6 +37,14 @@ Texture2D LightShadowMap : register(t4);
 SamplerState Sampler : register(s0);
 SamplerComparisonState PCFSampler : register(s1);
 
+cbuffer constant : register(b11)
+{
+	float4 currentCameraPos;
+	float linearFogStart;
+	float linearFogEnd;
+	float expFogDensity;
+};
+
 #include "LightBufferData.hlsli"
 #include "CameraBuffer.hlsli"
 
@@ -107,11 +115,26 @@ float4 GetAmbient()
 
 float4 PS(PSInput input) : SV_TARGET0
 {
+	// 선형 Fog 계산
+	float4 pos = PositionMap.Sample(Sampler, input.TextureUV);
+	float fogDist = distance(currentCameraPos, pos);
+	float linearFogAmount = saturate((fogDist - linearFogStart) / (linearFogEnd - linearFogStart));
+
+	// 지수 Fog 계산
+	float expFogAmount = exp(-fogDist * expFogDensity);
+
+	//fog
+	float3 fogColor = float3(0.5f, 0.5f, 0.5f);
+
+	// 선형 Fog와 지수 Fog의 양을 결합하여 최종 Fog 양을 계산
+	float fogAmount = lerp(linearFogAmount, expFogAmount, 0.0f);
+
 	float4 diffuseColor = ColorMap.Sample(Sampler, input.TextureUV);
 
 	float4 ret = diffuseColor * GetAmbient();
 	ret += diffuseColor * GetShadowRatio(input.TextureUV) * (GetDiffuse(input.TextureUV) + GetSpecular(input.TextureUV));
-
+	// 개체의 색상에 Fog를 적용
+	ret.xyz = lerp(ret.xyz, fogColor, fogAmount);
 	return float4(ret.xyz, 1);
 }
 

@@ -11,7 +11,7 @@ CollisionMgr::~CollisionMgr()
 }
 
 	//
-	// °¢ °´Ã¼°¡ CollisionMgr¿¡ º»ÀÎÀÇ ¹Ú½º¸¦ ¿øÇÏ´Â ¸®½ºÆ®¿¡ Ãæµ¹°Ë»ç¸¦ ÇØ´Ş¶ó´Â ¿äÃ» ÈÄ ÇÇµå¹éÀ¸·Î °á°ú ¹Ş±â
+	// ê° ê°ì²´ê°€ CollisionMgrì— ë³¸ì¸ì˜ ë°•ìŠ¤ë¥¼ ì›í•˜ëŠ” ë¦¬ìŠ¤íŠ¸ì— ì¶©ëŒê²€ì‚¬ë¥¼ í•´ë‹¬ë¼ëŠ” ìš”ì²­ í›„ í”¼ë“œë°±ìœ¼ë¡œ ê²°ê³¼ ë°›ê¸°
 	//
 
 bool	CollisionMgr::ChkPlayerAttackToNpcList(T_BOX* box)
@@ -21,8 +21,8 @@ bool	CollisionMgr::ChkPlayerAttackToNpcList(T_BOX* box)
 		T_BOX* npcBox = iter.first;
 		if (TCollision::ChkOBBToOBB(*box, *npcBox))
 		{
-			// NPCÀÇ ÇÇ°İ ÀÌº¥Æ® È°¼ºÈ­?
-			// ¾Æ´Ï¸é ¸®ÅÏ ¹ŞÀº °÷¿¡¼­ true false·Î Ã¼Å©
+			// NPCì˜ í”¼ê²© ì´ë²¤íŠ¸ í™œì„±í™”?
+			// ì•„ë‹ˆë©´ ë¦¬í„´ ë°›ì€ ê³³ì—ì„œ true falseë¡œ ì²´í¬
 
 			return true;
 		}
@@ -59,7 +59,7 @@ std::vector<Character*> CollisionMgr::GetHitCharacterList(T_BOX* attackBox)
 
 bool CollisionMgr::IsCollide(T_BOX* box)
 {
-	// NPC°£ÀÇ Ãæµ¹ ½Ã ¹®Á¦°¡ ÀÖÀ½
+	// NPCê°„ì˜ ì¶©ëŒ ì‹œ ë¬¸ì œê°€ ìˆìŒ
 	for (auto iter : m_NpcList)
 	{
 		T_BOX* npcBox = iter.first;
@@ -87,7 +87,7 @@ bool CollisionMgr::IsCollideTrigger(T_BOX* box)
 {
 	for (auto iter : m_MapTriggerList)
 	{
-		if (TCollision::ChkOBBToOBB(*box, iter))
+		if (TCollision::ChkOBBToOBB(*box, iter.second))
 		{
 			return true;
 		}
@@ -101,15 +101,27 @@ void CollisionMgr::AddMapCollisionBox(T_BOX tBox)
 	m_MapCollisionList.push_back(tBox);
 }
 
-void CollisionMgr::AddMapTriggerBox(T_BOX tBox)
+void CollisionMgr::AddMapTriggerBox(std::wstring szName, T_BOX tBox)
 {
-	m_MapTriggerList.push_back(tBox);
+	m_MapTriggerList.insert(std::make_pair(szName, tBox));
+}
+
+void CollisionMgr::DeleteTriggerBox(std::wstring szName)
+{
+	auto iter = m_MapTriggerList.find(szName);
+	if (iter != m_MapTriggerList.end())
+		m_MapTriggerList.erase(iter);
 }
 
 std::vector<T_BOX>& CollisionMgr::GetMapCollisionList()
 {
 	return m_MapCollisionList;
 }
+
+
+std::map<std::wstring, T_BOX>& CollisionMgr::GetMapTriggerList()
+{
+	return m_MapTriggerList;
 
 bool CollisionMgr::IsPenetratable(std::vector<TVector3> planeVertice, T_PLANE plane, TVector3 vertex)
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "Interface.h"
-
+#include "Camera.h"
 enum E_SCENE
 {
     S_TITLE = 0,

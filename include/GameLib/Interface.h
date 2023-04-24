@@ -473,6 +473,12 @@ public:
 			m_isDone = true;
 		}
 		pInter->m_cbData.fTimer = 360.0f * m_fCurrent / m_fTime;
+		/*OutputDebugStringA("------------------");
+		OutputDebugStringA(std::to_string(m_fCurrent).c_str());
+		OutputDebugStringA(" ");
+		OutputDebugStringA(std::to_string(pInter->m_cbData.fTimer).c_str());
+		OutputDebugStringA("------------------");
+		OutputDebugStringA("\n");*/
 		return true;
 	}
 

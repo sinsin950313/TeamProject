@@ -19,6 +19,7 @@ bool    MyMain::Init()
 
     m_screen.Initialize_SetData(m_pd3dDevice, m_pImmediateContext);
     m_screen.Init();
+    m_screen.m_pConstantBuffer_Fog = DX::CreateConstantBuffer(m_pd3dDevice, &m_screen.m_ConstantData_Fog, sizeof(m_screen.m_ConstantData_Fog));
 
     I_Scene.SetDevice(m_pd3dDevice, m_pImmediateContext);
     I_Scene.Init();
@@ -64,6 +65,12 @@ bool    MyMain::Render()
         for (auto light : lights)
         {
             light->Render();
+            m_screen.m_ConstantData_Fog.currentCameraPos = g_CurrentCameraPos;
+            m_screen.m_ConstantData_Fog.linearFogStart = 30.0f;
+            m_screen.m_ConstantData_Fog.linearFogEnd = 150.0f;
+            m_screen.m_ConstantData_Fog.expFogDensity = 0.001f;
+            m_pImmediateContext->UpdateSubresource(m_screen.m_pConstantBuffer_Fog, NULL, NULL, &m_screen.m_ConstantData_Fog, NULL, NULL);
+            m_pImmediateContext->PSSetConstantBuffers(11, 1, &m_screen.m_pConstantBuffer_Fog);
             m_screen.Render();
         }
     }
