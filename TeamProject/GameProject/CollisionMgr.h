@@ -1,6 +1,12 @@
 #pragma once
 #include "Character.h"
 
+struct CollisionData
+{
+	TVector3 CollisionNormal;
+	float CollisionDepth;
+};
+
 class CollisionMgr : public Singleton<CollisionMgr>
 {
 private:
@@ -20,9 +26,6 @@ private:
 	std::map<T_BOX*, Character*> m_StaticObjectList;
 	std::map<T_BOX*, Character*> m_NpcList;
 
-	// Character* -> NpcAttack : Attack 형식의 클래스로 변경예정..?
-	std::map<T_BOX*, Character*> m_NpcAttackList;
-
 public:
 	bool	ChkPlayerAttackToNpcList(T_BOX* box);
 	bool	ChkCharacterToStaticObjList(T_BOX* box);
@@ -41,9 +44,20 @@ public:
 	std::vector<T_BOX>& GetMapCollisionList();
 
 private:
+	bool IsPenetratable(std::vector<TVector3> planeVertice, T_PLANE plane, TVector3 vertex);
+	bool IsPenetrate(T_PLANE plane, TVector3 start, TVector3 end);
+
+public:
+	std::vector<T_BOX> GetCollideBoxList(T_BOX* collider, bool ghost = false);
+	std::vector<CollisionData> GetCollideData(T_BOX source, T_BOX dest);
+
+private:
 	CollisionMgr();
 public:
 	~CollisionMgr();
+
+public:
+	void NPCIsDead(T_BOX* box);
 };
 
 #define I_Collision CollisionMgr::GetInstance()

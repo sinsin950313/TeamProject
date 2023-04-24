@@ -74,12 +74,12 @@ bool    SceneInGame::Init()
 	I_Input.SwitchShowMouse(false);
 
 	m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
-	m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
+	//m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
 	for (auto enemy : m_Enemies)
 	{
 		m_debugBoxList.push_back(&enemy->m_ColliderBox);
-		m_debugBoxList.push_back(&enemy->m_AttackBox);
+		//m_debugBoxList.push_back(&enemy->m_AttackBox);
 	}
 
 	//m_debugBoxList.push_back(&m_pBoss->m_ColliderBox);
@@ -283,24 +283,32 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox)
 	{
-		/*for (auto box : I_Collision.GetMapCollisionList())
-		{
-		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(box);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}*/
+		//for (auto box : I_Collision.GetMapCollisionList())
+		//{
+		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(box);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
 
-		/*m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		TColor color = TColor(0, 0, 1, 1);
-		for (T_BOX* box : m_debugBoxList)
-		{
-			m_pDebugBox->SetBox(*box);
-			m_pDebugBox->SetColor(color);
-			m_pDebugBox->UpdateBuffer();
-			m_pDebugBox->Render();
-		}*/
+		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//TColor color = TColor(0, 0, 1, 1);
+		//for (T_BOX* box : m_debugBoxList)
+		//{
+		//	m_pDebugBox->SetBox(*box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
+
+		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
+		//{
+		//	m_pDebugBox->SetBox(box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
 
 		//T_BOX b;
 		//b.CreateOBBBox(0.2, 0.2, 0.2, Player::GetInstance().GetCurSocketPos("WeaponHigh"));
@@ -337,7 +345,6 @@ bool    SceneInGame::Render()
 		//box.CreateOBBBox();
 		//m_pDebugBox->Render();
 	}
-
 
 
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);

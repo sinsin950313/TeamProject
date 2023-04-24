@@ -734,7 +734,7 @@ namespace SSB
 		player->m_fSpeed = 20;
 		XMMATRIX world = XMLoadFloat4x4(&player->m_matWorld);
 		XMVECTOR dir = player->m_DashDirection;
-		player->MoveChar(dir, world);
+		player->MoveChar(dir, world, true);
 	}
 	StateTransferPriority PlayerDashState::GetPriority()
 	{

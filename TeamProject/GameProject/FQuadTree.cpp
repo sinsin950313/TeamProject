@@ -930,7 +930,14 @@ namespace MAPLOAD
                                 XMStoreFloat3(&box.vAxis[i], axis);
                             }
                             
-                            mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
+                            //mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
+                            TVector3 dirX = box.vAxis[0];
+                            dirX.Normalize();
+                            TVector3 dirY = box.vAxis[1];
+                            dirY.Normalize();
+                            TVector3 dirZ = box.vAxis[2];
+                            dirZ.Normalize();
+                            mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), dirX, dirY, dirZ);
                             I_Collision.AddMapCollisionBox(mePeedBox);
                         }
                         else if (specifyMode == "OBJECT_TRIGGER")
