@@ -12,9 +12,15 @@ namespace SSB
 		private:
 			const float _kLiveTime = 3.0f;
 			float _startTimeStamp;
+			const float _damage = 30;
+			bool _isDead = false;
 
 		public:
 			Arrow(MeshMap* map, float timeStamp);
+
+		private:
+			void Move();
+			void CollisionCheck();
 
 		public:
 			bool IsDead();
@@ -33,7 +39,7 @@ namespace SSB
         float GetSpotRange();
 
     public:
-        virtual ~FieldBoss() {}
+		virtual ~FieldBoss();
 
 	public:
 		void Attack();

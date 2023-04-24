@@ -37,5 +37,6 @@ namespace SSB
 
 	const StateManagerName kPlayerStateManager = "PlayerStateManager";
 	const StateManagerName kEnemyNPCMobStateManager = "EnemyNPCMobStateManager";
+	const StateManagerName kFieldBossStateManager = "FieldBossStateManager";
 	const StateManagerName kBossMobStateManager = "BossMobStateManager";
 }

@@ -193,7 +193,10 @@
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="FieldBoss.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldBossStateService.h">
+      <Filter>Ch\FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -330,7 +333,10 @@
       <Filter>Map</Filter>
     </ClCompile>
     <ClCompile Include="FieldBoss.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldBossStateService.cpp">
+      <Filter>Ch\FSM</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
