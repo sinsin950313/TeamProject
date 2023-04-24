@@ -134,7 +134,7 @@ bool CollisionMgr::IsPenetrate(T_PLANE plane, TVector3 start, TVector3 end)
 	return startVal * endVal < 0;
 }
 
-std::vector<T_BOX> CollisionMgr::GetCollideBoxList(T_BOX* source)
+std::vector<T_BOX> CollisionMgr::GetCollideBoxList(T_BOX* source, bool ghost)
 {
 	std::vector<T_BOX> ret;
 
@@ -152,13 +152,17 @@ std::vector<T_BOX> CollisionMgr::GetCollideBoxList(T_BOX* source)
 			ret.push_back(dest);
 		}
 	}
-	for (auto dest : m_NpcList)
+
+	if (!ghost)
 	{
-		if (dest.first != source)
+		for (auto dest : m_NpcList)
 		{
-			if (TCollision::ChkOBBToOBB(*source, *dest.first))
+			if (dest.first != source)
 			{
-				ret.push_back(*dest.first);
+				if (TCollision::ChkOBBToOBB(*source, *dest.first))
+				{
+					ret.push_back(*dest.first);
+				}
 			}
 		}
 	}
@@ -227,13 +231,20 @@ std::vector<CollisionData> CollisionMgr::GetCollideData(T_BOX source, T_BOX dest
 				if ((IsPenetratable(plane, dest.plane[j], start) || IsPenetratable(plane, dest.plane[j], end)) && IsPenetrate(dest.plane[j], start, end))
 				{
 					bool exist = false;
-					for (auto already : ret)
+					for (auto& already : ret)
 					{
 						if (fabs(already.CollisionNormal.x - dest.plane[j].fA) < 0.001f &&
 							fabs(already.CollisionNormal.y - dest.plane[j].fB) < 0.001f &&
 							fabs(already.CollisionNormal.z - dest.plane[j].fC) < 0.001f)
 						{
 							exist = true;
+
+							T_PLANE plane = dest.plane[j];
+							float val1 = plane.fA * end.x + plane.fB * end.y + plane.fC * end.z + plane.fD;
+							float val2 = plane.fA * start.x + plane.fB * start.y + plane.fC * start.z + plane.fD;
+							float val = min(val1, val2);
+
+							already.CollisionDepth = max(already.CollisionDepth, abs(val));
 						}
 					}
 
@@ -251,6 +262,11 @@ std::vector<CollisionData> CollisionMgr::GetCollideData(T_BOX source, T_BOX dest
 	}
 
 	return ret;
+}
+
+void CollisionMgr::NPCIsDead(T_BOX* box)
+{
+	m_NpcList.erase(box);
 }
 
 void	CollisionMgr::AddStaticObjectBox(T_BOX* box, Character* pChar)

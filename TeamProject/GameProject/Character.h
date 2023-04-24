@@ -71,8 +71,8 @@ public:
 	MeshMap* m_pMap;
 
 public:
-	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix);
-	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, float speed);
+	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, bool ghost = false);
+	void    MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, float speed, bool ghost = false);
 
 public:
 	SSB::Model* m_pModel = nullptr;

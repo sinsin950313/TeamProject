@@ -45,13 +45,16 @@ private:
 	bool IsPenetrate(T_PLANE plane, TVector3 start, TVector3 end);
 
 public:
-	std::vector<T_BOX> GetCollideBoxList(T_BOX* collider);
+	std::vector<T_BOX> GetCollideBoxList(T_BOX* collider, bool ghost = false);
 	std::vector<CollisionData> GetCollideData(T_BOX source, T_BOX dest);
 
 private:
 	CollisionMgr();
 public:
 	~CollisionMgr();
+
+public:
+	void NPCIsDead(T_BOX* box);
 };
 
 #define I_Collision CollisionMgr::GetInstance()

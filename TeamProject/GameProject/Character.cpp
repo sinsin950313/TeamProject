@@ -121,6 +121,11 @@ bool	Character::Frame()
 		}
 	}
 
+	if (IsDead())
+	{
+		I_Collision.NPCIsDead(&m_ColliderBox);
+	}
+
 	return true;
 }
 
@@ -222,12 +227,12 @@ void Character::SetMap(MeshMap* pMap)
 	m_pMap = pMap;
 }
 
-void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix)
+void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, bool ghost)
 {
-	MoveChar(destinationDirection, worldMatrix, m_fSpeed);
+	MoveChar(destinationDirection, worldMatrix, m_fSpeed, ghost);
 }
 
-void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, float speed)
+void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, float speed, bool ghost)
 {
 	float frameTime = g_fSecondPerFrame;
 
@@ -289,7 +294,7 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, 
 	if (CollisionMgr::GetInstance().IsCollide(&testBox))
 	{
 		TVector3 collideNormal(0, 0, 0);
-		std::vector<T_BOX> collideBoxList = CollisionMgr::GetInstance().GetCollideBoxList(&testBox);
+		std::vector<T_BOX> collideBoxList = CollisionMgr::GetInstance().GetCollideBoxList(&testBox, ghost);
 		float collisionDepth = 0;
 		int collisionBoxCount = 0;
 		for (auto collideBox : collideBoxList)
