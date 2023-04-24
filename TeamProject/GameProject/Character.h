@@ -10,7 +10,7 @@
 class MeshMap;
 class Interface;
 typedef std::string SkillPrimaryKey;
-typedef time_t SkillTimeStamp;
+typedef float SkillTimeStamp;
 typedef float SkillCoolTime;
 class Character
 {

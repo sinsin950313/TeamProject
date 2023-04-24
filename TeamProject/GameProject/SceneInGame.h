@@ -74,7 +74,8 @@ public:
     Interface* m_pInter_GameTitle;
     Interface* m_pInter_PressStart;
 
-    Interface* m_pInter_Win;
+    Interface* m_pInter_Win1;
+    Interface* m_pInter_Win2;
     Interface* m_pInter_Defeat;
 
     Camera* m_pMinimapCamera = nullptr;
@@ -107,6 +108,7 @@ public:
     bool m_bIngame2_CinemaIntro_Start = false;
     bool m_bIngame2_CinemaIntro_End = false;
     bool m_bIngame2_CinemaOver = false;
+    TVector3 m_vBossSpawnPos;
 public:
 
     virtual ~SceneInGame();

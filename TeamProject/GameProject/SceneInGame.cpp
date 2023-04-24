@@ -343,6 +343,37 @@ bool    SceneInGame::Frame()
 				SetMainCamera();
 			}
 		}
+
+		{//GameClear
+			if (m_Win)
+			{
+				if (!m_bIngame2_CinemaOver && m_iCurrentCineCount == 2)
+				{
+					Player::GetInstance().m_vPos = m_vBossSpawnPos;
+					m_pBoss->m_vPos = m_vBossSpawnPos;
+					SetCinemaCamera(L"Cine_Over");
+					m_bIngame2_CinemaOver = true;
+				}
+				if (m_bIngame2_CinemaOver && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
+				{
+					m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
+					if (!Player::GetInstance().IsVictory())
+					{
+						if((m_pCameraCurrent->m_vPos - Player::GetInstance().m_vPos).Length() < 30.0f)
+							Player::GetInstance().SetVictory();
+					}
+					MoveCinemaCamera();
+				}
+				if (m_bIngame2_CinemaOver && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
+				{
+					m_pInter_Win1->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
+					m_iCurrentCineCount = 3;
+					m_pQuadTree->m_fCamMoveCurrent = 0.0f;
+					m_bIngame2_CinemaOver = false;
+					SetMainCamera();
+				}
+			}
+		}
 	}
 
 	
@@ -352,10 +383,10 @@ bool    SceneInGame::Frame()
 	}
 
 
-	if (I_Input.GetKey('V') == KEY_PUSH)
+	/*if (I_Input.GetKey('V') == KEY_PUSH)
 	{
 		Player::GetInstance().SetVictory();
-	}
+	}*/
 
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
@@ -379,7 +410,7 @@ bool    SceneInGame::Frame()
 				++m_iMobDeadCount;
 			}
 		}
-		if (!m_Enemies.empty() && m_iMobDeadCount == m_Enemies.size() && !m_bInteractNextStage)
+		if (!m_Enemies.empty() && m_iMobDeadCount == m_Enemies.size() && !m_bInteractNextStage && m_Scene == S_INGAME)
 		{
 			m_bInteractNextStage = true;
 			auto iter = m_pQuadTree->m_TriggerList.find(L"Trig_Portal");
@@ -392,7 +423,14 @@ bool    SceneInGame::Frame()
 			{
 				m_Win = true;
 				//sound+
-				m_pInter_Win->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
+				for (auto enemy : m_Enemies)
+				{
+					enemy->m_HealthPoint = 0.0f;
+					if (enemy->IsDead())
+					{
+						++m_iMobDeadCount;
+					}
+				}
 			}
 		}
 		
@@ -421,7 +459,8 @@ bool    SceneInGame::Frame()
 	//	m_pBoss->Frame();
 	//}
 	I_Effect.Frame();
-	m_pInter_Win->Frame();
+	m_pInter_Win1->Frame();
+	m_pInter_Win2->Frame();
 	m_pInter_Defeat->Frame();
 	m_pInter_MinimapContents->Frame();
 	m_pInter_Ingame->Frame();
@@ -480,24 +519,32 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox)
 	{
-		//for (auto box : I_Collision.GetMapCollisionList())
-		//{
-		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//    m_pDebugBox->SetBox(box);
-		//    m_pDebugBox->SetColor({1, 0, 0, 1});
-		//    m_pDebugBox->UpdateBuffer();
-		//    m_pDebugBox->Render();
-		//}
+		if (m_pBoss)
+		{
+			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
+		    m_pDebugBox->SetColor({1, 0, 0, 1});
+		    m_pDebugBox->UpdateBuffer();
+		    m_pDebugBox->Render();
+		}
+		for (auto box : I_Collision.GetMapCollisionList())
+		{
+		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		    m_pDebugBox->SetBox(box);
+		    m_pDebugBox->SetColor({1, 0, 0, 1});
+		    m_pDebugBox->UpdateBuffer();
+		    m_pDebugBox->Render();
+		}
 
-		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//TColor color = TColor(0, 0, 1, 1);
-		//for (T_BOX* box : m_debugBoxList)
-		//{
-		//	m_pDebugBox->SetBox(*box);
-		//	m_pDebugBox->SetColor(color);
-		//	m_pDebugBox->UpdateBuffer();
-		//	m_pDebugBox->Render();
-		//}
+		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		TColor color = TColor(0, 0, 1, 1);
+		for (T_BOX* box : m_debugBoxList)
+		{
+			m_pDebugBox->SetBox(*box);
+			m_pDebugBox->SetColor(color);
+			m_pDebugBox->UpdateBuffer();
+			m_pDebugBox->Render();
+		}
 
 		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
 		//{
@@ -578,8 +625,11 @@ bool SceneInGame::PostRender()
 
 	RenderMinimap();
     m_pInter_Ingame->Render();
-	if(m_Win)
-		m_pInter_Win->Render();
+	if (m_Win)
+	{
+		m_pInter_Win1->Render();
+		m_pInter_Win2->Render();
+	}
 	else if(m_Defeat)
 		m_pInter_Defeat->Render();
 	
@@ -593,11 +643,17 @@ bool    SceneInGame::Release()
 	m_pInter_BossHP = nullptr;
 	m_pCameraCurrent = nullptr;
 
-	if (m_pInter_Win)
+	if (m_pInter_Win1)
 	{
-		m_pInter_Win->Release();
-		delete m_pInter_Win;
-		m_pInter_Win = nullptr;
+		m_pInter_Win1->Release();
+		delete m_pInter_Win1;
+		m_pInter_Win1 = nullptr;
+	}
+	if (m_pInter_Win2)
+	{
+		m_pInter_Win2->Release();
+		delete m_pInter_Win2;
+		m_pInter_Win2 = nullptr;
 	}
 	if (m_pInter_Defeat)
 	{
@@ -685,7 +741,7 @@ void    SceneInGame::CameraLoad()
 
 	m_pCinemaCamera = new CameraCinema();
 	m_pCinemaCamera->CreateViewMatrix(TVector3(0, 400, 0), TVector3(0, 0, 0.1f), TVector3(0, 0, 1));
-	m_pCinemaCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
+  	m_pCinemaCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
 
 	m_pCameraCurrent = m_pCinemaCamera;
 }
@@ -753,6 +809,9 @@ void    SceneInGame::CharacterLoad()
 			}
 			else if (m_pQuadTree->m_EnemySpawnList[i].first == bossStr)
 			{
+				XMFLOAT3 BossPos;
+				XMStoreFloat3(&BossPos, m_pQuadTree->m_EnemySpawnList[i].second.position);
+				m_vBossSpawnPos = BossPos;
 				enemy = new SSB::BossMob();
 				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
 				m_pBoss = dynamic_cast<SSB::BossMob*>(enemy);
@@ -920,14 +979,20 @@ void    SceneInGame::UiLoad()
 	m_pInter_Ingame->SetAllAlpha(0.0f);
 	m_pInter_MinimapContents->SetAllAlpha(0.0f);
 
-	m_pInter_Win = new Interface();
-	m_pInter_Win->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_blood.dds");
-	m_pInter_Win->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_Win1 = new Interface();
+	m_pInter_Win1->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/win1.dds");
+	m_pInter_Win1->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_Win1->SetAllAlpha(0.0f);
+
+	m_pInter_Win2 = new Interface();
+	m_pInter_Win2->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/win2.dds");
+	m_pInter_Win2->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_Win2->SetAllAlpha(0.0f);
 
 	m_pInter_Defeat = new Interface();
 	m_pInter_Defeat->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/defeat.dds");
 	m_pInter_Defeat->SetAttribute(TVector3(0, 0, 0));
-
+	m_pInter_Defeat->SetAllAlpha(0.0f);
 	if (m_Scene == S_INGAME2)
 		return;
 	m_pInter_GameTitle = new Interface();
