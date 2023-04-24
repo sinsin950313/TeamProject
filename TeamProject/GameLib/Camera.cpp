@@ -241,7 +241,7 @@ Camera::Camera()
 
 
 	D3DXMatrixIdentity(&m_matWorld);
-	CreateProjMatrix(XM_PI / 4.0f, 1.0f, 0.1f, 1000.0f);
+	//CreateProjMatrix(XM_PI / 4.0f, 1.0f, 0.1f, 1000.0f);
 	CreateViewMatrix(TVector3(0.0f, 0.0f, 10.0f), TVector3(0.0f, 0.0f, 0.0f), TVector3(0.0f, 1.0f, 0.0f));
 }
 

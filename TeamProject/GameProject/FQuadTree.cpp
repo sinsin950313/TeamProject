@@ -76,6 +76,11 @@ FQuadTree::FQuadTree(MeshMap* pMap, ID3D11Device* pDevice, ID3D11DeviceContext* 
 
     m_pConstantBuffer_Light = DX::CreateConstantBuffer(pDevice, &m_ConstantData_Light, sizeof(m_ConstantData_Light));
 
+    /*m_ConstantData_Fog.linearFogStart = 50.0f;
+    m_ConstantData_Fog.linearFogEnd = 300.0f;
+    m_ConstantData_Fog.expFogDensity = 0.0001f;
+    m_pConstantBuffer_Fog = DX::CreateConstantBuffer(pDevice, &m_pConstantBuffer_Fog, sizeof(m_ConstantData_Fog));*/
+
   /*  m_constantDataMap.matWorld = XMMatrixIdentity();
     m_constantDataMap.matView = XMMatrixIdentity();
     m_constantDataMap.matProj = XMMatrixIdentity();
@@ -298,8 +303,11 @@ void FQuadTree::Update()
         XMVectorGetZ(m_pCurrentCamera->m_matWorld.Forward()),
         XMVectorGetW(m_pCurrentCamera->m_matWorld.Forward()));
 
+    /*m_ConstantData_Fog.cameraPosition = m_pCurrentCamera->m_vPos;*/
+
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Map, NULL, NULL, &m_ConstantData_Map, NULL, NULL);
     m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Light, NULL, NULL, &m_ConstantData_Light, NULL, NULL);
+    //m_pImmediateContext->UpdateSubresource(m_pConstantBuffer_Fog, NULL, NULL, &m_ConstantData_Fog, NULL, NULL);
 
     VisibleNode(m_pRootNode); //재귀로 VisibleNode체크
 
@@ -312,6 +320,7 @@ void	FQuadTree::PreRender()
     m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
     m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pConstantBuffer_Map);
     m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pConstantBuffer_Light);
+    //m_pImmediateContext->VSSetConstantBuffers(3, 1, &m_pConstantBuffer_Fog);
 
 
     m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pConstantBuffer_Transform);
@@ -737,12 +746,11 @@ namespace MAPLOAD
 		UINT iMaxDepth = 0;
 		std::wstring szVSPath;
 		std::wstring szPSPath;
-        std::vector<CameraMove> CamMoveList;
-        float fCamMoveDuration = 0.0f;
+        std::vector<Cinema> CinemaList;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
         std::vector<std::pair<std::string, Transform>> spawnList;
-        T_BOX trigger;
+        std::map<std::wstring, T_BOX> triggerList;
 		std::unordered_set<Object*> allObjectList;
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
@@ -801,15 +809,21 @@ namespace MAPLOAD
 					std::getline(iss, str);
 					szPSPath = to_mw(str);
 				}
-                else if (fieldName == "m_CamMove")
+                else if (fieldName == "m_CinemaList")
                 {
-                    CameraMove move;
-                    iss >> move;
-                    CamMoveList.push_back(move);
-                }
-                else if (fieldName == "m_fCamMoveDuration")
-                {
-                    iss >> fCamMoveDuration;
+                    std::streampos prevPos = is.tellg();
+                    std::string cinemaLine;
+                    while (std::getline(is, cinemaLine))
+                    {
+                        Cinema cinema;
+                        if (cinemaLine.find("m_pMap:") != std::string::npos)
+                            break;
+                        is.seekg(prevPos);
+                        is >> cinema;
+                        CinemaList.push_back(cinema);
+                        prevPos = is.tellg();
+                    }
+                    is.seekg(prevPos);
                 }
 				else if (fieldName == "m_pMap")
 				{
@@ -964,7 +978,7 @@ namespace MAPLOAD
                             }
 
                             mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
-                            trigger = mePeedBox;
+                            triggerList.insert(std::make_pair(to_mw(strName), mePeedBox));
                         }
                         else if (specifyMode == "OBJECT_SPAWN")
                         {
@@ -1092,12 +1106,16 @@ namespace MAPLOAD
 
         for (const auto& spawn : spawnList)
         {
-            if (spawn.first == "Player")
-                pQuadTree->m_PlayerSpawnPoint = spawn;
+            if (spawn.first == "Player" || spawn.first.find("Cine") != std::string::npos)
+                pQuadTree->m_PlayerSpawnPoint.insert(spawn);
             else
                 pQuadTree->m_EnemySpawnList.push_back(spawn);
         }
-        pQuadTree->m_Trigger = trigger;
+        
+        for (const auto& trigger : triggerList)
+        {
+            pQuadTree->m_TriggerList.insert(trigger);
+        }
 
 		for (const auto& obj : allObjectList)
 		{
@@ -1107,11 +1125,10 @@ namespace MAPLOAD
         if (pSphereObject)
             pQuadTree->m_pSphereObject = pSphereObject;
 
-        for (int idx = 0; idx < CamMoveList.size(); idx++)
+        for (int idx = 0; idx < CinemaList.size(); idx++)
         {
-            pQuadTree->m_CamMoveList.push_back(CamMoveList[idx]);
+            pQuadTree->m_CinemaList.insert(std::make_pair(CinemaList[idx].szCinemaName, CinemaList[idx]));
         }
-        pQuadTree->m_fCamMoveDuration = fCamMoveDuration;
 
 		return pQuadTree;
 	}

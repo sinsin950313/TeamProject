@@ -71,9 +71,12 @@ public:
 
     Interface* m_pInter_Damage_blood;
 
-    Interface* m_pInter_Title;
     Interface* m_pInter_GameTitle;
     Interface* m_pInter_PressStart;
+
+    Interface* m_pInter_Win1;
+    Interface* m_pInter_Win2;
+    Interface* m_pInter_Defeat;
 
     Camera* m_pMinimapCamera = nullptr;
     RenderTarget m_RenderTargetMinimap;
@@ -84,12 +87,28 @@ public:
     Shader* m_pMinimapPS_DebugBox;
 
     Interface* m_pInter_Minimap;
-    InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
-    InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
+    InterfaceMinimap* m_pInter_MinimapContents = nullptr;
+    InterfaceMinimap* m_pInter_Minimap_player = nullptr;
 
-    bool m_bStartCamera = false;
     CameraCinema* m_pCinemaCamera = nullptr;
-    Camera* m_pCameraTemp = nullptr;
+    Camera* m_pCameraCurrent = nullptr;
+
+    void SetCinemaCamera(std::wstring szCinemaName);
+    void SetMainCamera();
+    void MoveCinemaCamera();
+
+    UINT m_iCurrentCineCount = 0;
+    bool m_bIngame1_CinemaIntro_Start = false;
+    bool m_bIngame1_CinemaIntro_End = false;
+    bool m_bIngame1_Cinema1_Start = false;
+    bool m_bIngame1_Cinema1_End = false;
+    bool m_bIngame1_Cinema2_Start = false;
+    bool m_bIngame1_Cinema2_End = false;
+
+    bool m_bIngame2_CinemaIntro_Start = false;
+    bool m_bIngame2_CinemaIntro_End = false;
+    bool m_bIngame2_CinemaOver = false;
+    TVector3 m_vBossSpawnPos;
 public:
 
     virtual ~SceneInGame();

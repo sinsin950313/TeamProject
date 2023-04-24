@@ -263,6 +263,7 @@ namespace SSB
 
 	bool Screen::Release()
 	{
+		if (m_pConstantBuffer_Fog) m_pConstantBuffer_Fog->Release();
 		if (m_pVertexBuffer) m_pVertexBuffer->Release();
 		if (m_pIndexBuffer)m_pIndexBuffer->Release();
 		if (m_pVertexLayout)m_pVertexLayout->Release();

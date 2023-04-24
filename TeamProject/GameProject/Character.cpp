@@ -318,7 +318,8 @@ void Character::MoveChar(XMVECTOR& destinationDirection, XMMATRIX& worldMatrix, 
 					collisionDepth += data.CollisionDepth;
 					++collisionBoxCount;
 				}
-				collisionDepth = collisionDepth / collisionBoxCount;
+				if(collisionBoxCount != 0)
+					collisionDepth = collisionDepth / collisionBoxCount;
 			}
 			collideNormal.y = 0;
 		}

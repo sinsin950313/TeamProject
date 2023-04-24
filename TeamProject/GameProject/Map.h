@@ -150,6 +150,15 @@ struct ConstantData_Light
 	XMFLOAT4 cameraPosition;
 };
 
+__declspec(align(16))
+struct ConstantData_Fog
+{
+	XMFLOAT4 currentCameraPos;
+	float linearFogStart;
+	float linearFogEnd;
+	float expFogDensity;
+};
+extern XMFLOAT4 g_CurrentCameraPos;
 
 struct PNCTVertex
 {
@@ -225,11 +234,11 @@ struct CameraMove
 		return os;
 	}
 
-	friend std::istringstream& operator>>(std::istringstream& is, CameraMove& camMove)
+	friend std::istringstream& operator>>(std::istringstream& iss, CameraMove& camMove)
 	{
 		// "pos: x y z, tex: x y, normal: x y z, color: r g b a"와 같은 형태의 문자열에서 필드 값을 추출합니다.
 		std::string line;
-		std::getline(is, line);
+		std::getline(iss, line);
 
 		// camPos 값을 추출합니다.
 		size_t pos_start = line.find("camPos:") + strlen("camPos:");
@@ -259,6 +268,58 @@ struct CameraMove
 		std::istringstream roll_stream(roll_str);
 		roll_stream >> camMove.fRoll;
 
+		return iss;
+	}
+};
+
+struct Cinema
+{
+	std::wstring szCinemaName;
+	std::vector<CameraMove> CamMoveList;
+	float fDuration;
+	friend std::ostream& operator<<(std::ostream& os, const Cinema& cinema)
+	{
+		os << "szCinemaName:" << to_wm(cinema.szCinemaName) << std::endl;
+		for (int idx = 0; idx < cinema.CamMoveList.size(); idx++)
+		{
+			os << "CamMoveList:" << cinema.CamMoveList[idx] << std::endl;
+		}
+		os << "fDuration:" << cinema.fDuration << std::endl;
+		return os;
+	}
+
+	friend std::istream& operator>>(std::istream& is, Cinema& cinema)
+	{
+		std::streampos prevPos;
+		std::string cinemaLine;
+		while (std::getline(is, cinemaLine) && cinemaLine != "")
+		{
+			if (cinemaLine.find("m_pMap:") != std::string::npos)
+				break;
+			std::istringstream cinemaIss(cinemaLine);
+			std::string fieldName;
+			std::getline(cinemaIss, fieldName, ':');
+			if (fieldName == "szCinemaName")
+			{
+				if (!cinema.szCinemaName.empty())
+					break;
+				std::string name;
+				cinemaIss >> name;
+				cinema.szCinemaName = to_mw(name);
+			}
+			else if (fieldName == "CamMoveList")
+			{
+				CameraMove camMove;
+				cinemaIss >> camMove;
+				cinema.CamMoveList.push_back(camMove);
+			}
+			else if (fieldName == "fDuration")
+			{
+				cinemaIss >> cinema.fDuration;
+			}
+			prevPos = is.tellg();
+		}
+		is.seekg(prevPos);
 		return is;
 	}
 };

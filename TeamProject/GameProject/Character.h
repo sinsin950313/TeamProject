@@ -140,5 +140,8 @@ private:
 public:
 	void SetPoundState(bool state);
 	bool IsPoundState();
+
+public:
+	virtual ~Character() {}
 };
 

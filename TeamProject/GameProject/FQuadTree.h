@@ -88,16 +88,17 @@ public:
 	ConstantData_Map m_ConstantData_Map;
 	ID3D11Buffer* m_pConstantBuffer_Light;
 	ConstantData_Light m_ConstantData_Light;
+	//ID3D11Buffer* m_pConstantBuffer_Fog;
+	//ConstantData_Fog m_ConstantData_Fog;
 
 	std::wstring m_szVSPath;
 	Shader* m_pVertexShader;
 	
 	std::wstring m_szPSPath;
 	Shader* m_pPixelShader;
-
-	std::pair<std::string, Transform> m_PlayerSpawnPoint;
+	std::map<std::string, Transform> m_PlayerSpawnPoint;
 	std::vector<std::pair<std::string, Transform>> m_EnemySpawnList;
-	T_BOX m_Trigger;
+	std::map<std::wstring, T_BOX> m_TriggerList;
 	std::unordered_set<Object*> m_pAllObjectList;
 	std::vector<FNode*> m_pLeafNodeList;
 	std::vector<FNode*> m_pDrawLeafNodeList;
@@ -109,8 +110,8 @@ public:
 	BaseObject* m_pSphereObject = nullptr;
 
 public:
-	std::vector<CameraMove> m_CamMoveList;
-	float m_fCamMoveDuration;
+	std::map<std::wstring, Cinema> m_CinemaList;
+	Cinema m_CurrentCinema;
 	float m_fCamMoveCurrent = 0.0f;
 };
 

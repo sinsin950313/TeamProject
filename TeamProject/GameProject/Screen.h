@@ -6,7 +6,7 @@
 #include "ShaderMgr.h"
 #include "MultiRenderTarget.h"
 #include "Light.h"
-
+#include "Map.h"
 namespace SSB
 {
 	struct ScreenVertex
@@ -17,6 +17,9 @@ namespace SSB
 
 	class Screen
 	{
+	public:
+		ID3D11Buffer* m_pConstantBuffer_Fog;
+		ConstantData_Fog m_ConstantData_Fog;
 	private:
 		ID3D11Device* m_pd3dDevice = nullptr;
 		ID3D11DeviceContext* m_pImmediateContext = nullptr;
