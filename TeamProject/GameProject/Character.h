@@ -36,9 +36,9 @@ public:
 	ID3D11DeviceContext* m_pImmediateContext = nullptr;
 	
 public:
-	Interface* m_pGageHP;
-	Interface* m_pDamage;
-	Interface* m_pMinimapProfile;
+	Interface* m_pInterGageHP;
+	Interface* m_pInterDamage;
+	Interface* m_pInterMinimapProfile;
 public:
 	virtual bool	Init();
 	virtual bool	Frame();

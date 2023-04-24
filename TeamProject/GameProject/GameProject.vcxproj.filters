@@ -189,6 +189,9 @@
     <ClInclude Include="TrailEffect.h">
       <Filter>Effect\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="CameraCinema.h">
+      <Filter>Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -319,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="TrailEffect.cpp">
       <Filter>Effect\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraCinema.cpp">
+      <Filter>Map</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

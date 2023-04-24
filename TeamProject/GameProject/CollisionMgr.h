@@ -22,6 +22,7 @@ private:
 	NpcAttackList
 	*/
 	std::vector<T_BOX> m_MapCollisionList;
+	std::vector<T_BOX> m_MapTriggerList;
 	std::map<T_BOX*, Character*> m_StaticObjectList;
 	std::map<T_BOX*, Character*> m_NpcList;
 
@@ -30,6 +31,7 @@ public:
 	bool	ChkCharacterToStaticObjList(T_BOX* box);
 	std::vector<Character*> GetHitCharacterList(T_BOX* attackBox);
 	bool IsCollide(T_BOX* box);
+	bool IsCollideTrigger(T_BOX* box);
 
 public:
 	void	AddStaticObjectBox(T_BOX* box, Character* pChar);
@@ -38,6 +40,7 @@ public:
 
 public:
 	void	AddMapCollisionBox(T_BOX tBox);
+	void	AddMapTriggerBox(T_BOX tBox);
 	std::vector<T_BOX>& GetMapCollisionList();
 
 private:

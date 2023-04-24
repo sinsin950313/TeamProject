@@ -21,12 +21,15 @@ namespace SSB
 	const StateName kPlayerUltimate = "Ultimate";
 	const StateName kPlayerDash = "Dash";
 	const StateName kPlayerDead = "Dead";
+	const StateName kPlayerVictoryStart = "VictoryStart";
+	const StateName kPlayerVictoryLoop = "VictoryLoop";
 
 	const unsigned int PlayerDeadTypePriority = 0;
-	const unsigned int PlayerDashTypePriority = 1;
-	const unsigned int PlayerSkillTypePriority = 2;
-	const unsigned int PlayerAttackTypePriority = 3;
-	const unsigned int PlayerMoveTypePriority = 4;
+	const unsigned int PlayerVictoryTypePriority = 1;
+	const unsigned int PlayerDashTypePriority = 2;
+	const unsigned int PlayerSkillTypePriority = 3;
+	const unsigned int PlayerAttackTypePriority = 4;
+	const unsigned int PlayerMoveTypePriority = 5;
 
 	class PlayerStateCommonMethodInterface : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
@@ -240,6 +243,26 @@ namespace SSB
 		void StateDecision() override;
 		void Action() override;
 		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerVictoryStartState : public PlayerStateCommonMethodInterface
+	{
+	public:
+		PlayerVictoryStartState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class PlayerVictoryLoopState : public CharacterState
+	{
+	public:
+		void StateDecision() override;
+		void Action() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 }

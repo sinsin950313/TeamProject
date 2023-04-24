@@ -89,6 +89,12 @@ namespace SSB
 			Decision_IsSkill(kPlayerUltimate, 'R', 0);
 		}
 
+		if (Player::GetInstance().IsVictory())
+		{
+			ReserveNextTransferName(kPlayerVictoryStart);
+			SetTransfer();
+		}
+
 		Decision_IsTransfer();
 	}
 	void PlayerIdleState::Action()
@@ -96,7 +102,7 @@ namespace SSB
 	}
 	std::vector<std::string> PlayerIdleState::GetLinkedList()
 	{
-		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate, kPlayerDrink };
+		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate, kPlayerDrink, kPlayerVictoryStart };
 	}
 	void PlayerMoveState::StateDecision()
 	{
@@ -233,12 +239,10 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
-						obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)obj->m_HealthPoint / obj->m_kHealthPointMax, 1.0f));
-						obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
 					}
 				}
 			}
@@ -322,8 +326,8 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
@@ -409,8 +413,8 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
@@ -496,8 +500,8 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
@@ -567,7 +571,7 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 2;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 2;
-			Player::GetInstance().m_pSkillE->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerRotate)));
+			Player::GetInstance().m_pInterSkillE->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerRotate)));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -604,8 +608,8 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
@@ -695,7 +699,7 @@ namespace SSB
 
 		if (!_blackboard->Initialized)
 		{
-			Player::GetInstance().m_pSkillDash->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerDash)));
+			Player::GetInstance().m_pInterSkillDash->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerDash)));
 			player->ActiveSkill(kPlayerDash);
 
 			XMVECTOR desiredCharDir = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
@@ -816,7 +820,7 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 0.5f;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 0.5f;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 2.0f;
-			Player::GetInstance().m_pSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerPierce)));
+			Player::GetInstance().m_pInterSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerPierce)));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -853,8 +857,8 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
@@ -922,7 +926,7 @@ namespace SSB
 			Player::GetInstance().m_AttackBox.fExtent[0] = 0.5f;
 			Player::GetInstance().m_AttackBox.fExtent[1] = 0.5f;
 			Player::GetInstance().m_AttackBox.fExtent[2] = 2.0f;
-			Player::GetInstance().m_pSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerPierce)));
+			Player::GetInstance().m_pInterSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerPierce)));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -959,8 +963,8 @@ namespace SSB
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
-							obj->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pDamage, 0.5f, 10.0f));
+							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
@@ -1014,7 +1018,7 @@ namespace SSB
 			Player::GetInstance().ActiveSkill(kPlayerPierce);
 			Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 			Player::GetInstance().ShotTornado(_blackboard->StateTImeStamp);
-			Player::GetInstance().m_pSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerPierce)));
+			Player::GetInstance().m_pInterSkillQ->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerPierce)));
 		}
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
@@ -1060,8 +1064,8 @@ namespace SSB
 					float currentHp = elem->m_HealthPoint - m_pCharacter->m_Damage;
 					if (currentHp <= 0)
 						currentHp = 0;
-					elem->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / elem->m_kHealthPointMax, 1.0f));
-					elem->m_pDamage->m_pWorkList.push_back(new InterfaceDamageFloating(100, elem->m_pDamage, 0.5f, 10.0f));
+					elem->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / elem->m_kHealthPointMax, 1.0f));
+					elem->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(100, elem->m_pInterDamage, 0.5f, 10.0f));
 				}
 			}
 
@@ -1081,7 +1085,9 @@ namespace SSB
 			auto targets = player->GetUltimateSkillTargetList();
 			Player::GetInstance().m_vPos = targets[0]->GetPosition();
 			Player::GetInstance().m_vPos.y = 0;
-			//Player::GetInstance().m_pSkillR->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerUltimate)));
+
+			Player::GetInstance().m_pInterSkillR->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerUltimate)));
+
 			auto list = player->GetUltimateSkillTargetList();
 			for (auto elem : list)
 			{
@@ -1126,7 +1132,7 @@ namespace SSB
 			if (!_blackboard->Damaged)
 			{
 				m_pCharacter->m_HealthPoint = min(m_pCharacter->m_HealthPoint + 30, m_pCharacter->m_kHealthPointMax);
-				m_pCharacter->m_pGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)m_pCharacter->m_HealthPoint / m_pCharacter->m_kHealthPointMax, 1.0f));
+				m_pCharacter->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)m_pCharacter->m_HealthPoint / m_pCharacter->m_kHealthPointMax, 1.0f));
 			}
 		}
 	}
@@ -1202,6 +1208,42 @@ namespace SSB
 	std::vector<std::string> PlayerHoudgiEndState::GetLinkedList()
 	{
 		return { kPlayerIdle };
+	}
+	PlayerVictoryStartState::PlayerVictoryStartState(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
+	{
+	}
+	void PlayerVictoryStartState::StateDecision()
+	{
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			ReserveNextTransferName(kPlayerVictoryLoop);
+			SetTransfer();
+		}
+	}
+	void PlayerVictoryStartState::Action()
+	{
+		if (_blackboard->Initialized)
+		{
+			Player::GetInstance().ActiveSkill(kPlayerRotate);
+		}
+	}
+	StateTransferPriority PlayerVictoryStartState::GetPriority()
+	{
+		return PlayerVictoryTypePriority;
+	}
+	std::vector<std::string> PlayerVictoryStartState::GetLinkedList()
+	{
+		return { kPlayerVictoryLoop };
+	}
+	void PlayerVictoryLoopState::StateDecision()
+	{
+	}
+	void PlayerVictoryLoopState::Action()
+	{
+	}
+	std::vector<std::string> PlayerVictoryLoopState::GetLinkedList()
+	{
+		return std::vector<std::string>();
 	}
 }
 ;
