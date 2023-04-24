@@ -147,9 +147,6 @@
     <ClInclude Include="BossStateService.h">
       <Filter>Ch\FSM</Filter>
     </ClInclude>
-    <ClInclude Include="Emitter.h">
-      <Filter>Effect</Filter>
-    </ClInclude>
     <ClInclude Include="DirectionalLight.h">
       <Filter>Light</Filter>
     </ClInclude>
@@ -171,10 +168,19 @@
     <ClInclude Include="SoundEffect.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="EffectMgr.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="TrailEffect.h">
+      <Filter>Effect\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraCinema.h">
+      <Filter>Map</Filter>
+    </ClInclude>
     <ClInclude Include="Effect.h">
       <Filter>Effect</Filter>
     </ClInclude>
-    <ClInclude Include="EffectMgr.h">
+    <ClInclude Include="Emitter.h">
       <Filter>Effect</Filter>
     </ClInclude>
     <ClInclude Include="EmitterData.h">
@@ -185,12 +191,6 @@
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="TrailEffect.h">
-      <Filter>Effect\Trail</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraCinema.h">
-      <Filter>Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -284,9 +284,6 @@
     <ClCompile Include="BossStateService.cpp">
       <Filter>Ch\FSM</Filter>
     </ClCompile>
-    <ClCompile Include="Emitter.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>Light</Filter>
     </ClCompile>
@@ -308,16 +305,7 @@
     <ClCompile Include="SoundEffect.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
     <ClCompile Include="EffectMgr.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprite.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="TrailEffect.cpp">
@@ -325,6 +313,18 @@
     </ClCompile>
     <ClCompile Include="CameraCinema.cpp">
       <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Emitter.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

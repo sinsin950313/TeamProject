@@ -13,7 +13,7 @@ int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 bool    MyMain::Init()
-{
+{    
     m_MRT.Initialize_SetData(m_pd3dDevice, m_pImmediateContext);
     m_MRT.Init();
 

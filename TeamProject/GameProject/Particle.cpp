@@ -15,13 +15,11 @@ void	Particle::Create(ParticleData data)
 	for (int i = 0; i < 3; i++)
 	{
 		m_iTransformType[i] = data.iTransformType[i];
-		m_ParticleSRT[i] = data.ParticleSRT[i];
+		m_ParticleSRT[i] = data.particleSRT[i];
 	}
 
-	m_StartColor = data.StartColor;
-	m_EndColor = data.EndColor;
-	m_isLifeColor = data.isLifeColor;
-	m_isLifeAlpha = data.isLifeAlpha;
+	m_ParticleColor = data.ColorData;
+	m_vCurColor = TColor(1, 1, 1, 1);
 
 	m_fCurLife = 0.0f;
 	m_isDestroyLifeTime = data.isDestroyLifeTime;
@@ -42,6 +40,7 @@ bool	Particle::Frame(TMatrix* matView)
 	//TVector3 vVelocity = (m_vAccel * g_fGameTimer) + m_vVelocity;
 	//TVector3 Position = (1 / 2 * m_vAccel * powf(g_fGameTimer, 2)) + (m_vVelocity * g_fGameTimer) + m_vPos;
 
+	ProcessColor();
 	ProcessSRT();
 	ProcessBillboard();
 
@@ -50,7 +49,7 @@ bool	Particle::Frame(TMatrix* matView)
 	{
 		if (m_isDestroyLifeTime)
 		{
-			m_isDone = true;
+			//m_isDone = true;
 		}
 		
 	}
@@ -58,6 +57,28 @@ bool	Particle::Frame(TMatrix* matView)
 	TQuaternion q = TQuaternion::CreateFromRotationMatrix(m_matRotation);
 	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, NULL, &q, &m_vPos);
 	return true;
+}
+
+void	Particle::ProcessColor()
+{
+	m_vCurColor;
+	switch (m_ParticleColor.iColorType)
+	{
+	case 0: // FIX
+		m_vCurColor = m_ParticleColor.vFix;
+		break;
+	case 1: // RANDOM
+		m_vCurColor = m_ParticleColor.vRandom;		
+		break;
+	case 2: // EASING
+		float delta = m_fCurLife / m_fLifeTime;
+		TVector4 color;
+		TVector4 s = m_ParticleColor.vStart.ToVector4();
+		TVector4 e = m_ParticleColor.vEnd.ToVector4();
+		D3DXVec4Lerp(&color, &s, &e, delta);
+		m_vCurColor = color;
+		break;
+	}
 }
 
 void	Particle::ProcessSRT()

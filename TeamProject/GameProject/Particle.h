@@ -76,16 +76,23 @@ struct ParticleSRT
 	TVector3		vStart;
 	TVector3		vEnd;
 };
+struct ParticleColor
+{
+	UINT		iColorType;
+
+	TColor	vFix;
+
+	TColor	vRandom;
+
+	TColor	vStart;
+	TColor	vEnd;
+};
 struct ParticleData
 {
 	UINT				iTransformType[3];
-	ParticleSRT	ParticleSRT[3];
+	ParticleSRT	particleSRT[3];
 
-
-	TColor			StartColor;
-	TColor			EndColor;
-	bool				isLifeColor;
-	bool				isLifeAlpha;
+	ParticleColor	ColorData;
 
 	bool				isDestroyLifeTime;
 	float				fLifeTime;
@@ -102,6 +109,7 @@ public:
 	void	Create(ParticleData data);
 
 	bool	Frame(TMatrix* matView);
+	void	ProcessColor();
 	void	ProcessSRT();
 	void	ProcessBillboard();
 
@@ -118,14 +126,11 @@ public:
 	TVector3		m_vScale;
 	TVector3		m_vRotation;
 
+	TColor			m_vCurColor;
+
 	UINT				m_iTransformType[3];
 	ParticleSRT	m_ParticleSRT[3];
-
-
-	TColor			m_StartColor;
-	TColor			m_EndColor;
-	bool				m_isLifeColor;
-	bool				m_isLifeAlpha;
+	ParticleColor	m_ParticleColor;
 
 	bool				m_isDestroyLifeTime;
 	bool				m_isDone;

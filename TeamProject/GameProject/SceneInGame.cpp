@@ -379,7 +379,7 @@ bool    SceneInGame::Frame()
 	
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"path", Player::GetInstance().GetPosition());
+		I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
 	}
 
 
@@ -387,9 +387,6 @@ bool    SceneInGame::Frame()
 	{
 		Player::GetInstance().SetVictory();
 	}*/
-
-	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
-		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
 
 	for (auto manager : m_StateManagerMap)

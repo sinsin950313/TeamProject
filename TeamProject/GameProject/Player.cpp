@@ -321,6 +321,15 @@ bool Player::Tornado::Init()
 	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 	m_DamagedCharacters.clear();
 
+	m_pModel = new SSB::Model;
+	SSB::OBBData data;
+	data.Width = 2;
+	data.Height = 6;
+	data.Depth = 2;
+	data.Scale = TVector3(0.01, 0.01, 0.01);
+	m_pModel->Initialize_SetBoundingVolume(data);
+	m_pModel->Init();
+
 	return true;
 }
 

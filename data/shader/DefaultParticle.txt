@@ -37,7 +37,7 @@ VS_out VS(VS_in input)
 
 	output.p = vProj;
 	output.n = normal;
-	output.c = g_vInstColor[input.iVID];
+	output.c = input.c * g_vInstColor[input.iVID];
 	output.t = input.t;
 
 	return output;
@@ -53,10 +53,14 @@ PS_OUT PS(VS_out input) : SV_Target
 {
 	PS_OUT vOut;
 	vOut.vColor = g_txTexA.Sample(g_SampleWrap, input.t);
-	float4 color = g_txTexA.Sample(g_SampleWrap, input.t);
-	//float white = (color.x + color.y + color.z) / 1.0f;
-	float white = max(max(color.r, color.g), color.b);
-	vOut.vBlack = float4(1 - white, 1 - white, 1 - white, 1);
-	vOut.vColor = color * input.c;
+	vOut.vColor.rgb = vOut.vColor.rgb * input.c.rgb * input.c.a;
+	vOut.vColor.a = 1;
+
+	vOut.vBlack = float4(1 - vOut.vColor.r, 1 - vOut.vColor.g, 1 - vOut.vColor.b, 1);
 	return vOut;
+}
+
+float4 COLOR_PS(VS_out input) : SV_Target
+{
+	return input.c;
 }
