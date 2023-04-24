@@ -363,7 +363,7 @@ void Character::Damage(int damage)
 void Character::Initialize_RegisterSkill(SkillPrimaryKey key, SkillCoolTime coolTime)
 {
 	_skillCoolTimeList.insert(std::make_pair(key, coolTime));
-	_skillTimeStampList.insert(std::make_pair(key, 0));
+	_skillTimeStampList.insert(std::make_pair(key, -100));
 }
 
 bool Character::IsCoolTimePassed(SkillPrimaryKey key, time_t elaspedGameTime)

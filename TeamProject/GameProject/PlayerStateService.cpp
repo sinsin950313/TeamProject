@@ -1178,10 +1178,6 @@ namespace SSB
 	}
 	void PlayerHoudgiStartState::Action()
 	{
-		if (_blackboard->Initialized)
-		{
-			Player::GetInstance().ActiveSkill(kPlayerRotate);
-		}
 	}
 	std::vector<std::string> PlayerHoudgiStartState::GetLinkedList()
 	{
@@ -1200,10 +1196,6 @@ namespace SSB
 	}
 	void PlayerHoudgiEndState::Action()
 	{
-		if (_blackboard->Initialized)
-		{
-			Player::GetInstance().ActiveSkill(kPlayerRotate);
-		}
 	}
 	std::vector<std::string> PlayerHoudgiEndState::GetLinkedList()
 	{
