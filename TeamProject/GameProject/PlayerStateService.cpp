@@ -89,6 +89,12 @@ namespace SSB
 			Decision_IsSkill(kPlayerUltimate, 'R', 0);
 		}
 
+		if (Player::GetInstance().IsVictory())
+		{
+			ReserveNextTransferName(kPlayerVictoryStart);
+			SetTransfer();
+		}
+
 		Decision_IsTransfer();
 	}
 	void PlayerIdleState::Action()
@@ -96,7 +102,7 @@ namespace SSB
 	}
 	std::vector<std::string> PlayerIdleState::GetLinkedList()
 	{
-		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate, kPlayerDrink };
+		return { kPlayerDead, kPlayerDash, kPlayerMove, kPlayerAttack1, kPlayerPierce, kPlayerRotate, kPlayerIdle, kPlayerUltimate, kPlayerDrink, kPlayerVictoryStart };
 	}
 	void PlayerMoveState::StateDecision()
 	{
@@ -1202,6 +1208,42 @@ namespace SSB
 	std::vector<std::string> PlayerHoudgiEndState::GetLinkedList()
 	{
 		return { kPlayerIdle };
+	}
+	PlayerVictoryStartState::PlayerVictoryStartState(float transferRequireTime) : PlayerStateCommonMethodInterface(transferRequireTime)
+	{
+	}
+	void PlayerVictoryStartState::StateDecision()
+	{
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			ReserveNextTransferName(kPlayerVictoryLoop);
+			SetTransfer();
+		}
+	}
+	void PlayerVictoryStartState::Action()
+	{
+		if (_blackboard->Initialized)
+		{
+			Player::GetInstance().ActiveSkill(kPlayerRotate);
+		}
+	}
+	StateTransferPriority PlayerVictoryStartState::GetPriority()
+	{
+		return PlayerVictoryTypePriority;
+	}
+	std::vector<std::string> PlayerVictoryStartState::GetLinkedList()
+	{
+		return { kPlayerVictoryLoop };
+	}
+	void PlayerVictoryLoopState::StateDecision()
+	{
+	}
+	void PlayerVictoryLoopState::Action()
+	{
+	}
+	std::vector<std::string> PlayerVictoryLoopState::GetLinkedList()
+	{
+		return std::vector<std::string>();
 	}
 }
 ;
