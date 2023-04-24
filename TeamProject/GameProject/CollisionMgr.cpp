@@ -92,7 +92,6 @@ bool CollisionMgr::IsCollideTrigger(T_BOX* box)
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -290,7 +289,6 @@ std::vector<CollisionData> CollisionMgr::GetCollideData(T_BOX source, T_BOX dest
 			}
 		}
 	}
-
 	return ret;
 }
 
