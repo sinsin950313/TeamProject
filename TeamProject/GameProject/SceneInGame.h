@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "CameraDebug.h"
 #include "CameraTPS.h"
+#include "CameraCinema.h"
 #include "DebugBox.h"
 #include "FQuadTree.h"
 #include "CharacterStateManager.h"
@@ -57,6 +58,9 @@ public:
 
     std::vector<DamageFont> m_DamageFontList;
     Interface* m_pInter_Ingame;
+    Interface* m_pInter_Frame;
+    Interface* m_pInter_Profile;
+    Interface* m_pInter_MinimapFrame;
     Interface* m_pInter_PlayerHP;
     Interface* m_pInter_BossHP;
     Interface* m_pInter_Passive;
@@ -64,6 +68,12 @@ public:
     Interface* m_pInter_Skill_W;
     Interface* m_pInter_Skill_E;
     Interface* m_pInter_Skill_R;
+
+    Interface* m_pInter_Damage_blood;
+
+    Interface* m_pInter_Title;
+    Interface* m_pInter_GameTitle;
+    Interface* m_pInter_PressStart;
 
     Camera* m_pMinimapCamera = nullptr;
     RenderTarget m_RenderTargetMinimap;
@@ -77,6 +87,9 @@ public:
     InterfaceMinimap* m_pInter_MinimapContents = new InterfaceMinimap();
     InterfaceMinimap* m_pInter_Minimap_player = new InterfaceMinimap();
 
+    bool m_bStartCamera = false;
+    CameraCinema* m_pCinemaCamera = nullptr;
+    Camera* m_pCameraTemp = nullptr;
 public:
 
     virtual ~SceneInGame();

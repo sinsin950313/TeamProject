@@ -737,9 +737,12 @@ namespace MAPLOAD
 		UINT iMaxDepth = 0;
 		std::wstring szVSPath;
 		std::wstring szPSPath;
+        std::vector<CameraMove> CamMoveList;
+        float fCamMoveDuration = 0.0f;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
         std::vector<std::pair<std::string, Transform>> spawnList;
+        T_BOX trigger;
 		std::unordered_set<Object*> allObjectList;
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
@@ -798,6 +801,16 @@ namespace MAPLOAD
 					std::getline(iss, str);
 					szPSPath = to_mw(str);
 				}
+                else if (fieldName == "m_CamMove")
+                {
+                    CameraMove move;
+                    iss >> move;
+                    CamMoveList.push_back(move);
+                }
+                else if (fieldName == "m_fCamMoveDuration")
+                {
+                    iss >> fCamMoveDuration;
+                }
 				else if (fieldName == "m_pMap")
 				{
 					is >> pMapMesh;
@@ -922,7 +935,29 @@ namespace MAPLOAD
                         }
                         else if (specifyMode == "OBJECT_TRIGGER")
                         {
-                            //spawnList.push_back(transform);
+                            T_BOX mePeedBox;
+
+                            XMFLOAT3 scale;
+                            XMStoreFloat3(&scale, transform.scale);
+                            XMFLOAT3 rot;
+                            XMStoreFloat3(&rot, transform.rotation);
+                            XMFLOAT3 translation;
+                            XMStoreFloat3(&translation, transform.position);
+
+                            XMMATRIX matWorld = XMMatrixTransformation({ 0,0,0,1 }, { 0,0,0,1 }, transform.scale, { 0,0,0,1 }, XMQuaternionRotationRollPitchYaw(
+                                _DegreeToRadian(rot.x),
+                                _DegreeToRadian(rot.y),
+                                _DegreeToRadian(rot.z)), transform.position);
+                            for (int i = 0; i < 3; ++i)
+                            {
+                                XMVECTOR axis = XMLoadFloat3(&box.vAxis[i]);
+                                axis = XMVector3TransformNormal(axis, matWorld);
+                                //axis = XMVector3Normalize(axis);
+                                XMStoreFloat3(&box.vAxis[i], axis);
+                            }
+
+                            mePeedBox.CreateOBBBox(box.fExtent[0] * scale.x, box.fExtent[1] * scale.y, box.fExtent[2] * scale.z, TVector3(translation), box.vAxis[0], box.vAxis[1], box.vAxis[2]);
+                            trigger = mePeedBox;
                         }
                         else if (specifyMode == "OBJECT_SPAWN")
                         {
@@ -1055,16 +1090,21 @@ namespace MAPLOAD
             else
                 pQuadTree->m_EnemySpawnList.push_back(spawn);
         }
+        pQuadTree->m_Trigger = trigger;
 
 		for (const auto& obj : allObjectList)
 		{
-		    /*if (obj->GetSpecify() != OBJECT_SPECIFY::OBJECT_SIMPLE)
-		        m_ListFbx.insert(obj->GetObjectName());*/
 		    pQuadTree->AddObject(obj);
 		}
 
         if (pSphereObject)
             pQuadTree->m_pSphereObject = pSphereObject;
+
+        for (int idx = 0; idx < CamMoveList.size(); idx++)
+        {
+            pQuadTree->m_CamMoveList.push_back(CamMoveList[idx]);
+        }
+        pQuadTree->m_fCamMoveDuration = fCamMoveDuration;
 
 		return pQuadTree;
 	}
