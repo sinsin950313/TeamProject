@@ -87,6 +87,8 @@ public:
 
 	void	SetObjectView(TVector3 vMax, TVector3 vMin);
 
+	void	GetCalcYawPitchRoll(float& fYaw, float& fPitch, float& fRoll);
+
 
 	virtual void				MoveLook(float fValue);
 	virtual void				MoveSide(float fValue);

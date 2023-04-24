@@ -65,12 +65,14 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 	{
 		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 		m_pMainCamera->Frame();
+		float yaw, pitch, roll;
+		m_pMainCamera->GetCalcYawPitchRoll(yaw, pitch, roll);
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.x = m_pMainCamera->m_vPos.x;
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.y = m_pMainCamera->m_vPos.y;
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.z = m_pMainCamera->m_vPos.z;
-		/*m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = m_pMainCamera->m_fCameraYawAngle;
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fPitch = m_pMainCamera->m_fCameraPitchAngle;
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fRoll = m_pMainCamera->m_fCameraRollAngle;*/
+		/*m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = yaw + 270.0f;*/
+		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fPitch = pitch;
+		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fRoll = roll;
 	}
 }
 
@@ -410,10 +412,6 @@ bool    SceneInGame::Frame()
 	{
 		Player::GetInstance().SetVictory();
 	}*/
-
-	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
-		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
-
 
 	for (auto manager : m_StateManagerMap)
 	{

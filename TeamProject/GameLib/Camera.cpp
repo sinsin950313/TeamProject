@@ -116,6 +116,15 @@ void	Camera::SetObjectView(TVector3 vMax, TVector3 vMin)
 	m_vTarget = vTarget;
 }
 
+void Camera::GetCalcYawPitchRoll(float& fYaw, float& fPitch, float& fRoll)
+{
+	TVector3 vDir(m_matView._13, m_matView._23, m_matView._33);
+	fYaw = XMConvertToDegrees(atan2f(vDir.z, vDir.x));
+	float fLength = sqrtf(vDir.x * vDir.x + vDir.z * vDir.z);
+	fPitch = XMConvertToDegrees(atan2f(-vDir.y, fLength));
+	fRoll = 0.0f;
+}
+
 void Camera::CreateViewMatrix(TVector3 vEye, TVector3 vAt, TVector3 vUp)
 {
 	//m_vDefaultEye = m_vCameraPos = vPos;

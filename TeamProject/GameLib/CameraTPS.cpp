@@ -76,10 +76,3 @@ bool CameraTPS::Frame()
 	return true;
 }
 
-void CameraTPS::CalcYawPitchRoll(float& fYaw, float& fPitch, float& fRoll)
-{
-
-	m_fYaw = _RadianToDegree(atan2f(XMVectorGetZ(m_vCameraDir), XMVectorGetX(m_vCameraDir)));
-	float fLength = sqrtf(XMVectorGetX(m_vCameraDir) * XMVectorGetX(m_vCameraDir) + XMVectorGetZ(m_vCameraDir) * XMVectorGetZ(m_vCameraDir));
-	m_fPitch = _RadianToDegree(atan2f(-XMVectorGetY(m_vCameraDir), fLength));
-}
