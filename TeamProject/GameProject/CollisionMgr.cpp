@@ -161,7 +161,7 @@ bool CollisionMgr::IsPenetrate(T_PLANE plane, TVector3 start, TVector3 end)
 {
 	float startVal = plane.fA * start.x + plane.fB * start.y + plane.fC * start.z + plane.fD;
 	float endVal = plane.fA * end.x + plane.fB * end.y + plane.fC * end.z + plane.fD;
-	return startVal * endVal < 0;
+ 	return startVal * endVal < 0;
 }
 
 std::vector<T_BOX> CollisionMgr::GetCollideBoxList(T_BOX* source, bool ghost)

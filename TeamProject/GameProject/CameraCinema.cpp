@@ -28,9 +28,9 @@ void CameraCinema::MoveCameraBezierSpline(float time, float duration, std::vecto
 		/*dir.x += basis * rotatedDir.x;
 		dir.y += basis * rotatedDir.y;
 		dir.z += basis * rotatedDir.z;*/
-		dir.x += basis * camMoveList[i].fYaw;
-		dir.y += basis * camMoveList[i].fPitch;
-		dir.z += basis * camMoveList[i].fRoll;
+		dir.x += basis * XMConvertToRadians(camMoveList[i].fYaw);
+		dir.y += basis * XMConvertToRadians(camMoveList[i].fPitch);
+		dir.z += basis * XMConvertToRadians(camMoveList[i].fRoll);
 	}
 
 	getPos = pos;
@@ -52,11 +52,11 @@ bool CameraCinema::Frame()
 	XMVECTOR scale = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 	XMVECTOR rotation =
 		XMQuaternionRotationRollPitchYaw(
-			XMConvertToRadians(m_fCameraPitchAngle),
-			XMConvertToRadians(m_fCameraYawAngle),
-			XMConvertToRadians(m_fCameraRollAngle));
+			m_fCameraPitchAngle,
+			m_fCameraYawAngle,
+			m_fCameraRollAngle);
 
-	XMVECTOR translation = m_vPos;;
+	XMVECTOR translation = m_vPos;
 
 	m_matWorld = XMMatrixTransformation({ 0,0,0,0 }, { 0,0,0,0 }, scale, { 0,0,0,0 }, rotation, translation);
 	m_matView = m_matWorld.Invert();

@@ -68,9 +68,9 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.x = m_pMainCamera->m_vPos.x;
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.y = m_pMainCamera->m_vPos.y;
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.z = m_pMainCamera->m_vPos.z;
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = XMConvertToDegrees(m_pMainCamera->m_fCameraYawAngle + XM_PI);
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fPitch = XMConvertToDegrees(m_pMainCamera->m_fCameraPitchAngle);
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fRoll = XMConvertToDegrees(m_pMainCamera->m_fCameraRollAngle);
+		/*m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = m_pMainCamera->m_fCameraYawAngle;
+		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fPitch = m_pMainCamera->m_fCameraPitchAngle;
+		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fRoll = m_pMainCamera->m_fCameraRollAngle;*/
 	}
 }
 
@@ -156,6 +156,23 @@ bool    SceneInGame::Init()
 
 bool    SceneInGame::Frame()
 {
+	/*if (I_Input.GetKey('B') == KEY_PUSH)
+	{
+		Cinema cinema = m_pQuadTree->m_CinemaList.find(L"Cine_1_End")->second;
+		m_pCinemaCamera->m_vPos = cinema.CamMoveList[2].camPos;
+		m_pCinemaCamera->m_fCameraYawAngle = cinema.CamMoveList[2].fYaw;
+		m_pCinemaCamera->m_fCameraPitchAngle = cinema.CamMoveList[2].fPitch;
+		m_pCinemaCamera->m_fCameraRollAngle = cinema.CamMoveList[2].fRoll;
+
+		m_pMainCamera->m_vPos = cinema.CamMoveList[2].camPos;
+		m_pMainCamera->m_fCameraYawAngle = -cinema.CamMoveList[2].fYaw;
+		m_pMainCamera->m_fCameraPitchAngle = -cinema.CamMoveList[2].fPitch;
+		m_pMainCamera->m_fCameraRollAngle = -cinema.CamMoveList[2].fRoll;
+
+		m_pCinemaCamera->Frame();
+		m_pMainCamera->Frame();
+		int a = 0;
+	}*/
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
@@ -306,6 +323,12 @@ bool    SceneInGame::Frame()
 		{//Intro
 			if (!m_bIngame2_CinemaIntro_Start && m_iCurrentCineCount == 0)
 			{
+				Cinema cinema = m_pQuadTree->m_CinemaList.find(L"Cine_1_Start")->second;
+				m_pMainCamera->m_vRotation.x = XMConvertToRadians(cinema.CamMoveList[0].fPitch);
+				m_pMainCamera->m_vRotation.y = XMConvertToRadians(cinema.CamMoveList[0].fYaw - XM_PI);
+				m_pMainCamera->m_vRotation.z = XMConvertToRadians(cinema.CamMoveList[0].fRoll);
+				Player::GetInstance().m_vRotation = m_pMainCamera->m_vRotation;
+				m_pMainCamera->Frame();
 				SetCinemaCamera(L"Cine_1_Start");
 				m_bIngame2_CinemaIntro_Start = true;
 			}
@@ -519,7 +542,7 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox)
 	{
-		if (m_pBoss)
+		/*if (m_pBoss)
 		{
 			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 		    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
@@ -544,7 +567,7 @@ bool    SceneInGame::Render()
 			m_pDebugBox->SetColor(color);
 			m_pDebugBox->UpdateBuffer();
 			m_pDebugBox->Render();
-		}
+		}*/
 
 		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
 		//{
