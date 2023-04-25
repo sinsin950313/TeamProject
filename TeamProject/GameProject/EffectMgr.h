@@ -26,7 +26,7 @@ private:
 private:
 	EffectMgr();
 public:
-	~EffectMgr();
+	virtual ~EffectMgr();
 };
 
 #define I_Effect EffectMgr::GetInstance()

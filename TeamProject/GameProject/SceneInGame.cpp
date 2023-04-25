@@ -55,7 +55,7 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 	m_pCinemaCamera->m_fCameraPitchAngle = m_pQuadTree->m_CurrentCinema.CamMoveList[0].fPitch;
 	m_pCinemaCamera->m_fCameraRollAngle = m_pQuadTree->m_CurrentCinema.CamMoveList[0].fRoll;
 
-	//¸¶Áö¸· Ä«¸Þ¶óÀÌµ¿ÀÇ followpos¸¦ ¹Þ¾Æ¿À±âÀ§ÇÔ
+	//ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ï¿½Ìµï¿½ï¿½ï¿½ followposï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (szCinemaName == L"Cine_Intro_Start")
 	{
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.x = m_pQuadTree->m_CurrentCinema.CamMoveList[0].camPos.x;
@@ -266,7 +266,7 @@ bool    SceneInGame::Frame()
 				I_Collision.DeleteTriggerBox(L"Trig_Cine1");
 				m_bIngame1_Cinema1_Start = true;
 				SetCinemaCamera(L"Cine_1_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"°úÇÐ1È£±â", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½1È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema1_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
@@ -285,7 +285,7 @@ bool    SceneInGame::Frame()
 			{
 				m_bIngame1_Cinema1_End = true;
 				SetCinemaCamera(L"Cine_1_End");
-				g_pWriter->SetText(WriteText(621, 673, L"°úÇÐ2È£±â", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½2È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema1_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 3)
@@ -313,7 +313,7 @@ bool    SceneInGame::Frame()
 				I_Collision.DeleteTriggerBox(L"Trig_Cine2");
 				m_bIngame1_Cinema2_Start = true;
 				SetCinemaCamera(L"Cine_2_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"°úÇÐ3È£±â", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½3È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema2_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 4)
@@ -332,7 +332,7 @@ bool    SceneInGame::Frame()
 			{
 				m_bIngame1_Cinema2_End = true;
 				SetCinemaCamera(L"Cine_2_End");
-				g_pWriter->SetText(WriteText(621, 673, L"°úÇÐ4È£±â", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½4È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = XMConvertToDegrees(m_pMainCamera->m_fCameraYawAngle - XM_PI);
 			}
@@ -362,7 +362,7 @@ bool    SceneInGame::Frame()
 				Player::GetInstance().m_vRotation = m_pMainCamera->m_vRotation;
 				m_pMainCamera->Frame();
 				SetCinemaCamera(L"Cine_1_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"°úÇÐ5È£±â", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½5È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_bIngame2_CinemaIntro_Start = true;
 			}
@@ -381,7 +381,7 @@ bool    SceneInGame::Frame()
 				m_bIngame2_CinemaIntro_End = true;
 				m_pQuadTree->m_fCamMoveCurrent = 0.0f;
 				SetCinemaCamera(L"Cine_1_End");
-				g_pWriter->SetText(WriteText(621, 673, L"°úÇÐ6È£±â", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½6È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
@@ -423,7 +423,7 @@ bool    SceneInGame::Frame()
 					Player::GetInstance().m_vPos = m_vBossSpawnPos;
 					Player::GetInstance().Frame();
 					SetCinemaCamera(L"Cine_Over");
-					g_pWriter->SetText(WriteText(621, 673, L"°úÇÐ7È£±â", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+					g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½7È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 					m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 					m_bIngame2_CinemaOver = true;
 				}
@@ -465,7 +465,8 @@ bool    SceneInGame::Frame()
 	
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"path", Player::GetInstance().GetPosition());
+		I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", Player::GetInstance().GetPosition());
+		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
 	}
 
 
@@ -602,7 +603,7 @@ bool    SceneInGame::Render()
 		m_pBoss->Render();
 	}*/
 
-	if (m_pDebugBox)
+	if (m_pDebugBox && false)
 	{
 		/*if (m_pBoss)
 		{
@@ -679,7 +680,7 @@ bool    SceneInGame::Render()
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//Player::GetInstance().m_pTrail->Render();
 
-    // CameraÀÇ À§Ä¡Á¤º¸°¡ ÇÊ¿äÇÏ¹Ç·Î Áö¿ìÁö ¸» °Í
+    // Cameraï¿½ï¿½ ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï¹Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½
 	auto lights = SSB::I_Light.GetLightList();
 	for (auto light : lights)
 	{

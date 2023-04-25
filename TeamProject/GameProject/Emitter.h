@@ -25,10 +25,11 @@ public:
 
 	TVector3 GetRandPos(TVector3 diff);
 	double	GetRandRealNum(double base, double diff);
+	TColor	GetRandColor(TColor c1, TColor c2);
 
 	void	SpawnParticle();
 	void	ParticleFrame();
-	TMatrix	CalcInheritMatrix(Emitter* pChild);
+	void	CalcInheritMatrix(Emitter* pChild);
 
 	void	Reset();
 
@@ -36,12 +37,16 @@ public:
 	Sprite* m_pSprite; // 랜더링 스프라이트
 	Camera* m_pCamera;
 	std::vector<Emitter*>	m_pChild;
-	TMatrix		m_matParent;
+	TMatrix		m_matParentTrans;
+	TMatrix		m_matParentRotation;
+	TMatrix		m_matParentScale;
 
 public:
-	// 파티클 매니저 변수
+		// 파티클 매니저 변수
 	BasicData			m_BasicData;
 	TransformData	m_TransData[3];
+	BasicRenderData m_BasicRenderData;
+	RenderSetData	m_RenderSetData;
 
 	ID3D11Buffer* m_pInstancingBuffer;
 	VS_EFFECT_BUFFER m_cbInstancingData;
@@ -51,13 +56,13 @@ public:
 	float				m_fSpawnTime;
 	float				m_fSpawnTimer;
 
+	float				m_fCurInitTime;
+	float				m_fInitTime;
+
+	bool				m_isDone;
+
 	///////////////////////////////////
-	TColor			m_BaseColor;
-	TColor			m_DiffColor;
 	bool				m_isLifeColor;
 	bool				m_isLifeAlpha;
-
-	float				m_fBaseLifeTime;
-	float				m_fDiffLifeTime;
 };
 

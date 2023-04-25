@@ -14,6 +14,9 @@ Sprite::~Sprite()
 bool Sprite::Init()
 {
 	BaseObject::Init();
+
+	//I_Shader.Load(L"../../data/shader/DefaultParticle.txt", L"VS", L"PS", &m_pSwapShader[0]);
+	//I_Shader.Load(L"../../data/shader/DefaultParticle.txt", L"VS", L"COLOR_PS", &m_pSwapShader[1]);
 	return true;
 }
 
@@ -22,6 +25,7 @@ bool Sprite::Frame()
 	// UVRectList의 개수로 UV애니메이션 / 텍스쳐 애니메이션 구분
 	// 프레임은 받아야
 
+	//UpdateMatrix();
 	BaseObject::Frame();
 
 	//static int curMat = 0;
@@ -33,14 +37,7 @@ bool Sprite::Frame()
 	
 	return true;
 }
-
-bool Sprite::Render()
-{
-	BaseObject::Render();
-	return true;
-}
-
-bool Sprite::RenderInstancing(UINT size)
+bool Sprite::PreRender()
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
@@ -56,10 +53,34 @@ bool Sprite::RenderInstancing(UINT size)
 
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);
 
+	m_pImmediateContext->RSSetState(DXState::g_pNonCullRSSolid);
+	return true;
+}
+
+bool Sprite::Render()
+{
+	PreRender();
+	PostRender();
+	return true;
+}
+
+bool Sprite::RenderInstancing(UINT size)
+{
+	PreRender();
+
 	if (m_pIndexBuffer == nullptr)
 		m_pImmediateContext->DrawInstanced(m_VertexList.size(), size, 0, 0);
 	else
 		m_pImmediateContext->DrawIndexedInstanced(m_IndexList.size(), size, 0, 0, 0);
+
+	m_pImmediateContext->RSSetState(DXState::g_pDefaultRSSolid);
+	return true;
+}
+
+bool Sprite::PostRender()
+{
+	BaseObject::PostRender();
+	m_pImmediateContext->RSSetState(DXState::g_pDefaultRSSolid);
 	return true;
 }
 
