@@ -76,10 +76,10 @@ public:
 
 	//UsingPerlinNoise;
 	int hash[256];
-	float m_shakeCurrent = 1.5f;
-	float m_shakeDuration = 1.0f;
-	float m_shakeAmplitude = 2.0f;
-	float m_shakeFrequency = 50.0f;
+	float m_fShakeCurrent = 1.5f;
+	float m_fShakeDuration = 1.0f;
+	float m_fShakeAmplitude = 1.0f;
+	float m_fShakeFrequency = 50.0f;
 	TVector3 m_vShakeOriginPos;
 	float Fade(float t);
 	float Lerp(float a, float b, float t);

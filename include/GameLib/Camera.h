@@ -74,6 +74,21 @@ public:
 	int					m_nZoomButtonMask;
 	int					m_nRotateCameraButtonMask;
 
+	//UsingPerlinNoise;
+	int hash[256];
+	float m_fShakeCurrent = 1.5f;
+	float m_fShakeDuration = 1.0f;
+	float m_fShakeAmplitude = 1.0f;
+	float m_fShakeFrequency = 50.0f;
+	TVector3 m_vShakeOriginPos;
+	float Fade(float t);
+	float Lerp(float a, float b, float t);
+	float Gradient(int hash, float x);
+	float PerlinNoise1D(float x);
+	void CameraShake();
+	void UpdateCameraShake();
+	void InitHash(int seed);
+
 public:
 	virtual void CreateViewMatrix(TVector3 vEye, TVector3 vAt, TVector3 vUp);
 	virtual void CreateProjMatrix(float fNear, float fFar, float fFovY, float fAspectRatio);

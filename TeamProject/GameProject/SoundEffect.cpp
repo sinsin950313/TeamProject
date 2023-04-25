@@ -10,7 +10,7 @@ namespace SSB
 
 		if (_sound != nullptr)
 		{
-			_sound->VolumeDown(100);
+			_sound->VolumeSet(0.3f);
 			_sound->Play(_isLoop);
 			_sound->Stop();
 		}

@@ -252,6 +252,8 @@ Camera::Camera()
 	D3DXMatrixIdentity(&m_matWorld);
 	//CreateProjMatrix(XM_PI / 4.0f, 1.0f, 0.1f, 1000.0f);
 	CreateViewMatrix(TVector3(0.0f, 0.0f, 10.0f), TVector3(0.0f, 0.0f, 0.0f), TVector3(0.0f, 1.0f, 0.0f));
+
+	InitHash(100);
 }
 
 Camera::~Camera()
@@ -317,7 +319,7 @@ float Camera::PerlinNoise1D(float x)
 }
 void Camera::CameraShake()
 {
-	m_shakeCurrent = 0.0f;
+	m_fShakeCurrent = 0.0f;
 	m_vShakeOriginPos = m_vPos;
 }
 
@@ -334,19 +336,19 @@ void Camera::InitHash(int seed)
 
 void Camera::UpdateCameraShake()
 {
-	if (m_shakeCurrent < m_shakeDuration)
+	if (m_fShakeCurrent < m_fShakeDuration)
 	{
-		float shakeFactor = 1.0f - (m_shakeCurrent / m_shakeDuration);
-		float offsetX = PerlinNoise1D(m_shakeCurrent * m_shakeFrequency) * m_shakeAmplitude * shakeFactor;
-		float offsetY = PerlinNoise1D((m_shakeCurrent + 1000.0f) * m_shakeFrequency) * m_shakeAmplitude * shakeFactor;
+		float shakeFactor = 1.0f - (m_fShakeCurrent / m_fShakeDuration);
+		float offsetX = PerlinNoise1D(m_fShakeCurrent * m_fShakeFrequency) * m_fShakeAmplitude * shakeFactor;
+		float offsetY = PerlinNoise1D((m_fShakeCurrent + 1000.0f) * m_fShakeFrequency) * m_fShakeAmplitude * shakeFactor;
 		TVector3 noisePos(offsetX, offsetY, 0.0f);
 		m_vPos += noisePos;
-		m_shakeCurrent += g_fSecondPerFrame;
+		m_fShakeCurrent += g_fSecondPerFrame;
 	}
 	else
 	{
-		XMFLOAT3 pos;
+		/*XMFLOAT3 pos;
 		XMStoreFloat3(&pos, XMVectorLerp(m_vPos, m_vShakeOriginPos, g_fSecondPerFrame * 30.0f));
-		m_vPos = pos;
+		m_vPos = pos;*/
 	}
 }

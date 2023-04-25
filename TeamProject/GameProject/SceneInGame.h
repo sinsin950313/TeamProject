@@ -76,7 +76,9 @@ public:
 
     Interface* m_pInter_Win1;
     Interface* m_pInter_Win2;
+    Interface* m_pInterFade;
     Interface* m_pInter_Defeat;
+    Interface* m_pInterText;
 
     Camera* m_pMinimapCamera = nullptr;
     RenderTarget m_RenderTargetMinimap;
@@ -109,6 +111,11 @@ public:
     bool m_bIngame2_CinemaIntro_End = false;
     bool m_bIngame2_CinemaOver = false;
     TVector3 m_vBossSpawnPos;
+
+public:
+    Sound* sound_bgm;
+    Sound* sound_houdgi;
+  
 public:
 
     virtual ~SceneInGame();

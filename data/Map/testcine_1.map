@@ -30,7 +30,7 @@ fDuration:5
 szCinemaName:Cine_1_Start
 CamMoveList:camPos:11.6922 3.99542 -100.778, fYaw:246.313, fPitch:16.5618, fRoll:0
 CamMoveList:camPos:-47.3279 2.66688 -95.3009, fYaw:262.951, fPitch:23.1545, fRoll:0
-fDuration:3
+fDuration:1.5
 szCinemaName:Cine_1_End
 CamMoveList:camPos:-47.3279 2.66688 -95.3009, fYaw:262.951, fPitch:23.1545, fRoll:0
 CamMoveList:camPos:-44.9772 3.43616 -95.8044, fYaw:263.901, fPitch:20.6545, fRoll:0
@@ -43,13 +43,13 @@ szCinemaName:Cine_2_Start
 CamMoveList:camPos:5.32801 3.70463 0.202841, fYaw:180.464, fPitch:15.869, fRoll:0
 CamMoveList:camPos:4.77844 11.8129 -16.4423, fYaw:186.314, fPitch:21.219, fRoll:0
 CamMoveList:camPos:0.0445042 11.7463 -26.7721, fYaw:185.965, fPitch:30.369, fRoll:0
-fDuration:1
+fDuration:3
 szCinemaName:Cine_2_End
 CamMoveList:camPos:-6.54351 11.1104 -31.1257, fYaw:180.287, fPitch:33.9923, fRoll:0
 CamMoveList:camPos:3.91678 15.327 -24.6189, fYaw:175.787, fPitch:36.1923, fRoll:0
 CamMoveList:camPos:2.83747 16.4498 -22.6157, fYaw:200.737, fPitch:38.5423, fRoll:0
 CamMoveList:camPos:6.57067 4.58728 -7.96683, fYaw:188.687, fPitch:30.8423, fRoll:0
-fDuration:2
+fDuration:3
 m_pMap:
 m_dwNumRows:129
 m_dwNumColumns:129

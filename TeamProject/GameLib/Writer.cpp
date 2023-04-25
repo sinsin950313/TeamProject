@@ -28,12 +28,12 @@ bool Writer::Init()
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_d2dFactory);
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&m_pDWriteFactory);
 	hr = m_pDWriteFactory->CreateTextFormat(
-		L"°íµñ",
+		L"Àº ¹ÙÅÁ",
 		NULL,
 		DWRITE_FONT_WEIGHT_NORMAL,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		30,
+		25,
 		L"ko-kr",
 		&m_pTextFormat);
 
@@ -51,16 +51,30 @@ bool Writer::Init()
 
 bool Writer::Frame()
 {
+	for (auto iter = m_ListText.begin(); iter != m_ListText.end(); )
+	{
+		iter->second.m_fTimeCurrent += g_fSecondPerFrame;
+		if (iter->second.m_fTimeCurrent > iter->second.m_fTimeDuration)
+			iter = m_ListText.erase(iter);
+		else
+			iter++;
+	}
 	return true;
 }
 
 bool Writer::Render()
 {
+	for (auto iter : m_ListText)
+	{
+		WriteText text = iter.second;
+		TextDraw(text);
+	}
 	return true;
 }
 
 bool Writer::Release()
 {
+	m_ListText.clear();
 	//if (m_pTextLayout)m_pTextLayout->Release();
 	if (m_pTextColor)m_pTextColor->Release();
 	if (m_pTextFormat) m_pTextFormat->Release();
@@ -91,6 +105,11 @@ bool	Writer::Set(IDXGISurface1* dxgiSurface)
 	return true;
 }
 
+void Writer::SetText(WriteText text)
+{
+	m_ListText.insert(std::make_pair(text.m_szText, text));
+}
+
 bool	Writer::Draw(float x, float y, std::wstring text, D2D1_COLOR_F color)
 {
 	m_d2dRT->BeginDraw();
@@ -103,4 +122,20 @@ bool	Writer::Draw(float x, float y, std::wstring text, D2D1_COLOR_F color)
 	m_d2dRT->EndDraw();
 
 	return true;
+}
+
+void Writer::TextDraw(WriteText text)
+{
+	m_d2dRT->BeginDraw();
+
+	D2D1_RECT_F rt = { text.m_x, text.m_y, g_rcClient.right, g_rcClient.bottom };
+	m_pTextColor->SetColor(text.m_color);
+	float opacity = 0.0f;
+	opacity = text.m_fTimeCurrent * 2.0f;
+	if (text.m_fTimeDuration - text.m_fTimeCurrent < 1.0f)
+		opacity = 1.0f - (1.0f - (text.m_fTimeDuration - text.m_fTimeCurrent));
+	m_pTextColor->SetOpacity(opacity > 1.0f ? 1.0f : opacity);
+	m_d2dRT->DrawText(text.m_szText.c_str(), text.m_szText.size(), m_pTextFormat, rt, m_pTextColor);
+
+	m_d2dRT->EndDraw();
 }

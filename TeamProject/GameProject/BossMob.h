@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Character.h"
-
+#include "Camera.h"
 namespace SSB
 {
 	class BossMob : public Character
 	{
+    public:
+        Camera* m_pMainCamera;
     public:
         float m_BattleRange = 5;
         float m_SpotRange = 40;
