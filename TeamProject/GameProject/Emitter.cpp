@@ -231,7 +231,8 @@ bool	Emitter::Frame()
 		}
 		else
 		{
-			m_isDone = true;
+			if(m_pParticleList.size() == 0)
+				m_isDone = true;
 		}
 	}
 
@@ -283,7 +284,7 @@ bool	Emitter::Render()
 	if (!m_BasicData.isVisible)
 		return true;
 	// 랜더 타겟을 사용해서 기존 랜더타겟 쉐이더 리소스뷰를 복사해서 넣어서 랜더링 후 나온 쉐이더 리소스 뷰를
-	if(m_BasicRenderData.iBlendType == 0)
+	if(m_BasicRenderData.iBlendType < 2)
 		m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
 	else
 		m_pImmediateContext->OMSetBlendState(DXState::g_pAddAlphaBlend, 0, -1);

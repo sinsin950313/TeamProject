@@ -188,8 +188,12 @@ void	EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
 		LoadRenderSetData(&pEmitter->m_RenderSetData);
 
 		pEmitter->m_pSprite = new Sprite();
+
+		std::wstring PSName = L"PS";
+		if (pEmitter->m_BasicRenderData.iMaterial == 1)
+			PSName = L"Distortion";
 		pEmitter->m_pSprite->Create(
-			m_pd3dDevice, m_pImmediateContext, L"../../data/shader/DefaultParticle.txt", pEmitter->m_BasicRenderData.texPath);
+			m_pd3dDevice, m_pImmediateContext, L"../../data/shader/DefaultParticle.txt", pEmitter->m_BasicRenderData.texPath, L"VS", PSName);
 		pEmitter->m_pSprite->Init();
 	};
 

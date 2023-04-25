@@ -379,7 +379,8 @@ bool    SceneInGame::Frame()
 	
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
+		I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", Player::GetInstance().GetPosition());
+		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
 	}
 
 
@@ -514,7 +515,7 @@ bool    SceneInGame::Render()
 		m_pBoss->Render();
 	}*/
 
-	if (m_pDebugBox)
+	if (m_pDebugBox && false)
 	{
 		if (m_pBoss)
 		{
