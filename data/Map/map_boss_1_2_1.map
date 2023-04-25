@@ -8,10 +8,10 @@ m_CinemaList:
 szCinemaName:Cine_1_Start
 CamMoveList:camPos:-14.7646 6.80307 -33.2952, fYaw:19, fPitch:23, fRoll:0
 CamMoveList:camPos:0.723114 8.92697 -15.8883, fYaw:17.85, fPitch:30.65, fRoll:0
-CamMoveList:camPos:8.71784 13.0901 -5.75389, fYaw:15.2999, fPitch:33.9, fRoll:0
+CamMoveList:camPos:12.71784 8.0901 0.75389, fYaw:15.2999, fPitch:33.9, fRoll:0
 fDuration:3
 szCinemaName:Cine_1_End
-CamMoveList:camPos:8.71784 13.0901 -5.75389, fYaw:15.2999, fPitch:33.9, fRoll:0
+CamMoveList:camPos:12.71784 8.0901 0.75389, fYaw:15.2999, fPitch:33.9, fRoll:0
 CamMoveList:camPos:2.41239 10.4938 -6.04587, fYaw:25.7926, fPitch:25.7948, fRoll:0
 CamMoveList:camPos:-3.49476 11.0352 -17.58, fYaw:25.7926, fPitch:25.7948, fRoll:0
 CamMoveList:camPos:-12.3471 6.9887 -25.6053, fYaw:31.3926, fPitch:14.1949, fRoll:0

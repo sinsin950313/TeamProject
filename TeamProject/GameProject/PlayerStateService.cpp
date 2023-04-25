@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "CollisionMgr.h"
 #include "CameraTPS.h"
+#include "SoundMgr.h"
 
 namespace SSB
 {
@@ -207,9 +208,28 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 4)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_attack4.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
-	
+		
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;
 		if (timer > 0.02f)
@@ -294,6 +314,25 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 4)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_attack4.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
@@ -381,6 +420,25 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 4)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_attack4.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
@@ -468,6 +526,25 @@ namespace SSB
 	{
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 4)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_attack4.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
@@ -576,6 +653,31 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 6)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_don.mp3";
+				break;
+			case 4:
+				szRandomSound = L"yasuo_sound_hasegi1.mp3";
+				break;
+			case 5:
+				szRandomSound = L"yasuo_sound_sul.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 		
@@ -825,6 +927,31 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 6)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_don.mp3";
+				break;
+			case 4:
+				szRandomSound = L"yasuo_sound_hasegi1.mp3";
+				break;
+			case 5:
+				szRandomSound = L"yasuo_sound_sul.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
@@ -931,6 +1058,31 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 6)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_don.mp3";
+				break;
+			case 4:
+				szRandomSound = L"yasuo_sound_hasegi1.mp3";
+				break;
+			case 5:
+				szRandomSound = L"yasuo_sound_sul.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
@@ -1023,6 +1175,31 @@ namespace SSB
 
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
+			std::wstring szRandomSound;
+			switch ((int)randf(g_fGameTimer) % 6)
+			{
+			case 0:
+				szRandomSound = L"yasuo_sound_attack1.mp3";
+				break;
+			case 1:
+				szRandomSound = L"yasuo_sound_attack2.mp3";
+				break;
+			case 2:
+				szRandomSound = L"yasuo_sound_attack3.mp3";
+				break;
+			case 3:
+				szRandomSound = L"yasuo_sound_don.mp3";
+				break;
+			case 4:
+				szRandomSound = L"yasuo_sound_hasegi1.mp3";
+				break;
+			case 5:
+				szRandomSound = L"yasuo_sound_sul.mp3";
+				break;
+			}
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
 
@@ -1078,6 +1255,10 @@ namespace SSB
 		Player* player = static_cast<Player*>(m_pCharacter);
 		if (!_blackboard->Initialized)
 		{
+			std::wstring szRandomSound = L"yasuo_sound_soriegedon.mp3";
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.2f);
+			sound->Play();
 			Player::GetInstance().ActiveSkill(kPlayerPierce);
 
 			((CameraTPS*)player->m_pMainCamera)->m_CharCamDist = 30;

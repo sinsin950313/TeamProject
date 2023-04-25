@@ -102,14 +102,18 @@ public:
     UINT m_iCurrentCineCount = 0;
     bool m_bIngame1_CinemaIntro_Start = false;
     bool m_bIngame1_CinemaIntro_End = false;
+    bool m_bIngame1_houdgiend = false;
     bool m_bIngame1_Cinema1_Start = false;
     bool m_bIngame1_Cinema1_End = false;
     bool m_bIngame1_Cinema2_Start = false;
     bool m_bIngame1_Cinema2_End = false;
+    bool m_bIngame1_EnemyHalfCount = false;
 
     bool m_bIngame2_CinemaIntro_Start = false;
     bool m_bIngame2_CinemaIntro_End = false;
     bool m_bIngame2_CinemaOver = false;
+    bool m_bIngame2_EnemyHalfCount = false;
+
     TVector3 m_vBossSpawnPos;
 
 public:

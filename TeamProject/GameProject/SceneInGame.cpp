@@ -55,7 +55,7 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 	m_pCinemaCamera->m_fCameraPitchAngle = m_pQuadTree->m_CurrentCinema.CamMoveList[0].fPitch;
 	m_pCinemaCamera->m_fCameraRollAngle = m_pQuadTree->m_CurrentCinema.CamMoveList[0].fRoll;
 
-	//ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ï¿½Ìµï¿½ï¿½ï¿½ followposï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½ï¿½ï¿½
+	//???? ????????? followpos?? ????????
 	if (szCinemaName == L"Cine_Intro_Start")
 	{
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.x = m_pQuadTree->m_CurrentCinema.CamMoveList[0].camPos.x;
@@ -237,6 +237,13 @@ bool    SceneInGame::Frame()
 			{
 				sound_houdgi->VolumeDown(g_fSecondPerFrame / 10.0f);
 				m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
+				if (m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration * 0.6f && !m_bIngame1_houdgiend)
+				{
+					m_bIngame1_houdgiend = true;
+					auto sound = I_Sound.Find(L"yasuo_sound_houdgi_end.mp3");
+					sound->VolumeSet(0.3f);
+					sound->Play(true);
+				}
 				MoveCinemaCamera();
 			}
 			if (m_bIngame1_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
@@ -263,10 +270,13 @@ bool    SceneInGame::Frame()
 		{//Cine1
 			if (!m_bIngame1_Cinema1_Start && m_iCurrentCineCount == 2 && I_Collision.IsCollideTrigger(&Player::GetInstance().m_ColliderBox))
 			{
+				auto sound = I_Sound.Find(L"yasuo_sound_ingame1_cine1.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
 				I_Collision.DeleteTriggerBox(L"Trig_Cine1");
 				m_bIngame1_Cinema1_Start = true;
 				SetCinemaCamera(L"Cine_1_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½1È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"????1???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema1_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
@@ -285,7 +295,7 @@ bool    SceneInGame::Frame()
 			{
 				m_bIngame1_Cinema1_End = true;
 				SetCinemaCamera(L"Cine_1_End");
-				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½2È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"????2???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema1_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 3)
@@ -313,7 +323,7 @@ bool    SceneInGame::Frame()
 				I_Collision.DeleteTriggerBox(L"Trig_Cine2");
 				m_bIngame1_Cinema2_Start = true;
 				SetCinemaCamera(L"Cine_2_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½3È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"????3???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema2_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 4)
@@ -332,7 +342,7 @@ bool    SceneInGame::Frame()
 			{
 				m_bIngame1_Cinema2_End = true;
 				SetCinemaCamera(L"Cine_2_End");
-				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½4È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"????4???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = XMConvertToDegrees(m_pMainCamera->m_fCameraYawAngle - XM_PI);
 			}
@@ -362,7 +372,7 @@ bool    SceneInGame::Frame()
 				Player::GetInstance().m_vRotation = m_pMainCamera->m_vRotation;
 				m_pMainCamera->Frame();
 				SetCinemaCamera(L"Cine_1_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½5È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"????5???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_bIngame2_CinemaIntro_Start = true;
 			}
@@ -381,7 +391,7 @@ bool    SceneInGame::Frame()
 				m_bIngame2_CinemaIntro_End = true;
 				m_pQuadTree->m_fCamMoveCurrent = 0.0f;
 				SetCinemaCamera(L"Cine_1_End");
-				g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½6È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, L"????6???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
@@ -423,7 +433,7 @@ bool    SceneInGame::Frame()
 					Player::GetInstance().m_vPos = m_vBossSpawnPos;
 					Player::GetInstance().Frame();
 					SetCinemaCamera(L"Cine_Over");
-					g_pWriter->SetText(WriteText(621, 673, L"ï¿½ï¿½ï¿½ï¿½7È£ï¿½ï¿½", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+					g_pWriter->SetText(WriteText(621, 673, L"????7???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 					m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 					m_bIngame2_CinemaOver = true;
 				}
@@ -433,8 +443,13 @@ bool    SceneInGame::Frame()
 					m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
 					if (!Player::GetInstance().IsVictory())
 					{
-						if((m_pCameraCurrent->m_vPos - Player::GetInstance().m_vPos).Length() < 30.0f)
+						if ((m_pCameraCurrent->m_vPos - Player::GetInstance().m_vPos).Length() < 30.0f)
+						{
+							auto sound = I_Sound.Find(L"yasuo_sound_anim_victory.mp3");
+							sound->VolumeSet(0.3f);
+							sound->Play(true);
 							Player::GetInstance().SetVictory();
+						}
 					}
 					MoveCinemaCamera();
 				}
@@ -459,6 +474,27 @@ bool    SceneInGame::Frame()
 					m_pInter_Win2->m_pWorkList.push_back(new InterfaceFadeIn(4.0f));
 				}
 			}
+		}
+	}
+	{//halfCount
+		if (m_Scene == S_INGAME && !m_bIngame1_EnemyHalfCount && m_iMobDeadCount >= m_Enemies.size() / 2)
+		{
+			m_bIngame1_EnemyHalfCount = true;
+			auto sound = I_Sound.Find(L"yasuo_sound_count_half1.mp3");
+			sound->VolumeSet(0.3f);
+			sound->Play(true);
+			g_pWriter->SetText(WriteText(621, 673, L"ÁöÄ¡Áöµµ ¾Ê°í ´ýº­µå´Â±º", { 1,1,1,1 }, 3.0f)); //ÁöÄ¡Áöµµ¾Ê°í´ýº­µå´Â±º
+			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
+		}
+
+		if (m_Scene == S_INGAME2 && !m_bIngame2_EnemyHalfCount && m_iMobDeadCount >= m_Enemies.size() / 2)
+		{
+			m_bIngame2_EnemyHalfCount = true;
+			auto sound = I_Sound.Find(L"yasuo_sound_count_half2.mp3");
+			sound->VolumeSet(0.3f);
+			sound->Play(true);
+			g_pWriter->SetText(WriteText(621, 673, L"ÀÌ¾ß±â´Â ¾ÆÁ÷ ³¡³ªÁö ¾Ê¾Ò¾î", { 1,1,1,1 }, 3.0f)); //ÀÌ¾ß±â´Â ¾ÆÁ÷ ³¡³ªÁö ¾Ê¾Ò¾î
+			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 	}
 
@@ -680,7 +716,7 @@ bool    SceneInGame::Render()
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//Player::GetInstance().m_pTrail->Render();
 
-    // Cameraï¿½ï¿½ ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï¹Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½
+    // Camera?? ??????? ??????? ????? ?? ??
 	auto lights = SSB::I_Light.GetLightList();
 	for (auto light : lights)
 	{
@@ -852,7 +888,8 @@ void    SceneInGame::CameraLoad()
 	m_pCinemaCamera = new CameraCinema();
 	m_pCinemaCamera->CreateViewMatrix(TVector3(0, 400, 0), TVector3(0, 0, 0.1f), TVector3(0, 0, 1));
   	m_pCinemaCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
-
+	m_pCinemaCamera->m_fShakeAmplitude = 5.0f;
+	m_pCinemaCamera->m_fShakeFrequency = 50.0f;
 	m_pCameraCurrent = m_pCinemaCamera;
 }
 
@@ -867,8 +904,8 @@ void    SceneInGame::CharacterLoad()
 		I_Model.Load(filename, "HoudgiPlaying", &Player::GetInstance().m_pModel);
 
 		//Idle, Attack1, Attack2, Attack3, Move, Dead
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 2);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 2);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 1);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 1);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 30);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDrink, 30);
@@ -1212,7 +1249,7 @@ void    SceneInGame::FSMLoad()
 		{
 			SSB::CharacterState* state = new SSB::PlayerUltimateSkillState(kUltimateSkillActiveTime);
 			state->Initialize_SetStateAnimation("Skill5");
-			state->Initialize_SetEffectSound(I_Sound.Find(L"YasuoSkill3.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"yasuo_sound_skill_r.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerUltimate, state);
 		}
 		{
@@ -1230,7 +1267,7 @@ void    SceneInGame::FSMLoad()
 		{
 			SSB::CharacterState* state = new SSB::PlayerDeadState;
 			state->Initialize_SetStateAnimation("Dead");
-			state->Initialize_SetEffectSound(I_Sound.Find(L"GarenDead.mp3"));
+			state->Initialize_SetEffectSound(I_Sound.Find(L"yasuo_sound_dead2.mp3"));
 			manager->Initialize_RegisterState(SSB::kPlayerDead, state);
 		}
 		{
@@ -1388,7 +1425,7 @@ void    SceneInGame::FSMLoad()
 
 void    SceneInGame::MapLoad()
 {
-	m_pQuadTree = m_Scene == S_INGAME ? MAPLOAD::OpenMap(L"../../data/map/testcine_1.map", m_pd3dDevice, m_pImmediateContext) : MAPLOAD::OpenMap(L"../../data/map/map_boss_1_2_1.map", m_pd3dDevice, m_pImmediateContext);
+	m_pQuadTree = m_Scene == S_INGAME ? MAPLOAD::OpenMap(L"../../data/map/testcine_1_2.map", m_pd3dDevice, m_pImmediateContext) : MAPLOAD::OpenMap(L"../../data/map/map_boss_1_2_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/map_boss_1.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/boss_1_2.map", m_pd3dDevice, m_pImmediateContext);
 	//m_pQuadTree = MAPLOAD::OpenMap(L"../../data/map/temp_8_8.map", m_pd3dDevice, m_pImmediateContext);
