@@ -74,7 +74,7 @@ namespace SSB
 		{
 			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
 			{
-				ReserveNextTransferName(kFieldBossMobSkill);
+				ReserveNextTransferName(kFieldBossMobAttack);
 				SetTransfer();
 			}
 		}
@@ -105,6 +105,11 @@ namespace SSB
     }
     void FieldBossAttackState::Action()
     {
+        if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+        {
+            static_cast<FieldBoss*>(m_pCharacter)->Attack();
+        }
+
         // LookAt Target
         if (!IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
@@ -157,7 +162,7 @@ namespace SSB
     }
     std::vector<std::string> FieldBossAttackState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobIdle, kFieldBossMobSkill, kFieldBossMobAirborne };
+        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobIdle, kFieldBossMobAttack, kFieldBossMobAirborne };
     }
     FieldBossSkillState::FieldBossSkillState(float transferRequireTime)
     {

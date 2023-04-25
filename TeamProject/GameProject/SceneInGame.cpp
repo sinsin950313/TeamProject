@@ -390,9 +390,6 @@ bool    SceneInGame::Frame()
 		Player::GetInstance().SetVictory();
 	}*/
 
-	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
-		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
-
 
 	for (auto manager : m_StateManagerMap)
 	{
@@ -804,15 +801,15 @@ void    SceneInGame::CharacterLoad()
 			Character* enemy = nullptr;
 			if (m_pQuadTree->m_EnemySpawnList[i].first == mobStr)
 			{
-				enemy = new SSB::EnemyNPCMob();
-				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
-				m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);	
-
-				//enemy = new SSB::FieldBoss();
+				//enemy = new SSB::EnemyNPCMob();
 				//enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				//I_Model.Load("Varus", "Idle", &enemy->m_pModel);
-				//m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
+				//I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
+				//m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);	
+
+				enemy = new SSB::FieldBoss();
+				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				I_Model.Load("Varus", "Idle", &enemy->m_pModel);
+				m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
 			}
 			else if (m_pQuadTree->m_EnemySpawnList[i].first == bossStr)
 			{
