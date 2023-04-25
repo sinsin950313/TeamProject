@@ -7,7 +7,9 @@ namespace SSB
 	const StateName kFieldBossMobIdle = "Idle";
 	const StateName kFieldBossMobMove = "Move";
 	const StateName kFieldBossMobAttack = "Attack";
-	const StateName kFieldBossMobSkill = "Skill";
+	const StateName kFieldBossMobAttackReset = "AttackReset";
+	const StateName kFieldBossMobSkillCasting = "SkillCasting";
+	const StateName kFieldBossMobSkillFire = "SkillFire";
 	const StateName kFieldBossMobDead = "Dead";
 	const StateName kFieldBossMobAirborne = "Airborne";
 	const StateName kFieldBossMobPound = "Pound";
@@ -67,6 +69,7 @@ namespace SSB
 	{
 	private:
 		float _transferRequireTime;
+		bool _isAttacked = false;
 
 	public:
 		FieldBossAttackState(float transferRequireTime);
@@ -79,13 +82,40 @@ namespace SSB
 		std::vector<std::string> GetLinkedList() override;
 	};
 
-	class FieldBossSkillState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	class FieldBossAttackReset : public CharacterState
+	{
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class FieldBossSkillCastingState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
 	private:
 		float _transferRequireTime;
 
 	public:
-		FieldBossSkillState(float transferRequireTime);
+		FieldBossSkillCastingState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
+	class FieldBossSkillFireState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	{
+	private:
+		float _transferRequireTime;
+		float _attackTimeStamp = 0.0f;
+		const float _kAttackInterval = 0.3f;
+
+	public:
+		FieldBossSkillFireState(float transferRequireTime);
 
 	public:
 		void StateDecision() override;

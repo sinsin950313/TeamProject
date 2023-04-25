@@ -5,6 +5,50 @@
 
 namespace SSB
 {
+    void FieldBossIdleState::StateDecision()
+    {
+        FieldBoss* mob = static_cast<FieldBoss*>(m_pCharacter);
+		if (mob->IsDead())
+		{
+            ReserveNextTransferName(kFieldBossMobDead);
+			SetTransfer();
+		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kFieldBossMobAirborne);
+			SetTransfer();
+        }
+
+		float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
+        if (fDistance <= mob->GetBattleRange())
+        {
+            if (!(0 < m_pCharacter->GetRemainSkillCoolTime(kFieldBossMobSkillCasting)))
+            {
+                ReserveNextTransferName(kFieldBossMobSkillCasting);
+                SetTransfer();
+            }
+        }
+
+		if (fDistance <= mob->GetSpotRange())
+		{
+			ReserveNextTransferName(kFieldBossMobMove);
+			SetTransfer();
+		}
+
+		if (fDistance <= mob->GetBattleRange())
+		{
+			ReserveNextTransferName(kFieldBossMobAttack);
+			SetTransfer();
+		}
+    }
+    void FieldBossIdleState::Action()
+    {
+    }
+    std::vector<std::string> FieldBossIdleState::GetLinkedList()
+    {
+        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobAttack, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
+    }
     void FieldBossMoveState::StateDecision()
     {
 		FieldBoss* mob = static_cast<FieldBoss*>(m_pCharacter);
@@ -19,6 +63,15 @@ namespace SSB
         {
             ReserveNextTransferName(kFieldBossMobAirborne);
 			SetTransfer();
+        }
+
+        if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+        {
+            if (!(0 < m_pCharacter->GetRemainSkillCoolTime(kFieldBossMobSkillCasting)))
+            {
+                ReserveNextTransferName(kFieldBossMobSkillCasting);
+                SetTransfer();
+            }
         }
 
 		if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
@@ -48,11 +101,10 @@ namespace SSB
     }
     std::vector<std::string> FieldBossMoveState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobAttack, kFieldBossMobIdle, kFieldBossMobAirborne };
+        return { kFieldBossMobDead, kFieldBossMobAttack, kFieldBossMobIdle, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
     }
-    FieldBossAttackState::FieldBossAttackState(float transferRequireTime)
+    FieldBossAttackState::FieldBossAttackState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
     {
-        _transferRequireTime = transferRequireTime;
     }
     void FieldBossAttackState::StateDecision()
     {
@@ -70,11 +122,20 @@ namespace SSB
 			SetTransfer();
         }
 
+        if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+        {
+            if (!(0 < m_pCharacter->GetRemainSkillCoolTime(kFieldBossMobSkillCasting)))
+            {
+                ReserveNextTransferName(kFieldBossMobSkillCasting);
+                SetTransfer();
+            }
+        }
+
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
 			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
 			{
-				ReserveNextTransferName(kFieldBossMobAttack);
+				ReserveNextTransferName(kFieldBossMobAttackReset);
 				SetTransfer();
 			}
 		}
@@ -99,15 +160,17 @@ namespace SSB
 
         if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
-            _blackboard->StateTImeStamp = g_fGameTimer;
-            _blackboard->DamagedCharacters.clear();
+            //_blackboard->StateTImeStamp = g_fGameTimer;
+            //_blackboard->DamagedCharacters.clear();
+			ReserveNextTransferName(kFieldBossMobIdle);
+			SetTransfer();
         }
     }
     void FieldBossAttackState::Action()
     {
-        if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+        if (!_blackboard->Initialized)
         {
-            static_cast<FieldBoss*>(m_pCharacter)->Attack();
+            _isAttacked = false;
         }
 
         // LookAt Target
@@ -139,18 +202,28 @@ namespace SSB
             D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
             D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 
-            // Damage Timing ��
-            float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-            if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
-            {
-                if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
-                {
-                    Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-                    Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-                    Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
-                }
-            }
+            //// Damage Timing ��
+            //float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+            //if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+            //{
+            //    if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+            //    {
+            //        Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+            //        Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+            //        Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+            //    }
+            //}
         }
+
+		float pivot = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		if (pivot < m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime)
+		{
+            if (!_isAttacked)
+            {
+                static_cast<FieldBoss*>(m_pCharacter)->Attack();
+                _isAttacked = true;
+            }
+		}
     }
     StateTransferPriority FieldBossAttackState::GetPriority()
     {
@@ -162,13 +235,40 @@ namespace SSB
     }
     std::vector<std::string> FieldBossAttackState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobIdle, kFieldBossMobAttack, kFieldBossMobAirborne };
+        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobIdle, kFieldBossMobAttackReset, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
     }
-    FieldBossSkillState::FieldBossSkillState(float transferRequireTime)
+    void FieldBossAttackReset::StateDecision()
     {
-        _transferRequireTime = transferRequireTime;
+		if (m_pCharacter->IsDead())
+		{
+            ReserveNextTransferName(kFieldBossMobDead);
+            SetTransfer();
+		}
+
+        if (m_pCharacter->IsAirborne())
+        {
+            ReserveNextTransferName(kFieldBossMobAirborne);
+			SetTransfer();
+        }
+
+		ReserveNextTransferName(kFieldBossMobAttack);
+		SetTransfer();
     }
-    void FieldBossSkillState::StateDecision()
+    void FieldBossAttackReset::Action()
+    {
+    }
+    StateTransferPriority FieldBossAttackReset::GetPriority()
+    {
+        return FieldBossMobAttackTypePriority;
+    }
+    std::vector<std::string> FieldBossAttackReset::GetLinkedList()
+    {
+        return { kFieldBossMobDead, kFieldBossMobAirborne, kFieldBossMobAttack };
+    }
+    FieldBossSkillCastingState::FieldBossSkillCastingState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+    {
+    }
+    void FieldBossSkillCastingState::StateDecision()
     {
         FieldBoss* mob = static_cast<FieldBoss*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
@@ -186,39 +286,17 @@ namespace SSB
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-			{
-				ReserveNextTransferName(kFieldBossMobAttack);
-				SetTransfer();
-			}
+			ReserveNextTransferName(kFieldBossMobSkillFire);
+			SetTransfer();
 		}
-
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
-		{
-			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-			{
-				ReserveNextTransferName(kFieldBossMobMove);
-				SetTransfer();
-			}
-		}
-
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
-		{
-			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-			{
-				ReserveNextTransferName(kFieldBossMobIdle);
-				SetTransfer();
-			}
-		}
-
-        if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
-        {
-            _blackboard->StateTImeStamp = g_fGameTimer;
-            _blackboard->DamagedCharacters.clear();
-        }
     }
-    void FieldBossSkillState::Action()
+    void FieldBossSkillCastingState::Action()
     {
+        if (!_blackboard->Initialized)
+        {
+            m_pCharacter->ActiveSkill(kFieldBossMobSkillCasting);
+        }
+
         // LookAt Target
         if (!IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
@@ -247,31 +325,19 @@ namespace SSB
             TQuaternion q;
             D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
             D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
-
-            // Damage Timing ��
-            float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-            if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
-            {
-                if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
-                {
-                    Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-                    Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-                    Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
-                }
-            }
         }
     }
-    StateTransferPriority FieldBossSkillState::GetPriority()
+    StateTransferPriority FieldBossSkillCastingState::GetPriority()
     {
         return FieldBossMobSkillTypePriority;
     }
-    float FieldBossSkillState::GetTransferRequireTime()
+    float FieldBossSkillCastingState::GetTransferRequireTime()
     {
         return _transferRequireTime;
     }
-    std::vector<std::string> FieldBossSkillState::GetLinkedList()
+    std::vector<std::string> FieldBossSkillCastingState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobIdle, kFieldBossMobAttack, kFieldBossMobAirborne };
+        return { kFieldBossMobDead, kFieldBossMobSkillFire, kFieldBossMobAirborne };
     }
     void FieldBossDeadState::StateDecision()
     {
@@ -290,41 +356,6 @@ namespace SSB
     std::vector<std::string> FieldBossDeadState::GetLinkedList()
     {
         return std::vector<std::string>();
-    }
-    void FieldBossIdleState::StateDecision()
-    {
-        FieldBoss* mob = static_cast<FieldBoss*>(m_pCharacter);
-		if (mob->IsDead())
-		{
-            ReserveNextTransferName(kFieldBossMobDead);
-			SetTransfer();
-		}
-
-        if (mob->IsAirborne())
-        {
-            ReserveNextTransferName(kFieldBossMobAirborne);
-			SetTransfer();
-        }
-
-		float fDistance = TVector3::Distance(Player::GetInstance().GetPosition(), mob->GetPosition());
-		if (fDistance <= mob->GetSpotRange())
-		{
-			ReserveNextTransferName(kFieldBossMobMove);
-			SetTransfer();
-		}
-
-		if (fDistance <= mob->GetBattleRange())
-		{
-			ReserveNextTransferName(kFieldBossMobAttack);
-			SetTransfer();
-		}
-    }
-    void FieldBossIdleState::Action()
-    {
-    }
-    std::vector<std::string> FieldBossIdleState::GetLinkedList()
-    {
-        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobAttack, kFieldBossMobAirborne };
     }
     void FieldBossAirBorneState::StateDecision()
     {
@@ -393,5 +424,53 @@ namespace SSB
     std::vector<std::string> FieldBossPoundState::GetLinkedList()
     {
         return { kFieldBossMobIdle };
+    }
+    FieldBossSkillFireState::FieldBossSkillFireState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+    {
+    }
+    void FieldBossSkillFireState::StateDecision()
+    {
+        FieldBoss* mob = static_cast<FieldBoss*>(m_pCharacter);
+		if (mob->IsDead())
+		{
+            ReserveNextTransferName(kFieldBossMobDead);
+            SetTransfer();
+		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kFieldBossMobAirborne);
+			SetTransfer();
+        }
+
+        if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+        {
+			ReserveNextTransferName(kFieldBossMobIdle);
+			SetTransfer();
+        }
+    }
+    void FieldBossSkillFireState::Action()
+    {
+		float pivot = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		if (pivot < m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime)
+		{
+            if (_attackTimeStamp + _kAttackInterval < g_fGameTimer)
+            {
+                static_cast<FieldBoss*>(m_pCharacter)->Attack();
+                _attackTimeStamp = g_fGameTimer;
+            }
+		}
+    }
+    StateTransferPriority FieldBossSkillFireState::GetPriority()
+    {
+        return FieldBossMobSkillTypePriority;
+    }
+    float FieldBossSkillFireState::GetTransferRequireTime()
+    {
+        return _transferRequireTime;
+    }
+    std::vector<std::string> FieldBossSkillFireState::GetLinkedList()
+    {
+        return { kFieldBossMobDead, kFieldBossMobAirborne, kFieldBossMobIdle };
     }
 }

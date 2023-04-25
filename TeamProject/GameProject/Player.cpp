@@ -181,6 +181,11 @@ void Player::Damage(int damage)
 	}
 }
 
+bool Player::IsDash()
+{
+	return m_IsDash;
+}
+
 void Player::UltimateSkillStacking(float timeStampe)
 {
 	if (m_stackingTimeStamp != timeStampe)

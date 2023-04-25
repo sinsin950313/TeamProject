@@ -795,21 +795,25 @@ void    SceneInGame::CharacterLoad()
 		SSB::ObjectScriptIO io;
 		std::string mobStr = "Alistar";
 		std::string bossStr = "Herald";
+		std::string fieldBossStr = "Varus";
 
 		for (int i = 0; i < m_pQuadTree->m_EnemySpawnList.size(); ++i)
 		{
 			Character* enemy = nullptr;
 			if (m_pQuadTree->m_EnemySpawnList[i].first == mobStr)
 			{
-				//enemy = new SSB::EnemyNPCMob();
-				//enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				//I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
-				//m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);	
-
-				enemy = new SSB::FieldBoss();
+				enemy = new SSB::EnemyNPCMob();
 				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				I_Model.Load("Varus", "Idle", &enemy->m_pModel);
-				m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
+				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
+				m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);	
+				enemy->Scale(0.01f);
+
+				//enemy = new SSB::FieldBoss();
+				//enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				//I_Model.Load("Varus", "Idle", &enemy->m_pModel);
+				//enemy->Scale(0.02f);
+				//m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
+				//enemy->Initialize_RegisterSkill(SSB::kFieldBossMobSkillCasting, 20);
 			}
 			else if (m_pQuadTree->m_EnemySpawnList[i].first == bossStr)
 			{
@@ -821,7 +825,22 @@ void    SceneInGame::CharacterLoad()
 				m_pBoss = dynamic_cast<SSB::BossMob*>(enemy);
 				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Spawn", &m_pBoss->m_pModel);
 				m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
+				enemy->Scale(0.01f);
 			}
+			else if (m_pQuadTree->m_EnemySpawnList[i].first == fieldBossStr)
+			{
+				//XMFLOAT3 BossPos;
+				//XMStoreFloat3(&BossPos, m_pQuadTree->m_EnemySpawnList[i].second.position);
+				//m_vBossSpawnPos = BossPos;
+
+				enemy = new SSB::FieldBoss();
+				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				I_Model.Load("Varus", "Idle", &enemy->m_pModel);
+				enemy->Scale(0.02f);
+				m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
+				enemy->Initialize_RegisterSkill(SSB::kFieldBossMobSkillCasting, 20);
+			}
+
 			//I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
 			if (!enemy)
 				continue;
@@ -832,7 +851,7 @@ void    SceneInGame::CharacterLoad()
 			enemy->m_fSpeed = 10;
 			//enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
 			enemy->Init();
-			enemy->Scale(0.01f);
+			//enemy->Scale(0.01f);
 
 			enemy->SetMap(m_pQuadTree->m_pMap);
 			if (m_pQuadTree->m_EnemySpawnList[i].first == mobStr)
@@ -1210,10 +1229,22 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kFieldBossMobAttack, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::FieldBossSkillState(1.5f);
-			state->Initialize_SetStateAnimation("Attack2");
+			SSB::CharacterState* state = new SSB::FieldBossAttackReset;
+			state->Initialize_SetStateAnimation("AttackReset");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
+			manager->Initialize_RegisterState(SSB::kFieldBossMobAttackReset, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossSkillCastingState(1.5f);
+			state->Initialize_SetStateAnimation("SkillCasting");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack2.mp3"));
+			manager->Initialize_RegisterState(SSB::kFieldBossMobSkillCasting, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossSkillFireState(1.5f);
+			state->Initialize_SetStateAnimation("SkillFire");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack2.mp3"));
-			manager->Initialize_RegisterState(SSB::kFieldBossMobSkill, state);
+			manager->Initialize_RegisterState(SSB::kFieldBossMobSkillFire, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::FieldBossDeadState;
