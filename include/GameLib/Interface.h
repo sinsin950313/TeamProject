@@ -265,6 +265,43 @@ public:
 	float m_fRemain;
 };
 
+class InterfaceFadeInOut : public InterfaceWork
+{
+public:
+	bool	Frame(Interface* pInter)
+	{
+		m_fCurrent += g_fSecondPerFrame;
+		if(m_fCurrent < m_fFadeInTime)
+			m_fAlpha = m_fCurrent / m_fFadeInTime;
+		if (m_fCurrent > m_fDuraiton - m_fFadeOutTime)
+			m_fAlpha = 1.0f - (m_fFadeOutTime - (m_fDuraiton - m_fCurrent)) / m_fFadeOutTime;
+		if (m_fCurrent >= m_fDuraiton)
+		{
+			m_isDone = true;
+			m_fAlpha = 0.0f;
+		}
+		for (int i = 0; i < pInter->m_VertexList.size(); i++)
+		{
+			pInter->m_VertexList[i].c.w = m_fAlpha;
+		}
+		return true;
+	}
+public:
+	InterfaceFadeInOut(float fDuration, float fFadeIn = 0.25f, float fFadeOut = 0.5f)
+	{
+		m_fDuraiton = fDuration;
+		m_fCurrent = 0.0f;
+		m_fFadeInTime = fFadeIn;
+		m_fFadeOutTime = fFadeOut;
+	}
+public:
+	float m_fAlpha = 0.0f;
+	float m_fDuraiton;
+	float m_fCurrent = 0.0f;
+	float m_fFadeInTime = 0.5f;
+	float m_fFadeOutTime = 0.5f;
+};
+
 class InterfaceLoopFade : public InterfaceWork
 {
 public:

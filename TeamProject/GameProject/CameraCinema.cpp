@@ -56,7 +56,8 @@ bool CameraCinema::Frame()
 			XMConvertToRadians(m_fCameraYawAngle),
 			XMConvertToRadians(m_fCameraRollAngle));
 
-	XMVECTOR translation = m_vPos;;
+	UpdateCameraShake();
+	XMVECTOR translation = m_vPos;
 
 	m_matWorld = XMMatrixTransformation({ 0,0,0,0 }, { 0,0,0,0 }, scale, { 0,0,0,0 }, rotation, translation);
 	m_matView = m_matWorld.Invert();

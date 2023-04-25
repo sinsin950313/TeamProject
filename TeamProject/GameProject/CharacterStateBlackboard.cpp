@@ -13,6 +13,7 @@ namespace SSB
 	void CharacterStateBlackboardManager::RegisterBlackboard(Character* character)
 	{
 		Blackboard* tmp = new Blackboard;
+		tmp->StateTImeStamp = g_fGameTimer;
 		_data.insert(std::make_pair(character, tmp));
 	}
 	Blackboard* CharacterStateBlackboardManager::GetBlackBoard(Character* character)

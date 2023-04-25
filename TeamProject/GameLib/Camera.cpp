@@ -116,6 +116,15 @@ void	Camera::SetObjectView(TVector3 vMax, TVector3 vMin)
 	m_vTarget = vTarget;
 }
 
+void Camera::GetCalcYawPitchRoll(float& fYaw, float& fPitch, float& fRoll)
+{
+	TVector3 vDir(m_matView._13, m_matView._23, m_matView._33);
+	fYaw = XMConvertToDegrees(atan2f(vDir.z, vDir.x));
+	float fLength = sqrtf(vDir.x * vDir.x + vDir.z * vDir.z);
+	fPitch = XMConvertToDegrees(atan2f(-vDir.y, fLength));
+	fRoll = 0.0f;
+}
+
 void Camera::CreateViewMatrix(TVector3 vEye, TVector3 vAt, TVector3 vUp)
 {
 	//m_vDefaultEye = m_vCameraPos = vPos;
@@ -243,6 +252,8 @@ Camera::Camera()
 	D3DXMatrixIdentity(&m_matWorld);
 	//CreateProjMatrix(XM_PI / 4.0f, 1.0f, 0.1f, 1000.0f);
 	CreateViewMatrix(TVector3(0.0f, 0.0f, 10.0f), TVector3(0.0f, 0.0f, 0.0f), TVector3(0.0f, 1.0f, 0.0f));
+
+	InitHash(100);
 }
 
 Camera::~Camera()
@@ -278,4 +289,66 @@ void Camera::SetWindow(int nWidth, int nHeight, float fArcballRadius)
 void Camera::SetModelCenter(TVector3 vModelCenter)
 {
 	m_vModelCenter = vModelCenter;
+}
+
+float Camera::Fade(float t)
+{
+	return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
+}
+
+float Camera::Lerp(float a, float b, float t)
+{
+	return a + t * (b - a);
+}
+
+float Camera::Gradient(int hash, float x)
+{
+	int h = hash & 15;
+	float u = h < 8 ? x : -x;
+	return u * (h < 4 ? 1.0f : -1.0f);
+}
+
+float Camera::PerlinNoise1D(float x)
+{
+	int X = (int)floor(x) & 255;
+	x -= floor(x);
+	float u = Fade(x);
+	int A = hash[X];
+	int B = hash[(X + 1) & 255];
+	return Lerp(Gradient(hash[A], x), Gradient(hash[B], x - 1.0f), u);
+}
+void Camera::CameraShake()
+{
+	m_fShakeCurrent = 0.0f;
+	m_vShakeOriginPos = m_vPos;
+}
+
+#include <random>
+void Camera::InitHash(int seed)
+{
+	std::mt19937 gen(seed);
+	std::uniform_int_distribution<int> dist(0, 255);
+	for (int i = 0; i < 256; ++i)
+	{
+		hash[i] = dist(gen);
+	}
+}
+
+void Camera::UpdateCameraShake()
+{
+	if (m_fShakeCurrent < m_fShakeDuration)
+	{
+		float shakeFactor = 1.0f - (m_fShakeCurrent / m_fShakeDuration);
+		float offsetX = PerlinNoise1D(m_fShakeCurrent * m_fShakeFrequency) * m_fShakeAmplitude * shakeFactor;
+		float offsetY = PerlinNoise1D((m_fShakeCurrent + 1000.0f) * m_fShakeFrequency) * m_fShakeAmplitude * shakeFactor;
+		TVector3 noisePos(offsetX, offsetY, 0.0f);
+		m_vPos += noisePos;
+		m_fShakeCurrent += g_fSecondPerFrame;
+	}
+	else
+	{
+		/*XMFLOAT3 pos;
+		XMStoreFloat3(&pos, XMVectorLerp(m_vPos, m_vShakeOriginPos, g_fSecondPerFrame * 30.0f));
+		m_vPos = pos;*/
+	}
 }

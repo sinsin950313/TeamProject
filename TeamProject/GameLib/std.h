@@ -21,12 +21,13 @@
 
 using namespace Microsoft::WRL;
 #define DXCORE
-
+class Writer;
 extern HWND		g_hWnd;
 extern RECT		g_rcClient;
 extern RECT		g_rcWindow;
 extern UINT		g_iClientWidth;
 extern UINT		g_iClientHeight;
+extern Writer*   g_pWriter;
 
 extern float g_fGameTimer;
 extern float g_fSecondPerFrame;
