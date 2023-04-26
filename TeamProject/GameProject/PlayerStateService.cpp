@@ -854,8 +854,6 @@ namespace SSB
 	}
 	void PlayerDashState::Action()
 	{
-		
-
 		Player* player = static_cast<Player*>(m_pCharacter);
 		player->m_IsDash = true;
 
@@ -866,6 +864,7 @@ namespace SSB
 
 		if (!_blackboard->Initialized)
 		{
+			Player::GetInstance().m_pMainCamera->CameraClosing();
 			Player::GetInstance().m_pInterSkillDash->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerDash)));
 			player->ActiveSkill(kPlayerDash);
 
@@ -1346,6 +1345,7 @@ namespace SSB
 		Player* player = static_cast<Player*>(m_pCharacter);
 		if (!_blackboard->Initialized)
 		{
+			Player::GetInstance().m_pMainCamera->CameraClosing(2.0f);
 			std::wstring szRandomSound = L"yasuo_sound_soriegedon.mp3";
 			auto sound = I_Sound.Find(szRandomSound);
 			sound->VolumeSet(0.2f);

@@ -552,6 +552,7 @@ bool    SceneInGame::Frame()
 		{
 			if (m_pBoss->IsDead() && !m_Win)
 			{
+				m_pCameraCurrent->CameraClosing(3.0f);
 				m_pInterFade->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
 				m_Win = true;
 				//sound+
