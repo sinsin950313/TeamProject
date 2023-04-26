@@ -192,6 +192,18 @@
     <ClInclude Include="Sprite.h">
       <Filter>Effect</Filter>
     </ClInclude>
+    <ClInclude Include="TrailEffect.h">
+      <Filter>Effect\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraCinema.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldBoss.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldBossStateService.h">
+      <Filter>Ch\FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -325,6 +337,18 @@
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="TrailEffect.cpp">
+      <Filter>Effect\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraCinema.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldBoss.cpp">
+      <Filter>Ch\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldBossStateService.cpp">
+      <Filter>Ch\FSM</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

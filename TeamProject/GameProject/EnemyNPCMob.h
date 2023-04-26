@@ -6,13 +6,14 @@ namespace SSB
 {
     class EnemyNPCMob : public Character
     {
-    public:
+    private:
         float m_BattleRange = 2;
         float m_SpotRange = 30;
 
     public:
         float GetBattleRange();
         float GetSpotRange();
+
     public:
         virtual ~EnemyNPCMob() {}
     };

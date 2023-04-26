@@ -89,27 +89,6 @@ namespace SSB
 	void BossMobSpawnState::Action()
 	{
 	}
-	//bool BossMobStunState::StateDecision()
-	//{
- //       bool transfer = false;
-
-	//	BossMob* mob = static_cast<BossMob*>(m_pCharacter);
-	//	if (mob->IsDead())
-	//	{
-	//		transfer = true;
-	//		SetNextTransferName(kBossMobDead);
-	//	}
-	//	else
-	//	{
-	//		if (IsPassedRequireCoolTime(mob->GetStateElapseTime()))
-	//		{
-	//			transfer = true;
-	//			SetNextTransferName(kBossMobIdle);
-	//		}
-	//	}
-
-	//	return transfer;
-	//}
 	void BossMobMoveState::StateDecision()
 	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
@@ -143,7 +122,7 @@ namespace SSB
 
 		if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 		{
-			ReserveNextTransferName(kBossMobIdle);
+			ReserveNextTransferName(kBossMobMove);
 			SetTransfer();
 		}
 	}
@@ -158,7 +137,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobMoveState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobAttack1, kBossMobDashStart, kBossMobIdle, kBossMobAirborne };
+		return { kBossMobDead, kBossMobAttack1, kBossMobDashStart, kBossMobMove, kBossMobAirborne };
 	}
 	void BossMobDashStartState::StateDecision()
 	{
@@ -210,7 +189,7 @@ namespace SSB
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-            ReserveNextTransferName(kBossMobIdle);
+            ReserveNextTransferName(kBossMobMove);
             SetTransfer();
 
 			mob->SetLastSkillTimeStamp();
@@ -218,11 +197,18 @@ namespace SSB
 	}
 	void BossMobDashEndState::Action()
 	{
-		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < time)
 		{
-			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-			Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-			Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
+			{
+				if (!Player::GetInstance().IsDash())
+				{
+					Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+					Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+					Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+				}
+			}
 		}
 	}
 	void BossMobAttack1State::StateDecision()
@@ -285,7 +271,7 @@ namespace SSB
 		{
 			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 			{
-				ReserveNextTransferName(kBossMobIdle);
+				ReserveNextTransferName(kBossMobMove);
 				SetTransfer();
 			}
 		}
@@ -322,14 +308,20 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
-				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-				Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-				Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+				if (!Player::GetInstance().IsDash())
+				{
+					Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+					Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+					Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+				}
 			}
 		}
 	}
@@ -397,7 +389,7 @@ namespace SSB
 		{
 			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 			{
-				ReserveNextTransferName(kBossMobIdle);
+				ReserveNextTransferName(kBossMobMove);
 				SetTransfer();
 			}
 		}
@@ -411,7 +403,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobAttack1State::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack2, kBossMobIdle, kBossMobAirborne };
+		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack2, kBossMobMove, kBossMobAirborne };
 	}
 	void BossMobAttack2State::Action()
 	{
@@ -445,14 +437,20 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
-				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-				Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-				Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+				if (!Player::GetInstance().IsDash())
+				{
+					Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+					Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+					Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+				}
 			}
 		}
 	}
@@ -505,7 +503,7 @@ namespace SSB
 		{
 			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 			{
-				ReserveNextTransferName(kBossMobIdle);
+				ReserveNextTransferName(kBossMobMove);
 				SetTransfer();
 
 				mob->SetLastSkillTimeStamp();
@@ -546,15 +544,20 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		// Damage Timing Á¶Á¤
-		float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.5f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.53;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+			)
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
-				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 2);
-				Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-				Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+				if (!Player::GetInstance().IsDash())
+				{
+					Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 2);
+					Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+					Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+				}
 			}
 		}
 	}
@@ -596,9 +599,18 @@ namespace SSB
 
 		if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 		{
-			Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 0.5);
-			Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-			Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+			if (!Player::GetInstance().IsDash())
+			{
+				Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 0.5);
+				{
+					XMMATRIX world = XMLoadFloat4x4(&Player::GetInstance().m_matWorld);
+					XMFLOAT4 tmpF(0, 0, 0, 0);
+					XMVECTOR tmp = XMLoadFloat4(&tmpF);
+					Player::GetInstance().MoveChar(tmp, world);
+				}
+				Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+				Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+			}
 		}
 	}
 	void BossMobDeadState::StateDecision()
@@ -628,7 +640,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobAttack2State::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack1, kBossMobIdle, kBossMobAirborne };
+		return { kBossMobDead, kBossMobMove, kBossMobDashStart, kBossMobSkill1, kBossMobAttack1, kBossMobMove, kBossMobAirborne };
 	}
 	BossMobDashStartState::BossMobDashStartState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
@@ -665,7 +677,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobDashEndState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobIdle, kBossMobAirborne };
+		return { kBossMobDead, kBossMobMove, kBossMobAirborne };
 	}
 	BossMobSkill1State::BossMobSkill1State(float transferRequireTime)
 	{
@@ -677,7 +689,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobSkill1State::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobAttack1, kBossMobMove, kBossMobIdle, kBossMobAirborne };
+		return { kBossMobDead, kBossMobAttack1, kBossMobMove, kBossMobMove, kBossMobAirborne };
 	}
 	BossMobSpawnState::BossMobSpawnState(float transferRequireTime)
 	{
@@ -701,7 +713,7 @@ namespace SSB
 
         if(!m_pCharacter->IsAirborne())
 		{
-			ReserveNextTransferName(kBossMobIdle);
+			ReserveNextTransferName(kBossMobMove);
 			SetTransfer();
 		}
     }
@@ -731,7 +743,7 @@ namespace SSB
     }
     std::vector<std::string> BossMobAirBorneState::GetLinkedList()
     {
-        return { kBossMobIdle, kBossMobPound };
+        return { kBossMobMove, kBossMobPound };
     }
 	BossMobPoundState::BossMobPoundState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
     {
@@ -745,7 +757,7 @@ namespace SSB
 			XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
 			m_pCharacter->MoveChar(tmp, world);
 
-			ReserveNextTransferName(kBossMobIdle);
+			ReserveNextTransferName(kBossMobMove);
 			SetTransfer();
 		}
     }
@@ -758,6 +770,6 @@ namespace SSB
     }
     std::vector<std::string> BossMobPoundState::GetLinkedList()
     {
-        return { kBossMobIdle };
+        return { kBossMobMove };
     }
 }

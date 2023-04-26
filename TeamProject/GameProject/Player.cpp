@@ -181,6 +181,11 @@ void Player::Damage(int damage)
 	}
 }
 
+bool Player::IsDash()
+{
+	return m_IsDash;
+}
+
 void Player::UltimateSkillStacking(float timeStampe)
 {
 	if (m_stackingTimeStamp != timeStampe)
@@ -326,7 +331,6 @@ bool Player::Tornado::Init()
 	data.Width = 2;
 	data.Height = 6;
 	data.Depth = 2;
-	data.Scale = TVector3(0.01, 0.01, 0.01);
 	m_pModel->Initialize_SetBoundingVolume(data);
 	m_pModel->Init();
 
@@ -340,7 +344,7 @@ bool Player::Tornado::Frame()
 
 	XMVECTOR dir = m_Direction;
 	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
-	MoveChar(dir, world, m_Speed);
+	MoveChar(dir, world, m_Speed, true);
 	m_collideBox.UpdateBox(m_matWorld);
 
 	auto list = GetHitList();

@@ -14,6 +14,8 @@
 #include "DirectionalLight.h"
 #include "LightManager.h"
 #include "EffectMgr.h"
+#include "FieldBoss.h"
+#include "FieldBossStateService.h"
 #include "Writer.h"
 
 XMFLOAT4 g_CurrentCameraPos;
@@ -605,32 +607,32 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox && false)
 	{
-		/*if (m_pBoss)
-		{
-			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}
-		for (auto box : I_Collision.GetMapCollisionList())
-		{
-		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(box);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}
+		//if (m_pBoss)
+		//{
+		//	m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
+		//for (auto box : I_Collision.GetMapCollisionList())
+		//{
+		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(box);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
 
-		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		TColor color = TColor(0, 0, 1, 1);
-		for (T_BOX* box : m_debugBoxList)
-		{
-			m_pDebugBox->SetBox(*box);
-			m_pDebugBox->SetColor(color);
-			m_pDebugBox->UpdateBuffer();
-			m_pDebugBox->Render();
-		}*/
+		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//TColor color = TColor(0, 0, 1, 1);
+		//for (T_BOX* box : m_debugBoxList)
+		//{
+		//	m_pDebugBox->SetBox(*box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
 
 		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
 		//{
@@ -905,7 +907,8 @@ void    SceneInGame::CharacterLoad()
 	{
 		SSB::ObjectScriptIO io;
 		std::string mobStr = "Alistar";
-		std::string bossStr = m_Scene == S_INGAME ? "Varus" : "Herald";
+		std::string bossStr = "Herald";
+		std::string fieldBossStr = "Varus";
 
 		for (int i = 0; i < m_pQuadTree->m_EnemySpawnList.size(); ++i)
 		{
@@ -914,8 +917,9 @@ void    SceneInGame::CharacterLoad()
 			{
 				enemy = new SSB::EnemyNPCMob();
 				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
+				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "idle", &enemy->m_pModel);
 				m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);	
+				enemy->Scale(0.01f);
 			}
 			else if (m_pQuadTree->m_EnemySpawnList[i].first == bossStr)
 			{
@@ -927,7 +931,22 @@ void    SceneInGame::CharacterLoad()
 				m_pBoss = dynamic_cast<SSB::BossMob*>(enemy);
 				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "NotUse", &m_pBoss->m_pModel);
 				/*m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);*/
+				enemy->Scale(0.01f);
 			}
+			else if (m_pQuadTree->m_EnemySpawnList[i].first == fieldBossStr)
+			{
+				//XMFLOAT3 BossPos;
+				//XMStoreFloat3(&BossPos, m_pQuadTree->m_EnemySpawnList[i].second.position);
+				//m_vBossSpawnPos = BossPos;
+
+				enemy = new SSB::FieldBoss();
+				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
+				I_Model.Load("Varus", "Idle", &enemy->m_pModel);
+				enemy->Scale(0.02f);
+				m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
+				enemy->Initialize_RegisterSkill(SSB::kFieldBossMobSkillCasting, 20);
+			}
+
 			//I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
 			if (!enemy)
 				continue;
@@ -938,8 +957,8 @@ void    SceneInGame::CharacterLoad()
 			enemy->m_fSpeed = 10;
 			//enemy->_damagedSound = I_Sound.Find(L"AlistarDamaged.mp3");
 			enemy->Init();
-			enemy->Scale(0.01f);
-			
+			//enemy->Scale(0.01f);
+
 			enemy->SetMap(m_pQuadTree->m_pMap);
 			if (m_pQuadTree->m_EnemySpawnList[i].first == mobStr)
 			{
@@ -1294,6 +1313,64 @@ void    SceneInGame::FSMLoad()
 
 		manager->Init();
 		m_StateManagerMap.insert(std::make_pair(SSB::kEnemyNPCMobStateManager, manager));
+	}
+
+	{
+		SSB::CharacterStateManager* manager = new SSB::CharacterStateManager;
+		{
+			SSB::CharacterState* state = new SSB::FieldBossIdleState;
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kFieldBossMobIdle, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossAirBorneState;
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kFieldBossMobAirborne, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossPoundState(kUltimateSkillActiveTime);
+			state->Initialize_SetStateAnimation("Idle");
+			manager->Initialize_RegisterState(SSB::kFieldBossMobPound, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossMoveState;
+			state->Initialize_SetStateAnimation("Move");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarWalk.mp3"), true);
+			manager->Initialize_RegisterState(SSB::kFieldBossMobMove, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossAttackStartState(0.5f);
+			state->Initialize_SetStateAnimation("AttackStart");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
+			manager->Initialize_RegisterState(SSB::kFieldBossMobAttackStart, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossAttackState(1.0f);
+			state->Initialize_SetStateAnimation("Attack");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
+			manager->Initialize_RegisterState(SSB::kFieldBossMobAttack, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossSkillCastingState(1.5f);
+			state->Initialize_SetStateAnimation("SkillCasting");
+			//state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack2.mp3"));
+			manager->Initialize_RegisterState(SSB::kFieldBossMobSkillCasting, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossSkillFireState(1.5f);
+			state->Initialize_SetStateAnimation("SkillFire");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack2.mp3"));
+			manager->Initialize_RegisterState(SSB::kFieldBossMobSkillFire, state);
+		}
+		{
+			SSB::CharacterState* state = new SSB::FieldBossDeadState;
+			state->Initialize_SetStateAnimation("Dead");
+			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarDead.mp3"));
+			manager->Initialize_RegisterState(SSB::kFieldBossMobDead, state);
+		}
+
+		manager->Init();
+		m_StateManagerMap.insert(std::make_pair(SSB::kFieldBossStateManager, manager));
 	}
 
 	{

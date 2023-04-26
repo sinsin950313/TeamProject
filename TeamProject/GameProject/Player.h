@@ -63,6 +63,9 @@ public:
 	TVector3 m_DashDirection;
     bool m_IsDash = false;
 
+public:
+    bool IsDash();
+
 private:
     const int m_kMaxUltimateSkillStackCount = 3;
     int m_UltimateSkillStack = 0;
