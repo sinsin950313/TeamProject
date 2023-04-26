@@ -607,32 +607,32 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox && false)
 	{
-		/*if (m_pBoss)
-		{
-			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}
-		for (auto box : I_Collision.GetMapCollisionList())
-		{
-		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		    m_pDebugBox->SetBox(box);
-		    m_pDebugBox->SetColor({1, 0, 0, 1});
-		    m_pDebugBox->UpdateBuffer();
-		    m_pDebugBox->Render();
-		}
+		//if (m_pBoss)
+		//{
+		//	m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
+		//for (auto box : I_Collision.GetMapCollisionList())
+		//{
+		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//    m_pDebugBox->SetBox(box);
+		//    m_pDebugBox->SetColor({1, 0, 0, 1});
+		//    m_pDebugBox->UpdateBuffer();
+		//    m_pDebugBox->Render();
+		//}
 
-		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		TColor color = TColor(0, 0, 1, 1);
-		for (T_BOX* box : m_debugBoxList)
-		{
-			m_pDebugBox->SetBox(*box);
-			m_pDebugBox->SetColor(color);
-			m_pDebugBox->UpdateBuffer();
-			m_pDebugBox->Render();
-		}*/
+		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		//TColor color = TColor(0, 0, 1, 1);
+		//for (T_BOX* box : m_debugBoxList)
+		//{
+		//	m_pDebugBox->SetBox(*box);
+		//	m_pDebugBox->SetColor(color);
+		//	m_pDebugBox->UpdateBuffer();
+		//	m_pDebugBox->Render();
+		//}
 
 		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
 		//{
@@ -917,16 +917,9 @@ void    SceneInGame::CharacterLoad()
 			{
 				enemy = new SSB::EnemyNPCMob();
 				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);
+				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "idle", &enemy->m_pModel);
 				m_StateManagerMap.find(SSB::kEnemyNPCMobStateManager)->second->RegisterCharacter(enemy, SSB::kEnemyNPCMobIdle);	
 				enemy->Scale(0.01f);
-
-				//enemy = new SSB::FieldBoss();
-				//enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				//I_Model.Load("Varus", "Idle", &enemy->m_pModel);
-				//enemy->Scale(0.02f);
-				//m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
-				//enemy->Initialize_RegisterSkill(SSB::kFieldBossMobSkillCasting, 20);
 			}
 			else if (m_pQuadTree->m_EnemySpawnList[i].first == bossStr)
 			{
@@ -1346,16 +1339,16 @@ void    SceneInGame::FSMLoad()
 			manager->Initialize_RegisterState(SSB::kFieldBossMobMove, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::FieldBossAttackState(1.5f);
-			state->Initialize_SetStateAnimation("Attack1");
+			SSB::CharacterState* state = new SSB::FieldBossAttackStartState(0.5f);
+			state->Initialize_SetStateAnimation("AttackStart");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
-			manager->Initialize_RegisterState(SSB::kFieldBossMobAttack, state);
+			manager->Initialize_RegisterState(SSB::kFieldBossMobAttackStart, state);
 		}
 		{
-			SSB::CharacterState* state = new SSB::FieldBossAttackReset;
-			state->Initialize_SetStateAnimation("AttackReset");
+			SSB::CharacterState* state = new SSB::FieldBossAttackState(1.0f);
+			state->Initialize_SetStateAnimation("Attack");
 			state->Initialize_SetEffectSound(I_Sound.Find(L"AlistarAttack1.mp3"));
-			manager->Initialize_RegisterState(SSB::kFieldBossMobAttackReset, state);
+			manager->Initialize_RegisterState(SSB::kFieldBossMobAttack, state);
 		}
 		{
 			SSB::CharacterState* state = new SSB::FieldBossSkillCastingState(1.5f);

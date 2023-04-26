@@ -38,7 +38,7 @@ namespace SSB
 
 		if (fDistance <= mob->GetBattleRange())
 		{
-			ReserveNextTransferName(kFieldBossMobAttack);
+			ReserveNextTransferName(kFieldBossMobAttackStart);
 			SetTransfer();
 		}
     }
@@ -47,7 +47,7 @@ namespace SSB
     }
     std::vector<std::string> FieldBossIdleState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobAttack, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
+        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobAttackStart, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
     }
     void FieldBossMoveState::StateDecision()
     {
@@ -82,7 +82,7 @@ namespace SSB
 
 		if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 		{
-            ReserveNextTransferName(kFieldBossMobIdle);
+            ReserveNextTransferName(kFieldBossMobMove);
             SetTransfer();
 		}
     }
@@ -101,7 +101,7 @@ namespace SSB
     }
     std::vector<std::string> FieldBossMoveState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobAttack, kFieldBossMobIdle, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
+        return { kFieldBossMobDead, kFieldBossMobAttack, kFieldBossMobMove, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
     }
     FieldBossAttackState::FieldBossAttackState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
     {
@@ -122,47 +122,11 @@ namespace SSB
 			SetTransfer();
         }
 
-        if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-        {
-            if (!(0 < m_pCharacter->GetRemainSkillCoolTime(kFieldBossMobSkillCasting)))
-            {
-                ReserveNextTransferName(kFieldBossMobSkillCasting);
-                SetTransfer();
-            }
-        }
-
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
-		{
-			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
-			{
-				ReserveNextTransferName(kFieldBossMobAttackReset);
-				SetTransfer();
-			}
-		}
-
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
-		{
-			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-			{
-				ReserveNextTransferName(kFieldBossMobMove);
-				SetTransfer();
-			}
-		}
-
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
-		{
-			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
-			{
-				ReserveNextTransferName(kFieldBossMobIdle);
-				SetTransfer();
-			}
-		}
-
         if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
             //_blackboard->StateTImeStamp = g_fGameTimer;
             //_blackboard->DamagedCharacters.clear();
-			ReserveNextTransferName(kFieldBossMobIdle);
+			ReserveNextTransferName(kFieldBossMobMove);
 			SetTransfer();
         }
     }
@@ -201,18 +165,6 @@ namespace SSB
             TQuaternion q;
             D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
             D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
-
-            //// Damage Timing ��
-            //float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-            //if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
-            //{
-            //    if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
-            //    {
-            //        Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-            //        Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-            //        Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
-            //    }
-            //}
         }
 
 		float pivot = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
@@ -235,35 +187,7 @@ namespace SSB
     }
     std::vector<std::string> FieldBossAttackState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobIdle, kFieldBossMobAttackReset, kFieldBossMobAirborne, kFieldBossMobSkillCasting };
-    }
-    void FieldBossAttackReset::StateDecision()
-    {
-		if (m_pCharacter->IsDead())
-		{
-            ReserveNextTransferName(kFieldBossMobDead);
-            SetTransfer();
-		}
-
-        if (m_pCharacter->IsAirborne())
-        {
-            ReserveNextTransferName(kFieldBossMobAirborne);
-			SetTransfer();
-        }
-
-		ReserveNextTransferName(kFieldBossMobAttack);
-		SetTransfer();
-    }
-    void FieldBossAttackReset::Action()
-    {
-    }
-    StateTransferPriority FieldBossAttackReset::GetPriority()
-    {
-        return FieldBossMobAttackTypePriority;
-    }
-    std::vector<std::string> FieldBossAttackReset::GetLinkedList()
-    {
-        return { kFieldBossMobDead, kFieldBossMobAirborne, kFieldBossMobAttack };
+        return { kFieldBossMobDead, kFieldBossMobMove, kFieldBossMobAirborne };
     }
     FieldBossSkillCastingState::FieldBossSkillCastingState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
     {
@@ -367,7 +291,7 @@ namespace SSB
 
         if(!m_pCharacter->IsAirborne())
 		{
-			ReserveNextTransferName(kFieldBossMobIdle);
+			ReserveNextTransferName(kFieldBossMobMove);
 			SetTransfer();
 		}
     }
@@ -397,7 +321,7 @@ namespace SSB
     }
     std::vector<std::string> FieldBossAirBorneState::GetLinkedList()
     {
-        return { kFieldBossMobIdle, kFieldBossMobPound };
+        return { kFieldBossMobMove, kFieldBossMobPound };
     }
     FieldBossPoundState::FieldBossPoundState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
     {
@@ -410,7 +334,7 @@ namespace SSB
 			XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
 			m_pCharacter->MoveChar(tmp, world);
 
-			ReserveNextTransferName(kFieldBossMobIdle);
+			ReserveNextTransferName(kFieldBossMobMove);
 			SetTransfer();
 		}
     }
@@ -423,7 +347,7 @@ namespace SSB
     }
     std::vector<std::string> FieldBossPoundState::GetLinkedList()
     {
-        return { kFieldBossMobIdle };
+        return { kFieldBossMobMove };
     }
     FieldBossSkillFireState::FieldBossSkillFireState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
     {
@@ -445,12 +369,42 @@ namespace SSB
 
         if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
         {
-			ReserveNextTransferName(kFieldBossMobIdle);
+			ReserveNextTransferName(kFieldBossMobMove);
 			SetTransfer();
         }
     }
     void FieldBossSkillFireState::Action()
     {
+        // LookAt Target
+        if (!IsPassedRequiredTime(_blackboard->StateTImeStamp))
+        {
+            XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
+            oldCharDirection = XMVector3Normalize(oldCharDirection);
+
+            XMVECTOR destinationDirection = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
+            destinationDirection = XMVector3Normalize(destinationDirection);
+
+            if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
+                oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
+
+            XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection);	// Get the characters direction (based off time, old position, and desired
+            currCharDirection = XMVector3Normalize(currCharDirection);
+
+            XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+            float charDirAngle = XMVectorGetX(XMVector3AngleBetweenNormals(XMVector3Normalize(currCharDirection), XMVector3Normalize(DefaultForward)));
+            if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
+                charDirAngle = -charDirAngle;
+
+            m_pCharacter->m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
+
+            // Set the characters old direction
+            m_pCharacter->m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+
+            TQuaternion q;
+            D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
+            D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
+        }
+
 		float pivot = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
 		if (pivot < m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime)
 		{
@@ -471,6 +425,78 @@ namespace SSB
     }
     std::vector<std::string> FieldBossSkillFireState::GetLinkedList()
     {
-        return { kFieldBossMobDead, kFieldBossMobAirborne, kFieldBossMobIdle };
+        return { kFieldBossMobDead, kFieldBossMobAirborne, kFieldBossMobMove };
+    }
+    FieldBossAttackStartState::FieldBossAttackStartState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
+    {
+    }
+    void FieldBossAttackStartState::StateDecision()
+    {
+        FieldBoss* mob = static_cast<FieldBoss*>(m_pCharacter);
+		Character* targetPlayer = &Player::GetInstance();
+		if (mob->IsDead())
+		{
+            ReserveNextTransferName(kFieldBossMobDead);
+            SetTransfer();
+		}
+
+        if (mob->IsAirborne())
+        {
+            ReserveNextTransferName(kFieldBossMobAirborne);
+			SetTransfer();
+        }
+
+		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		{
+			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
+			{
+				ReserveNextTransferName(kFieldBossMobAttack);
+				SetTransfer();
+			}
+		}
+    }
+    void FieldBossAttackStartState::Action()
+    {
+        // LookAt Target
+        if (!IsPassedRequiredTime(_blackboard->StateTImeStamp))
+        {
+            XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
+            oldCharDirection = XMVector3Normalize(oldCharDirection);
+
+            XMVECTOR destinationDirection = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
+            destinationDirection = XMVector3Normalize(destinationDirection);
+
+            if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
+                oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
+
+            XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection);	// Get the characters direction (based off time, old position, and desired
+            currCharDirection = XMVector3Normalize(currCharDirection);
+
+            XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+            float charDirAngle = XMVectorGetX(XMVector3AngleBetweenNormals(XMVector3Normalize(currCharDirection), XMVector3Normalize(DefaultForward)));
+            if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
+                charDirAngle = -charDirAngle;
+
+            m_pCharacter->m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
+
+            // Set the characters old direction
+            m_pCharacter->m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+
+            TQuaternion q;
+            D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
+            D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
+        }
+    }
+    StateTransferPriority FieldBossAttackStartState::GetPriority()
+    {
+        return FieldBossMobAttackTypePriority;
+    }
+    float FieldBossAttackStartState::GetTransferRequireTime()
+    {
+        return _transferRequireTime;
+    }
+    std::vector<std::string> FieldBossAttackStartState::GetLinkedList()
+    {
+        return { kFieldBossMobDead, kFieldBossMobAirborne, kFieldBossMobAttack };
     }
 }

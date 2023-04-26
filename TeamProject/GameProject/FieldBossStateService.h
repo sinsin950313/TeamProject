@@ -7,7 +7,7 @@ namespace SSB
 	const StateName kFieldBossMobIdle = "Idle";
 	const StateName kFieldBossMobMove = "Move";
 	const StateName kFieldBossMobAttack = "Attack";
-	const StateName kFieldBossMobAttackReset = "AttackReset";
+	const StateName kFieldBossMobAttackStart = "AttackStart";
 	const StateName kFieldBossMobSkillCasting = "SkillCasting";
 	const StateName kFieldBossMobSkillFire = "SkillFire";
 	const StateName kFieldBossMobDead = "Dead";
@@ -65,6 +65,23 @@ namespace SSB
 		std::vector<std::string> GetLinkedList() override;
 	};
 
+	class FieldBossAttackStartState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
+	{
+	private:
+		float _transferRequireTime;
+		bool _isAttacked = false;
+
+	public:
+		FieldBossAttackStartState(float transferRequireTime);
+
+	public:
+		void StateDecision() override;
+		void Action() override;
+		StateTransferPriority GetPriority() override;
+		float GetTransferRequireTime() override;
+		std::vector<std::string> GetLinkedList() override;
+	};
+
 	class FieldBossAttackState : public CharacterState, public MinimumTransferCoolTimeRequireInterface, public DamageTypeStateInterface
 	{
 	private:
@@ -79,15 +96,6 @@ namespace SSB
 		void Action() override;
 		StateTransferPriority GetPriority() override;
 		float GetTransferRequireTime() override;
-		std::vector<std::string> GetLinkedList() override;
-	};
-
-	class FieldBossAttackReset : public CharacterState
-	{
-	public:
-		void StateDecision() override;
-		void Action() override;
-		StateTransferPriority GetPriority() override;
 		std::vector<std::string> GetLinkedList() override;
 	};
 
