@@ -18,6 +18,7 @@ public:
     void    FSMLoad();
     void    CharacterLoad();
     void    MapLoad();
+    void    ScenarioLoad();
     
     void    RenderMinimap();
 
@@ -113,6 +114,7 @@ public:
     bool m_bIngame2_CinemaIntro_End = false;
     bool m_bIngame2_CinemaOver = false;
     bool m_bIngame2_EnemyHalfCount = false;
+    std::map<std::wstring, std::wstring> m_ScenarioList;
 
     TVector3 m_vBossSpawnPos;
 

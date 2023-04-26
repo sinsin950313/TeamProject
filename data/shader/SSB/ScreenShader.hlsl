@@ -124,7 +124,7 @@ float4 PS(PSInput input) : SV_TARGET0
 	float expFogAmount = exp(-fogDist * expFogDensity);
 
 	//fog
-	float3 fogColor = float3(0.5f, 0.5f, 0.5f);
+	float4 fogColor = float4(0.5f, 0.5f, 0.5f, 0.2f);
 
 	// 선형 Fog와 지수 Fog의 양을 결합하여 최종 Fog 양을 계산
 	float fogAmount = lerp(linearFogAmount, expFogAmount, 0.0f);
@@ -134,7 +134,7 @@ float4 PS(PSInput input) : SV_TARGET0
 	float4 ret = diffuseColor * GetAmbient();
 	ret += diffuseColor * GetShadowRatio(input.TextureUV) * (GetDiffuse(input.TextureUV) + GetSpecular(input.TextureUV));
 	// 개체의 색상에 Fog를 적용
-	ret.xyz = lerp(ret.xyz, fogColor, fogAmount);
+	ret = lerp(ret, fogColor, fogAmount);
 	return float4(ret.xyz, 1);
 }
 

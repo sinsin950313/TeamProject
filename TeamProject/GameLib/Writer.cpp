@@ -33,7 +33,7 @@ bool Writer::Init()
 		DWRITE_FONT_WEIGHT_NORMAL,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		25,
+		22,
 		L"ko-kr",
 		&m_pTextFormat);
 
@@ -134,7 +134,7 @@ void Writer::TextDraw(WriteText text)
 	opacity = text.m_fTimeCurrent * 2.0f;
 	if (text.m_fTimeDuration - text.m_fTimeCurrent < 1.0f)
 		opacity = 1.0f - (1.0f - (text.m_fTimeDuration - text.m_fTimeCurrent));
-	m_pTextColor->SetOpacity(opacity > 1.0f ? 1.0f : opacity);
+	m_pTextColor->SetOpacity(opacity > 0.7f ? 0.7f : opacity);
 	m_d2dRT->DrawText(text.m_szText.c_str(), text.m_szText.size(), m_pTextFormat, rt, m_pTextColor);
 
 	m_d2dRT->EndDraw();

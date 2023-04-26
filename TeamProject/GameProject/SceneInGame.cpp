@@ -131,6 +131,8 @@ void SceneInGame::DataLoad()
 	FSMLoad();
 
 	CharacterLoad();
+
+	ScenarioLoad();
 }
 
 
@@ -237,17 +239,14 @@ bool    SceneInGame::Frame()
 			{
 				sound_houdgi->VolumeDown(g_fSecondPerFrame / 10.0f);
 				m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
-				if (m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration * 0.6f && !m_bIngame1_houdgiend)
-				{
-					m_bIngame1_houdgiend = true;
-					auto sound = I_Sound.Find(L"yasuo_sound_houdgi_end.mp3");
-					sound->VolumeSet(0.3f);
-					sound->Play(true);
-				}
 				MoveCinemaCamera();
 			}
 			if (m_bIngame1_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
 			{
+				std::wstring szRandomSound = L"yasuo_sound_houdgi_end.mp3";
+				auto sound = I_Sound.Find(szRandomSound);
+				sound->VolumeSet(0.5f);
+				sound->Play();
 				m_iCurrentCineCount = 2;
 				m_pQuadTree->m_fCamMoveCurrent = 0.0f;
 				m_bIngame1_CinemaIntro_End = false;
@@ -276,8 +275,8 @@ bool    SceneInGame::Frame()
 				I_Collision.DeleteTriggerBox(L"Trig_Cine1");
 				m_bIngame1_Cinema1_Start = true;
 				SetCinemaCamera(L"Cine_1_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"????1???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
-				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_Cinema1_Start")->second , { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration + 1.0f));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration + 1.0f));
 			}
 			if (m_bIngame1_Cinema1_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
 			{
@@ -295,7 +294,10 @@ bool    SceneInGame::Frame()
 			{
 				m_bIngame1_Cinema1_End = true;
 				SetCinemaCamera(L"Cine_1_End");
-				g_pWriter->SetText(WriteText(621, 673, L"????2???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				auto sound = I_Sound.Find(L"yasuo_sound_voice1.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
+				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_Cinema1_End")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema1_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 3)
@@ -323,7 +325,7 @@ bool    SceneInGame::Frame()
 				I_Collision.DeleteTriggerBox(L"Trig_Cine2");
 				m_bIngame1_Cinema2_Start = true;
 				SetCinemaCamera(L"Cine_2_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"????3???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_Cinema2_Start")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema2_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 4)
@@ -341,8 +343,11 @@ bool    SceneInGame::Frame()
 			if (!m_bIngame1_Cinema2_End && I_Input.GetKey('O') == KEY_PUSH && m_iCurrentCineCount == 5)
 			{
 				m_bIngame1_Cinema2_End = true;
+				auto sound = I_Sound.Find(L"yasuo_sound_voice2.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
 				SetCinemaCamera(L"Cine_2_End");
-				g_pWriter->SetText(WriteText(621, 673, L"????4???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_Cinema2_End")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = XMConvertToDegrees(m_pMainCamera->m_fCameraYawAngle - XM_PI);
 			}
@@ -371,8 +376,11 @@ bool    SceneInGame::Frame()
 				m_pMainCamera->m_vRotation.z = XMConvertToRadians(cinema.CamMoveList[0].fRoll);
 				Player::GetInstance().m_vRotation = m_pMainCamera->m_vRotation;
 				m_pMainCamera->Frame();
-				SetCinemaCamera(L"Cine_1_Start");
-				g_pWriter->SetText(WriteText(621, 673, L"????5???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				auto sound = I_Sound.Find(L"yasuo_sound_meet_boss2.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
+				SetCinemaCamera(L"Cine_1_1_Start");
+				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_CinemaIntro_Start")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_bIngame2_CinemaIntro_Start = true;
 			}
@@ -383,16 +391,17 @@ bool    SceneInGame::Frame()
 			}
 			if (!m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 0)
 			{
-				auto sound = I_Sound.Find(L"yasuo_sound_meet_boss2.mp3");
-				sound->VolumeSet(0.3f);
-				sound->Play(true);
 				m_iCurrentCineCount = 1;
 				m_bIngame2_CinemaIntro_Start = false;
 				m_bIngame2_CinemaIntro_End = true;
 				m_pQuadTree->m_fCamMoveCurrent = 0.0f;
-				SetCinemaCamera(L"Cine_1_End");
-				g_pWriter->SetText(WriteText(621, 673, L"????6???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
-				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
+				auto sound = I_Sound.Find(L"yasuo_sound_voice3.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
+				SetCinemaCamera(L"Cine_1_1_End");
+				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_CinemaIntro_End")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));	
+				//I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", m_vBossSpawnPos);
 			}
 			if (m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
 			{
@@ -432,13 +441,16 @@ bool    SceneInGame::Frame()
 					m_pBoss->Frame();
 					Player::GetInstance().m_vPos = m_vBossSpawnPos;
 					Player::GetInstance().Frame();
-					SetCinemaCamera(L"Cine_Over");
-					g_pWriter->SetText(WriteText(621, 673, L"????7???", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+					SetCinemaCamera(L"Cine_Over4");
+					g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_CinemaOver")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 					m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 					m_bIngame2_CinemaOver = true;
 				}
 				if (m_bIngame2_CinemaOver && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
 				{
+					g_fFogStart += g_fSecondPerFrame;
+					g_fFogEnd += g_fSecondPerFrame * 10.0f;
+					g_fFogDensity = 0.0f;
 					sound_bgm->VolumeDown(g_fSecondPerFrame / 5.0f);
 					m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
 					if (!Player::GetInstance().IsVictory())
@@ -483,7 +495,7 @@ bool    SceneInGame::Frame()
 			auto sound = I_Sound.Find(L"yasuo_sound_count_half1.mp3");
 			sound->VolumeSet(0.3f);
 			sound->Play(true);
-			g_pWriter->SetText(WriteText(621, 673, L"지치지도 않고 덤벼드는군", { 1,1,1,1 }, 3.0f)); //지치지도않고덤벼드는군
+			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //지치지도않고덤벼드는군
 			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 
@@ -493,7 +505,7 @@ bool    SceneInGame::Frame()
 			auto sound = I_Sound.Find(L"yasuo_sound_count_half2.mp3");
 			sound->VolumeSet(0.3f);
 			sound->Play(true);
-			g_pWriter->SetText(WriteText(621, 673, L"이야기는 아직 끝나지 않았어", { 1,1,1,1 }, 3.0f)); //이야기는 아직 끝나지 않았어
+			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //이야기는 아직 끝나지 않았어
 			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 	}
@@ -1433,6 +1445,34 @@ void    SceneInGame::MapLoad()
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Map.hlsl", L"psmain", &m_pMinimapPS_Quadtree);
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_Skydome.hlsl", L"psmain", &m_pMinimapPS_Skydome);
 	I_Shader.PSLoad(L"../../data/shader/MAP/PSMinimap_DebugBox.hlsl", L"PS", &m_pMinimapPS_DebugBox);
+}
+
+void SceneInGame::ScenarioLoad()
+{
+	std::ifstream is(L"../../data/Scenario/Scenario.List");
+	std::string line;
+
+	while (std::getline(is, line))
+	{
+		// ',' 이전의 문자열을 key로, 이후의 문자열을 value로 저장
+		std::size_t pos = line.find(',');
+		if (pos != std::wstring::npos) 
+		{
+			std::wstring key, value;
+			std::string str_key = std::string(line.substr(0, pos));
+			std::string str_value = std::string(line.substr(pos + 1));
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			key = converter.from_bytes(str_key);
+			value = converter.from_bytes(str_value);
+			std::size_t found = 0;
+			while ((found = value.find(L"\\n", found)) != std::wstring::npos) {
+				value.replace(found, 2, L"\n");
+				found += 1;
+			}
+			m_ScenarioList[key] = value;
+		}
+	}
+	is.close();
 }
 
 void SceneInGame::RenderMinimap()

@@ -256,6 +256,19 @@ namespace SSB
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
+							std::wstring szRandomSound;
+							switch ((int)randf(g_fGameTimer) % 2)
+							{
+							case 0:
+								szRandomSound = L"sound_dmg_player1.mp3";
+								break;
+							case 1:
+								szRandomSound = L"sound_dmg_player2.mp3";
+								break;
+							}
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
@@ -362,6 +375,19 @@ namespace SSB
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
+							std::wstring szRandomSound;
+							switch ((int)randf(g_fGameTimer) % 2)
+							{
+							case 0:
+								szRandomSound = L"sound_dmg_player1.mp3";
+								break;
+							case 1:
+								szRandomSound = L"sound_dmg_player2.mp3";
+								break;
+							}
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
@@ -468,6 +494,19 @@ namespace SSB
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
+							std::wstring szRandomSound;
+							switch ((int)randf(g_fGameTimer) % 2)
+							{
+							case 0:
+								szRandomSound = L"sound_dmg_player1.mp3";
+								break;
+							case 1:
+								szRandomSound = L"sound_dmg_player2.mp3";
+								break;
+							}
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
@@ -574,6 +613,19 @@ namespace SSB
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
+							std::wstring szRandomSound;
+							switch ((int)randf(g_fGameTimer) % 2)
+							{
+							case 0:
+								szRandomSound = L"sound_dmg_player1.mp3";
+								break;
+							case 1:
+								szRandomSound = L"sound_dmg_player2.mp3";
+								break;
+							}
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
@@ -707,6 +759,19 @@ namespace SSB
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
+							std::wstring szRandomSound;
+							switch ((int)randf(g_fGameTimer) % 2)
+							{
+							case 0:
+								szRandomSound = L"sound_dmg_player1.mp3";
+								break;
+							case 1:
+								szRandomSound = L"sound_dmg_player2.mp3";
+								break;
+							}
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
@@ -981,6 +1046,19 @@ namespace SSB
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
+							std::wstring szRandomSound;
+							switch ((int)randf(g_fGameTimer) % 2)
+							{
+							case 0:
+								szRandomSound = L"sound_dmg_player1.mp3";
+								break;
+							case 1:
+								szRandomSound = L"sound_dmg_player2.mp3";
+								break;
+							}
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
@@ -1112,6 +1190,19 @@ namespace SSB
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
+							std::wstring szRandomSound;
+							switch ((int)randf(g_fGameTimer) % 2)
+							{
+							case 0:
+								szRandomSound = L"sound_dmg_player1.mp3";
+								break;
+							case 1:
+								szRandomSound = L"sound_dmg_player2.mp3";
+								break;
+							}
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
 							if (currentHp <= 0)
 								currentHp = 0;
@@ -1321,6 +1412,10 @@ namespace SSB
 	{
 		if (!_blackboard->Initialized)
 		{
+			std::wstring szRandomSound = L"yasuo_sound_drink.mp3";
+			auto sound = I_Sound.Find(szRandomSound);
+			sound->VolumeSet(0.3f);
+			sound->Play();
 			Player::GetInstance().ActiveSkill(kPlayerDrink);
 			_blackboard->HealthPoint = m_pCharacter->m_HealthPoint;
 		}

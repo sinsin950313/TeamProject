@@ -28,6 +28,9 @@ extern RECT		g_rcWindow;
 extern UINT		g_iClientWidth;
 extern UINT		g_iClientHeight;
 extern Writer*   g_pWriter;
+extern float g_fFogStart;
+extern float g_fFogEnd;
+extern float g_fFogDensity;
 
 extern float g_fGameTimer;
 extern float g_fSecondPerFrame;
