@@ -38,3 +38,28 @@ struct TransformData
 	TVector3 vEasingEnd;
 	TVector3 vEasingEndDiff;
 };
+
+struct BasicRenderData
+{
+	UINT iMaterial;
+	std::wstring texPath;
+	UINT iBlendType;
+};
+
+struct RenderSetData
+{
+	UINT iRenderType;
+	UINT iColorType;
+
+	TColor vFixColor;
+	
+	TColor vRandMinColor;
+	TColor vRandMaxColor;
+
+	TColor vStartColor;
+	TColor vStartDiffColor;
+	TColor vEndColor;
+	TColor vEndDiffColor;
+
+	UINT iBillboard;
+};

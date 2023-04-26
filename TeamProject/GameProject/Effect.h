@@ -4,16 +4,22 @@
 class Effect
 {
 public:
-	bool	Init();
+	ID3D11Device* m_pd3dDevice = nullptr;
+	ID3D11DeviceContext* m_pImmediateContext = nullptr;
+
+public:
+	bool	Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
 	bool	Frame();
 	bool	Render();
 	bool	Release();
 
+	void	SetCamera(Camera* pCamera);
 	void	Reset();
 
 public:
-	std::vector<Emitter*>	m_pEmitterList;
+	std::list<Emitter*>	m_pEmitterList;
 
 	TVector3	m_vPos;
+	bool			m_isDone;
 };
 

@@ -53,6 +53,15 @@ namespace SSB
 	}
 	void BossMobAngryState::Action()
 	{
+		static bool called = false;
+		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.5f;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime && m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime && !called)
+		{
+			called = true;
+			mob->m_pMainCamera->CameraShake();
+		}
 	}
 	float BossMobAngryState::GetTransferRequireTime()
 	{
@@ -515,7 +524,7 @@ namespace SSB
 	void BossMobSkill1State::Action()
 	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
-
+		mob->m_pMainCamera->CameraShake();
 		// LookAt Target
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
@@ -590,7 +599,7 @@ namespace SSB
 	void BossMobDashState::Action()
 	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
-
+		mob->m_pMainCamera->CameraShake();
 		mob->m_fSpeed = 20;
 
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);

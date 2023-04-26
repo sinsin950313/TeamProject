@@ -81,10 +81,10 @@ bool DXState::SetState(ID3D11Device* pd3dDevice)
     bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
     bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;		 // SV_TARGET0
     bd.RenderTarget[0].DestBlend = D3D11_BLEND_SRC1_COLOR; // SV_TARGET1
+    //DualSourceColorBlending에서 ***_SRC1_*** 은 SV_TARGET1으로 사용된다.
 
-    bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
     bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-    bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
     bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
     pd3dDevice->CreateBlendState(&bd, &g_pAddAlphaBlend);
 

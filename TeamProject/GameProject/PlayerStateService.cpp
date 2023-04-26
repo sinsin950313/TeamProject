@@ -209,7 +209,7 @@ namespace SSB
 		{
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
 		}
-
+	
 		static float timer = 0.0f;
 		timer += g_fSecondPerFrame;
 		if (timer > 0.02f)

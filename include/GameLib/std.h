@@ -21,12 +21,13 @@
 
 using namespace Microsoft::WRL;
 #define DXCORE
-
+class Writer;
 extern HWND		g_hWnd;
 extern RECT		g_rcClient;
 extern RECT		g_rcWindow;
 extern UINT		g_iClientWidth;
 extern UINT		g_iClientHeight;
+extern Writer*   g_pWriter;
 
 extern float g_fGameTimer;
 extern float g_fSecondPerFrame;
@@ -54,13 +55,15 @@ public:
 	}
 };
 
-static double RandomStep(double min, double max = 1.0)
+static double RandomStep(double dMin, double dMax = 1.0)
 {
+	double d1 = min(dMin, dMax);
+	double d2 = max(dMin, dMax);
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<>	 dist(min, max);
+	std::uniform_real_distribution<>	 dist(d1, d2);
 	return dist(gen);
-};
+}
 
 //#include <atlconv.h> // A2W
 static std::wstring to_mw(const std::string& _src)

@@ -96,6 +96,9 @@ namespace DX
 		virtual bool Render();
 		virtual bool PostRender();
 		virtual bool Release();
+
+		BaseObject() {};
+		virtual ~BaseObject() {};
 	};
 };
 using namespace DX;

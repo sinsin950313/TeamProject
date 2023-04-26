@@ -16,6 +16,7 @@
 #include "EffectMgr.h"
 #include "FieldBoss.h"
 #include "FieldBossStateService.h"
+#include "Writer.h"
 
 XMFLOAT4 g_CurrentCameraPos;
 
@@ -35,6 +36,7 @@ E_SCENE SceneInGame::NextScene()
 	
 	if (m_bInteractNextStage && I_Collision.IsCollideTrigger(&Player::GetInstance().m_ColliderBox))
 	{
+		sound_bgm->Stop();
 		m_Scene = S_INGAME2;
 		I_Collision.GetMapCollisionList().clear();
 		I_Collision.GetMapTriggerList().clear();
@@ -45,7 +47,9 @@ E_SCENE SceneInGame::NextScene()
 void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 {
 	m_pQuadTree->m_CurrentCinema = m_pQuadTree->m_CinemaList.find(szCinemaName)->second;
-
+	Player::GetInstance().m_pMainCamera = m_pCinemaCamera;
+	if(m_pBoss)
+		m_pBoss->m_pMainCamera = m_pCinemaCamera;
 	m_pCameraCurrent = m_pCinemaCamera;
 	m_pQuadTree->m_pCurrentCamera = m_pCinemaCamera;
 	m_pCinemaCamera->m_vPos = m_pQuadTree->m_CurrentCinema.CamMoveList[0].camPos;
@@ -53,7 +57,7 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 	m_pCinemaCamera->m_fCameraPitchAngle = m_pQuadTree->m_CurrentCinema.CamMoveList[0].fPitch;
 	m_pCinemaCamera->m_fCameraRollAngle = m_pQuadTree->m_CurrentCinema.CamMoveList[0].fRoll;
 
-	//마지막 카메라이동의 followpos를 받아오기위함
+	//���� ī�޶��̵��� followpos�� �޾ƿ�����
 	if (szCinemaName == L"Cine_Intro_Start")
 	{
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.x = m_pQuadTree->m_CurrentCinema.CamMoveList[0].camPos.x;
@@ -67,12 +71,14 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 	{
 		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 		m_pMainCamera->Frame();
+		float yaw, pitch, roll;
+		m_pMainCamera->GetCalcYawPitchRoll(yaw, pitch, roll);
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.x = m_pMainCamera->m_vPos.x;
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.y = m_pMainCamera->m_vPos.y;
 		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].camPos.z = m_pMainCamera->m_vPos.z;
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = XMConvertToDegrees(m_pMainCamera->m_fCameraYawAngle + XM_PI);
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fPitch = XMConvertToDegrees(m_pMainCamera->m_fCameraPitchAngle);
-		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fRoll = XMConvertToDegrees(m_pMainCamera->m_fCameraRollAngle);
+		/*m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = yaw + 270.0f;*/
+		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fPitch = pitch;
+		m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fRoll = roll;
 	}
 }
 
@@ -82,6 +88,8 @@ void SceneInGame::SetMainCamera()
 	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 	Player::GetInstance().m_pMainCamera = m_pMainCamera;
 	((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+	if (m_pBoss)
+		m_pBoss->m_pMainCamera = m_pMainCamera;
 }
 
 void SceneInGame::MoveCinemaCamera()
@@ -151,13 +159,31 @@ bool    SceneInGame::Init()
 	m_pDebugBox = new DebugBox;
 	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
-	Sound* sound = I_Sound.Find(L"BGM.mp3");
-	sound->Play(true);
+	sound_bgm = I_Sound.Find(m_Scene == S_INGAME ?  L"BGM.mp3" : L"BGM2.mp3");
+	sound_bgm->Play(true);
 	return true;
 }
 
 bool    SceneInGame::Frame()
 {
+	if (I_Input.GetKey('B') == KEY_PUSH)
+	{
+		/*Cinema cinema = m_pQuadTree->m_CinemaList.find(L"Cine_1_End")->second;
+		m_pCinemaCamera->m_vPos = cinema.CamMoveList[2].camPos;
+		m_pCinemaCamera->m_fCameraYawAngle = cinema.CamMoveList[2].fYaw;
+		m_pCinemaCamera->m_fCameraPitchAngle = cinema.CamMoveList[2].fPitch;
+		m_pCinemaCamera->m_fCameraRollAngle = cinema.CamMoveList[2].fRoll;
+
+		m_pMainCamera->m_vPos = cinema.CamMoveList[2].camPos;
+		m_pMainCamera->m_fCameraYawAngle = -cinema.CamMoveList[2].fYaw;
+		m_pMainCamera->m_fCameraPitchAngle = -cinema.CamMoveList[2].fPitch;
+		m_pMainCamera->m_fCameraRollAngle = -cinema.CamMoveList[2].fRoll;
+
+		m_pCinemaCamera->Frame();
+		m_pMainCamera->Frame();
+		int a = 0;*/
+	}
+
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
@@ -166,6 +192,11 @@ bool    SceneInGame::Frame()
 		{//Intro
 			if (!m_bIngame1_CinemaIntro_Start && m_iCurrentCineCount == 0)
 			{
+				sound_houdgi = I_Sound.Find(L"yasuo_sound_houdgi.mp3");
+				sound_houdgi->VolumeSet(0.1f);
+				sound_houdgi->SetLoop(true);
+				sound_houdgi->Play(true);
+
 				SetCinemaCamera(L"Cine_Intro_Start");
 				m_bIngame1_CinemaIntro_Start = true;
 
@@ -179,6 +210,9 @@ bool    SceneInGame::Frame()
 			}
 			if (!m_bIngame1_CinemaIntro_End && I_Input.GetKey('O') == KEY_PUSH && m_iCurrentCineCount == 0)
 			{
+				auto sound = I_Sound.Find(L"yasuo_sound_start_text1.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
 				m_iCurrentCineCount = 1;
 				m_bIngame1_CinemaIntro_Start = false;
 				m_bIngame1_CinemaIntro_End = true;
@@ -203,6 +237,7 @@ bool    SceneInGame::Frame()
 			}
 			if (m_bIngame1_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
 			{
+				sound_houdgi->VolumeDown(g_fSecondPerFrame / 10.0f);
 				m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
 				MoveCinemaCamera();
 			}
@@ -218,11 +253,13 @@ bool    SceneInGame::Frame()
 				for (int idx = 0; idx < m_pInter_MinimapContents->m_pChildList.size(); idx++)
 					m_pInter_MinimapContents->m_pChildList[idx]->m_pWorkList.push_back(new InterfaceFadeIn(0.5f));
 
-				m_pInter_Ingame->AddChild(m_pInter_Damage_blood);
 				SetMainCamera();
 				auto iter = m_pQuadTree->m_TriggerList.find(L"Trig_Cine1");
 				I_Collision.AddMapTriggerBox(iter->first, iter->second);
 			}
+			if (sound_houdgi->m_fVolume <= 0.01f)
+				sound_houdgi->Stop();
+			
 		}
 
 		{//Cine1
@@ -231,6 +268,8 @@ bool    SceneInGame::Frame()
 				I_Collision.DeleteTriggerBox(L"Trig_Cine1");
 				m_bIngame1_Cinema1_Start = true;
 				SetCinemaCamera(L"Cine_1_Start");
+				g_pWriter->SetText(WriteText(621, 673, L"����1ȣ��", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema1_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
 			{
@@ -248,6 +287,8 @@ bool    SceneInGame::Frame()
 			{
 				m_bIngame1_Cinema1_End = true;
 				SetCinemaCamera(L"Cine_1_End");
+				g_pWriter->SetText(WriteText(621, 673, L"����2ȣ��", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema1_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 3)
 			{
@@ -268,9 +309,14 @@ bool    SceneInGame::Frame()
 		{//Cine2
 			if (!m_bIngame1_Cinema2_Start && m_iCurrentCineCount == 4 && I_Collision.IsCollideTrigger(&Player::GetInstance().m_ColliderBox))
 			{
+				auto sound = I_Sound.Find(L"yasuo_sound_meet_boss1.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
 				I_Collision.DeleteTriggerBox(L"Trig_Cine2");
 				m_bIngame1_Cinema2_Start = true;
 				SetCinemaCamera(L"Cine_2_Start");
+				g_pWriter->SetText(WriteText(621, 673, L"����3ȣ��", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame1_Cinema2_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 4)
 			{
@@ -288,6 +334,8 @@ bool    SceneInGame::Frame()
 			{
 				m_bIngame1_Cinema2_End = true;
 				SetCinemaCamera(L"Cine_2_End");
+				g_pWriter->SetText(WriteText(621, 673, L"����4ȣ��", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = XMConvertToDegrees(m_pMainCamera->m_fCameraYawAngle - XM_PI);
 			}
 			if (m_bIngame1_Cinema2_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 5)
@@ -308,7 +356,16 @@ bool    SceneInGame::Frame()
 		{//Intro
 			if (!m_bIngame2_CinemaIntro_Start && m_iCurrentCineCount == 0)
 			{
+				m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
+				Cinema cinema = m_pQuadTree->m_CinemaList.find(L"Cine_1_Start")->second;
+				m_pMainCamera->m_vRotation.x = XMConvertToRadians(cinema.CamMoveList[0].fPitch);
+				m_pMainCamera->m_vRotation.y = XMConvertToRadians(cinema.CamMoveList[0].fYaw - XM_PI);
+				m_pMainCamera->m_vRotation.z = XMConvertToRadians(cinema.CamMoveList[0].fRoll);
+				Player::GetInstance().m_vRotation = m_pMainCamera->m_vRotation;
+				m_pMainCamera->Frame();
 				SetCinemaCamera(L"Cine_1_Start");
+				g_pWriter->SetText(WriteText(621, 673, L"����5ȣ��", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 				m_bIngame2_CinemaIntro_Start = true;
 			}
 			if (m_bIngame2_CinemaIntro_Start && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 0)
@@ -316,13 +373,18 @@ bool    SceneInGame::Frame()
 				m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
 				MoveCinemaCamera();
 			}
-			if (!m_bIngame2_CinemaIntro_End && I_Input.GetKey('O') == KEY_PUSH && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 0)
+			if (!m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 0)
 			{
+				auto sound = I_Sound.Find(L"yasuo_sound_meet_boss2.mp3");
+				sound->VolumeSet(0.3f);
+				sound->Play(true);
 				m_iCurrentCineCount = 1;
 				m_bIngame2_CinemaIntro_Start = false;
 				m_bIngame2_CinemaIntro_End = true;
 				m_pQuadTree->m_fCamMoveCurrent = 0.0f;
 				SetCinemaCamera(L"Cine_1_End");
+				g_pWriter->SetText(WriteText(621, 673, L"����6ȣ��", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 			}
 			if (m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
 			{
@@ -341,7 +403,6 @@ bool    SceneInGame::Frame()
 				for (int idx = 0; idx < m_pInter_MinimapContents->m_pChildList.size(); idx++)
 					m_pInter_MinimapContents->m_pChildList[idx]->m_pWorkList.push_back(new InterfaceFadeIn(0.5f));
 
-				m_pInter_Ingame->AddChild(m_pInter_Damage_blood);
 				SetMainCamera();
 			}
 		}
@@ -349,15 +410,28 @@ bool    SceneInGame::Frame()
 		{//GameClear
 			if (m_Win)
 			{
-				if (!m_bIngame2_CinemaOver && m_iCurrentCineCount == 2)
+				if (sound_bgm->m_fVolume <= 0.01f)
+					sound_bgm->Stop();
+				if (!m_bIngame2_CinemaOver && m_iCurrentCineCount == 2 && m_pInterFade->m_VertexList[0].c.w >= 0.9f)
 				{
-					Player::GetInstance().m_vPos = m_vBossSpawnPos;
+					auto sound = I_Sound.Find(L"Ending.mp3");
+					sound->Play(true);
+					sound = I_Sound.Find(L"yasuo_sound_win.mp3");
+					sound->VolumeSet(0.3f);
+					sound->Play(true);
+					m_pInterFade->m_pWorkList.push_back(new InterfaceFadeOut(2.0f));
 					m_pBoss->m_vPos = m_vBossSpawnPos;
+					m_pBoss->Frame();
+					Player::GetInstance().m_vPos = m_vBossSpawnPos;
+					Player::GetInstance().Frame();
 					SetCinemaCamera(L"Cine_Over");
+					g_pWriter->SetText(WriteText(621, 673, L"����7ȣ��", { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
+					m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
 					m_bIngame2_CinemaOver = true;
 				}
 				if (m_bIngame2_CinemaOver && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
 				{
+					sound_bgm->VolumeDown(g_fSecondPerFrame / 5.0f);
 					m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
 					if (!Player::GetInstance().IsVictory())
 					{
@@ -368,11 +442,23 @@ bool    SceneInGame::Frame()
 				}
 				if (m_bIngame2_CinemaOver && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 2)
 				{
+					auto sound = I_Sound.Find(L"sound_win_effect1.mp3");
+					sound->VolumeSet(0.3f);
+					sound->Play(true);
 					m_pInter_Win1->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
 					m_iCurrentCineCount = 3;
 					m_pQuadTree->m_fCamMoveCurrent = 0.0f;
 					m_bIngame2_CinemaOver = false;
 					SetMainCamera();
+				}
+				if (!m_bIngame2_CinemaOver && m_iCurrentCineCount == 3 && m_pInter_Win1->m_VertexList[0].c.w >= 1.0f)
+				{
+					m_iCurrentCineCount = 4;
+					m_pInter_Win1->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+					auto sound = I_Sound.Find(L"sound_win_effect2.mp3");
+					sound->VolumeSet(0.3f);
+					sound->Play(true);
+					m_pInter_Win2->m_pWorkList.push_back(new InterfaceFadeIn(4.0f));
 				}
 			}
 		}
@@ -381,7 +467,8 @@ bool    SceneInGame::Frame()
 	
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"path", Player::GetInstance().GetPosition());
+		I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", Player::GetInstance().GetPosition());
+		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
 	}
 
 
@@ -389,7 +476,6 @@ bool    SceneInGame::Frame()
 	{
 		Player::GetInstance().SetVictory();
 	}*/
-
 
 	for (auto manager : m_StateManagerMap)
 	{
@@ -420,11 +506,13 @@ bool    SceneInGame::Frame()
 		{
 			if (m_pBoss->IsDead() && !m_Win)
 			{
+				m_pInterFade->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
 				m_Win = true;
 				//sound+
 				for (auto enemy : m_Enemies)
 				{
 					enemy->m_HealthPoint = 0.0f;
+					enemy->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(0.0f, 1.0f));
 					if (enemy->IsDead())
 					{
 						++m_iMobDeadCount;
@@ -435,6 +523,9 @@ bool    SceneInGame::Frame()
 		
 		if (Player::GetInstance().IsDead() && !m_Defeat)
 		{
+			auto sound = I_Sound.Find(L"sound_died.mp3");
+			sound->VolumeSetCompMin(0.3f);
+			sound->Play(true);
 			m_Defeat = true;
 			//sound+
 			m_pInter_Defeat->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
@@ -453,17 +544,15 @@ bool    SceneInGame::Frame()
 		enemy->m_pInterDamage->Frame();
 	}
 
-	//if (m_pBoss)
-	//{
-	//	m_pBoss->Frame();
-	//}
 	I_Effect.Frame();
+	m_pInterText->Frame();
+	m_pInter_Damage_blood->Frame();
 	m_pInter_Win1->Frame();
 	m_pInter_Win2->Frame();
 	m_pInter_Defeat->Frame();
 	m_pInter_MinimapContents->Frame();
 	m_pInter_Ingame->Frame();
-	//m_pInter_Title->Frame();
+	m_pInterFade->Frame();
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
 	g_CurrentCameraPos = XMFLOAT4(m_pCameraCurrent->m_vPos.x, m_pCameraCurrent->m_vPos.y, m_pCameraCurrent->m_vPos.z, 1.0f);
 	return true;
@@ -516,34 +605,34 @@ bool    SceneInGame::Render()
 		m_pBoss->Render();
 	}*/
 
-	if (m_pDebugBox)
+	if (m_pDebugBox && false)
 	{
-		//if (m_pBoss)
-		//{
-		//	m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
-		//    m_pDebugBox->SetColor({1, 0, 0, 1});
-		//    m_pDebugBox->UpdateBuffer();
-		//    m_pDebugBox->Render();
-		//}
-		//for (auto box : I_Collision.GetMapCollisionList())
-		//{
-		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//    m_pDebugBox->SetBox(box);
-		//    m_pDebugBox->SetColor({1, 0, 0, 1});
-		//    m_pDebugBox->UpdateBuffer();
-		//    m_pDebugBox->Render();
-		//}
+		/*if (m_pBoss)
+		{
+			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
+		    m_pDebugBox->SetColor({1, 0, 0, 1});
+		    m_pDebugBox->UpdateBuffer();
+		    m_pDebugBox->Render();
+		}
+		for (auto box : I_Collision.GetMapCollisionList())
+		{
+		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		    m_pDebugBox->SetBox(box);
+		    m_pDebugBox->SetColor({1, 0, 0, 1});
+		    m_pDebugBox->UpdateBuffer();
+		    m_pDebugBox->Render();
+		}
 
-		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//TColor color = TColor(0, 0, 1, 1);
-		//for (T_BOX* box : m_debugBoxList)
-		//{
-		//	m_pDebugBox->SetBox(*box);
-		//	m_pDebugBox->SetColor(color);
-		//	m_pDebugBox->UpdateBuffer();
-		//	m_pDebugBox->Render();
-		//}
+		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		TColor color = TColor(0, 0, 1, 1);
+		for (T_BOX* box : m_debugBoxList)
+		{
+			m_pDebugBox->SetBox(*box);
+			m_pDebugBox->SetColor(color);
+			m_pDebugBox->UpdateBuffer();
+			m_pDebugBox->Render();
+		}*/
 
 		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
 		//{
@@ -593,7 +682,7 @@ bool    SceneInGame::Render()
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//Player::GetInstance().m_pTrail->Render();
 
-    // Camera의 위치정보가 필요하므로 지우지 말 것
+    // Camera�� �ġ����� �ʿ��ϹǷ� ����� �� ��
 	auto lights = SSB::I_Light.GetLightList();
 	for (auto light : lights)
 	{
@@ -623,6 +712,8 @@ bool SceneInGame::PostRender()
 	I_Effect.Render();
 
 	RenderMinimap();
+	m_pInterText->Render();
+	m_pInter_Damage_blood->Render();
     m_pInter_Ingame->Render();
 	if (m_Win)
 	{
@@ -631,6 +722,7 @@ bool SceneInGame::PostRender()
 	}
 	else if(m_Defeat)
 		m_pInter_Defeat->Render();
+	m_pInterFade->Render();
 	
 	return true;
 }
@@ -641,6 +733,27 @@ bool    SceneInGame::Release()
 	Player::GetInstance().m_pInterGageHP = nullptr;
 	m_pInter_BossHP = nullptr;
 	m_pCameraCurrent = nullptr;
+
+	if (m_pInterText)
+	{
+		m_pInterText->Release();
+		delete m_pInterText;
+		m_pInterText = nullptr;
+	}
+
+	if (m_pInter_Damage_blood)
+	{
+		m_pInter_Damage_blood->Release();
+		delete m_pInter_Damage_blood;
+		m_pInter_Damage_blood = nullptr;
+	}
+
+	if (m_pInterFade)
+	{
+		m_pInterFade->Release();
+		delete m_pInterFade;
+		m_pInterFade = nullptr;
+	}
 
 	if (m_pInter_Win1)
 	{
@@ -823,8 +936,8 @@ void    SceneInGame::CharacterLoad()
 				enemy = new SSB::BossMob();
 				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
 				m_pBoss = dynamic_cast<SSB::BossMob*>(enemy);
-				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Spawn", &m_pBoss->m_pModel);
-				m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
+				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "NotUse", &m_pBoss->m_pModel);
+				/*m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);*/
 				enemy->Scale(0.01f);
 			}
 			else if (m_pQuadTree->m_EnemySpawnList[i].first == fieldBossStr)
@@ -996,12 +1109,6 @@ void    SceneInGame::UiLoad()
 	m_pInter_Damage_blood->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_blood.dds");
 	m_pInter_Damage_blood->SetAttribute(TVector3(0, 0, 0));
 
-	for (int i = 0; i < m_pInter_Damage_blood->m_VertexList.size(); i++)
-		m_pInter_Damage_blood->m_VertexList[i].c.w = 0.0f;
-
-	m_pInter_Ingame->SetAllAlpha(0.0f);
-	m_pInter_MinimapContents->SetAllAlpha(0.0f);
-
 	m_pInter_Win1 = new Interface();
 	m_pInter_Win1->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/win1.dds");
 	m_pInter_Win1->SetAttribute(TVector3(0, 0, 0));
@@ -1016,6 +1123,22 @@ void    SceneInGame::UiLoad()
 	m_pInter_Defeat->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/defeat.dds");
 	m_pInter_Defeat->SetAttribute(TVector3(0, 0, 0));
 	m_pInter_Defeat->SetAllAlpha(0.0f);
+
+	m_pInterFade = new Interface();
+	m_pInterFade->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/fade.png");
+	m_pInterFade->SetAttribute(TVector3(0, 0, 0));
+	m_pInterFade->SetAllAlpha(0.0f);
+	
+	
+	m_pInterText = new Interface();
+	m_pInterText->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/frame_text.dds");
+	m_pInterText->SetAttribute(TVector3(0, 0, 0));
+	m_pInterText->SetAllAlpha(0.0f);
+
+	m_pInterFade->SetAllAlpha(0.0f);
+	m_pInter_Damage_blood->SetAllAlpha(0.0f);
+	m_pInter_Ingame->SetAllAlpha(0.0f);
+	m_pInter_MinimapContents->SetAllAlpha(0.0f);
 	if (m_Scene == S_INGAME2)
 		return;
 	m_pInter_GameTitle = new Interface();
@@ -1344,21 +1467,6 @@ void    SceneInGame::FSMLoad()
 
 		manager->Init();
 		m_StateManagerMap.insert(std::make_pair(SSB::kBossMobStateManager, manager));
-
-		// FMod가 1초 미만의 Sound를 Loop 시 Loop가 안되는 버그가 있음
-		// Channel의 문제로 짐작 중
-		{
-			auto sound = I_Sound.Find(L"BossMove.mp3");
-			sound->VolumeDown(100);
-			sound->Play(true);
-			sound->Stop();
-		}
-		{
-			auto sound = I_Sound.Find(L"BossDash.mp3");
-			sound->VolumeDown(100);
-			sound->Play(true);
-			sound->Stop();
-		}
 	}
 }
 

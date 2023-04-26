@@ -5,21 +5,23 @@
 #include "ShaderMgr.h"
 #include "SoundMgr.h"
 #include "DXState.h"
+Writer* g_pWriter = nullptr;
 
 HRESULT GameCore::CreateDxResource()
 {
-	m_Writer.Init();
+	g_pWriter = new Writer();
+	g_pWriter->Init();
 
 	IDXGISurface1* pBackBuffer;
 	m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface1), (void**)&pBackBuffer);
-	m_Writer.Set(pBackBuffer);
+	g_pWriter->Set(pBackBuffer);
 	pBackBuffer->Release();
 	return S_OK;
 }
 
 HRESULT GameCore::DeleteDxResource()
 {
-	m_Writer.DeleteDxResource();
+	g_pWriter->DeleteDxResource();
 	return S_OK;
 }
 
@@ -99,7 +101,7 @@ bool	GameCore::CoreFrame()
 	I_Input.Frame();
 	I_Timer.Frame();
 	I_Sound.Frame();
-	m_Writer.Frame();
+	g_pWriter->Frame();
 
 	return Frame();
 }
@@ -153,7 +155,7 @@ bool	GameCore::CorePostRender()
 
 	I_Input.Render();
 	I_Timer.Render();
-	m_Writer.Render();
+	g_pWriter->Render();
 
 	m_pSwapChain->Present(0, 0);
 	ClearD3D11DeviceContext();
@@ -172,7 +174,12 @@ bool	GameCore::CoreRelease()
 	I_Input.Release();
 	I_Timer.Release();
 
-	m_Writer.Release();
+	if (g_pWriter)
+	{
+		g_pWriter->Release();
+		delete g_pWriter;
+		g_pWriter = nullptr;
+	}
 
 	DXState::Release();
 	DXDevice::Release();

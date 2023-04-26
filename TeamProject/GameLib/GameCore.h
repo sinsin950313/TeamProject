@@ -28,7 +28,7 @@ public:
 public:
 	bool	m_bGameRun;
 	bool	m_isRelease;
-	Writer m_Writer;
+	//Writer  m_Writer;
 
 	BaseObject		m_BG;
 	RenderTarget	m_RT;

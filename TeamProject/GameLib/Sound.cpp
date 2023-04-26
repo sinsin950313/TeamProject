@@ -20,7 +20,7 @@ bool Sound::Play(bool bLoop)
 		FMOD_RESULT hr = m_pSystem->playSound(m_pSound, nullptr, false, &m_pChannel);
 		if (hr == FMOD_OK)
 		{
-			m_fVolume = 0.5f;
+			//m_fVolume = 0.5f;
 			m_pChannel->setVolume(m_fVolume);
 			SetLoop(bLoop);
 		}
@@ -32,7 +32,7 @@ bool Sound::PlayEffect()
 	FMOD_RESULT hr = m_pSystem->playSound(m_pSound, nullptr, false, &m_pChannel);
 	if (hr == FMOD_OK)
 	{
-		m_fVolume = 0.5f;
+		//m_fVolume = 0.5f;
 		m_pChannel->setVolume(m_fVolume);
 		SetLoop();
 	}
@@ -78,8 +78,26 @@ void Sound::VolumeDown(float fVolume)
 	m_pChannel->setVolume(m_fVolume);
 }
 
-bool    Sound::Init()
+void Sound::VolumeSetCompMin(float fVolume)
 {
+	m_fVolume = min(fVolume, m_fVolume);
+	m_pChannel->setVolume(m_fVolume);
+}
+
+void Sound::VolumeSetCompMax(float fVolume)
+{
+	m_fVolume = max(fVolume, m_fVolume);
+	m_pChannel->setVolume(m_fVolume);
+}
+
+void Sound::VolumeSet(float fVolume)
+{
+	m_fVolume = fVolume;
+	m_pChannel->setVolume(m_fVolume);
+}
+
+bool    Sound::Init()
+{	
 	return true;
 }
 bool    Sound::Frame()
