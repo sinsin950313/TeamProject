@@ -14,7 +14,7 @@
 #include "DirectionalLight.h"
 #include "LightManager.h"
 #include "EffectMgr.h"
-#include "FieldBoss.h"
+
 #include "FieldBossStateService.h"
 #include "Writer.h"
 
@@ -189,13 +189,13 @@ bool    SceneInGame::Frame()
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
-	if (I_Input.GetKey('M') == KEY_PUSH)
+	/*if (I_Input.GetKey('M') == KEY_PUSH)
 	{
 		if (m_pBoss != nullptr)
 		{
 			m_pBoss->_isAngry = true;
 		}
-	}
+	}*/
 
 	if (m_Scene == S_INGAME)
 	{
@@ -401,6 +401,7 @@ bool    SceneInGame::Frame()
 			}
 			if (!m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 0)
 			{
+				m_pBoss->_isAngry = true;
 				m_iCurrentCineCount = 1;
 				m_bIngame2_CinemaIntro_Start = false;
 				m_bIngame2_CinemaIntro_End = true;
@@ -567,7 +568,6 @@ bool    SceneInGame::Frame()
 				m_pCameraCurrent->CameraClosing(3.0f);
 				m_pInterFade->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
 				m_Win = true;
-				//sound+
 				for (auto enemy : m_Enemies)
 				{
 					enemy->m_HealthPoint = 0.0f;
@@ -586,7 +586,6 @@ bool    SceneInGame::Frame()
 			sound->VolumeSetCompMin(0.3f);
 			sound->Play(true);
 			m_Defeat = true;
-			//sound+
 			m_pInter_Defeat->m_pWorkList.push_back(new InterfaceFadeIn(3.0f));
 		}
 	}
@@ -771,8 +770,10 @@ bool SceneInGame::PostRender()
 
 	I_Effect.Render();
 	
-	RenderMinimap();
 	m_pInter_blur->Render();
+
+	RenderMinimap();
+
 	m_pInterText->Render();
 	m_pInter_Damage_blood->Render();
 	m_pInter_Ingame->Render();
@@ -887,12 +888,6 @@ bool    SceneInGame::Release()
 		delete enemy;
 	}
 
-	//if (m_pBoss)
-	//{
-	//	m_pBoss->Release();
-	//	delete m_pBoss;
-	//}
-
 	if (m_pDebugBox)
 	{
 		m_pDebugBox->Release();
@@ -1000,18 +995,17 @@ void    SceneInGame::CharacterLoad()
 				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
 				m_pBoss = dynamic_cast<SSB::BossMob*>(enemy);
 				I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "NotUse", &m_pBoss->m_pModel);
-				/*m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);*/
 				enemy->Scale(0.01f);
 			}
 			else if (m_pQuadTree->m_EnemySpawnList[i].first == fieldBossStr)
 			{
-				//XMFLOAT3 BossPos;
-				//XMStoreFloat3(&BossPos, m_pQuadTree->m_EnemySpawnList[i].second.position);
-				//m_vBossSpawnPos = BossPos;
-
+				XMFLOAT3 BossPos;
+				XMStoreFloat3(&BossPos, m_pQuadTree->m_EnemySpawnList[i].second.position);
+				m_vBossSpawnPos = BossPos;
 				enemy = new SSB::FieldBoss();
 				enemy->SetDevice(m_pd3dDevice, m_pImmediateContext);
-				I_Model.Load("Varus", "Idle", &enemy->m_pModel);
+				m_pFieldBoss = dynamic_cast<SSB::FieldBoss*>(enemy);
+				I_Model.Load("Varus", "Idle", &m_pFieldBoss->m_pModel);
 				enemy->Scale(0.02f);
 				m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
 				enemy->Initialize_RegisterSkill(SSB::kFieldBossMobSkillCasting, 20);

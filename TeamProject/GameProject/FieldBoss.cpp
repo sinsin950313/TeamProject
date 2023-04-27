@@ -28,7 +28,12 @@ namespace SSB
 	}
 	FieldBoss::~FieldBoss()
 	{
-		Release();
+		for (auto arrow : _activeArrows)
+		{
+			arrow->UnActive();
+			_unActiveArrows.push(arrow);
+		}
+		_activeArrows.clear();
 
 		while(!_unActiveArrows.empty())
 		{
@@ -95,13 +100,7 @@ namespace SSB
 	}
 	bool FieldBoss::Release()
 	{
-		for (auto arrow : _activeArrows)
-		{
-			arrow->UnActive();
-			_unActiveArrows.push(arrow);
-		}
-		_activeArrows.clear();
-
+		Character::Release();
 		return true;
 	}
 	FieldBoss::Arrow::Arrow()
