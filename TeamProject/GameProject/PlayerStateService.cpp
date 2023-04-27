@@ -1326,10 +1326,11 @@ namespace SSB
 
 			for (auto elem : _blackboard->DamagedCharacters)
 			{
-				elem->Damage(100);
-				if (_blackboard->DamagedCharacters.find(elem) == _blackboard->DamagedCharacters.end())
+				float damage = 100;
+				elem->Damage(damage);
+				//if (_blackboard->DamagedCharacters.find(elem) == _blackboard->DamagedCharacters.end())
 				{
-					float currentHp = elem->m_HealthPoint - m_pCharacter->m_Damage;
+					float currentHp = elem->m_HealthPoint - damage;
 					if (currentHp <= 0)
 						currentHp = 0;
 					elem->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / elem->m_kHealthPointMax, 1.0f));
