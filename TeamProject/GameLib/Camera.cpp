@@ -345,10 +345,28 @@ void Camera::UpdateCameraShake()
 		m_vPos += noisePos;
 		m_fShakeCurrent += g_fSecondPerFrame;
 	}
+}
+
+void Camera::CameraClosing(float fDuration)
+{
+	m_fClosingCurrent = 0.0f;
+	m_fClosingDuration = fDuration;
+}
+
+void Camera::UpdateCameraClosing()
+{
+	if (m_fClosingCurrent < m_fClosingDuration)
+	{
+		TVector3 posOrigin = m_vPos;
+		TVector3 vLook = m_vTarget - posOrigin;
+		vLook.Normalize();
+		m_vPos += vLook * 2.0f;
+		vLook = posOrigin - m_vPos;
+		m_vPos += vLook * (m_fClosingCurrent / m_fClosingDuration);
+		m_fClosingCurrent += g_fSecondPerFrame;
+	}
 	else
 	{
-		/*XMFLOAT3 pos;
-		XMStoreFloat3(&pos, XMVectorLerp(m_vPos, m_vShakeOriginPos, g_fSecondPerFrame * 30.0f));
-		m_vPos = pos;*/
+		m_fClosingDuration = 0.5f;
 	}
 }

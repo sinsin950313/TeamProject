@@ -18,6 +18,7 @@ public:
     void    FSMLoad();
     void    CharacterLoad();
     void    MapLoad();
+    void    ScenarioLoad();
     
     void    RenderMinimap();
 
@@ -92,6 +93,8 @@ public:
     InterfaceMinimap* m_pInter_MinimapContents = nullptr;
     InterfaceMinimap* m_pInter_Minimap_player = nullptr;
 
+    Interface* m_pInter_blur;
+
     CameraCinema* m_pCinemaCamera = nullptr;
     Camera* m_pCameraCurrent = nullptr;
 
@@ -102,14 +105,19 @@ public:
     UINT m_iCurrentCineCount = 0;
     bool m_bIngame1_CinemaIntro_Start = false;
     bool m_bIngame1_CinemaIntro_End = false;
+    bool m_bIngame1_houdgiend = false;
     bool m_bIngame1_Cinema1_Start = false;
     bool m_bIngame1_Cinema1_End = false;
     bool m_bIngame1_Cinema2_Start = false;
     bool m_bIngame1_Cinema2_End = false;
+    bool m_bIngame1_EnemyHalfCount = false;
 
     bool m_bIngame2_CinemaIntro_Start = false;
     bool m_bIngame2_CinemaIntro_End = false;
     bool m_bIngame2_CinemaOver = false;
+    bool m_bIngame2_EnemyHalfCount = false;
+    std::map<std::wstring, std::wstring> m_ScenarioList;
+
     TVector3 m_vBossSpawnPos;
 
 public:

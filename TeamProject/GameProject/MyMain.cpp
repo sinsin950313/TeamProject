@@ -2,7 +2,9 @@
 #include "Input.h"
 #include "SceneMgr.h"
 #include "LightManager.h"
-
+float g_fFogStart = 30.0f;
+float g_fFogEnd = 200.0f;
+float g_fFogDensity = 0.001f;
 int		MyMain::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     //if (m_pMainCamera)
@@ -66,9 +68,9 @@ bool    MyMain::Render()
         {
             light->Render();
             m_screen.m_ConstantData_Fog.currentCameraPos = g_CurrentCameraPos;
-            m_screen.m_ConstantData_Fog.linearFogStart = 30.0f;
-            m_screen.m_ConstantData_Fog.linearFogEnd = 150.0f;
-            m_screen.m_ConstantData_Fog.expFogDensity = 0.001f;
+            m_screen.m_ConstantData_Fog.linearFogStart = g_fFogStart;
+            m_screen.m_ConstantData_Fog.linearFogEnd = g_fFogEnd;
+            m_screen.m_ConstantData_Fog.expFogDensity = g_fFogDensity;
             m_pImmediateContext->UpdateSubresource(m_screen.m_pConstantBuffer_Fog, NULL, NULL, &m_screen.m_ConstantData_Fog, NULL, NULL);
             m_pImmediateContext->PSSetConstantBuffers(11, 1, &m_screen.m_pConstantBuffer_Fog);
             m_screen.Render();

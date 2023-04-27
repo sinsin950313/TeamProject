@@ -57,6 +57,7 @@ bool CameraCinema::Frame()
 			XMConvertToRadians(m_fCameraRollAngle));
 
 	UpdateCameraShake();
+	UpdateCameraClosing();
 	XMVECTOR translation = m_vPos;
 
 	m_matWorld = XMMatrixTransformation({ 0,0,0,0 }, { 0,0,0,0 }, scale, { 0,0,0,0 }, rotation, translation);

@@ -88,7 +88,11 @@ public:
 	void CameraShake();
 	void UpdateCameraShake();
 	void InitHash(int seed);
-
+	float m_fClosingCurrent = 1.5f;
+	float m_fClosingDuration = 0.5f;
+	TVector3 m_vPosOrigin;
+	void CameraClosing(float fDuration = 0.5f);
+	void UpdateCameraClosing();
 public:
 	virtual void CreateViewMatrix(TVector3 vEye, TVector3 vAt, TVector3 vUp);
 	virtual void CreateProjMatrix(float fNear, float fFar, float fFovY, float fAspectRatio);
