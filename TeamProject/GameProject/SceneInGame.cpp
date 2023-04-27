@@ -187,6 +187,11 @@ bool    SceneInGame::Frame()
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
+	if (I_Input.GetKey('M') == KEY_PUSH)
+	{
+		m_pBoss->_isAngry = true;
+	}
+
 	if (m_Scene == S_INGAME)
 	{
 		{//Intro

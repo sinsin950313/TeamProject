@@ -25,13 +25,19 @@ namespace SSB
             ReserveNextTransferName(kBossMobMove);
             SetTransfer();
 		}
+
+		if (mob->_isAngry)
+		{
+            ReserveNextTransferName(kBossMobAngry);
+            SetTransfer();
+		}
 	}
 	void BossMobIdleState::Action()
 	{
 	}
 	std::vector<std::string> BossMobIdleState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobMove, kBossMobAirborne };
+		return { kBossMobDead, kBossMobMove, kBossMobAirborne, kBossMobAngry };
 	}
 	BossMobAngryState::BossMobAngryState(float transferRequireTime) : _transferRequireTime(transferRequireTime)
 	{
@@ -47,6 +53,7 @@ namespace SSB
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
+			mob->_isAngry = false;
             ReserveNextTransferName(kBossMobIdle);
             SetTransfer();
 		}
@@ -82,7 +89,7 @@ namespace SSB
 
 		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-            ReserveNextTransferName(kBossMobAngry);
+            ReserveNextTransferName(kBossMobIdle);
             SetTransfer();
 		}
 	}
@@ -120,6 +127,12 @@ namespace SSB
 			}
 		}
 
+		if (mob->_isAngry)
+		{
+            ReserveNextTransferName(kBossMobAngry);
+            SetTransfer();
+		}
+
 		if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 		{
 			ReserveNextTransferName(kBossMobMove);
@@ -137,7 +150,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobMoveState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobAttack1, kBossMobDashStart, kBossMobMove, kBossMobAirborne };
+		return { kBossMobDead, kBossMobAttack1, kBossMobDashStart, kBossMobMove, kBossMobAirborne, kBossMobAngry };
 	}
 	void BossMobDashStartState::StateDecision()
 	{
@@ -701,7 +714,7 @@ namespace SSB
 	}
 	std::vector<std::string> BossMobSpawnState::GetLinkedList()
 	{
-		return { kBossMobDead, kBossMobAngry };
+		return { kBossMobDead, kBossMobIdle };
 	}
     void BossMobAirBorneState::StateDecision()
     {
