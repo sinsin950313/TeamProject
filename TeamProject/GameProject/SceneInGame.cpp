@@ -160,6 +160,8 @@ bool    SceneInGame::Init()
 	//m_debugBoxList.push_back(&testBox);
 	//I_Collision.AddStaticObjectBox(&testBox, NULL);
 
+	I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
+
 	m_pDebugBox = new DebugBox;
 	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
