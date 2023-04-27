@@ -122,7 +122,7 @@ void SceneInGame::DataLoad()
 
 	CameraLoad();
 	I_Effect.SetDevice(m_pd3dDevice, m_pImmediateContext);
-	I_Effect.SetCamera(m_pMainCamera);
+	I_Effect.SetCamera(m_pCameraCurrent);
 
 	MapLoad();
 	
@@ -400,8 +400,11 @@ bool    SceneInGame::Frame()
 				sound->Play(true);
 				SetCinemaCamera(L"Cine_1_1_End");
 				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_CinemaIntro_End")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
-				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));	
-				//I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", m_vBossSpawnPos);
+				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
+
+				TVector3 vLook = m_pCameraCurrent->m_vPos - m_vBossSpawnPos;
+				vLook.Normalize();
+				I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", m_vBossSpawnPos + vLook * 3.0f);
 			}
 			if (m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
 			{
@@ -514,7 +517,6 @@ bool    SceneInGame::Frame()
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
 		I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", Player::GetInstance().GetPosition());
-		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
 	}
 
 
@@ -600,6 +602,7 @@ bool    SceneInGame::Frame()
 	m_pInter_MinimapContents->Frame();
 	m_pInter_Ingame->Frame();
 	m_pInterFade->Frame();
+	m_pInter_blur->Frame();
 	//modelBox.UpdateBox(Player::GetInstance().m_matWorld);
 	g_CurrentCameraPos = XMFLOAT4(m_pCameraCurrent->m_vPos.x, m_pCameraCurrent->m_vPos.y, m_pCameraCurrent->m_vPos.z, 1.0f);
 	return true;
@@ -757,20 +760,21 @@ bool SceneInGame::PostRender()
 	}
 
 	I_Effect.Render();
-
+	
 	RenderMinimap();
+	m_pInter_blur->Render();
 	m_pInterText->Render();
 	m_pInter_Damage_blood->Render();
-    m_pInter_Ingame->Render();
+	m_pInter_Ingame->Render();
 	if (m_Win)
 	{
 		m_pInter_Win1->Render();
 		m_pInter_Win2->Render();
 	}
-	else if(m_Defeat)
+	else if (m_Defeat)
 		m_pInter_Defeat->Render();
 	m_pInterFade->Render();
-	
+
 	return true;
 }
 
@@ -780,6 +784,13 @@ bool    SceneInGame::Release()
 	Player::GetInstance().m_pInterGageHP = nullptr;
 	m_pInter_BossHP = nullptr;
 	m_pCameraCurrent = nullptr;
+
+	if (m_pInter_blur)
+	{
+		m_pInter_blur->Release();
+		delete m_pInter_blur;
+		m_pInter_blur = nullptr;
+	}
 
 	if (m_pInterText)
 	{
@@ -948,6 +959,7 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().m_pInterSkillE = m_pInter_Skill_E;
 		Player::GetInstance().m_pInterSkillR = m_pInter_Skill_R;
 		Player::GetInstance().m_pInterDamageBlood = m_pInter_Damage_blood;
+		Player::GetInstance().m_pInterBlur = m_pInter_blur;
 	}
 
 
@@ -1153,7 +1165,6 @@ void    SceneInGame::UiLoad()
 	m_pInterFade->SetAttribute(TVector3(0, 0, 0));
 	m_pInterFade->SetAllAlpha(0.0f);
 	
-	
 	m_pInterText = new Interface();
 	m_pInterText->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/frame_text.dds");
 	m_pInterText->SetAttribute(TVector3(0, 0, 0));
@@ -1163,6 +1174,12 @@ void    SceneInGame::UiLoad()
 	m_pInter_Damage_blood->SetAllAlpha(0.0f);
 	m_pInter_Ingame->SetAllAlpha(0.0f);
 	m_pInter_MinimapContents->SetAllAlpha(0.0f);
+
+	m_pInter_blur = new Interface();
+	m_pInter_blur->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Blur.hlsl", L"../../data/UI/blur_alpha.dds", L"VS", L"PS_Blur");
+	m_pInter_blur->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_blur->SetAllAlpha(0.0f);
+
 	if (m_Scene == S_INGAME2)
 		return;
 	m_pInter_GameTitle = new Interface();

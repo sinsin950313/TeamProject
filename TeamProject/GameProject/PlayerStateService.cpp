@@ -865,6 +865,7 @@ namespace SSB
 		if (!_blackboard->Initialized)
 		{
 			Player::GetInstance().m_pMainCamera->CameraClosing();
+			Player::GetInstance().m_pInterBlur->m_pWorkList.push_back(new InterfaceFadeOut(0.5f));
 			Player::GetInstance().m_pInterSkillDash->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerDash)));
 			player->ActiveSkill(kPlayerDash);
 

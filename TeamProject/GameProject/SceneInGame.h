@@ -93,6 +93,8 @@ public:
     InterfaceMinimap* m_pInter_MinimapContents = nullptr;
     InterfaceMinimap* m_pInter_Minimap_player = nullptr;
 
+    Interface* m_pInter_blur;
+
     CameraCinema* m_pCinemaCamera = nullptr;
     Camera* m_pCameraCurrent = nullptr;
 

@@ -52,6 +52,7 @@ public:
     Interface* m_pInterSkillR;
     Interface* m_pInterSkillPassive;
     Interface* m_pInterDamageBlood;
+    Interface* m_pInterBlur;
 
 public:
     bool m_IsImmortal = false;

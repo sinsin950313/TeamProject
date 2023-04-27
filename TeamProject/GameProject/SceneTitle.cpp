@@ -10,7 +10,7 @@ E_SCENE     SceneTitle::NextScene()
 {
 	if (I_Input.GetKey(VK_SPACE) == KEY_UP)
 	{
-		return E_SCENE::S_INGAME2;
+		return E_SCENE::S_INGAME;
 	}
 	return S_TITLE;
 }
