@@ -105,6 +105,7 @@ private:
         bool IsHit();
         bool IsFinished();
         std::vector<Character*> GetAirborneList();
+        void Clear();
 
     public:
         bool Init() override;

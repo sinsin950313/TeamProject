@@ -80,6 +80,10 @@ bool    Player::Frame()
 	{
 		m_Tornado.Frame();
 	}
+	else
+	{
+		m_Tornado.Clear();
+	}
 
 	return true;
 }
@@ -317,6 +321,11 @@ std::vector<Character*> Player::Tornado::GetAirborneList()
 	return ret;
 }
 
+void Player::Tornado::Clear()
+{
+	m_DamagedCharacters.clear();
+}
+
 bool Player::Tornado::Init()
 {
 	if (m_pDebugBox != nullptr)
@@ -333,6 +342,8 @@ bool Player::Tornado::Init()
 	data.Depth = 2;
 	m_pModel->Initialize_SetBoundingVolume(data);
 	m_pModel->Init();
+
+	m_DamagedCharacters.clear();
 
 	return true;
 }
