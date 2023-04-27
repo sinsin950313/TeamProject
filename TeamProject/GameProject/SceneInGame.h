@@ -8,7 +8,9 @@
 #include "CharacterStateManager.h"
 #include "EnemyNPCMob.h"
 #include "BossMob.h"
+#include "FieldBoss.h"
 #include "RenderTarget.h"
+
 class SceneInGame : public Scene
 {
 public:
@@ -56,6 +58,7 @@ public:
     std::map<SSB::StateManagerName, SSB::CharacterStateManager*> m_StateManagerMap;
 
     SSB::BossMob* m_pBoss = nullptr;
+    SSB::FieldBoss* m_pFieldBoss = nullptr;
 
     std::vector<DamageFont> m_DamageFontList;
     Interface* m_pInter_Ingame;

@@ -19,7 +19,7 @@ namespace SSB
 
 		public:
 			Arrow();
-			~Arrow();
+			virtual ~Arrow();
 
 		private:
 			void Move();
