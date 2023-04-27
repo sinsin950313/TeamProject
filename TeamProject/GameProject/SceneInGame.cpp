@@ -189,7 +189,10 @@ bool    SceneInGame::Frame()
 
 	if (I_Input.GetKey('M') == KEY_PUSH)
 	{
-		m_pBoss->_isAngry = true;
+		if (m_pBoss != nullptr)
+		{
+			m_pBoss->_isAngry = true;
+		}
 	}
 
 	if (m_Scene == S_INGAME)
@@ -877,7 +880,7 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 2);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 2);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 30);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 60);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDrink, 30);
 		Player::GetInstance().Init();
 	}

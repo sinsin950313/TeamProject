@@ -1078,7 +1078,7 @@ namespace SSB
 		Player* player = static_cast<Player*>(m_pCharacter);
 		if (!_blackboard->Initialized)
 		{
-			Player::GetInstance().ActiveSkill(kPlayerPierce);
+			Player::GetInstance().ActiveSkill(kPlayerUltimate);
 
 			((CameraTPS*)player->m_pMainCamera)->m_CharCamDist = 30;
 
