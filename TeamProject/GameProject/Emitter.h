@@ -44,6 +44,8 @@ public:
 	TMatrix		m_matParentRotation;
 	TMatrix		m_matParentScale;
 
+	TMatrix*	m_matTopWorld;
+
 public:
 	// 파티클 매니저 변수
 	BasicData			m_BasicData;

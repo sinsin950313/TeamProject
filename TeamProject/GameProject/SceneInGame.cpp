@@ -48,6 +48,7 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 {
 	m_pQuadTree->m_CurrentCinema = m_pQuadTree->m_CinemaList.find(szCinemaName)->second;
 	Player::GetInstance().m_pMainCamera = m_pCinemaCamera;
+	I_Effect.SetCamera(m_pCinemaCamera);
 	if(m_pBoss)
 		m_pBoss->m_pMainCamera = m_pCinemaCamera;
 	m_pCameraCurrent = m_pCinemaCamera;
@@ -84,6 +85,7 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 
 void SceneInGame::SetMainCamera()
 {
+	I_Effect.SetCamera(m_pMainCamera);
 	m_pCameraCurrent = m_pMainCamera;
 	m_pQuadTree->m_pCurrentCamera = m_pMainCamera;
 	Player::GetInstance().m_pMainCamera = m_pMainCamera;
@@ -415,7 +417,7 @@ bool    SceneInGame::Frame()
 
 				TVector3 vLook = m_pCameraCurrent->m_vPos - m_vBossSpawnPos;
 				vLook.Normalize();
-				I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", m_vBossSpawnPos + vLook * 3.0f);
+				//I_Effect.CreateEffect(L"../../data/effectdata/test.EFT");
 			}
 			if (m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
 			{
@@ -527,7 +529,7 @@ bool    SceneInGame::Frame()
 	
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", Player::GetInstance().GetPosition());
+		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
 		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
 	}
 

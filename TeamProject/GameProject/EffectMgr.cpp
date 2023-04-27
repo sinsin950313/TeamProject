@@ -13,12 +13,12 @@ void	EffectMgr::SetCamera(Camera* pCamera)
 	m_pCamera = pCamera;
 }
 
-void	EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
+Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos)
 {
 	FILE* stream;
 	if (_wfopen_s(&stream, path.c_str(), L"rt, ccs=UNICODE") != 0)
 	{
-		return;
+		return nullptr;
 	}
 	std::wifstream is(stream);
 	std::wstring str;
@@ -208,7 +208,7 @@ void	EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
 		pEffect->Release();
 		delete pEffect;
 		is.close();
-		return;
+		return nullptr;
 	}
 	for (int i = 0; i < iEmitterNum; i++)
 	{
@@ -221,6 +221,7 @@ void	EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
 	m_List.push_back(pEffect);
 
 	is.close();
+	return pEffect;
 }
 
 bool	EffectMgr::Frame()

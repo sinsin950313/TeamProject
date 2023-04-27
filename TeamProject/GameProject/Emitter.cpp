@@ -103,6 +103,7 @@ void	Emitter::SpawnParticle()
 		if (m_BasicData.iInheritPosType >= 1)
 			D3DXMatrixTranslation(&pParticle->m_matParentTrans, vPos.x, vPos.y, vPos.z);
 
+		pParticle->m_matTopWorld = m_matTopWorld;
 
 		for (auto pChild : m_pChild)
 		{
@@ -135,6 +136,8 @@ Emitter* Emitter::CopyEmitter(Emitter* pEmitter)
 
 	newEmitter->SetCamera(m_pCamera);
 
+	newEmitter->m_matTopWorld = m_matTopWorld;
+
 	for (auto pChild : pEmitter->m_pChild)
 	{
 		newEmitter->m_pChild.push_back(CopyEmitter(pChild));
@@ -166,6 +169,10 @@ void	Emitter::Reset()
 void	Emitter::SetCamera(Camera* pCamera)
 {
 	m_pCamera = pCamera;
+	for (auto pChild : m_pChild)
+	{
+		pChild->SetCamera(m_pCamera);
+	}
 }
 
 bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)

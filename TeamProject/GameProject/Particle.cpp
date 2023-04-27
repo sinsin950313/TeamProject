@@ -68,7 +68,7 @@ bool	Particle::Frame(TMatrix* matView)
 	D3DXMatrixMultiply(&matParent, &matParent, &m_matParentTrans);
 	m_matParent = matParent;
 
-	m_matWorld = m_matBillboard * matLocal * matParent;
+	m_matWorld = m_matBillboard * matLocal * matParent * (*m_matTopWorld);
 
 	auto iter = m_pChildEmitterList.begin();
 	while (iter != m_pChildEmitterList.end())

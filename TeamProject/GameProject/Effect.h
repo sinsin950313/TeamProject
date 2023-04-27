@@ -19,7 +19,9 @@ public:
 public:
 	std::list<Emitter*>	m_pEmitterList;
 
-	TVector3	m_vPos;
+	TMatrix		m_matTopWorld;
+
+	TVector3*	m_vPos;
 	bool			m_isDone;
 };
 

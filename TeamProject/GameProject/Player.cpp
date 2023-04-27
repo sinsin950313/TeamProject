@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Input.h"
 #include "CollisionMgr.h"
+#include "EffectMgr.h"
 
 Player::Player() : m_Tornado(this)
 {
@@ -335,6 +336,8 @@ bool Player::Tornado::Init()
 	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 	m_DamagedCharacters.clear();
 
+	I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &m_vPos);
+
 	m_pModel = new SSB::Model;
 	SSB::OBBData data;
 	data.Width = 2;
@@ -402,9 +405,9 @@ bool Player::Tornado::Render()
 	TColor color = TColor(1, 1, 1, 1);
 	{
 		m_pDebugBox->SetBox(m_collideBox);
-		m_pDebugBox->SetColor(color);
+		//m_pDebugBox->SetColor(color);
 		m_pDebugBox->UpdateBuffer();
-		m_pDebugBox->Render();
+		//m_pDebugBox->Render();
 	}
 
 	return true;

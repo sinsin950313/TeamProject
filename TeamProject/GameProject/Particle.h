@@ -96,5 +96,7 @@ public:
 	TMatrix			m_matParentScale;
 	TMatrix			m_matParentRotation;
 	TMatrix			m_matParentTrans;
+
+	TMatrix*		m_matTopWorld;
 };
 

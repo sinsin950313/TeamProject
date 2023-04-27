@@ -16,7 +16,7 @@ private:
 	std::list<Effect*>	m_List;
 
 public:
-	void	CreateEffect(std::wstring path, TVector3 vPos);
+	Effect*	CreateEffect(std::wstring path, TVector3* vPos);
 
 	bool	Frame();
 	bool	Render();
