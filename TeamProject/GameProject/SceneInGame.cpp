@@ -204,8 +204,8 @@ bool    SceneInGame::Frame()
 
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
-		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
+		//I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
+		I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", Player::GetInstance().GetPosition());
 	}
 
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
@@ -450,7 +450,7 @@ bool    SceneInGame::Frame()
 
 				TVector3 vLook = m_pCameraCurrent->m_vPos - m_vBossSpawnPos;
 				vLook.Normalize();
-				//I_Effect.CreateEffect(L"../../data/effectdata/test.EFT");
+				I_Effect.CreateEffect(L"../../data/effectdata/Roar.EFT", (m_vBossSpawnPos + vLook * 3.0f) + TVector3(0, 3, 0));
 			}
 			if (m_bIngame2_CinemaIntro_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 1)
 			{

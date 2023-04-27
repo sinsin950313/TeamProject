@@ -175,6 +175,23 @@ void	Emitter::SetCamera(Camera* pCamera)
 	}
 }
 
+void	Emitter::SpriteReload()
+{
+	if (m_pSprite)
+	{
+		m_pSprite->Release();
+		delete m_pSprite;
+		m_pSprite = nullptr;
+	}
+		m_pSprite = new Sprite();
+		std::wstring VSName = L"VS";
+		std::wstring PSName = L"PS";
+		m_pSprite->Create(m_pd3dDevice, m_pImmediateContext,
+			L"../../data/shader/DefaultParticle.hlsl", m_BasicRenderData.texPath, VSName, PSName);
+
+		m_pSprite->Init();
+}
+
 bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 {
 	m_pd3dDevice = pd3dDevice;
@@ -204,27 +221,6 @@ bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 
 	m_fCurInitTime = 0.0f;
 	m_fInitTime = GetRandRealNum(m_BasicData.fInitDelay, m_BasicData.fInitDelayDiff);
-
-	m_isDone = false;
-
-	m_BasicData.isVisible = true;
-	m_BasicData.Name = L"Node";
-	m_BasicData.iSpawnCount = 1;
-	m_BasicData.fSpawnRate = 1.0;
-	m_BasicData.fLifeTime = 1.0;
-	m_BasicData.isLifeTime = true;
-
-	m_TransData[2].vFix = TVector3(1, 1, 1);
-
-	m_BasicRenderData.iBlendType = 2;
-
-	m_RenderSetData.vFixColor = TColor(1, 1, 1, 1);
-	m_RenderSetData.vRandMinColor = TColor(1, 1, 1, 1);
-	m_RenderSetData.vRandMaxColor = TColor(1, 1, 1, 1);
-	m_RenderSetData.vStartColor = TColor(1, 1, 1, 1);
-	m_RenderSetData.vStartDiffColor = TColor(1, 1, 1, 1);
-	m_RenderSetData.vEndColor = TColor(1, 1, 1, 1);
-	m_RenderSetData.vEndDiffColor = TColor(1, 1, 1, 1);
 
 	return true;
 }
@@ -319,10 +315,10 @@ bool	Emitter::Render()
 		if (m_BasicRenderData.texPath == L"")
 			m_pSprite->m_pPS = m_pSprite->m_pSwapPS[2];
 
-		if (m_BasicRenderData.iBlendType == 0)
-			m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
-		else
+		if (m_BasicRenderData.iBlendType == 2)
 			m_pImmediateContext->OMSetBlendState(DXState::g_pAddAlphaBlend, 0, -1);
+		else
+			m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
 
 		if (m_BasicRenderData.iMaterial == 1)
 			m_pSprite->m_pPS = m_pSprite->m_pSwapPS[1];

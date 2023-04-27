@@ -59,17 +59,22 @@ PS_OUT PS(VS_out input) : SV_Target
 	return vOut;
 }
 
-PS_OUT Distortion(VS_out input) : SV_Target
+float4 Distortion(VS_out input) : SV_Target
 {
-	PS_OUT vOut;
-	float fWeight = g_txTexA.Sample(g_SampleWrap, input.t).r * 0.5f;
+	float4 vOut;
+	float4 color = g_txTexA.Sample(g_SampleWrap, input.t);
+	float2 fWeight = color.rg * 0.5f - 0.5;
+	fWeight = fWeight * 0.2;
 
-	float2 xy; //((input.p.xy / 2048.0f) + 1) / 2;
-	xy.x = input.p.x / 2048.0f + 0.1f;
+	float2 xy; ((input.p.xy / 2048.0f) + 1) / 2;
+	xy.x = input.p.x / 2048.0f;
 	xy.y = input.p.y / 2048.0f;
 
-	vOut.vColor = g_ColorTex.Sample(g_SampleWrap, xy + fWeight);
-	vOut.vBlack = float4(0, 0, 0, 0);
+	vOut = g_ColorTex.Sample(g_SampleWrap, xy + fWeight);
+	float alpha = (0.5 - (abs(input.t.x - 0.5))) + (0.5 - (abs(input.t.y - 0.5)));
+	vOut.a = alpha;
+	if (color.a <= 0.2)
+		vOut.a = 0;
 
 	return vOut;
 }

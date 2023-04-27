@@ -15,8 +15,11 @@ private:
 	friend class Singleton<EffectMgr>;
 	std::list<Effect*>	m_List;
 
+	Effect*	LoadEffect(std::wstring path);
+
 public:
 	Effect*	CreateEffect(std::wstring path, TVector3* vPos);
+	Effect* CreateEffect(std::wstring path, TVector3 vPos);
 
 	bool	Frame();
 	bool	Render();

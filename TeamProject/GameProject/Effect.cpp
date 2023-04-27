@@ -15,8 +15,11 @@ bool	Effect::Frame()
 	// Emitter는 SpawnCount, DestroyTime등으로 자신의 삭제를 결정
 	// 하지만 InitDelay를 지났는지 확인해야함
 	// Effect는 리스트의 Emitter가 모두 없어지면 삭제 결정
-	D3DXMatrixTranslation(&m_matTopWorld, m_vPos->x, m_vPos->y, m_vPos->z);
-
+	D3DXMatrixTranslation(&m_matTopWorld, m_vPos.x, m_vPos.y, m_vPos.z);
+	if (m_vFollowPos)
+	{
+		D3DXMatrixTranslation(&m_matTopWorld, m_vFollowPos->x, m_vFollowPos->y, m_vFollowPos->z);
+	}
 	auto iter = m_pEmitterList.begin();
 	while(iter != m_pEmitterList.end())
 	{

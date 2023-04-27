@@ -11,9 +11,13 @@ void	EffectMgr::SetDevice(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 void	EffectMgr::SetCamera(Camera* pCamera)
 {
 	m_pCamera = pCamera;
+	for (auto pEffect : m_List)
+	{
+		pEffect->SetCamera(pCamera);
+	}
 }
 
-Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos)
+Effect* EffectMgr::LoadEffect(std::wstring path)
 {
 	FILE* stream;
 	if (_wfopen_s(&stream, path.c_str(), L"rt, ccs=UNICODE") != 0)
@@ -185,6 +189,9 @@ Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos)
 
 		//pEmitter->m_RenderSetData;
 		LoadRenderSetData(&pEmitter->m_RenderSetData);
+
+		pEmitter->SpriteReload();
+		pEmitter->Reset();
 	};
 
 	std::function<void(Emitter*)> ProcessLoad = [&](Emitter* pEmitter)
@@ -196,10 +203,8 @@ Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos)
 			ProcessLoad(pChild);
 		}
 	};
-	///////////////////////////////////////////////////////////////////////////////////////////////////
 	Effect* pEffect = new Effect();
 	pEffect->Init(m_pd3dDevice, m_pImmediateContext);
-	pEffect->m_vPos = vPos;
 
 	std::getline(is, str);
 	DWORD iEmitterNum = _ttoi64(str.c_str());
@@ -219,8 +224,27 @@ Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos)
 		ProcessLoad(pEmitter);
 	}
 	m_List.push_back(pEffect);
-
 	is.close();
+	return pEffect;
+}
+
+Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos)
+{
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	Effect* pEffect = LoadEffect(path);
+	pEffect->m_vFollowPos = vPos;
+	
+	return pEffect;
+}
+
+Effect* EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
+{
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	Effect* pEffect = LoadEffect(path);
+	pEffect->m_vPos = vPos;
+
 	return pEffect;
 }
 

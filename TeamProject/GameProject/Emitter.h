@@ -34,6 +34,8 @@ public:
 	void	SpawnParticle();
 	void	ParticleFrame();
 
+	void	SpriteReload();
+
 	void	Reset();
 
 public:
