@@ -49,7 +49,7 @@ public:
 	void	UpdateBox();
 
 	void	UpdateMatrix();
-	void	SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj);
+	virtual void	SetMatrix(TMatrix* matWorld, TMatrix* matView, TMatrix* matProj);
 
 	void	SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 

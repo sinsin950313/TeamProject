@@ -136,15 +136,20 @@ namespace SSB
             D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
             D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 
-            // Damage Timing ��
-            float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-            if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+			float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+			float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
+			if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+				m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+				)
             {
                 if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
                 {
-                    Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-                    Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-                    Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+                    if (!Player::GetInstance().IsDash())
+                    {
+                        Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                        Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+                        Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+                    }
                 }
             }
         }
@@ -245,15 +250,20 @@ namespace SSB
             D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
             D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 
-            // Damage Timing ��
-            float time = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-            if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > time)
+			float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+			float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23f;
+			if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
+				m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
+				)
             {
                 if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
                 {
-                    Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
-                    Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-                    Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+                    if (!Player::GetInstance().IsDash())
+                    {
+                        Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+                        Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+                        Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+                    }
                 }
             }
         }

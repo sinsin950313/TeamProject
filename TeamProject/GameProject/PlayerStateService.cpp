@@ -1346,12 +1346,13 @@ namespace SSB
 		Player* player = static_cast<Player*>(m_pCharacter);
 		if (!_blackboard->Initialized)
 		{
+
 			Player::GetInstance().m_pMainCamera->CameraClosing(2.0f);
 			std::wstring szRandomSound = L"yasuo_sound_soriegedon.mp3";
 			auto sound = I_Sound.Find(szRandomSound);
 			sound->VolumeSet(0.2f);
 			sound->Play();
-			Player::GetInstance().ActiveSkill(kPlayerPierce);
+			Player::GetInstance().ActiveSkill(kPlayerUltimate);
 
 			((CameraTPS*)player->m_pMainCamera)->m_CharCamDist = 30;
 

@@ -80,6 +80,10 @@ bool    Player::Frame()
 	{
 		m_Tornado.Frame();
 	}
+	else
+	{
+		m_Tornado.Clear();
+	}
 
 	return true;
 }
@@ -179,6 +183,11 @@ void Player::Damage(int damage)
 	{
 		Character::Damage(damage);
 	}
+}
+
+bool Player::IsDash()
+{
+	return m_IsDash;
 }
 
 void Player::UltimateSkillStacking(float timeStampe)
@@ -312,6 +321,11 @@ std::vector<Character*> Player::Tornado::GetAirborneList()
 	return ret;
 }
 
+void Player::Tornado::Clear()
+{
+	m_DamagedCharacters.clear();
+}
+
 bool Player::Tornado::Init()
 {
 	if (m_pDebugBox != nullptr)
@@ -326,9 +340,10 @@ bool Player::Tornado::Init()
 	data.Width = 2;
 	data.Height = 6;
 	data.Depth = 2;
-	data.Scale = TVector3(0.01, 0.01, 0.01);
 	m_pModel->Initialize_SetBoundingVolume(data);
 	m_pModel->Init();
+
+	m_DamagedCharacters.clear();
 
 	return true;
 }
@@ -340,7 +355,7 @@ bool Player::Tornado::Frame()
 
 	XMVECTOR dir = m_Direction;
 	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
-	MoveChar(dir, world, m_Speed);
+	MoveChar(dir, world, m_Speed, true);
 	m_collideBox.UpdateBox(m_matWorld);
 
 	auto list = GetHitList();
