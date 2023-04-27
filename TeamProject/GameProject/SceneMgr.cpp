@@ -75,6 +75,7 @@ bool	SceneMgr::Frame()
         {
         case LOADSTART:
         {
+            m_pFade->m_pWorkList.push_back(new InterfaceFadeOut());
             Scene** pScene = m_pCurrentScene;
             (*pScene)->Release();
             delete (*pScene);
@@ -83,14 +84,26 @@ bool	SceneMgr::Frame()
             m_pSceneArray[m_CurScene] = CreateScene(m_CurScene);
             m_pSceneArray[m_CurScene]->m_Scene = m_CurScene;
             m_pSceneArray[m_CurScene]->SetDevice(m_pd3dDevice, m_pImmediateContext);
+            m_pSceneArray[m_CurScene]->DataLoad();
+            m_LoadState = LOADING;
+
             // Data Load Func() < Thread
 
-            m_LoadState = LOADING;
-            m_pSceneArray[m_CurScene]->DataLoad();
+            //m_LoadState = LOADING;
+            //m_pSceneArray[m_CurScene]->DataLoad();
+
+
+            //m_pSceneArray[m_CurScene] = CreateScene(m_CurScene);
+            //m_pSceneArray[m_CurScene]->m_Scene = m_CurScene;
+            //m_pSceneArray[m_CurScene]->SetDevice(m_pd3dDevice, m_pImmediateContext);
+            //// Data Load Func() < Thread
+
+            //m_LoadState = LOADING;
+            //m_pSceneArray[m_CurScene]->DataLoad();
             //SceneDataLoad(m_pSceneArray[m_CurScene]);
             //m_LoadThread = std::thread(&SceneDataLoad, m_pSceneArray[m_CurScene]);
-        }
-            break;
+        }break;
+
         case LOADING:
             if (1)//m_pSceneArray[m_CurScene]->m_fLoadRate >= 1.0f)
             {
@@ -100,19 +113,17 @@ bool	SceneMgr::Frame()
             // LoadRate로 로딩바 조절
             break;
         case LOADCOMPLETE:
+        {
             // 데이터로드를 쓰레드로 돌리면서 진행 정도마다 로딩바 UI의 퍼센트를 대입
             // 100%가 되면 페이드 아웃을 넣으면서 씬의 Init 작동
             // Init의 데이터 로드 부분을 함수로 뺄 필요성 있음
-            // 
 
             m_isChangingScene = false;
-
             m_pCurrentScene = &m_pSceneArray[m_CurScene];
             m_pSceneArray[m_CurScene]->Init();
+        }break;
 
-            m_pFade->m_pWorkList.push_back(new InterfaceFadeOut());
-            break;
-        default:
+        case LOADNONE:
             if (m_pFade->m_pWorkList.size() == 0)
             {
                 m_LoadState = LOADSTART;
@@ -126,7 +137,7 @@ bool	SceneMgr::Frame()
 bool SceneMgr::PreRender()
 {
     if (!m_isChangingScene)
-		(*m_pCurrentScene)->PreRender();
+        (*m_pCurrentScene)->PreRender();
     return true;
 }
 
@@ -140,7 +151,7 @@ bool	SceneMgr::Render()
 
 bool SceneMgr::PostRender()
 {
-    if (!m_isChangingScene)
+    if (!m_isChangingScene || m_LoadState == LOADNONE)
         (*m_pCurrentScene)->PostRender();
 
     m_pFade->Render();
