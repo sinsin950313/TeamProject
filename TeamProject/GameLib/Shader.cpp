@@ -18,9 +18,13 @@ bool	Shader::Render()
 bool	Shader::Release()
 {
 	if (m_pVS)m_pVS->Release();
-	if (m_pPS)m_pPS->Release();
 	if (m_pVSCode) m_pVSCode->Release();
+
+	if (m_pPS)m_pPS->Release();
 	if (m_pPSCode)m_pPSCode->Release();
+
+	if (m_pGS) m_pGS->Release();
+	if (m_pGSCode)m_pGSCode->Release();
 	return true;
 }
 
@@ -48,6 +52,21 @@ HRESULT Shader::VSLoad(
 	m_pImmediateContext = pContext;
 	HRESULT hr;
 	hr = CreateVertexShader(name, VSname);
+	if (FAILED(hr))
+		return hr;
+
+	return hr;
+}
+
+HRESULT Shader::GSLoad(
+	ID3D11Device* pd3dDevice,
+	ID3D11DeviceContext* pContext,
+	std::wstring name, std::wstring GSname)
+{
+	m_pd3dDevice = pd3dDevice;
+	m_pImmediateContext = pContext;
+	HRESULT hr;
+	hr = CreateGeometryShader(name, GSname);
 	if (FAILED(hr))
 		return hr;
 
@@ -162,6 +181,51 @@ HRESULT Shader::CreatePixelShader(std::wstring name, std::wstring PSname)
 		}
 		return hr;
 	}
+
+	return hr;
+}
+
+
+HRESULT	Shader::CreateGeometryShader(std::wstring filename, std::wstring funcName)
+{
+	ID3DBlob* pErrorCode = nullptr;
+	DWORD dwShaderFlags = 0;
+#ifdef _DEBUG
+	dwShaderFlags |= (D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION);
+#endif
+
+	std::string str = std::to_string(MAXLIGHTNUM);
+	const D3D_SHADER_MACRO defines[] =
+	{
+		"EXAMPLE_DEFINE", "1",
+		"MAXLIGHTNUM", str.c_str(),
+		NULL, NULL
+	};
+
+	HRESULT hr = D3DCompileFromFile(
+		filename.c_str(),
+		defines,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		wtm(funcName).c_str(),
+		"gs_5_0",
+		dwShaderFlags,
+		0,
+		&m_pGSCode,
+		&pErrorCode);
+	if (FAILED(hr))
+	{
+		if (pErrorCode)
+		{
+			OutputDebugStringA((char*)pErrorCode->GetBufferPointer());
+			pErrorCode->Release();
+		}
+		return hr;
+	}
+	hr = m_pd3dDevice->CreateGeometryShader(
+		m_pGSCode->GetBufferPointer(),
+		m_pGSCode->GetBufferSize(),
+		NULL,
+		&m_pGS);
 
 	return hr;
 }

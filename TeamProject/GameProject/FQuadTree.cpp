@@ -368,6 +368,7 @@ void FQuadTree::Render()
 
 
     m_pImmediateContext->VSSetShader(m_pVertexShader->m_pVS, NULL, 0);
+    m_pImmediateContext->GSSetShader(NULL, NULL, 0);
     m_pImmediateContext->PSSetShader(m_pPixelShader->m_pPS, NULL, 0);
 
     UINT stride = sizeof(PNCTVertex); //정점의크기

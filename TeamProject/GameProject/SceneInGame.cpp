@@ -509,7 +509,7 @@ bool    SceneInGame::Frame()
 			auto sound = I_Sound.Find(L"yasuo_sound_count_half1.mp3");
 			sound->VolumeSet(0.3f);
 			sound->Play(true);
-			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //ÁöÄ¡Áöµµ¾Ê°í´ıº­µå´Â±º
+			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //ì§€ì¹˜ì??„ì•Šê³ ë¤ë²¼ë“œ?”êµ°
 			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 
@@ -519,7 +519,7 @@ bool    SceneInGame::Frame()
 			auto sound = I_Sound.Find(L"yasuo_sound_count_half2.mp3");
 			sound->VolumeSet(0.3f);
 			sound->Play(true);
-			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //ÀÌ¾ß±â´Â ¾ÆÁ÷ ³¡³ªÁö ¾Ê¾Ò¾î
+			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //?´ì•¼ê¸°ëŠ” ?„ì§ ?ë‚˜ì§€ ?Šì•˜??
 			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 	}
@@ -527,7 +527,8 @@ bool    SceneInGame::Frame()
 	
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"../../data/effectdata/test.EFT", Player::GetInstance().GetPosition());
+		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", Player::GetInstance().GetPosition());
+		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
 	}
 
 
@@ -1551,7 +1552,7 @@ void SceneInGame::ScenarioLoad()
 
 	while (std::getline(is, line))
 	{
-		// ',' ÀÌÀüÀÇ ¹®ÀÚ¿­À» key·Î, ÀÌÈÄÀÇ ¹®ÀÚ¿­À» value·Î ÀúÀå
+		// ',' ?´ì „??ë¬¸ì?´ì„ keyë¡? ?´í›„??ë¬¸ì?´ì„ valueë¡??€??
 		std::size_t pos = line.find(',');
 		if (pos != std::wstring::npos) 
 		{

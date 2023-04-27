@@ -1,5 +1,6 @@
 #include "Particle.h"
 #include "Timer.h"
+#include "Emitter.h"
 
 Particle::Particle()
 {
@@ -51,13 +52,80 @@ bool	Particle::Frame(TMatrix* matView)
 		{
 			m_isDone = true;
 		}
-		
+
 	}
 
-	TQuaternion q = TQuaternion::CreateFromRotationMatrix(m_matRotation);
-	D3DXMatrixAffineTransformation(&m_matWorld, &m_vScale, NULL, &q, &m_vPos);
+	TMatrix matLocal;
+	D3DXMatrixMultiply(&matLocal, &matLocal, &m_matScale);
+	if (!(m_iBillBoardType == 0 || m_iBillBoardType == 2))
+		D3DXMatrixMultiply(&matLocal, &matLocal, &m_matRotation);
+	D3DXMatrixMultiply(&matLocal, &matLocal, &m_matTrans);
+	m_matLocal = matLocal;
+
+	TMatrix matParent;
+	D3DXMatrixMultiply(&matParent, &matParent, &m_matParentScale);
+	D3DXMatrixMultiply(&matParent, &matParent, &m_matParentRotation);
+	D3DXMatrixMultiply(&matParent, &matParent, &m_matParentTrans);
+	m_matParent = matParent;
+
+	m_matWorld = m_matBillboard * matLocal * matParent;
+
+	auto iter = m_pChildEmitterList.begin();
+	while (iter != m_pChildEmitterList.end())
+	{
+		CalcInheritMatrix(*iter);
+		(*iter)->Frame();
+		iter++;
+	}
 	return true;
 }
+
+bool	Particle::Render()
+{
+	auto iter = m_pChildEmitterList.begin();
+	while (iter != m_pChildEmitterList.end())
+	{
+		(*iter)->Render();
+		iter++;
+	}
+	return true;
+}
+
+bool	Particle::Release()
+{
+	auto iter = m_pChildEmitterList.begin();
+	while (iter != m_pChildEmitterList.end())
+	{
+		(*iter)->Release();
+		delete (*iter);
+		iter++;
+	}
+	m_pChildEmitterList.clear();
+	return true;
+}
+
+void	Particle::CalcInheritMatrix(Emitter* pChild)
+{
+	TMatrix matParentWorld;
+
+	D3DXMatrixMultiply(&matParentWorld, &m_matLocal, &m_matParent);
+
+	TVector3 scale, pos;
+	TQuaternion rot;
+	matParentWorld.Decompose(scale, rot, pos);
+	TMatrix s, r, t;
+	D3DXMatrixScaling(&s, scale.x, scale.y, scale.z);
+	D3DXMatrixRotationQuaternion(&r, &rot);
+	D3DXMatrixTranslation(&t, pos.x, pos.y, pos.z);
+
+	if (pChild->m_BasicData.iInheritScaleType > 0)
+		pChild->m_matParentScale = s;
+	if (pChild->m_BasicData.iInheritRotType > 0)
+		pChild->m_matParentRotation = r;
+	if (pChild->m_BasicData.iInheritPosType > 0)
+		pChild->m_matParentTrans = t;
+}
+
 
 void	Particle::ProcessColor()
 {
@@ -68,14 +136,14 @@ void	Particle::ProcessColor()
 		m_vCurColor = m_ParticleColor.vFix;
 		break;
 	case 1: // RANDOM
-		m_vCurColor = m_ParticleColor.vRandom;		
+		m_vCurColor = m_ParticleColor.vRandom;
 		break;
 	case 2: // EASING
 		float delta = m_fCurLife / m_fLifeTime;
 		TVector4 color;
-		TVector4 s = m_ParticleColor.vStart.ToVector4();
-		TVector4 e = m_ParticleColor.vEnd.ToVector4();
-		D3DXVec4Lerp(&color, &s, &e, delta);
+		TVector4 c1 = m_ParticleColor.vStart.ToVector4();
+		TVector4 c2 = m_ParticleColor.vEnd.ToVector4();
+		D3DXVec4Lerp(&color, &c1, &c2, delta);
 		m_vCurColor = color;
 		break;
 	}
@@ -92,7 +160,8 @@ void	Particle::ProcessSRT()
 		}
 		else if (m_iTransformType[i] == 1) // PVA
 		{
-			m_ParticleSRT[i].vCurVelocity += m_ParticleSRT[i].vVelocity + m_ParticleSRT[i].vAccel * powf(g_fSecondPerFrame, 2);
+			//m_ParticleSRT[i].vCurVelocity = m_ParticleSRT[i].vVelocity;
+			m_ParticleSRT[i].vCurVelocity += m_ParticleSRT[i].vAccel;
 			m_ParticleSRT[i].vPVA += m_ParticleSRT[i].vCurVelocity * g_fSecondPerFrame;
 			vSRT[i] = m_ParticleSRT[i].vPVA;
 		}
@@ -102,8 +171,11 @@ void	Particle::ProcessSRT()
 		}
 	}
 	m_vScale = vSRT[2];
+	D3DXMatrixScaling(&m_matScale, m_vScale.x, m_vScale.y, m_vScale.z);
 	m_vRotation = vSRT[1];
+	D3DXMatrixRotationYawPitchRoll(&m_matRotation, m_vRotation.y, m_vRotation.x, m_vRotation.z);
 	m_vPos = vSRT[0];
+	D3DXMatrixTranslation(&m_matTrans, m_vPos.x, m_vPos.y, m_vPos.z);
 }
 
 void	Particle::ProcessBillboard()
@@ -111,15 +183,18 @@ void	Particle::ProcessBillboard()
 	switch (m_iBillBoardType)
 	{
 	case 0: // Billboard
-		m_matRotation = m_matView.Invert();
-		m_matRotation._41 = m_matRotation._42 = m_matRotation._43 = 0.0f;
-		break;
-	case 1: // Rotate Billboard
-		D3DXMatrixRotationYawPitchRoll(&m_matRotation, m_vRotation.y, m_vRotation.x, m_vRotation.z);
 		m_matBillboard = m_matView.Invert();
 		m_matBillboard._41 = m_matBillboard._42 = m_matBillboard._43 = 0.0f;
-		D3DXMatrixMultiply(&m_matRotation, &m_matRotation, &m_matBillboard);
 		break;
+	case 1: // Rotate Billboard
+	{
+		TMatrix matRot;
+		D3DXMatrixRotationYawPitchRoll(&matRot, m_vRotation.y, m_vRotation.x, m_vRotation.z);
+		m_matBillboard = m_matView.Invert();
+		m_matBillboard._41 = m_matBillboard._42 = m_matBillboard._43 = 0.0f;
+		D3DXMatrixMultiply(&m_matBillboard, &matRot, &m_matBillboard);
+	}
+	break;
 	case 2: // Y Axis Billboard		
 	{
 		m_matBillboard = m_matView.Invert();
@@ -128,9 +203,9 @@ void	Particle::ProcessBillboard()
 		TQuaternion q;
 		m_matBillboard.Decompose(s, q, t);
 		q.x = q.z = 0.0f;
-		D3DXMatrixRotationQuaternion(&m_matRotation, &q);
+		D3DXMatrixRotationQuaternion(&m_matBillboard, &q);
 	}
-		break;
+	break;
 	case 3: // Fix
 	default:
 		D3DXMatrixRotationYawPitchRoll(&m_matRotation, m_vRotation.y, m_vRotation.x, m_vRotation.z);

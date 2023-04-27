@@ -1,13 +1,16 @@
 #pragma once
 #include "Camera.h"
 #include "Sprite.h"
-#include "Particle.h"
 #include "EmitterData.h"
 
+class Particle;
+#define INSTNUM 200
 struct VS_EFFECT_BUFFER
 {
-	TMatrix matInst[500];
-	TVector4 vColor[500];
+	TMatrix matInst[INSTNUM];
+	TVector4 vColor[INSTNUM];
+	TVector4 vCalc[INSTNUM][2];
+	TVector4 vUV[INSTNUM][2];
 };
 
 class Emitter
@@ -27,9 +30,9 @@ public:
 	double	GetRandRealNum(double base, double diff);
 	TColor	GetRandColor(TColor c1, TColor c2);
 
+	Emitter* CopyEmitter(Emitter* pEmitter);
 	void	SpawnParticle();
 	void	ParticleFrame();
-	void	CalcInheritMatrix(Emitter* pChild);
 
 	void	Reset();
 
@@ -42,7 +45,7 @@ public:
 	TMatrix		m_matParentScale;
 
 public:
-		// 파티클 매니저 변수
+	// 파티클 매니저 변수
 	BasicData			m_BasicData;
 	TransformData	m_TransData[3];
 	BasicRenderData m_BasicRenderData;

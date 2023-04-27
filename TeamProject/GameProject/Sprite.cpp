@@ -15,8 +15,15 @@ bool Sprite::Init()
 {
 	BaseObject::Init();
 
-	//I_Shader.Load(L"../../data/shader/DefaultParticle.txt", L"VS", L"PS", &m_pSwapShader[0]);
-	//I_Shader.Load(L"../../data/shader/DefaultParticle.txt", L"VS", L"COLOR_PS", &m_pSwapShader[1]);
+	I_Shader.VSLoad(L"../../data/shader/DefaultParticle.hlsl", L"VS", &m_pSwapVS[0]);
+	I_Shader.VSLoad(L"../../data/shader/DefaultParticle.hlsl", L"RibbonVS", &m_pSwapVS[1]);
+
+	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"PS", &m_pSwapPS[0]);
+	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"Distortion", &m_pSwapPS[1]);
+	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"COLOR_PS", &m_pSwapPS[2]);
+
+	m_pSwapGS[0] = NULL;
+	I_Shader.GSLoad(L"../../data/shader/DefaultParticle.hlsl", L"RibbonGS", &m_pSwapGS[1]);
 	return true;
 }
 
@@ -45,8 +52,10 @@ bool Sprite::PreRender()
 	m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 	m_pImmediateContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	m_pImmediateContext->VSSetShader(m_pShader->m_pVS, NULL, 0);
-	m_pImmediateContext->PSSetShader(m_pShader->m_pPS, NULL, 0);
+	m_pImmediateContext->VSSetShader(m_pVS ? m_pVS->m_pVS : NULL, NULL, 0);
+	m_pImmediateContext->GSSetShader(m_pGS ? m_pGS->m_pGS : NULL, NULL, 0);
+	m_pImmediateContext->PSSetShader(m_pPS ? m_pPS->m_pPS : NULL, NULL, 0);
+
 	m_pImmediateContext->IASetInputLayout(m_pVertexLayout);
 
 	m_pImmediateContext->PSSetShaderResources(0, 1, &m_pTextureSRV);

@@ -79,6 +79,41 @@ HRESULT ShaderMgr::VSLoad(std::wstring name, std::wstring VSfunc, Shader** retSh
 	return E_FAIL;
 }
 
+
+HRESULT ShaderMgr::GSLoad(std::wstring name, std::wstring GSfunc, Shader** retShader)
+{
+	HRESULT hr;
+
+	if (retShader)
+	{
+		*retShader = nullptr;
+	}
+	else if (!retShader)
+	{
+		return E_INVALIDARG;
+	}
+	Shader* pShader = Find(name + GSfunc);
+	if (pShader != nullptr)
+	{
+		*retShader = pShader;
+		return S_OK;
+	}
+
+	pShader = new Shader;
+	if (pShader)
+	{
+		hr = pShader->GSLoad(m_pd3dDevice, m_pImmediateContext, name, GSfunc);
+		if (SUCCEEDED(hr))
+		{
+			std::wstring LastName = name + GSfunc;
+			m_List.insert(std::make_pair(LastName, pShader));
+			*retShader = pShader;
+			return S_OK;
+		}
+	}
+	return E_FAIL;
+}
+
 HRESULT ShaderMgr::PSLoad(std::wstring name, std::wstring PSfunc, Shader** retShader)
 {
 	HRESULT hr;

@@ -15,14 +15,13 @@ void	EffectMgr::SetCamera(Camera* pCamera)
 
 void	EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
 {
-	FILE* stream;	
+	FILE* stream;
 	if (_wfopen_s(&stream, path.c_str(), L"rt, ccs=UNICODE") != 0)
 	{
 		return;
 	}
 	std::wifstream is(stream);
 	std::wstring str;
-
 	auto LoadBasicData = [&](BasicData* bd)
 	{
 		std::getline(is, str);
@@ -186,24 +185,15 @@ void	EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
 
 		//pEmitter->m_RenderSetData;
 		LoadRenderSetData(&pEmitter->m_RenderSetData);
-
-		pEmitter->m_pSprite = new Sprite();
-
-		std::wstring PSName = L"PS";
-		if (pEmitter->m_BasicRenderData.iMaterial == 1)
-			PSName = L"Distortion";
-		pEmitter->m_pSprite->Create(
-			m_pd3dDevice, m_pImmediateContext, L"../../data/shader/DefaultParticle.txt", pEmitter->m_BasicRenderData.texPath, L"VS", PSName);
-		pEmitter->m_pSprite->Init();
 	};
 
-	auto ProcessLoad = [&](Emitter* pEmitter)
+	std::function<void(Emitter*)> ProcessLoad = [&](Emitter* pEmitter)
 	{
 		LoadEmitter(pEmitter);
 
 		for (auto pChild : pEmitter->m_pChild)
 		{
-			LoadEmitter(pChild);
+			ProcessLoad(pChild);
 		}
 	};
 	///////////////////////////////////////////////////////////////////////////////////////////////////

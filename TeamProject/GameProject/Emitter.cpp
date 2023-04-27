@@ -1,5 +1,5 @@
 #include "Emitter.h"
-
+#include "Particle.h"
 TVector3 Emitter::GetRandPos(TVector3 diff)
 {
 	float u = RandomStep(0.0);
@@ -85,53 +85,64 @@ void	Emitter::SpawnParticle()
 
 	data.iBillBoardType = m_RenderSetData.iBillboard;
 
-	if (m_pParticleList.size() < 500)
+	if (m_pParticleList.size() < INSTNUM - 1)
 	{
 		Particle* pParticle = new Particle();
 		pParticle->Create(data);
+
+		TMatrix combWorld = TMatrix::Identity;
+		combWorld = m_matParentScale * m_matParentRotation * m_matParentTrans;
+		TVector3 vScale, vPos;
+		TQuaternion q;
+		combWorld.Decompose(vScale, q, vPos);
+
+		if (m_BasicData.iInheritScaleType >= 1)
+			D3DXMatrixScaling(&pParticle->m_matParentScale, vScale.x, vScale.y, vScale.z);
+		if (m_BasicData.iInheritRotType >= 1)
+			D3DXMatrixRotationQuaternion(&pParticle->m_matParentRotation, &q);
+		if (m_BasicData.iInheritPosType >= 1)
+			D3DXMatrixTranslation(&pParticle->m_matParentTrans, vPos.x, vPos.y, vPos.z);
+
+
+		for (auto pChild : m_pChild)
+		{
+			Emitter* pEmitter = CopyEmitter(pChild);
+			pParticle->m_pChildEmitterList.push_back(pEmitter);
+		}
+
 		m_pParticleList.push_back(pParticle);
 	}
 }
 
-void	Emitter::CalcInheritMatrix(Emitter* pChild)
+Emitter* Emitter::CopyEmitter(Emitter* pEmitter)
 {
-	auto GetVector = [&](TransformData data)->TVector3 {
-		switch (data.iType)
-		{
-		case 0:
-			return data.vFix;
-			break;
-		case 1:
-			return data.vPVA;
-			break;
-		case 2:
-			return data.vEasingStart;
-			break;
-		}
-	};
+	Emitter* newEmitter = new Emitter();
 
-	m_BasicData.iInheritScaleType;
-	m_BasicData.iInheritRotType;
-	m_BasicData.iInheritPosType;
-	TVector3 scale = GetVector(m_TransData[0]);
-	TVector3 rot = GetVector(m_TransData[1]);
-	TVector3 pos = GetVector(m_TransData[2]);
-	
-	TMatrix matScale;
-	D3DXMatrixScaling(&matScale, scale.x, scale.y, scale.z);
+	newEmitter->m_pSprite = new Sprite();
+	newEmitter->m_pSprite->Create(
+		m_pd3dDevice, m_pImmediateContext, L"../../data/shader/DefaultParticle.hlsl",
+		pEmitter->m_BasicRenderData.texPath, L"VS", L"PS");
+	newEmitter->m_pSprite->Init();
 
-	TQuaternion qRotation;
-	D3DXQuaternionRotationYawPitchRoll(&qRotation, rot.y, rot.x, rot.z);
+	newEmitter->Init(m_pd3dDevice, m_pImmediateContext);
 
-	TMatrix matTranslate;
-	D3DXMatrixTranslation(&matTranslate, pos.x, pos.y, pos.z);
+	newEmitter->m_BasicData = pEmitter->m_BasicData;
+	for (int i = 0; i < 3; i++)
+		newEmitter->m_TransData[i] = pEmitter->m_TransData[i];
 
-	if (pChild->m_BasicData.iInheritScaleType > 0)
-		D3DXMatrixMultiply(&pChild->m_matParentScale, &TMatrix::Identity, &matScale);
-	if (pChild->m_BasicData.iInheritRotType > 0)
-		D3DXMatrixRotationQuaternion(&pChild->m_matParentRotation, &qRotation);
-	if (pChild->m_BasicData.iInheritPosType > 0)
-		D3DXMatrixMultiply(&pChild->m_matParentTrans, &TMatrix::Identity, &matTranslate);
+	newEmitter->m_BasicRenderData = pEmitter->m_BasicRenderData;
+	newEmitter->m_RenderSetData = pEmitter->m_RenderSetData;
+
+	newEmitter->SetCamera(m_pCamera);
+
+	for (auto pChild : pEmitter->m_pChild)
+	{
+		newEmitter->m_pChild.push_back(CopyEmitter(pChild));
+	}
+
+	newEmitter->Reset();
+
+	return newEmitter;
 }
 
 void	Emitter::Reset()
@@ -146,27 +157,14 @@ void	Emitter::Reset()
 	{
 		auto pParticle = (*iter);
 		iter = m_pParticleList.erase(iter);
+		pParticle->Release();
 		delete pParticle;
 	}
-	for (int i = 0; i < 500; i++)
-	{
-		m_cbInstancingData.matInst[i] = TMatrix::Identity;
-		m_cbInstancingData.vColor[i] = TVector4(1, 1, 1, 1);
-	}
 	m_pImmediateContext->UpdateSubresource(m_pInstancingBuffer, 0, nullptr, &m_cbInstancingData, 0, 0);
-
-	for (auto pChild : m_pChild)
-	{
-		pChild->Reset();
-	}
 }
 
 void	Emitter::SetCamera(Camera* pCamera)
 {
-	for (auto pChild : m_pChild)
-	{
-		pChild->SetCamera(pCamera);
-	}
 	m_pCamera = pCamera;
 }
 
@@ -175,11 +173,22 @@ bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 	m_pd3dDevice = pd3dDevice;
 	m_pImmediateContext = pContext;
 
+	if (!m_pSprite)
+	{
+		m_pSprite = new Sprite();
+		std::wstring VSName = L"VS";
+		std::wstring PSName = L"PS";
+		m_pSprite->Create(m_pd3dDevice, m_pImmediateContext,
+			L"../../data/shader/DefaultParticle.hlsl", m_BasicRenderData.texPath, VSName, PSName);
+
+		m_pSprite->Init();
+	}
+
 	m_matParentTrans = TMatrix::Identity;
 	m_matParentRotation = TMatrix::Identity;
 	m_matParentScale = TMatrix::Identity;
 
-	for (int i = 0; i < 500; i++)
+	for (int i = 0; i < INSTNUM; i++)
 	{
 		m_cbInstancingData.matInst[i] = TMatrix::Identity;
 		m_cbInstancingData.vColor[i] = TVector4(1, 1, 1, 1);
@@ -197,7 +206,7 @@ bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 	m_BasicData.fSpawnRate = 1.0;
 	m_BasicData.fLifeTime = 1.0;
 	m_BasicData.isLifeTime = true;
-	
+
 	m_TransData[2].vFix = TVector3(1, 1, 1);
 
 	m_BasicRenderData.iBlendType = 2;
@@ -231,23 +240,12 @@ bool	Emitter::Frame()
 		}
 		else
 		{
-			if(m_pParticleList.size() == 0)
-				m_isDone = true;
+			m_isDone = true;
 		}
 	}
 
 	ParticleFrame();
 	m_pSprite->Frame();
-
-	for (auto pChild : m_pChild)
-	{
-		// Child Emitter의 프레임이나 여타 함수에 넘겨야할듯
-		// 여기서 부모 행렬을 들고 프레임 들어가서 받아온 값으로 파티클 생성
-		// 
-		//(*m_pParticleList.begin())->
-		CalcInheritMatrix(pChild);
-		pChild->Frame();
-	}
 
 	return true;
 }
@@ -257,48 +255,90 @@ void	Emitter::ParticleFrame()
 	auto iter = m_pParticleList.begin();
 	while (iter != m_pParticleList.end())
 	{
-		(*iter)->Frame(&m_pCamera->m_matView);
 		if ((*iter)->m_isDone)
 		{
 			auto pParticle = (*iter);
 			iter = m_pParticleList.erase(iter);
+			pParticle->Release();
 			delete pParticle;
 		}
 		else
 		{
-			TMatrix matWorld;
-			D3DXMatrixMultiply(&matWorld, &(*iter)->m_matWorld, &m_matParentScale);
-			D3DXMatrixMultiply(&matWorld, &matWorld, &m_matParentRotation);
-			D3DXMatrixMultiply(&matWorld, &matWorld, &m_matParentTrans);
-			D3DXMatrixTranspose(&m_cbInstancingData.matInst[i], &matWorld);
+			if (m_BasicData.iInheritScaleType == 2)
+				D3DXMatrixMultiply(&(*iter)->m_matParentScale, &TMatrix::Identity, &m_matParentScale);
+			if (m_BasicData.iInheritRotType == 2)
+				D3DXMatrixMultiply(&(*iter)->m_matParentRotation, &TMatrix::Identity, &m_matParentRotation);
+			if (m_BasicData.iInheritPosType == 2)
+				D3DXMatrixMultiply(&(*iter)->m_matParentTrans, &TMatrix::Identity, &m_matParentTrans);
+
+			(*iter)->Frame(&m_pCamera->m_matView);
+
+			D3DXMatrixTranspose(&m_cbInstancingData.matInst[i], &(*iter)->m_matWorld);
 			m_cbInstancingData.vColor[i] = (*iter)->m_vCurColor.ToVector4();
+
+			for (int v = 0; v < 2; v++)
+			{
+				TVector3 p;
+				D3DXVec3TransformCoord(&p, &m_pSprite->m_VertexList[2 * v + 0].p, &(*iter)->m_matWorld);
+				TVector3 p1;
+				D3DXVec3TransformCoord(&p1, &m_pSprite->m_VertexList[2 * v + 1].p, &(*iter)->m_matWorld);
+				TVector4 v1 = TVector4(p.x, p.y, p.z, 1);
+				TVector4 v2 = TVector4(p1.x, p1.y, p1.z, 1);
+				D3DXVec4Lerp(&m_cbInstancingData.vCalc[i][v], &v1, &v2, 0.5);
+				float u = (i + 1) / ((float)m_pParticleList.size());
+				m_cbInstancingData.vUV[i][v] = TVector4(v, u, 0, 0);
+
+				m_cbInstancingData.vCalc[i + 1][v] = m_cbInstancingData.vCalc[i][v];
+				m_cbInstancingData.vUV[i + 1][v] = m_cbInstancingData.vUV[i][v];
+			}
+			m_cbInstancingData.matInst[i + 1] = m_cbInstancingData.matInst[i];
+			m_cbInstancingData.vColor[i + 1] = m_cbInstancingData.vColor[i];
 			i++;
 			iter++;
 		}
 	}
+
 	m_pImmediateContext->UpdateSubresource(m_pInstancingBuffer, 0, nullptr, &m_cbInstancingData, 0, 0);
 }
 #include "DXState.h"
 bool	Emitter::Render()
 {
-	if (!m_BasicData.isVisible)
-		return true;
-	// 랜더 타겟을 사용해서 기존 랜더타겟 쉐이더 리소스뷰를 복사해서 넣어서 랜더링 후 나온 쉐이더 리소스 뷰를
-	if(m_BasicRenderData.iBlendType < 2)
+	if (m_BasicData.isVisible)
+	{
+		m_pSprite->m_pVS = m_pSprite->m_pSwapVS[0];
+		m_pSprite->m_pGS = m_pSprite->m_pSwapGS[0];
+		m_pSprite->m_pPS = m_pSprite->m_pSwapPS[0];
+
+		if (m_BasicRenderData.texPath == L"")
+			m_pSprite->m_pPS = m_pSprite->m_pSwapPS[2];
+
+		if (m_BasicRenderData.iBlendType == 0)
+			m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
+		else
+			m_pImmediateContext->OMSetBlendState(DXState::g_pAddAlphaBlend, 0, -1);
+
+		if (m_BasicRenderData.iMaterial == 1)
+			m_pSprite->m_pPS = m_pSprite->m_pSwapPS[1];
+
+
+		if (m_RenderSetData.iRenderType == 1)
+		{
+			m_pSprite->m_pVS = m_pSprite->m_pSwapVS[1];
+			m_pSprite->m_pGS = m_pSprite->m_pSwapGS[1];
+			m_pImmediateContext->GSSetConstantBuffers(0, 1, &m_pSprite->m_pConstantBuffer);
+			m_pImmediateContext->GSSetConstantBuffers(8, 1, &m_pInstancingBuffer);
+		}
+
+		m_pImmediateContext->OMSetDepthStencilState(DXState::g_pDefaultDepthStencilAndNoWrite, 0xff);
+
+		m_pSprite->SetMatrix(nullptr, &m_pCamera->m_matView, &m_pCamera->m_matProj);
+		m_pImmediateContext->VSSetConstantBuffers(8, 1, &m_pInstancingBuffer);
+		m_pSprite->RenderInstancing(m_pParticleList.size());
+
 		m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
-	else
-		m_pImmediateContext->OMSetBlendState(DXState::g_pAddAlphaBlend, 0, -1);
-
-	m_pImmediateContext->OMSetDepthStencilState(DXState::g_pDefaultDepthStencilAndNoWrite, 0xff);
-
-	m_pSprite->SetMatrix(nullptr, &m_pCamera->m_matView, &m_pCamera->m_matProj);
-	m_pImmediateContext->VSSetConstantBuffers(8, 1, &m_pInstancingBuffer);
-	m_pSprite->RenderInstancing(m_pParticleList.size());
-
-	m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
-	m_pImmediateContext->OMSetDepthStencilState(DXState::g_pDefaultDepthStencil, 0xff);
-
-	for (auto pChild : m_pChild)
+		m_pImmediateContext->OMSetDepthStencilState(DXState::g_pDefaultDepthStencil, 0xff);
+	}
+	for (auto pChild : m_pParticleList)
 	{
 		pChild->Render();
 	}
@@ -315,6 +355,7 @@ bool	Emitter::Release()
 
 	for (auto particle : m_pParticleList)
 	{
+		particle->Release();
 		delete particle;
 	}
 	m_pParticleList.clear();

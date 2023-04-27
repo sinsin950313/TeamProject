@@ -15,6 +15,7 @@ public:
 	HRESULT Load(std::wstring name, std::wstring VSname, std::wstring PSname, Shader** retShader);
 	HRESULT Load(std::wstring name, Shader** retShader);
 	HRESULT VSLoad(std::wstring name, std::wstring VSfunc, Shader** retShader);
+	HRESULT GSLoad(std::wstring name, std::wstring GSfunc, Shader** retShader);
 	HRESULT PSLoad(std::wstring name, std::wstring PSfunc, Shader** retShader);
 
 private:
