@@ -21,7 +21,7 @@ bool    Player::Init()
 	{
 		D3DXMatrixTranspose(&m_cbInstancingData.matWorld[i], &m_matWorld);
 		float alpha = (1 - (i / (float)12)) * 0.5f;
-		m_vInstancingColor[i] = { 0.2, 0.1, 0.8, alpha * alpha };
+		m_vInstancingColor[i] = { 1, 1, 1, alpha * alpha };
 	}
 
 	m_pInstancingBuffer = CreateConstantBuffer(m_pd3dDevice, &m_cbInstancingData, sizeof(VS_INSTANCING_BUFFER));
