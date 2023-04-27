@@ -48,6 +48,7 @@ bool	Effect::Render()
 	{
 		pEmitter->Render();
 	}
+	m_pImmediateContext->GSSetShader(NULL, NULL, 0);
 	return true;
 }
 
