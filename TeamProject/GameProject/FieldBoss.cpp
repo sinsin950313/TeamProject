@@ -3,7 +3,7 @@
 #include "CollisionMgr.h"
 #include "ModelMgr.h"
 #include "Player.h"
-
+#include "SoundMgr.h"
 namespace SSB
 {
 	DebugBox box;
@@ -147,6 +147,10 @@ namespace SSB
 					{
 						if (!_isHit)
 						{
+							std::wstring szRandomSound = L"varus_sound_hit.mp3";
+							auto sound = I_Sound.Find(szRandomSound);
+							sound->VolumeSet(0.2f);
+							sound->Play();
 							Player::GetInstance().Damage(_damage);
 							Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
 							Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));

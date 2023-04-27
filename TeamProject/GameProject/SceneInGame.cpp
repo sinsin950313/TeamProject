@@ -598,7 +598,7 @@ bool    SceneInGame::Frame()
 	{
 		enemy->Frame();
 		if(typeid(*enemy->m_pInterGageHP) == typeid(InterfaceBillboard))
-			enemy->m_pInterGageHP->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2, enemy->m_vPos.z }, {0.005, 0.01, 0.01});
+			enemy->m_pInterGageHP->SetAttribute({ enemy->m_vPos.x, typeid(*enemy) == typeid(SSB::FieldBoss) ? enemy->m_vPos.y + 3.5f : enemy->m_vPos.y + 2, enemy->m_vPos.z }, { 0.005, 0.01, 0.01 });
 		enemy->m_pInterGageHP->Frame();
 
 		enemy->m_pInterDamage->SetAttribute({ enemy->m_vPos.x, enemy->m_vPos.y + 2.5f, enemy->m_vPos.z }, { 0.01, 0.01, 0.01 });
@@ -1027,7 +1027,7 @@ void    SceneInGame::CharacterLoad()
 			//enemy->Scale(0.01f);
 
 			enemy->SetMap(m_pQuadTree->m_pMap);
-			if (m_pQuadTree->m_EnemySpawnList[i].first == mobStr)
+			if (m_pQuadTree->m_EnemySpawnList[i].first != bossStr)
 			{
 				enemy->m_pInterGageHP = new InterfaceBillboard();
 				enemy->m_pInterGageHP->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/enemy_hp.dds");
@@ -1168,6 +1168,7 @@ void    SceneInGame::UiLoad()
 	m_pInter_Damage_blood = new Interface();
 	m_pInter_Damage_blood->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/damage_blood.dds");
 	m_pInter_Damage_blood->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_Damage_blood->SetAllAlpha(0.0f);
 
 	m_pInter_Win1 = new Interface();
 	m_pInter_Win1->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/win1.dds");
@@ -1193,16 +1194,19 @@ void    SceneInGame::UiLoad()
 	m_pInterText->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/frame_text.dds");
 	m_pInterText->SetAttribute(TVector3(0, 0, 0));
 	m_pInterText->SetAllAlpha(0.0f);
-
-	m_pInterFade->SetAllAlpha(0.0f);
-	m_pInter_Damage_blood->SetAllAlpha(0.0f);
-	m_pInter_Ingame->SetAllAlpha(0.0f);
-	m_pInter_MinimapContents->SetAllAlpha(0.0f);
-
 	m_pInter_blur = new Interface();
 	m_pInter_blur->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Blur.hlsl", L"../../data/UI/blur_alpha.dds", L"VS", L"PS_Blur");
 	m_pInter_blur->SetAttribute(TVector3(0, 0, 0));
+
+	auto pInterDash = new Interface();
+	pInterDash->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/effect_dash.dds");
+	pInterDash->SetAttribute(TVector3(0, 0, 0));
+	m_pInter_blur->AddChild(pInterDash);
 	m_pInter_blur->SetAllAlpha(0.0f);
+
+	m_pInter_Ingame->SetAllAlpha(0.0f);
+	m_pInter_MinimapContents->SetAllAlpha(0.0f);
+	
 
 	if (m_Scene == S_INGAME2)
 		return;
