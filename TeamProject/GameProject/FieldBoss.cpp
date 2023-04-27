@@ -49,7 +49,10 @@ namespace SSB
 			auto arrow = _unActiveArrows.front();
 			_unActiveArrows.pop();
 
-			arrow->SetDevice(m_pd3dDevice, m_pImmediateContext);
+			if (arrow->m_pd3dDevice == nullptr)
+			{
+				arrow->SetDevice(m_pd3dDevice, m_pImmediateContext);
+			}
 			arrow->SetMatrix(nullptr, &m_matView, &m_matProj);
 			arrow->Active(m_pMap, g_fGameTimer, GetCurSocketPos("BowBegin"), Player::GetInstance().m_vPos);
 			_activeArrows.insert(arrow);
