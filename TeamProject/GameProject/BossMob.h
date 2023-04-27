@@ -28,5 +28,8 @@ namespace SSB
         bool Frame() override;
     public:
         virtual ~BossMob() {}
+
+    public:
+        bool _isAngry = false;
 	};
 }
