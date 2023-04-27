@@ -40,6 +40,7 @@ E_SCENE SceneInGame::NextScene()
 		m_Scene = S_INGAME2;
 		I_Collision.GetMapCollisionList().clear();
 		I_Collision.GetMapTriggerList().clear();
+		//¹ß¼Ò¸®°¡°è¼Óµé¸², ´ë½¬? µî Ã³¸®ÇÊ¿ä
 	}
 	return m_Scene;
 }
@@ -153,15 +154,12 @@ bool    SceneInGame::Init()
 		//m_debugBoxList.push_back(&enemy->m_AttackBox);
 	}
 
-	//m_debugBoxList.push_back(&m_pBoss->m_ColliderBox);
-	//m_debugBoxList.push_back(&m_pBoss->m_AttackBox);
-
 	//testBox.CreateOBBBox(40, 4, 4);
 	//m_debugBoxList.push_back(&testBox);
 	//I_Collision.AddStaticObjectBox(&testBox, NULL);
-
+	if(m_Scene == S_INGAME)
+		Player::GetInstance().m_vPos = TVector3(0, -50, 0);
 	I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
-
 	m_pDebugBox = new DebugBox;
 	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
@@ -190,9 +188,6 @@ bool    SceneInGame::Frame()
 		int a = 0;*/
 	}
 
-	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
-		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
-
 	/*if (I_Input.GetKey('M') == KEY_PUSH)
 	{
 		if (m_pBoss != nullptr)
@@ -200,6 +195,21 @@ bool    SceneInGame::Frame()
 			m_pBoss->_isAngry = true;
 		}
 	}*/
+
+
+	/*if (I_Input.GetKey('V') == KEY_PUSH)
+	{
+		Player::GetInstance().SetVictory();
+	}*/
+
+	if (I_Input.GetKey('P') == KEY_PUSH)
+	{
+		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
+		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
+	}
+
+	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
+		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 
 	if (m_Scene == S_INGAME)
 	{
@@ -224,7 +234,14 @@ bool    SceneInGame::Frame()
 			}
 			if (!m_bIngame1_CinemaIntro_End && I_Input.GetKey('O') == KEY_PUSH && m_iCurrentCineCount == 0)
 			{
-				auto sound = I_Sound.Find(L"yasuo_sound_start_text1.mp3");
+				XMFLOAT3 playerSpawnPos;
+				XMStoreFloat3(&playerSpawnPos, m_pQuadTree->m_PlayerSpawnPoint.find("Player")->second.position);
+				Player::GetInstance().Initialize_SetPosition(TVector3(playerSpawnPos));
+
+				auto sound = I_Sound.Find(L"Press_Start.mp3");
+				sound->VolumeSet(0.5f);
+				sound->Play(true);
+				sound = I_Sound.Find(L"yasuo_sound_start_text1.mp3");
 				sound->VolumeSet(0.3f);
 				sound->Play(true);
 				m_iCurrentCineCount = 1;
@@ -372,9 +389,23 @@ bool    SceneInGame::Frame()
 			}
 			if (m_bIngame1_Cinema2_End && m_pQuadTree->m_fCamMoveCurrent > m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 5)
 			{
+				m_iCurrentCineCount = 6;
 				m_bIngame1_Cinema2_End = false;
 				m_pQuadTree->m_fCamMoveCurrent = 0.0f;
 				SetMainCamera();
+			}
+		}
+
+		{
+			if (m_bInteractNextStage&& m_pQuadTree->m_fCamMoveCurrent < 3.0f && m_iCurrentCineCount == 6)
+			{
+				m_pQuadTree->m_fCamMoveCurrent += g_fSecondPerFrame;
+			}
+			if(m_bInteractNextStage&& m_pQuadTree->m_fCamMoveCurrent > 3.0f && m_iCurrentCineCount == 6)
+			{
+				m_iCurrentCineCount = 7;
+				auto iter = m_pQuadTree->m_TriggerList.find(L"Trig_Portal");
+				I_Collision.AddMapTriggerBox(iter->first, iter->second);
 			}
 		}
 	}
@@ -513,7 +544,7 @@ bool    SceneInGame::Frame()
 			auto sound = I_Sound.Find(L"yasuo_sound_count_half1.mp3");
 			sound->VolumeSet(0.3f);
 			sound->Play(true);
-			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //ì§€ì¹˜ì??„ì•Šê³ ë¤ë²¼ë“œ?”êµ°
+			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f));
 			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 
@@ -523,23 +554,10 @@ bool    SceneInGame::Frame()
 			auto sound = I_Sound.Find(L"yasuo_sound_count_half2.mp3");
 			sound->VolumeSet(0.3f);
 			sound->Play(true);
-			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f)); //?´ì•¼ê¸°ëŠ” ?„ì§ ?ë‚˜ì§€ ?Šì•˜??
+			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_EnemyHalfCount")->second, { 1,1,1,1 }, 3.0f));
 			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 	}
-
-	
-	if (I_Input.GetKey('P') == KEY_PUSH)
-	{
-		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
-		//I_Effect.CreateEffect(L"../../data/effectdata/data.EFT", Player::GetInstance().GetPosition());
-	}
-
-
-	/*if (I_Input.GetKey('V') == KEY_PUSH)
-	{
-		Player::GetInstance().SetVictory();
-	}*/
 
 	for (auto manager : m_StateManagerMap)
 	{
@@ -561,9 +579,12 @@ bool    SceneInGame::Frame()
 		}
 		if (!m_Enemies.empty() && m_iMobDeadCount == m_Enemies.size() && !m_bInteractNextStage && m_Scene == S_INGAME)
 		{
+			auto sound = I_Sound.Find(L"yasuo_sound_map1_clear.mp3");
+			sound->VolumeSet(0.3f);
+			sound->Play(true);
 			m_bInteractNextStage = true;
-			auto iter = m_pQuadTree->m_TriggerList.find(L"Trig_Portal");
-			I_Collision.AddMapTriggerBox(iter->first, iter->second);
+			g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bInteractNextStage")->second, { 1,1,1,1 }, 3.0f));
+			m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(3.0f));
 		}
 
 		if (m_pBoss)
@@ -746,7 +767,6 @@ bool    SceneInGame::Render()
 	//Player::GetInstance().m_pTrail->SetMatrix(nullptr, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	//Player::GetInstance().m_pTrail->Render();
 
-    // Camera?? ??????? ??????? ????? ?? ??
 	auto lights = SSB::I_Light.GetLightList();
 	for (auto light : lights)
 	{
@@ -775,7 +795,7 @@ bool SceneInGame::PostRender()
 
 	I_Effect.Render();
 	
-	m_pInter_blur->Render();
+	m_pInter_blur->Render(); 
 
 	RenderMinimap();
 
@@ -955,6 +975,7 @@ void    SceneInGame::CharacterLoad()
 		XMFLOAT3 playerSpawnPos;
 		XMStoreFloat3(&playerSpawnPos, m_pQuadTree->m_PlayerSpawnPoint.find("Player")->second.position);
 		Player::GetInstance().Initialize_SetPosition(TVector3(playerSpawnPos));
+
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
 		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Scale(0.01f);
