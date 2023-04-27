@@ -17,41 +17,44 @@ E_SCENE     SceneTitle::NextScene()
 
 bool    SceneTitle::Init()
 {
-	I_Input.SwitchShowMouse(true);
+	/*I_Input.SwitchShowMouse(true);
 
 	m_pObj = new TestObj;
 	m_pInteract = new InteractiveObject();
 
-	m_pInteract->SetSwitch(&m_pObj->m_isB);
+	m_pInteract->SetSwitch(&m_pObj->m_isB);*/
 
 	m_pInter = new Interface();
-	m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/sky.jpg");
-	m_pInter->m_vPos = TVector3(0, 0, 0);
-	m_pInter->m_vScale = TVector3(1, 1, 1);
-	m_pInter->m_pWorkList.push_back(new InterfaceFadeOut(0.5f));
-	m_pInter->SetAttribute(TVector3(0, 0, 0), TVector3(1, 1, 1), TColor(1, 1, 1, 1));
+	m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/scene_title.dds");
+	m_pInter->SetAttribute(TVector3(0, 0, 0));
 
 	return true;
 }
 
 bool    SceneTitle::Frame()
 {
-	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
+	/*if (I_Input.GetKey(VK_F3) == KEY_PUSH)
 		I_Input.SwitchShowMouse(!I_Input.GetShowMouse());
 	if (I_Input.GetKey('Q') == KEY_PUSH)
 	{
 		m_pInteract->Switching();
-	}
+	}*/
 
 	m_pInter->Frame();
-	POINT pt = I_Input.m_ptPos;
+	/*POINT pt = I_Input.m_ptPos;
 	ScreenToClient(g_hWnd, &pt);
-	m_pInter->SetAttribute(TVector3(pt.x, pt.y, 0), TVector3(1, 1, 1), TColor(1, 1, 1, 1));
+	m_pInter->SetAttribute(TVector3(pt.x, pt.y, 0), TVector3(1, 1, 1), TColor(1, 1, 1, 1));*/
 
 	return true;
 }
 
 bool    SceneTitle::Render()
+{
+	
+	return true;
+}
+
+bool SceneTitle::PostRender()
 {
 	m_pInter->Render();
 	return true;
@@ -66,7 +69,7 @@ bool    SceneTitle::Release()
 		m_pInter = nullptr;
 	}
 
-	delete m_pObj;
-	delete m_pInteract;
+	/*delete m_pObj;
+	delete m_pInteract;*/
 	return true;
 }
