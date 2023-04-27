@@ -88,10 +88,10 @@ private:
         TVector3 m_Position;
         TVector3 m_Direction;
         float m_TimeStamp;
-        float m_Livetime = 3;
+        float m_Livetime = 1.5f;
         bool m_IsAlive = false;
         float m_Speed = 20;
-        float m_Damage = 100;
+        float m_Damage = 10.0f;
 
     public:
         Tornado(Character* owner);

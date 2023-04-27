@@ -2,6 +2,7 @@
 #include "FieldBoss.h"
 #include "Player.h"
 #include "CollisionMgr.h"
+#include "SoundMgr.h"
 
 namespace SSB
 {
@@ -134,6 +135,33 @@ namespace SSB
     {
         if (!_blackboard->Initialized)
         {
+            std::wstring szRandomSound;
+            switch ((int)randf(g_fGameTimer) % 2)
+            {
+                case 0:
+                    szRandomSound = L"varus_sound_voice_attack1.mp3";
+                    break;
+                case 1:
+                    szRandomSound = L"varus_sound_voice_attack2.mp3";
+                    break;
+            }
+            auto sound = I_Sound.Find(szRandomSound);
+            sound->VolumeSet(0.2f);
+            sound->Play();
+
+            szRandomSound;
+            switch ((int)randf(g_fGameTimer) % 2)
+            {
+                case 0:
+                    szRandomSound = L"varus_sound_attack2.mp3";
+                    break;
+                case 1:
+                    szRandomSound = L"varus_sound_attack2.mp3";
+                    break;
+            }
+            sound = I_Sound.Find(szRandomSound);
+            sound->VolumeSet(0.2f);
+            sound->Play();
             _isAttacked = false;
         }
 
@@ -268,6 +296,13 @@ namespace SSB
     }
     void FieldBossDeadState::Action()
     {
+        if (!_blackboard->Initialized)
+        {
+            std::wstring szRandomSound = L"varus_sound_dead.mp3";
+            auto sound = I_Sound.Find(szRandomSound);
+            sound->VolumeSet(0.2f);
+            sound->Play();
+        }
         XMFLOAT4 tmpF(0, 0, 0, 0);
         XMVECTOR tmp = XMLoadFloat4(&tmpF);
 		XMMATRIX world = XMLoadFloat4x4(&m_pCharacter->m_matWorld);
@@ -405,11 +440,42 @@ namespace SSB
             D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
         }
 
+        if (!_blackboard->Initialized)
+        {
+            std::wstring szRandomSound;
+            switch ((int)randf(g_fGameTimer) % 2)
+            {
+                case 0:
+                    szRandomSound = L"varus_sound_voice_attack1.mp3";
+                    break;
+                case 1:
+                    szRandomSound = L"varus_sound_voice_attack2.mp3";
+                    break;
+            }
+            auto sound = I_Sound.Find(szRandomSound);
+            sound->VolumeSet(0.2f);
+            sound->Play();
+        }
+
 		float pivot = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
 		if (pivot < m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime)
 		{
             if (_attackTimeStamp + _kAttackInterval < g_fGameTimer)
             {
+               
+                std::wstring szRandomSound;
+                switch ((int)randf(g_fGameTimer) % 2)
+                {
+                    case 0:
+                        szRandomSound = L"varus_sound_attack2.mp3";
+                        break;
+                    case 1:
+                        szRandomSound = L"varus_sound_attack2.mp3";
+                        break;
+                }
+                auto sound = I_Sound.Find(szRandomSound);
+                sound->VolumeSet(0.2f);
+                sound->Play();
                 static_cast<FieldBoss*>(m_pCharacter)->Attack();
                 _attackTimeStamp = g_fGameTimer;
             }
