@@ -128,6 +128,9 @@
       <AdditionalLibraryDirectories>../../lib;../../fmod/lib/x64;../../dxtk/lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>GameLib_D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

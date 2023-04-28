@@ -101,7 +101,7 @@ float4 GetSpecular(float2 uv)
 
 	float powVal = 10;
 	float Attenuation = 1;
-	float intensity = min(1, max(0, pow(dot(eyeDirection, reflectVector), powVal)));
+	float intensity = pow(saturate(dot(eyeDirection, reflectVector)), powVal);
 
 	float4 ret = LightColor * intensity * Attenuation;
 
