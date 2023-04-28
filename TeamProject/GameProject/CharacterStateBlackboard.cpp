@@ -6,6 +6,7 @@ namespace SSB
 	{
 		for (auto iter : _data)
 		{
+			iter.second->CurrentSound.Stop();
 			delete iter.second;
 		}
 		_data.clear();
