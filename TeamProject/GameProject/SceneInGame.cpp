@@ -817,7 +817,10 @@ bool SceneInGame::PostRender()
 bool    SceneInGame::Release()
 {
 	I_Effect.Release();
+
 	Player::GetInstance().m_pInterGageHP = nullptr;
+	Player::GetInstance().SceneChange();
+
 	m_pInter_BossHP = nullptr;
 	m_pCameraCurrent = nullptr;
 

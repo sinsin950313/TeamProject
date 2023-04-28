@@ -138,4 +138,7 @@ private:
 public:
     void SetVictory();
     bool IsVictory();
+
+public:
+    void SceneChange();
 };

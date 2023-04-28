@@ -268,6 +268,11 @@ bool Player::IsVictory()
 	return _isVictory;
 }
 
+void Player::SceneChange()
+{
+	m_IsDash = false;
+}
+
 Player::Tornado::Tornado(Character* owner) : m_Owner(owner)
 {
 	m_pDebugBox = new DebugBox;
