@@ -21,6 +21,7 @@ public:
 
 	TMatrix		m_matTopWorld;
 
+	TVector3	m_vRot;
 	TVector3	m_vPos;
 	TVector3* m_vFollowPos;
 	bool			m_isDone;

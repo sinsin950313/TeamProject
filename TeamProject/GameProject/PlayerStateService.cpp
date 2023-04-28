@@ -4,7 +4,7 @@
 #include "CollisionMgr.h"
 #include "CameraTPS.h"
 #include "SoundMgr.h"
-
+#include "EffectMgr.h"
 namespace SSB
 {
 	PlayerStateCommonMethodInterface::PlayerStateCommonMethodInterface(float transferRequireTime) : _transferRequireTime(transferRequireTime)
@@ -275,6 +275,7 @@ namespace SSB
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
+						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -394,6 +395,7 @@ namespace SSB
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
+						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -513,6 +515,7 @@ namespace SSB
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
+						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -632,6 +635,7 @@ namespace SSB
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
+						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -778,6 +782,7 @@ namespace SSB
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
+						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -1066,6 +1071,7 @@ namespace SSB
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
+						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 					}
@@ -1210,6 +1216,7 @@ namespace SSB
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
+						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 					}
@@ -1348,7 +1355,7 @@ namespace SSB
 		Player* player = static_cast<Player*>(m_pCharacter);
 		if (!_blackboard->Initialized)
 		{
-
+			Player::GetInstance().m_pMainCamera->CameraShake();
 			Player::GetInstance().m_pMainCamera->CameraClosing(2.0f);
 			std::wstring szRandomSound = L"yasuo_sound_soriegedon.mp3";
 			auto sound = I_Sound.Find(szRandomSound);
@@ -1371,11 +1378,25 @@ namespace SSB
 			}
 		}
 
+		m_fTime += g_fSecondPerFrame;
+		if (m_fTime >= m_fCheckTime)
+		{
+			m_isOnEffect = true;
+		}
 		auto list = player->GetUltimateSkillTargetList();
 		for (auto elem : list)
 		{
 			elem->SetPoundState(true);
 			elem->m_vPos.y = 3;
+		}
+		if (m_isOnEffect)
+		{
+			for (auto elem : _blackboard->DamagedCharacters)
+			{
+				I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", elem->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
+			}
+			m_isOnEffect = false;
+			m_fTime = 0.0f;
 		}
 	}
 	StateTransferPriority PlayerUltimateSkillState::GetPriority()

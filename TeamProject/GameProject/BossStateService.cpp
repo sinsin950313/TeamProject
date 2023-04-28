@@ -2,6 +2,7 @@
 #include "BossMob.h"
 #include "Player.h"
 #include "CollisionMgr.h"
+#include "EffectMgr.h"
 
 namespace SSB
 {
@@ -551,6 +552,9 @@ namespace SSB
 
 			// Set the characters old direction
 			m_pCharacter->m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+
+			I_Effect.CreateEffect(L"../../data/effectdata/ShockWave.EFT", m_pCharacter->m_AttackBox.vCenter + 
+				TVector3(0, -m_pCharacter->m_AttackBox.fExtent[1], 0));
 
 			TQuaternion q;
 			D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);

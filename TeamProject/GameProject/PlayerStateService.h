@@ -206,6 +206,11 @@ namespace SSB
 	public:
 		PlayerUltimateSkillState(float transferRequireTime);
 
+	private:
+		float	m_fTime = 0.0f;
+		float	m_fCheckTime = 0.3f;
+		bool	m_isOnEffect = false;
+
 	public:
 		void StateDecision() override;
 		void Action() override;

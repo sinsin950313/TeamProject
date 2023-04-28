@@ -122,17 +122,17 @@ bool	Player::PostRender()
 		m_pImmediateContext->VSSetConstantBuffers(1, 1, &_objectToWorldTransformBuffer);
 		m_pImmediateContext->VSSetConstantBuffers(8, 1, &m_pInstancingBuffer);
 
-		m_pImmediateContext->VSSetShader(m_pModelVS[1]->m_pVS, NULL, 0);
-		m_pImmediateContext->PSSetShader(m_pModelPS[1]->m_pPS, NULL, 0);
-		m_pModel->PostRender();
+		//m_pImmediateContext->VSSetShader(m_pModelVS[1]->m_pVS, NULL, 0);
+		//m_pImmediateContext->PSSetShader(m_pModelPS[1]->m_pPS, NULL, 0);
+		//m_pModel->PostRender();
 
 		m_pImmediateContext->VSSetShader(m_pModelVS[0]->m_pVS, NULL, 0);
 		m_pImmediateContext->PSSetShader(m_pModelPS[0]->m_pPS, NULL, 0);
 		m_pModel->RenderInstancing(12);
 
-		m_pImmediateContext->VSSetShader(m_pModelVS[1]->m_pVS, NULL, 0);
-		m_pImmediateContext->PSSetShader(m_pModelPS[1]->m_pPS, NULL, 0);
-		m_pModel->PostRender();
+		//m_pImmediateContext->VSSetShader(m_pModelVS[1]->m_pVS, NULL, 0);
+		//m_pImmediateContext->PSSetShader(m_pModelPS[1]->m_pPS, NULL, 0);
+		//m_pModel->PostRender();
 	}
 
 	// 인스턴싱 쪼개서 11 + 1 사이에 PS 갈아치우기

@@ -157,9 +157,9 @@ bool    SceneInGame::Init()
 	//testBox.CreateOBBBox(40, 4, 4);
 	//m_debugBoxList.push_back(&testBox);
 	//I_Collision.AddStaticObjectBox(&testBox, NULL);
-	if(m_Scene == S_INGAME)
-		Player::GetInstance().m_vPos = TVector3(0, -50, 0);
-	I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
+
+	I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", TVector3(1000, -1000, 1000));
+	
 	m_pDebugBox = new DebugBox;
 	m_pDebugBox->Create(m_pd3dDevice, m_pImmediateContext);
 
@@ -205,7 +205,9 @@ bool    SceneInGame::Frame()
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
 		//I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
-		I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", Player::GetInstance().GetPosition());
+		//I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", Player::GetInstance().GetPosition());
+		//I_Effect.CreateEffect(L"../../data/effectdata/Portal.EFT", Player::GetInstance().GetPosition() + TVector3(0, 5, 0));
+		I_Effect.CreateEffect(L"../../data/effectdata/ShockWave.EFT", Player::GetInstance().GetPosition() + TVector3(0, 0, 0));
 	}
 
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)
@@ -405,6 +407,7 @@ bool    SceneInGame::Frame()
 			{
 				m_iCurrentCineCount = 7;
 				auto iter = m_pQuadTree->m_TriggerList.find(L"Trig_Portal");
+				I_Effect.CreateEffect(L"../../data/effectdata/Portal.EFT", iter->second.vCenter + TVector3(0, -2, 0));
 				I_Collision.AddMapTriggerBox(iter->first, iter->second);
 			}
 		}
@@ -1038,6 +1041,7 @@ void    SceneInGame::CharacterLoad()
 				enemy->Scale(0.02f);
 				m_StateManagerMap.find(SSB::kFieldBossStateManager)->second->RegisterCharacter(enemy, SSB::kFieldBossMobIdle);	
 				enemy->Initialize_RegisterSkill(SSB::kFieldBossMobSkillCasting, 20);
+				enemy->m_vRotation.y = XM_PI;
 			}
 
 			//I_Model.Load(m_pQuadTree->m_EnemySpawnList[i].first, "Idle", &enemy->m_pModel);

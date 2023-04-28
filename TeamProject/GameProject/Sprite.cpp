@@ -21,6 +21,7 @@ bool Sprite::Init()
 	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"PS", &m_pSwapPS[0]);
 	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"Distortion", &m_pSwapPS[1]);
 	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"COLOR_PS", &m_pSwapPS[2]);
+	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"OPACITY_PS", &m_pSwapPS[3]);
 
 	m_pSwapGS[0] = NULL;
 	I_Shader.GSLoad(L"../../data/shader/DefaultParticle.hlsl", L"RibbonGS", &m_pSwapGS[1]);

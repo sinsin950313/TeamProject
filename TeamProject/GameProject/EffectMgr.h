@@ -18,8 +18,8 @@ private:
 	Effect*	LoadEffect(std::wstring path);
 
 public:
-	Effect*	CreateEffect(std::wstring path, TVector3* vPos);
-	Effect* CreateEffect(std::wstring path, TVector3 vPos);
+	Effect*	CreateEffect(std::wstring path, TVector3* vPos, TVector3 vRot = TVector3(0, 0, 0));
+	Effect* CreateEffect(std::wstring path, TVector3 vPos, TVector3 vRot = TVector3(0, 0, 0));
 
 	bool	Frame();
 	bool	Render();

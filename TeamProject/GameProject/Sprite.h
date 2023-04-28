@@ -9,7 +9,7 @@ public:
 
 	Shader* m_pSwapVS[2]; // VS, RibbonVS
 	Shader* m_pSwapGS[2]; // NULL, RibbonGS
-	Shader* m_pSwapPS[3]; // PS, Distortion, COLOR_PS
+	Shader* m_pSwapPS[4]; // PS, Distortion, COLOR_PS
 
 	Shader* m_pVS;
 	Shader* m_pGS;

@@ -45,7 +45,7 @@ CamMoveList:camPos:4.77844 11.8129 -16.4423, fYaw:186.314, fPitch:21.219, fRoll:
 CamMoveList:camPos:0.0445042 11.7463 -26.7721, fYaw:185.965, fPitch:30.369, fRoll:0
 fDuration:3
 szCinemaName:Cine_2_End
-CamMoveList:camPos:-6.54351 11.1104 -31.1257, fYaw:180.287, fPitch:33.9923, fRoll:0
+CamMoveList:camPos:0.0445042 11.7463 -26.7721, fYaw:185.965, fPitch:30.369, fRoll:0
 CamMoveList:camPos:3.91678 15.327 -24.6189, fYaw:175.787, fPitch:36.1923, fRoll:0
 CamMoveList:camPos:2.83747 16.4498 -22.6157, fYaw:200.737, fPitch:38.5423, fRoll:0
 CamMoveList:camPos:6.57067 4.58728 -7.96683, fYaw:188.687, fPitch:30.8423, fRoll:0
@@ -16751,7 +16751,7 @@ SimpleObjectCollider, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_Interac
 ..\..\data\fbx\tree1.Script, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_SOLID, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_STATIC, position:30.403 11.531 -84.557, rotation:7 162 0, scale:0.07 0.07 0.07, vAxis:1 0 0 0 1 0 0 0 1, fExtent:165.334 203.429 127.984, vCenter:-19.8652 35.2712 12.5626
 SimpleObjectCollider, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_COLLIDER, position:-53.583 0.0283555 -66.483, rotation:0 -4 0, scale:21 19 20, vAxis:1 0 0 0 1 0 0 0 1, fExtent:0.5 0.5 0.5, vCenter:0 0 0
 SimpleObjectCollider, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_COLLIDER, position:-22.235 -0.412185 -87.089, rotation:0 25 0, scale:22 20 13, vAxis:1 0 0 0 1 0 0 0 1, fExtent:0.5 0.5 0.5, vCenter:0 0 0
-Trig_Portal, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_TRIGGER, position:-5.359 -5.22488 -46.511, rotation:0 13 0, scale:30 30 30, vAxis:1 0 0 0 1 0 0 0 1, fExtent:0.5 0.5 0.5, vCenter:0 0 0
+Trig_Portal, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_TRIGGER, position:-3.359 4.775 -46.511, rotation:0 -27 0, scale:15 15 15, vAxis:1 0 0 0 1 0 0 0 1, fExtent:0.5 0.5 0.5, vCenter:0 0 0
 ..\..\data\fbx\periph_north.Script, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_SOLID, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_STATIC, position:17.523 4.398 -11.048, rotation:5 237 0, scale:0.025 0.02 0.02, vAxis:1 0 0 0 1 0 0 0 1, fExtent:336.119 300.513 257.581, vCenter:7.62448 44.804 23.4781
 ..\..\data\fbx\periph_north.Script, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_SOLID, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_STATIC, position:47.488 7.694 43.373, rotation:3 345 15, scale:0.05 0.05 0.05, vAxis:1 0 0 0 1 0 0 0 1, fExtent:336.119 300.513 257.581, vCenter:7.62448 44.804 23.4781
 SimpleObjectCollider, m_CullMode:CULL_MODE_NONE, m_DrawMode:MODE_WIRE, m_InteractiveMode:MODE_NONE, m_Specify:OBJECT_COLLIDER, position:51.104 -0.0545578 -9.687, rotation:0 15 0, scale:21 20 14, vAxis:1 0 0 0 1 0 0 0 1, fExtent:0.5 0.5 0.5, vCenter:0 0 0

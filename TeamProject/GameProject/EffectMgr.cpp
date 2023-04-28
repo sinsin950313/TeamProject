@@ -228,22 +228,24 @@ Effect* EffectMgr::LoadEffect(std::wstring path)
 	return pEffect;
 }
 
-Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos)
+Effect*	EffectMgr::CreateEffect(std::wstring path, TVector3* vPos, TVector3 vRot)
 {
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	Effect* pEffect = LoadEffect(path);
 	pEffect->m_vFollowPos = vPos;
+	pEffect->m_vRot = vRot;
 	
 	return pEffect;
 }
 
-Effect* EffectMgr::CreateEffect(std::wstring path, TVector3 vPos)
+Effect* EffectMgr::CreateEffect(std::wstring path, TVector3 vPos, TVector3 vRot)
 {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	Effect* pEffect = LoadEffect(path);
 	pEffect->m_vPos = vPos;
+	pEffect->m_vRot = vRot;
 
 	return pEffect;
 }

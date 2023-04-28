@@ -66,6 +66,9 @@ public:
 	float				m_fCurInitTime;
 	float				m_fInitTime;
 
+	float				m_fLifeTime;
+	float				m_fLifeTimer;
+
 	bool				m_isDone;
 
 	///////////////////////////////////

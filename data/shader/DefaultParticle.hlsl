@@ -74,7 +74,7 @@ float4 Distortion(VS_out input) : SV_Target
 	float alpha = (0.5 - (abs(input.t.x - 0.5))) + (0.5 - (abs(input.t.y - 0.5)));
 	vOut.a = alpha;
 	if (color.a <= 0.2)
-		vOut.a = 0;
+		discard;
 
 	return vOut;
 }

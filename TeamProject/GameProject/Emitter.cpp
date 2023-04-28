@@ -154,7 +154,8 @@ void	Emitter::Reset()
 	m_fSpawnTime = 0.0f;
 	m_fCurInitTime = 0.0f;
 	m_fInitTime = GetRandRealNum(m_BasicData.fInitDelay, m_BasicData.fInitDelayDiff);
-
+	m_fLifeTime = 0.0f;
+	m_fLifeTimer = GetRandRealNum(m_BasicData.fLifeTime, m_BasicData.fLifeTimeDiff);
 	auto iter = m_pParticleList.begin();
 	while (iter != m_pParticleList.end())
 	{
@@ -222,6 +223,9 @@ bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 	m_fCurInitTime = 0.0f;
 	m_fInitTime = GetRandRealNum(m_BasicData.fInitDelay, m_BasicData.fInitDelayDiff);
 
+	m_fLifeTime = 0.0f;
+	m_fLifeTimer= GetRandRealNum(m_BasicData.fLifeTime, m_BasicData.fLifeTimeDiff);
+
 	return true;
 }
 bool	Emitter::Frame()
@@ -230,6 +234,7 @@ bool	Emitter::Frame()
 	if (m_fCurInitTime < m_fInitTime)
 		return true;
 
+	m_fLifeTime += g_fSecondPerFrame;
 	m_fSpawnTime += g_fSecondPerFrame;
 	if (m_fSpawnTime >= m_fSpawnTimer)
 	{
@@ -243,7 +248,8 @@ bool	Emitter::Frame()
 		}
 		else
 		{
-			m_isDone = true;
+			if(m_BasicData.isLifeTime && m_fLifeTime >= m_fLifeTimer)
+				m_isDone = true;
 		}
 	}
 
@@ -315,10 +321,13 @@ bool	Emitter::Render()
 		if (m_BasicRenderData.texPath == L"")
 			m_pSprite->m_pPS = m_pSprite->m_pSwapPS[2];
 
-		if (m_BasicRenderData.iBlendType == 2)
-			m_pImmediateContext->OMSetBlendState(DXState::g_pAddAlphaBlend, 0, -1);
-		else
+		if (m_BasicRenderData.iBlendType == 0)
+		{
+			m_pSprite->m_pPS = m_pSprite->m_pSwapPS[3];
 			m_pImmediateContext->OMSetBlendState(DXState::g_pAlphaBlend, 0, -1);
+		}
+		else
+			m_pImmediateContext->OMSetBlendState(DXState::g_pAddAlphaBlend, 0, -1);
 
 		if (m_BasicRenderData.iMaterial == 1)
 			m_pSprite->m_pPS = m_pSprite->m_pSwapPS[1];

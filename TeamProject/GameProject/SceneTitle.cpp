@@ -28,6 +28,18 @@ bool    SceneTitle::Init()
 	m_pInter->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/scene_title.dds");
 	m_pInter->SetAttribute(TVector3(0, 0, 0));
 
+	Shader* temp;
+	I_Shader.VSLoad(L"../../data/shader/DefaultParticle.hlsl", L"VS", &temp);
+	I_Shader.VSLoad(L"../../data/shader/DefaultParticle.hlsl", L"RibbonVS", &temp);
+
+	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"PS", &temp);
+	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"Distortion", &temp);
+	I_Shader.PSLoad(L"../../data/shader/DefaultParticle.hlsl", L"COLOR_PS", &temp);
+
+	I_Shader.GSLoad(L"../../data/shader/DefaultParticle.hlsl", L"RibbonGS", &temp);
+
+	Texture* tTex;
+	I_Tex.Load(L"../../data/effectdata/smoke_tex.png", &tTex);
 	return true;
 }
 
