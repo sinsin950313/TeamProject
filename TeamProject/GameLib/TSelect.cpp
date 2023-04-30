@@ -489,6 +489,11 @@ bool TSelect::ChkPick(TVector3& v0, TVector3& v1, TVector3& v2)
 		m_vSrcVex[1] = v1;
 		m_vSrcVex[2] = v2;
 		m_matWorldPick = m_matWorld;
+		if (fDist < 0)
+		{
+			return false;
+		}
+		m_vIntersection = m_Ray.vOrigin + m_Ray.vDirection * fDist;
 		return true;
 	}
 
