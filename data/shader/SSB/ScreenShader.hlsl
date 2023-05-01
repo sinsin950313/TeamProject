@@ -113,8 +113,67 @@ float4 GetAmbient()
 	return float4(0.2, 0.2, 0.2, 1);
 }
 
+bool IsBoundary(float2 uv)
+{
+	return false;
+	float depth = DepthMap.Sample(Sampler, uv).x;
+	depth = depth - 0.998;
+	depth = depth / 0.002f;
+	if(0.8f < depth)
+	{
+		return false;
+	}
+
+	float textureColor = DepthMap.Sample(Sampler, uv).x;
+	int		g_iTexSizeX = 1600;
+	int		g_iTexSizeY = 900;
+
+	// -1 0 1
+	// -2 0 2
+	// -1 0 1
+	float dx = 1.0f/g_iTexSizeX;
+	float dy = 1.0f/g_iTexSizeY;
+
+	float tl = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y - dy)).x;
+	float l = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y)).x;
+	float bl = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y + dy)).x;
+	float t = DepthMap.Sample(Sampler, float2(uv.x, uv.y - dy)).x;
+	float b = DepthMap.Sample(Sampler, float2(uv.x, uv.y + dy)).x;
+	float tr = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y - dy)).x;
+	float r = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y)).x;
+	float br = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y + dy)).x;
+	
+	float SobelX = -tl - 2.0f * l - bl + tr + 2.0f * r + br;
+
+	// -1 -2 -1
+	// 0 0 0
+	// 1 2 1
+	float SobelY = -tl - 2.0f * t - tr + bl + 2.0f * b + br;
+
+	//float3 N = normalize(float3(-SobelX.x, -SobelY.x, 1.0f));
+	//N = N *0.5f +0.5f;
+
+	float SobelResult = (abs(SobelX) + abs(SobelY)) / 2.0f;
+	SobelResult = SobelResult / 0.002f;
+	SobelResult = SobelResult - 0.998f;
+		
+	if (0.7f < SobelResult)
+	{
+		return false;
+	}
+	else 
+	{
+		return true;
+	}	
+}
+
 float4 PS(PSInput input) : SV_TARGET0
 {
+	if(IsBoundary(input.TextureUV))
+	{
+		return float4(0, 0, 0, 1);
+	}
+
 	// 선형 Fog 계산
 	float4 pos = PositionMap.Sample(Sampler, input.TextureUV);
 	float fogDist = distance(currentCameraPos, pos);

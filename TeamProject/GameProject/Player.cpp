@@ -217,9 +217,20 @@ bool Player::IsAbleToCallUltimateSkill()
 	return m_kMaxUltimateSkillStackCount == m_UltimateSkillStack;
 }
 
+bool Player::IsUltimateSkill()
+{
+	return m_IsCallUltimateSkill;
+}
+
 void Player::CallUltimateSkill()
 {
 	m_UltimateSkillStack = 0;
+	m_IsCallUltimateSkill = true;
+}
+
+void Player::ResetUltimateSkill()
+{
+	m_IsCallUltimateSkill = false;
 }
 
 void Player::SetMap(MeshMap* pMap)
