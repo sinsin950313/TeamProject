@@ -19,21 +19,24 @@ namespace SSB
 
 		for (auto node : _map->m_pDrawLeafNodeList)
 		{
-			UINT index = 0;
-			UINT iNumFace = node->m_IndexList.size() / 3;
-			for (UINT face = 0; face < iNumFace; face++)
+			if (m_Select.OBBtoRay(&node->m_Box))
 			{
-				UINT i0 = node->m_IndexList[index + 0];
-				UINT i1 = node->m_IndexList[index + 1];
-				UINT i2 = node->m_IndexList[index + 2];
-				TVector3 v0 = _map->m_pMap->m_ListVertex[i0].pos;
-				TVector3 v1 = _map->m_pMap->m_ListVertex[i1].pos;
-				TVector3 v2 = _map->m_pMap->m_ListVertex[i2].pos;
-				if (m_Select.ChkPick(v0, v1, v2))
+				UINT index = 0;
+				UINT iNumFace = node->m_IndexList.size() / 3;
+				for (UINT face = 0; face < iNumFace; face++)
 				{
-					return true;
+					UINT i0 = node->m_IndexList[index + 0];
+					UINT i1 = node->m_IndexList[index + 1];
+					UINT i2 = node->m_IndexList[index + 2];
+					TVector3 v0 = _map->m_pMap->m_ListVertex[i0].pos;
+					TVector3 v1 = _map->m_pMap->m_ListVertex[i1].pos;
+					TVector3 v2 = _map->m_pMap->m_ListVertex[i2].pos;
+					if (m_Select.ChkPick(v0, v1, v2))
+					{
+						return true;
+					}
+					index += 3;
 				}
-				index += 3;
 			}
 		}
 
@@ -65,7 +68,6 @@ namespace SSB
 		TVector3 y(0, 1, 0);
 
 		TVector3 z = delta;
-		z.y = 0;
 		z.Normalize();
 
 		TVector3 x;
@@ -82,7 +84,7 @@ namespace SSB
 			TQuaternion q;
 			XMVECTOR quat = XMQuaternionRotationMatrix(XMMatrixRotationRollPitchYaw(-m_fCameraPitchAngle, m_fCameraYawAngle, 0));
 			XMStoreFloat4(&q, quat);
-			D3DXMatrixAffineTransformation(&tmpWorld, 1, nullptr, &q, &cameraPosition);
+			D3DXMatrixAffineTransformation(&tmpWorld, 1, nullptr, &q, &center);
 			_collideCheckBox.UpdateBox(tmpWorld);
 		}
 
