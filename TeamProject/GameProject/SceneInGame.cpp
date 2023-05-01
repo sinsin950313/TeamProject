@@ -145,13 +145,13 @@ bool    SceneInGame::Init()
 {
 	I_Input.SwitchShowMouse(false);
 
-	m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
+	//m_debugBoxList.push_back(&Player::GetInstance().m_ColliderBox);
 	//m_debugBoxList.push_back(&Player::GetInstance().m_AttackBox);
 
 	for (auto enemy : m_Enemies)
 	{
-		m_debugBoxList.push_back(&enemy->m_ColliderBox);
-		//m_debugBoxList.push_back(&enemy->m_AttackBox);
+		//m_debugBoxList.push_back(&enemy->m_ColliderBox);
+		m_debugBoxList.push_back(&enemy->m_AttackBox);
 	}
 
 	//testBox.CreateOBBBox(40, 4, 4);
@@ -695,32 +695,40 @@ bool    SceneInGame::Render()
 
 	if (m_pDebugBox && false)
 	{
-		//if (m_pBoss)
-		//{
-		//	m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
-		//    m_pDebugBox->SetColor({1, 0, 0, 1});
-		//    m_pDebugBox->UpdateBuffer();
-		//    m_pDebugBox->Render();
-		//}
-		//for (auto box : I_Collision.GetMapCollisionList())
-		//{
-		//    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//    m_pDebugBox->SetBox(box);
-		//    m_pDebugBox->SetColor({1, 0, 0, 1});
-		//    m_pDebugBox->UpdateBuffer();
-		//    m_pDebugBox->Render();
-		//}
+		if (m_pBoss)
+		{
+			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		    m_pDebugBox->SetBox(m_pBoss->m_ColliderBox);
+		    m_pDebugBox->SetColor({1, 0, 0, 1});
+		    m_pDebugBox->UpdateBuffer();
+		    m_pDebugBox->Render();
+		}
+		if (m_pFieldBoss)
+		{
+			m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		    m_pDebugBox->SetBox(m_pFieldBoss->m_ColliderBox);
+		    m_pDebugBox->SetColor({1, 0, 0, 1});
+		    m_pDebugBox->UpdateBuffer();
+		    m_pDebugBox->Render();
+		}
+		for (auto box : I_Collision.GetMapCollisionList())
+		{
+		    m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		    m_pDebugBox->SetBox(box);
+		    m_pDebugBox->SetColor({1, 0, 0, 1});
+		    m_pDebugBox->UpdateBuffer();
+		    m_pDebugBox->Render();
+		}
 
-		//m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-		//TColor color = TColor(0, 0, 1, 1);
-		//for (T_BOX* box : m_debugBoxList)
-		//{
-		//	m_pDebugBox->SetBox(*box);
-		//	m_pDebugBox->SetColor(color);
-		//	m_pDebugBox->UpdateBuffer();
-		//	m_pDebugBox->Render();
-		//}
+		m_pDebugBox->SetMatrix(&m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+		TColor color = TColor(0, 0, 1, 1);
+		for (T_BOX* box : m_debugBoxList)
+		{
+			m_pDebugBox->SetBox(*box);
+			m_pDebugBox->SetColor(color);
+			m_pDebugBox->UpdateBuffer();
+			m_pDebugBox->Render();
+		}
 
 		//for (T_BOX box : I_Collision.GetInstance().GetMapCollisionList())
 		//{
@@ -986,7 +994,6 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().Initialize_SetPosition(TVector3(playerSpawnPos));
 
 		//Player::GetInstance()._damagedSound = I_Sound.Find(L"GarenDamaged.mp3");
-		Player::GetInstance().m_Damage = 100;
 		Player::GetInstance().Scale(0.01f);
 
 		m_StateManagerMap.find(SSB::kPlayerStateManager)->second->RegisterCharacter(&Player::GetInstance(), SSB::kPlayerHoudgiLoop);

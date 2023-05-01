@@ -242,7 +242,7 @@ namespace SSB
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
 		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.25;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
 			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
 			)
@@ -362,7 +362,7 @@ namespace SSB
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
 		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.25;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
 			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
 			)
@@ -482,7 +482,7 @@ namespace SSB
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
 		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.25;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
 			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
 			)
@@ -602,7 +602,7 @@ namespace SSB
 		// 선택된 소켓의 애니메이션 행렬을 가져와서 어택 박스에 적용시켜서 
 		// 충돌 처리가 될 수 있게끔 해야함
 		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
-		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.3f;
+		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.25;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
 			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
 			)
@@ -759,6 +759,7 @@ namespace SSB
 				auto list = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);
 				for (auto obj : list)
 				{
+					float damage = m_pCharacter->m_Damage * 1.5;
 					if (obj != m_pCharacter)
 					{
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
@@ -776,14 +777,14 @@ namespace SSB
 							auto sound = I_Sound.Find(szRandomSound);
 							sound->VolumeSet(0.2f);
 							sound->Play();
-							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							float currentHp = obj->m_HealthPoint - damage;
 							if (currentHp <= 0)
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
-						Damage(_blackboard, obj, m_pCharacter->m_Damage);
+						Damage(_blackboard, obj, damage);
 					}
 				}
 			}
@@ -1050,6 +1051,7 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
+						float damage = m_pCharacter->m_Damage * 2.0f;
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
 							std::wstring szRandomSound;
@@ -1065,14 +1067,14 @@ namespace SSB
 							auto sound = I_Sound.Find(szRandomSound);
 							sound->VolumeSet(0.2f);
 							sound->Play();
-							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							float currentHp = obj->m_HealthPoint - damage;
 							if (currentHp <= 0)
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
-						Damage(_blackboard, obj, m_pCharacter->m_Damage);
+						Damage(_blackboard, obj, damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 					}
 				}
@@ -1195,6 +1197,7 @@ namespace SSB
 				{
 					if (obj != m_pCharacter)
 					{
+						float damage = m_pCharacter->m_Damage * 2.0f;
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
 							std::wstring szRandomSound;
@@ -1210,14 +1213,14 @@ namespace SSB
 							auto sound = I_Sound.Find(szRandomSound);
 							sound->VolumeSet(0.2f);
 							sound->Play();
-							float currentHp = obj->m_HealthPoint - m_pCharacter->m_Damage;
+							float currentHp = obj->m_HealthPoint - damage;
 							if (currentHp <= 0)
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
-							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, obj->m_pInterDamage, 0.5f, 10.0f));
 						}
 						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
-						Damage(_blackboard, obj, m_pCharacter->m_Damage);
+						Damage(_blackboard, obj, damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 					}
 				}
@@ -1334,7 +1337,7 @@ namespace SSB
 
 			for (auto elem : _blackboard->DamagedCharacters)
 			{
-				float damage = 100;
+				float damage = 70;
 				elem->Damage(damage);
 				//if (_blackboard->DamagedCharacters.find(elem) == _blackboard->DamagedCharacters.end())
 				{
@@ -1342,12 +1345,13 @@ namespace SSB
 					if (currentHp <= 0)
 						currentHp = 0;
 					elem->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / elem->m_kHealthPointMax, 1.0f));
-					elem->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(100, elem->m_pInterDamage, 0.5f, 10.0f));
+					elem->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, elem->m_pInterDamage, 0.5f, 10.0f));
 				}
 			}
 
 			ReserveNextTransferName(kPlayerIdle);
 			SetTransfer();
+			Player::GetInstance().m_IsImmortal = false;
 		}
 	}
 	void PlayerUltimateSkillState::Action()
@@ -1376,6 +1380,7 @@ namespace SSB
 			{
 				_blackboard->DamagedCharacters.insert(elem);
 			}
+			player->m_IsImmortal = true;
 		}
 
 		m_fTime += g_fSecondPerFrame;

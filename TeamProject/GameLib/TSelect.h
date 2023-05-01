@@ -108,7 +108,7 @@ public:
 	bool    GetIntersection(TVector3 vStart,TVector3 vEnd,TVector3 vNormal,TVector3 v0,TVector3 v1,	TVector3 v2,float* fPercentage = nullptr);
 	// 폴리곤안에 위치하는지 판단한다.
 	bool    PointInPolygon(TVector3 vert,TVector3 faceNormal,TVector3 v0,TVector3 v1,TVector3 v2);
-	bool	ChkPick(TVector3& v0, TVector3& v1, TVector3& v2);
+	bool	ChkPick(TVector3& v0, TVector3& v1, TVector3& v2, float extent);
 	bool	IntersectTriangle(const TVector3& orig, const TVector3& dir,TVector3& v0, TVector3& v1, TVector3& v2,FLOAT* t, FLOAT* u, FLOAT* v);
 public:
 	TSelect(void);

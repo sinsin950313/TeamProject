@@ -44,6 +44,7 @@ bool CameraTPS::Frame()
 	// to be "standing" on (0,0,0), instead of centered around it ;) Well target her head here though
 	//m_CharCamDist = 10.0f;
 	camPosition = (camPosition * m_CharCamDist) + m_vTarget;
+	camPosition = XMVectorSetY(camPosition, XMVectorGetY(camPosition) + 3.0f);
 
 	// We need to set our cameras forward and right vectors to lay
 	// in the worlds xz plane, since they are the vectors we will

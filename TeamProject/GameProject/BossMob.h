@@ -9,9 +9,9 @@ namespace SSB
     public:
         Camera* m_pMainCamera;
     public:
-        float m_BattleRange = 5;
+        float m_BattleRange = 6;
         float m_SpotRange = 40;
-        float m_DashRange = 20;
+        float m_DashRange = 30;
         float m_LastSkillTimeStamp;
         TVector3 m_DashDirection;
 

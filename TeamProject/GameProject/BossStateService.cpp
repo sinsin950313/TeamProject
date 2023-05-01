@@ -218,7 +218,7 @@ namespace SSB
 			{
 				if (!Player::GetInstance().IsDash())
 				{
-					Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage);
+					Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 1.5f);
 					Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
 					Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
 				}
@@ -229,6 +229,7 @@ namespace SSB
 	{
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		Character* targetPlayer = &Player::GetInstance();
+
 		if (mob->IsDead())
 		{
             ReserveNextTransferName(kBossMobDead);
@@ -293,7 +294,8 @@ namespace SSB
 	void BossMobAttack1State::Action()
 	{
 		// LookAt Target
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		float pivotTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < pivotTime)
 		{
 			XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
 			oldCharDirection = XMVector3Normalize(oldCharDirection);
@@ -322,7 +324,7 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.15;
 		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
 			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
@@ -422,7 +424,8 @@ namespace SSB
 	void BossMobAttack2State::Action()
 	{
 		// LookAt Target
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		float pivotTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
+		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < pivotTime)
 		{
 			XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
 			oldCharDirection = XMVector3Normalize(oldCharDirection);
@@ -451,7 +454,7 @@ namespace SSB
 			D3DXMatrixAffineTransformation(&m_pCharacter->m_matWorld, &m_pCharacter->m_vScale, nullptr, &q, &m_pCharacter->m_vPos);
 		}
 
-		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.2f;
+		float startTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.15;
 		float endTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > startTime &&
 			m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < endTime
@@ -487,6 +490,9 @@ namespace SSB
         if (mob->IsAirborne())
         {
             ReserveNextTransferName(kBossMobAirborne);
+			m_pCharacter->m_AttackBox.fExtent[0] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[1] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[2] = 1.5f;
 			SetTransfer();
         }
 
@@ -495,6 +501,9 @@ namespace SSB
 			if (TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()) <= mob->GetBattleRange())
 			{
 				ReserveNextTransferName(kBossMobAttack1);
+			m_pCharacter->m_AttackBox.fExtent[0] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[1] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[2] = 1.5f;
 				SetTransfer();
 
 				mob->SetLastSkillTimeStamp();
@@ -506,6 +515,9 @@ namespace SSB
 			if (mob->GetBattleRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 			{
 				ReserveNextTransferName(kBossMobMove);
+			m_pCharacter->m_AttackBox.fExtent[0] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[1] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[2] = 1.5f;
 				SetTransfer();
 
 				mob->SetLastSkillTimeStamp();
@@ -518,6 +530,9 @@ namespace SSB
 			if (mob->GetSpotRange() < TVector3::Distance(targetPlayer->GetPosition(), mob->GetPosition()))
 			{
 				ReserveNextTransferName(kBossMobMove);
+			m_pCharacter->m_AttackBox.fExtent[0] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[1] = 2.0f;
+			m_pCharacter->m_AttackBox.fExtent[2] = 1.5f;
 				SetTransfer();
 
 				mob->SetLastSkillTimeStamp();
@@ -526,35 +541,51 @@ namespace SSB
 	}
 	void BossMobSkill1State::Action()
 	{
+		static bool called = false;
+
+		if (!_blackboard->Initialized)
+		{
+			called = false;
+			m_pCharacter->m_AttackBox.fExtent[0] = 3.0f;
+			m_pCharacter->m_AttackBox.fExtent[1] = 3.0f;
+			m_pCharacter->m_AttackBox.fExtent[2] = 3.0f;
+		}
+
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		mob->m_pMainCamera->CameraShake();
 		// LookAt Target
-		if (IsPassedRequiredTime(_blackboard->StateTImeStamp))
+		if (!IsPassedRequiredTime(_blackboard->StateTImeStamp))
 		{
-			XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
-			oldCharDirection = XMVector3Normalize(oldCharDirection);
+			//XMVECTOR oldCharDirection = m_pCharacter->m_vDirection;
+			//oldCharDirection = XMVector3Normalize(oldCharDirection);
 
-			XMVECTOR destinationDirection = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
-			destinationDirection = XMVector3Normalize(destinationDirection);
+			//XMVECTOR destinationDirection = Player::GetInstance().GetPosition() - m_pCharacter->GetPosition();;
+			//destinationDirection = XMVector3Normalize(destinationDirection);
 
-			if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
-				oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
+			//if (XMVectorGetX(XMVector3Dot(destinationDirection, oldCharDirection)) == -1)
+			//	oldCharDirection += XMVectorSet(0.4f, 0.0f, -0.4f, 0.0f);
 
-			XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection);	// Get the characters direction (based off time, old position, and desired
-			currCharDirection = XMVector3Normalize(currCharDirection);
+			//XMVECTOR currCharDirection = (oldCharDirection)+(destinationDirection);	// Get the characters direction (based off time, old position, and desired
+			//currCharDirection = XMVector3Normalize(currCharDirection);
 
-			XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-			float charDirAngle = XMVectorGetX(XMVector3AngleBetweenNormals(XMVector3Normalize(currCharDirection), XMVector3Normalize(DefaultForward)));
-			if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
-				charDirAngle = -charDirAngle;
+			//XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+			//float charDirAngle = XMVectorGetX(XMVector3AngleBetweenNormals(XMVector3Normalize(currCharDirection), XMVector3Normalize(DefaultForward)));
+			//if (XMVectorGetY(XMVector3Cross(currCharDirection, DefaultForward)) > 0.0f)
+			//	charDirAngle = -charDirAngle;
 
-			m_pCharacter->m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
+			//m_pCharacter->m_vRotation = TVector3(0, charDirAngle - 3.14159265f, 0);
 
-			// Set the characters old direction
-			m_pCharacter->m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
+			//// Set the characters old direction
+			//m_pCharacter->m_vDirection = TVector3(XMVectorGetX(currCharDirection), XMVectorGetY(currCharDirection), XMVectorGetZ(currCharDirection));
 
-			I_Effect.CreateEffect(L"../../data/effectdata/ShockWave.EFT", m_pCharacter->m_AttackBox.vCenter + 
-				TVector3(0, -m_pCharacter->m_AttackBox.fExtent[1], 0));
+			float pivotTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.5f;
+			if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime > pivotTime && !called)
+			{
+				called = true;
+				mob->m_pMainCamera->CameraShake();
+				I_Effect.CreateEffect(L"../../data/effectdata/ShockWave.EFT", m_pCharacter->m_AttackBox.vCenter +
+					TVector3(0, -m_pCharacter->m_AttackBox.fExtent[1] * 0.5f, 0));
+			}
 
 			TQuaternion q;
 			D3DXQuaternionRotationYawPitchRoll(&q, m_pCharacter->m_vRotation.y, m_pCharacter->m_vRotation.x, m_pCharacter->m_vRotation.z);
@@ -569,11 +600,18 @@ namespace SSB
 		{
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
-				if (!Player::GetInstance().IsDash())
+				auto datas = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);
+				for (auto data : datas)
 				{
-					Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 2);
-					Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
-					Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+					if (data == &Player::GetInstance())
+					{
+						if (!Player::GetInstance().IsDash())
+						{
+							Damage(_blackboard, &Player::GetInstance(), m_pCharacter->m_Damage * 2);
+							Player::GetInstance().m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)Player::GetInstance().m_HealthPoint / Player::GetInstance().m_kHealthPointMax, 1.0f));
+							Player::GetInstance().m_pInterDamageBlood->m_pWorkList.push_back(new InterfaceFadeOut(1.0f));
+						}
+					}
 				}
 			}
 		}
