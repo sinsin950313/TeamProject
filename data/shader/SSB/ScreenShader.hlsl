@@ -112,6 +112,38 @@ float4 GetAmbient()
 {
 	return float4(0.2, 0.2, 0.2, 1);
 }
+bool IsBoundaryDepthNomral(float2 uv)
+{
+	int	g_iTexSizeX = 1600;
+	int	g_iTexSizeY = 900;
+	// -1 0 1
+	// -2 0 2
+	// -1 0 1
+	float nx = 1.0f / g_iTexSizeX;
+	float ny = 1.0f / g_iTexSizeY;
+	int dx[9] = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+	int dy[9] = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
+	float depth = DepthMap.Sample(Sampler, uv).x;
+	float diff = 0.0f;
+	float3 normal = normalize(NormalMap.Sample(Sampler, uv).xyz);
+	/*float3 viewVector = normalize(PositionMap.Sample(Sampler, uv).xyz - currentCameraPos.xyz);
+	float cosTheta = dot(normal.xyz, -viewVector);*/
+	float sum = 0.0f;
+	for (int idx = 0; idx < 9; idx++)
+	{
+		float depthCheck = DepthMap.Sample(Sampler, float2(uv.x + dx[idx] * nx, uv.y + dy[idx] * ny)).x;
+		diff += abs(depthCheck - depth);
+
+		/*float3 normalCheck = normalize(NormalMap.Sample(Sampler, float2(uv.x + dx[idx] * nx, uv.y + dy[idx] * ny)).xyz);
+		sum += saturate(dot(normalCheck, normal) - 0.2f);*/
+	}
+	
+
+	if ( diff > 0.003f)
+		return true;
+	else
+		return false;
+}
 
 bool IsBoundary(float2 uv)
 {
@@ -169,7 +201,11 @@ bool IsBoundary(float2 uv)
 
 float4 PS(PSInput input) : SV_TARGET0
 {
-	if(IsBoundary(input.TextureUV))
+	/*if(IsBoundary(input.TextureUV))
+	{
+		return float4(0, 0, 0, 1);
+	}*/
+	if (IsBoundaryDepthNomral(input.TextureUV))
 	{
 		return float4(0, 0, 0, 1);
 	}
