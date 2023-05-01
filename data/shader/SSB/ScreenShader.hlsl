@@ -115,20 +115,9 @@ float4 GetAmbient()
 
 bool IsBoundary(float2 uv)
 {
-	/*float depth = DepthMap.Sample(Sampler, uv).x;
-	depth = depth - 0.998;
-	depth = depth / 0.002f;
-	if(0.8f < depth)
-	{
-		return false;
-	}
-
-	float4 textureColor = DepthMap.Sample(Sampler, uv);
-	int		g_iTexSizeX = 1600;
-	int		g_iTexSizeY = 900;
-	// -1 0 1
-	// -2 0 2
-	// -1 0 1
+	int		g_iTexSizeX;
+	int		g_iTexSizeY;
+	DepthMap.GetDimensions(g_iTexSizeX, g_iTexSizeY);
 	float dx = 1.0f/g_iTexSizeX;
 	float dy = 1.0f/g_iTexSizeY;
 
@@ -141,77 +130,27 @@ bool IsBoundary(float2 uv)
 	float4 r = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y));
 	float4 br = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y + dy));
 	
-	float4 SobelX = -tl - 2.0f * l - bl + tr + 2.0f * r + br;
-
-	// -1 -2 -1
-	// 0 0 0
-	// 1 2 1
-	float4 SobelY = -tl - 2.0f *t - tr + bl + 2.0f *b + br;
-
-	//float3 N = normalize(float3(-SobelX.x, -SobelY.x, 1.0f));
-	//N = N *0.5f +0.5f;
-
-	float4 SobelResult = abs(SobelX) + abs(SobelY);
-	//float deltaNormal = (SobelResult.x + SobelResult.y + SobelResult.z ) / 3;
-	float deltaNormal = SobelResult.x  / 0.002f;
-		
-	if (deltaNormal < 0.1f)
-	{
-		return false;
-	}
-	else 
-	{
-		return true;
-	}	*/
-
-	float depth = DepthMap.Sample(Sampler, uv).x;
-	depth = depth - 0.998;
-	depth = depth / 0.002f;
-	if(0.8f < depth)
-	{
-		return false;
-	}
-
-	float4 textureColor = NormalMap.Sample(Sampler, uv);
-	int		g_iTexSizeX = 1600;
-	int		g_iTexSizeY = 900;
 	// -1 0 1
 	// -2 0 2
 	// -1 0 1
-	float dx = 1.0f/g_iTexSizeX;
-	float dy = 1.0f/g_iTexSizeY;
-
-	float4 tl = NormalMap.Sample(Sampler, float2(uv.x - dx, uv.y - dy));
-	float4 l = NormalMap.Sample(Sampler, float2(uv.x - dx, uv.y));
-	float4 bl = NormalMap.Sample(Sampler, float2(uv.x - dx, uv.y + dy));
-	float4 t = NormalMap.Sample(Sampler, float2(uv.x, uv.y - dy));
-	float4 b = NormalMap.Sample(Sampler, float2(uv.x, uv.y + dy));
-	float4 tr = NormalMap.Sample(Sampler, float2(uv.x + dx, uv.y - dy));
-	float4 r = NormalMap.Sample(Sampler, float2(uv.x + dx, uv.y));
-	float4 br = NormalMap.Sample(Sampler, float2(uv.x + dx, uv.y + dy));
-	
 	float4 SobelX = -tl - 2.0f * l - bl + tr + 2.0f * r + br;
 
 	// -1 -2 -1
 	// 0 0 0
 	// 1 2 1
-	float4 SobelY = -tl - 2.0f *t - tr + bl + 2.0f *b + br;
-
-	//float3 N = normalize(float3(-SobelX.x, -SobelY.x, 1.0f));
-	//N = N *0.5f +0.5f;
+	float4 SobelY = -tl - 2.0f * t - tr + bl + 2.0f * b + br;
 
 	float4 SobelResult = abs(SobelX) + abs(SobelY);
-	float deltaNormal = (SobelResult.x + SobelResult.y + SobelResult.z ) / 3;
-	float deltaDepth = SobelResult.w;
-		
-	if (deltaNormal < 0.7f && deltaDepth < 0.05f)
+	float delta = SobelResult.x / 2.0f;
+
+	if (0.0005f < delta)
 	{
-		return false;
+		return true;
 	}
 	else 
 	{
-		return true;
-	}	
+		return false;
+	}
 }
 
 float4 PS(PSInput input) : SV_TARGET0
