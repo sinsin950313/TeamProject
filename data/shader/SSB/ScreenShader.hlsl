@@ -115,56 +115,42 @@ float4 GetAmbient()
 
 bool IsBoundary(float2 uv)
 {
-	return false;
-	float depth = DepthMap.Sample(Sampler, uv).x;
-	depth = depth - 0.998;
-	depth = depth / 0.002f;
-	if(0.8f < depth)
-	{
-		return false;
-	}
-
-	float textureColor = DepthMap.Sample(Sampler, uv).x;
-	int		g_iTexSizeX = 1600;
-	int		g_iTexSizeY = 900;
-
-	// -1 0 1
-	// -2 0 2
-	// -1 0 1
+	int		g_iTexSizeX;
+	int		g_iTexSizeY;
+	DepthMap.GetDimensions(g_iTexSizeX, g_iTexSizeY);
 	float dx = 1.0f/g_iTexSizeX;
 	float dy = 1.0f/g_iTexSizeY;
 
-	float tl = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y - dy)).x;
-	float l = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y)).x;
-	float bl = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y + dy)).x;
-	float t = DepthMap.Sample(Sampler, float2(uv.x, uv.y - dy)).x;
-	float b = DepthMap.Sample(Sampler, float2(uv.x, uv.y + dy)).x;
-	float tr = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y - dy)).x;
-	float r = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y)).x;
-	float br = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y + dy)).x;
+	float4 tl = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y - dy));
+	float4 l = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y));
+	float4 bl = DepthMap.Sample(Sampler, float2(uv.x - dx, uv.y + dy));
+	float4 t = DepthMap.Sample(Sampler, float2(uv.x, uv.y - dy));
+	float4 b = DepthMap.Sample(Sampler, float2(uv.x, uv.y + dy));
+	float4 tr = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y - dy));
+	float4 r = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y));
+	float4 br = DepthMap.Sample(Sampler, float2(uv.x + dx, uv.y + dy));
 	
-	float SobelX = -tl - 2.0f * l - bl + tr + 2.0f * r + br;
+	// -1 0 1
+	// -2 0 2
+	// -1 0 1
+	float4 SobelX = -tl - 2.0f * l - bl + tr + 2.0f * r + br;
 
 	// -1 -2 -1
 	// 0 0 0
 	// 1 2 1
-	float SobelY = -tl - 2.0f * t - tr + bl + 2.0f * b + br;
+	float4 SobelY = -tl - 2.0f * t - tr + bl + 2.0f * b + br;
 
-	//float3 N = normalize(float3(-SobelX.x, -SobelY.x, 1.0f));
-	//N = N *0.5f +0.5f;
+	float4 SobelResult = abs(SobelX) + abs(SobelY);
+	float delta = SobelResult.x / 2.0f;
 
-	float SobelResult = (abs(SobelX) + abs(SobelY)) / 2.0f;
-	SobelResult = SobelResult / 0.002f;
-	SobelResult = SobelResult - 0.998f;
-		
-	if (0.7f < SobelResult)
+	if (0.0005f < delta)
 	{
-		return false;
+		return true;
 	}
 	else 
 	{
-		return true;
-	}	
+		return false;
+	}
 }
 
 float4 PS(PSInput input) : SV_TARGET0
