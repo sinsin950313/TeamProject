@@ -13,7 +13,7 @@ namespace SSB
 		private:
 			const float _kLiveTime = 3.0f;
 			float _startTimeStamp;
-			const float _damage = 30;
+			const float _damage = 20;
 			bool _isDead = false;
 			bool _isHit = false;
 

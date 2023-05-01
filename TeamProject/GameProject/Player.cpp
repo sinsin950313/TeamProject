@@ -39,6 +39,8 @@ bool    Player::Init()
 
 	m_Tornado.SetDevice(m_pd3dDevice, m_pImmediateContext);
 
+	m_Damage = 40;
+
 	return true;
 }
 

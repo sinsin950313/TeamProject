@@ -16,5 +16,8 @@ namespace SSB
 
     public:
         virtual ~EnemyNPCMob() {}
+
+    public:
+        bool Init() override;
     };
 }

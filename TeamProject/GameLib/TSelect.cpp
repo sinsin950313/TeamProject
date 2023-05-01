@@ -477,7 +477,7 @@ bool    TSelect::PointInPolygon(
 	return true;
 };
 
-bool TSelect::ChkPick(TVector3& v0, TVector3& v1, TVector3& v2)
+bool TSelect::ChkPick(TVector3& v0, TVector3& v1, TVector3& v2, float extent)
 {
 	FLOAT fBary1, fBary2;
 	FLOAT fDist;
@@ -489,7 +489,7 @@ bool TSelect::ChkPick(TVector3& v0, TVector3& v1, TVector3& v2)
 		m_vSrcVex[1] = v1;
 		m_vSrcVex[2] = v2;
 		m_matWorldPick = m_matWorld;
-		if (fDist < 0)
+		if (fDist < 0 || fDist > extent)
 		{
 			return false;
 		}

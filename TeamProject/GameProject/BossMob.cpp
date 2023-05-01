@@ -30,15 +30,19 @@ namespace SSB
 	{
 		Character::Init();
 
+		m_AttackBox.CreateOBBBox(2.0f, 2.0, 1.5f);
 		m_AttackBoxLocalMatrix = TMatrix(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
-			0, 200, -400, 1
+			0, 200, -450, 1
 		);
-		m_AttackBox.fExtent[0] = 2;
-		m_AttackBox.fExtent[1] = 2;
-		m_AttackBox.fExtent[2] = 1.5f;
+		//m_AttackBox.fExtent[0] = 2;
+		//m_AttackBox.fExtent[1] = 2;
+		//m_AttackBox.fExtent[2] = 1.5f;
+
+		m_Damage = 30;
+		m_HealthPoint = 200;
 
 		return false;
 	}
