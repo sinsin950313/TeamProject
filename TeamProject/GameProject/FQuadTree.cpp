@@ -243,8 +243,6 @@ FNode* FQuadTree::VisibleNode(FNode* pNode)
         m_pDrawLeafNodeList.push_back(pNode);
         return pNode;
     }
-    if (1) // 걸쳐있다.
-    {
         if (pNode->m_bLeaf)
         {
             m_pDrawLeafNodeList.push_back(pNode);
@@ -256,7 +254,6 @@ FNode* FQuadTree::VisibleNode(FNode* pNode)
                 VisibleNode(pNode->m_pChild[iNode]);
             }
         }
-    }
     return pNode;
 }
 

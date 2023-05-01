@@ -125,11 +125,11 @@ void SceneInGame::DataLoad()
 	I_Sound.LoadDir(kTeamProjectSoundPath);
 	I_Sound.LoadAll(kTeamProjectSoundPath);
 
+	MapLoad();
+
 	CameraLoad();
 	I_Effect.SetDevice(m_pd3dDevice, m_pImmediateContext);
 	I_Effect.SetCamera(m_pCameraCurrent);
-
-	MapLoad();
 	
 	UiLoad();
 
@@ -935,11 +935,14 @@ bool    SceneInGame::Release()
 	return true;
 }
 
+#include "SpringArmCamera.h"
+
 void    SceneInGame::CameraLoad()
 {
-	m_pMainCamera = new CameraTPS;
+	m_pMainCamera = new SSB::SpringArmCamera;
 	m_pMainCamera->CreateViewMatrix(TVector3(0, 10, -30), TVector3(0, 0, 0.1f), TVector3(0, 1, 0));
 	m_pMainCamera->CreateProjMatrix(0.1f, 1500.0f, XM_PI * 0.25f, (float)g_rcClient.right / (float)g_rcClient.bottom);
+	static_cast<SSB::SpringArmCamera*>(m_pMainCamera)->Initialize_SetMap(m_pQuadTree);
 
 	m_pMinimapCamera = new Camera();
 	m_pMinimapCamera->CreateViewMatrix(TVector3(0, m_Scene == S_INGAME ? 400.0f : 200.0f, 0), TVector3(0, 0, 0.1f), TVector3(0, 0, 1));
