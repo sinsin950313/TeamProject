@@ -138,7 +138,6 @@ bool IsBoundaryDepthNomral(float2 uv)
 		sum += saturate(dot(normalCheck, normal) - 0.2f);*/
 	}
 	
-
 	if ( diff > 0.003f)
 		return true;
 	else
