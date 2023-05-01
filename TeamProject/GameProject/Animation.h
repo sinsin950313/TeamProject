@@ -41,9 +41,11 @@ namespace SSB
 		float	m_fAnimTime = 0.0f;
 		FrameIndex _startFrame;
 		FrameIndex _endFrame;
-	private:
+
+	public:
 		float _framePerSecond = 30;
 
+	private:
 		int _boneAnimationUnitMaxCount = 0;
 		int _meshAnimationUnitMaxCount = 0;
 		std::vector<AnimationFrameInfo*> _data;

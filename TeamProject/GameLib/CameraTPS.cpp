@@ -10,8 +10,8 @@ bool CameraTPS::Frame()
 		m_fCameraPitchAngle = 0.85f;
 	//if (m_fCameraPitchAngle < -0.85f)
 	//	m_fCameraPitchAngle = -0.85f;
-	if (m_fCameraPitchAngle < 0.10f)
-		m_fCameraPitchAngle = 0.10f;
+	if (m_fCameraPitchAngle < 0.0f)
+		m_fCameraPitchAngle = 0.0f;
 
 	// Third Person Camera
 	// Set the cameras target to be looking at the character.
@@ -19,7 +19,7 @@ bool CameraTPS::Frame()
 	if (m_vFollowPos)
 	{
 		m_vTarget = *m_vFollowPos;
-		m_vTarget.y += 1.5f;
+		//m_vTarget.y += 1.5f;
 	}
 	
 	// This line is because this lessons model was set to stand on the point (0,0,0) (my bad), and we

@@ -130,6 +130,11 @@ namespace SSB
 	}
 	void PlayerMoveState::Action()
 	{
+		if (!_blackboard->Initialized)
+		{
+			//m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 50;
+		}
+
 		Player* player = static_cast<Player*>(m_pCharacter);
 
 		bool moveChar = false;
@@ -202,10 +207,17 @@ namespace SSB
 				//pTrail->m_VertexList[i].c.w = 0.0f;
 				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
+
+			//m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 30;
 		}
 	}
 	void PlayerAttackState1::Action()
 	{
+		if (!_blackboard->Initialized)
+		{
+			m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 50;
+		}
+
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
 			std::wstring szRandomSound;
@@ -322,10 +334,17 @@ namespace SSB
 				//pTrail->m_VertexList[i].c.w = 0.0f;
 				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
+
+			//m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 30;
 		}
 	}
 	void PlayerAttackState2::Action()
 	{
+		if (!_blackboard->Initialized)
+		{
+			m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 50;
+		}
+
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
 			std::wstring szRandomSound;
@@ -442,10 +461,17 @@ namespace SSB
 				//pTrail->m_VertexList[i].c.w = 0.0f;
 				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
+
+			//m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 30;
 		}
 	}
 	void PlayerAttackState3::Action()
 	{
+		if (!_blackboard->Initialized)
+		{
+			m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 50;
+		}
+
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
 			std::wstring szRandomSound;
@@ -562,10 +588,17 @@ namespace SSB
 				//pTrail->m_VertexList[i].c.w = 0.0f;
 				//pTrail->m_VertexCatmullRomList[i].p = TVector3(0, 0, 0);
 			}
+
+			//m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 30;
 		}
 	}
 	void PlayerAttackState4::Action()
 	{
+		if (!_blackboard->Initialized)
+		{
+			m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 50;
+		}
+
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < 0.1f)
 		{
 			std::wstring szRandomSound;
@@ -1353,6 +1386,11 @@ namespace SSB
 			SetTransfer();
 			Player::GetInstance().m_IsImmortal = false;
 		}
+
+		if (IsTransfer())
+		{
+			Player::GetInstance().ResetUltimateSkill();
+		}
 	}
 	void PlayerUltimateSkillState::Action()
 	{
@@ -1367,8 +1405,6 @@ namespace SSB
 			sound->Play();
 			Player::GetInstance().ActiveSkill(kPlayerUltimate);
 
-			((CameraTPS*)player->m_pMainCamera)->m_CharCamDist = 30;
-
 			auto targets = player->GetUltimateSkillTargetList();
 			Player::GetInstance().m_vPos = targets[0]->GetPosition();
 			Player::GetInstance().m_vPos.y = 0;
@@ -1381,6 +1417,7 @@ namespace SSB
 				_blackboard->DamagedCharacters.insert(elem);
 			}
 			player->m_IsImmortal = true;
+			player->CallUltimateSkill();
 		}
 
 		m_fTime += g_fSecondPerFrame;
@@ -1448,6 +1485,7 @@ namespace SSB
 			sound->Play();
 			Player::GetInstance().ActiveSkill(kPlayerDrink);
 			_blackboard->HealthPoint = m_pCharacter->m_HealthPoint;
+			m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 35;
 		}
 
 		if (_blackboard->HealthPoint != m_pCharacter->m_HealthPoint)
@@ -1520,10 +1558,10 @@ namespace SSB
 	}
 	void PlayerVictoryStartState::Action()
 	{
-		if (_blackboard->Initialized)
-		{
-			Player::GetInstance().ActiveSkill(kPlayerRotate);
-		}
+		//if (_blackboard->Initialized)
+		//{
+		//	Player::GetInstance().ActiveSkill(kPlayerRotate);
+		//}
 	}
 	StateTransferPriority PlayerVictoryStartState::GetPriority()
 	{
