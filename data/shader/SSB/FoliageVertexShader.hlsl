@@ -10,7 +10,8 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
-	float4 position : SV_POSITION;
+	float4 projection : SV_POSITION;
+	float4 world : TEXCOORD3;
 	float4 normal : NORMAL0;
 	float4 color : COLOR0;
 	float2 tex : TEXCOORD0;
@@ -37,7 +38,8 @@ VS_OUTPUT VS(VS_INPUT input)
 	float4 vView = mul(vWorld, ViewMatrix);
 	float4 vProj = mul(vView, ProjectionMatrix);
 
-	output.position = vProj;
+	output.projection = vProj;
+	output.world = vWorld;
 	output.normal = float4(normalize(mul(input.normal, input.worldInstance)).xyz, 1.0f);
 	output.tex = input.tex;
 	output.color = input.color;
