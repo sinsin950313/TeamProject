@@ -248,7 +248,7 @@ bool	Emitter::Frame()
 		}
 		else
 		{
-			if(m_BasicData.isLifeTime && m_fLifeTime >= m_fLifeTimer)
+			if(m_BasicData.isLifeTime && m_fLifeTime >= m_fLifeTimer && m_pParticleList.empty())
 				m_isDone = true;
 		}
 	}

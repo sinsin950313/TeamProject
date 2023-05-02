@@ -16,8 +16,10 @@ bool	Effect::Frame()
 	// 하지만 InitDelay를 지났는지 확인해야함
 	// Effect는 리스트의 Emitter가 모두 없어지면 삭제 결정
 	TMatrix matRot;
-	D3DXMatrixRotationYawPitchRoll(&matRot, m_vRot.y, m_vRot.x, m_vRot.z);
-	D3DXMatrixTranslation(&m_matTopWorld, m_vPos.x, m_vPos.y, m_vPos.z);
+	if(m_vRot != TVector3::Zero)
+		D3DXMatrixRotationYawPitchRoll(&matRot, m_vRot.y, m_vRot.x, m_vRot.z);
+	if(m_vPos != TVector3::Zero)
+		D3DXMatrixTranslation(&m_matTopWorld, m_vPos.x, m_vPos.y, m_vPos.z);
 	D3DXMatrixMultiply(&m_matTopWorld, &matRot, &m_matTopWorld);
 	if (m_vFollowPos)
 	{

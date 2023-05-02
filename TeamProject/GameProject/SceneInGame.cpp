@@ -204,10 +204,10 @@ bool    SceneInGame::Frame()
 
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		//I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
+		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
 		//I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", Player::GetInstance().GetPosition());
 		//I_Effect.CreateEffect(L"../../data/effectdata/Portal.EFT", Player::GetInstance().GetPosition() + TVector3(0, 5, 0));
-		I_Effect.CreateEffect(L"../../data/effectdata/ShockWave.EFT", Player::GetInstance().GetPosition() + TVector3(0, 0, 0));
+		//I_Effect.CreateEffect(L"../../data/effectdata/ShockWave.EFT", Player::GetInstance().GetPosition() + TVector3(0, 0, 0));
 	}
 
 	if (I_Input.GetKey(VK_F3) == KEY_PUSH)

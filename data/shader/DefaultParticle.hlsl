@@ -73,7 +73,7 @@ float4 Distortion(VS_out input) : SV_Target
 	vOut = g_ColorTex.Sample(g_SampleWrap, xy + fWeight);
 	float alpha = (0.5 - (abs(input.t.x - 0.5))) + (0.5 - (abs(input.t.y - 0.5)));
 	vOut.a = alpha;
-	if (color.a <= 0.2)
+	if (color.a <= 0.1)
 		discard;
 
 	return vOut;
@@ -82,6 +82,12 @@ float4 Distortion(VS_out input) : SV_Target
 float4 COLOR_PS(VS_out input) : SV_Target
 {
 	return input.c;
+}
+
+float4 OPACITY_PS(VS_out input) : SV_Target
+{
+	float4 color = g_txTexA.Sample(g_SampleWrap, input.t);
+	return color * input.c;
 }
 
 
@@ -161,3 +167,42 @@ void RibbonGS( triangle GS_in input[3], inout TriangleStream<VS_out> ribbonStrea
 	}
 	ribbonStream.RestartStrip();
 }
+
+
+cbuffer MaterialConstantBuffer : register(b7)
+{
+	float4 ambientColor;
+	float4 diffuseColor;
+	float4 specularColor;
+	float4 emissiveColor;
+	float shininess;
+	float padding[3];
+};
+
+/*
+// Pixel Shader
+float4 Emissive(VS_out input) : SV_Target
+{
+
+	// diffuse lighting을 계산합니다.
+	float4 diffuse = texDiffuse.Sample(samLinear, input.tex);
+	float3 lightDirection = normalize(float3(1.0f, 1.0f, 1.0f));
+	float diffuseIntensity = max(dot(lightDirection, float3(0.0f, 0.0f, -1.0f)), 0.0f);
+	float4 diffuseColor = diffuse * diffuseIntensity;
+
+	// emissive 값을 반환합니다.
+	float4 emissive = texDiffuse.Sample(samLinear, input.tex);
+	return emissive + diffuseColor;
+
+	////////////////////////////////////////////////
+	float3 lightDirection = normalize(LightDirection.xyz);
+	float3 viewDirection = normalize(EyeDirection.xyz);
+	float3 reflectedLight = reflect(-lightDirection, normal);
+
+	float4 ambient = ambientColor * AmbientIntensity;
+	float4 diffuse = diffuseColor * saturate(dot(normal, lightDirection));
+	float4 specular = specularColor * pow(saturate(dot(reflectedLight, viewDirection)), shininess);
+	float4 emissive = emissiveColor; // 추가: emissive 값
+
+	output = emissive + ambient + diffuse + specular;
+}*/
