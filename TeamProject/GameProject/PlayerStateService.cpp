@@ -5,6 +5,8 @@
 #include "CameraTPS.h"
 #include "SoundMgr.h"
 #include "EffectMgr.h"
+#include "MeshMap.h"
+
 namespace SSB
 {
 	PlayerStateCommonMethodInterface::PlayerStateCommonMethodInterface(float transferRequireTime) : _transferRequireTime(transferRequireTime)
@@ -1407,7 +1409,7 @@ namespace SSB
 
 			auto targets = player->GetUltimateSkillTargetList();
 			Player::GetInstance().m_vPos = targets[0]->GetPosition();
-			Player::GetInstance().m_vPos.y = 0;
+			Player::GetInstance().m_vPos.y = player->m_pMap->GetHeight(player->m_vPos.x, player->m_vPos.z);
 
 			Player::GetInstance().m_pInterSkillR->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerUltimate)));
 
@@ -1429,7 +1431,7 @@ namespace SSB
 		for (auto elem : list)
 		{
 			elem->SetPoundState(true);
-			elem->m_vPos.y = 3;
+			elem->m_vPos.y = 3 + player->m_pMap->GetHeight(player->m_vPos.x, player->m_vPos.z);
 		}
 		if (m_isOnEffect)
 		{

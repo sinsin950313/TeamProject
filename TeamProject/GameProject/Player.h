@@ -56,6 +56,7 @@ public:
 
 public:
     bool m_IsImmortal = false;
+    bool m_isCheat = false;
 
 public:
 	void Damage(int damage) override;

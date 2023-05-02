@@ -182,9 +182,12 @@ void    Player::UpdateInstancingBuffer()
 
 void Player::Damage(int damage)
 {
-	if (!m_IsImmortal)
+	if (!m_isCheat)
 	{
-		Character::Damage(damage);
+		if (!m_IsImmortal)
+		{
+			Character::Damage(damage);
+		}
 	}
 }
 

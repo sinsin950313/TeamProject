@@ -188,19 +188,27 @@ bool    SceneInGame::Frame()
 		int a = 0;*/
 	}
 
-	/*if (I_Input.GetKey('M') == KEY_PUSH)
+	if (I_Input.GetKey('V') == KEY_PUSH)
 	{
-		if (m_pBoss != nullptr)
+		Player::GetInstance().m_isCheat = true;
+	}
+
+	if (I_Input.GetKey('K') == KEY_PUSH)
+	{
+		for (auto enemy : m_Enemies)
 		{
-			m_pBoss->_isAngry = true;
+			if (enemy == m_pFieldBoss)
+			{
+				continue;
+			}
+			if (enemy == m_pBoss)
+			{
+				continue;
+			}
+			enemy->m_HealthPoint = 0;
+			enemy->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)enemy->m_HealthPoint / enemy->m_kHealthPointMax, 1.0f));
 		}
-	}*/
-
-
-	/*if (I_Input.GetKey('V') == KEY_PUSH)
-	{
-		Player::GetInstance().SetVictory();
-	}*/
+	}
 
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
