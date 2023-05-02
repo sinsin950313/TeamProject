@@ -411,6 +411,13 @@ void	FQuadTree::Release()
         delete obj;
     }
     m_pAllObjectList.clear();
+    
+    for (auto obj : m_pAllInstanceObjectList)
+    {
+        obj->Release();
+        delete obj;
+    }
+    m_pAllInstanceObjectList.clear();
 
     if (m_fAlphaData)
     {
@@ -750,6 +757,7 @@ namespace MAPLOAD
         std::vector<std::pair<std::string, Transform>> spawnList;
         std::map<std::wstring, T_BOX> triggerList;
 		std::unordered_set<Object*> allObjectList;
+        std::unordered_set<Object*> allInstnaceObjectList;
 		BYTE* fAlphaData = nullptr;
 		std::ifstream is(szFullPath);
 		std::string line;
@@ -1084,7 +1092,7 @@ namespace MAPLOAD
                         else if (specifyMode == "OBJECT_FOLIAGE")
                         {
                             Foliage* pFoliage = new Foliage(strName, &InstanceList, pd3dDevice, pContext);
-                            allObjectList.insert(pFoliage);
+                            allInstnaceObjectList.insert(pFoliage);
                         }
                         else
                         {
@@ -1167,6 +1175,11 @@ namespace MAPLOAD
 		{
 		    pQuadTree->AddObject(obj);
 		}
+
+        for (const auto& obj : allInstnaceObjectList)
+        {
+            pQuadTree->m_pAllInstanceObjectList.insert(obj);
+        }
 
         if (pSphereObject)
             pQuadTree->m_pSphereObject = pSphereObject;

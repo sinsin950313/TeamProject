@@ -571,7 +571,10 @@ bool    SceneInGame::Frame()
 	{
 		m_pCameraCurrent->Frame();
 		m_pQuadTree->Update();
-
+		for (auto obj : m_pQuadTree->m_pAllInstanceObjectList)
+		{
+			obj->Frame();
+		}
 		m_iMobDeadCount = 0;
 		for (auto enemy : m_Enemies)
 		{
@@ -657,7 +660,11 @@ bool SceneInGame::PreRender()
 
         m_pQuadTree->SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
         m_pQuadTree->PreRender();
-
+		for (auto obj : m_pQuadTree->m_pAllInstanceObjectList)
+		{
+			obj->SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
+			obj->PreRender();
+		}
         Player::GetInstance().SetMatrix(nullptr, &tmp.m_matView, &tmp.m_matProj);
         Player::GetInstance().PreRender();
 
@@ -677,6 +684,10 @@ bool    SceneInGame::Render()
 
     m_pQuadTree->SetMatrix(nullptr, &m_pCameraCurrent->m_matView, &m_pCameraCurrent->m_matProj);
     m_pQuadTree->Render();
+	for (auto obj : m_pQuadTree->m_pAllInstanceObjectList)
+	{
+		obj->Render();
+	}
 
 	Player::GetInstance().SetMatrix(nullptr, &m_pCameraCurrent->m_matView, &m_pCameraCurrent->m_matProj);
 	Player::GetInstance().Render();

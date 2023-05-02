@@ -23,7 +23,7 @@ bool Foliage::Render()
 	{
 		//m_pImmediateContext->VSSetConstantBuffers(4, 1, &static_cast<SSB::Mesh_Vertex_PCNT_Animatable*>(mesh.second)->_meshBuffer);
 		m_pImmediateContext->IASetInputLayout(static_cast<SSB::Mesh<SSB::Mesh_Vertex_PCNT_Animatable>*>(mesh.second)->_vertexLayout);
-		UINT stride = sizeof(SSB::Mesh_Vertex_PCNT_Animatable);
+		UINT stride = sizeof(SSB::Vertex_PCNT);
 		UINT offset = 0;
 		m_pImmediateContext->IASetVertexBuffers(0, 1, &static_cast<SSB::Mesh<SSB::Mesh_Vertex_PCNT_Animatable>*>(mesh.second)->_vertexBuffer, &stride, &offset);
 		stride = sizeof(InstanceData);
