@@ -13,7 +13,7 @@ namespace SSB
 		desc.DepthClipEnable = TRUE;
 		desc.FillMode = D3D11_FILL_SOLID;
 		desc.CullMode = D3D11_CULL_BACK;
-		desc.DepthBias = 5000;
+		desc.DepthBias = 7000;
 		desc.DepthBiasClamp = 0.0f;
 		desc.SlopeScaledDepthBias = 1.0f;
 		_device->CreateRasterizerState(&desc, &_rsState);
