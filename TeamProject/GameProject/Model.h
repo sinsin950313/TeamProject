@@ -37,7 +37,7 @@ namespace SSB
 		TVector3 _minVertex;
 		TVector3 _maxVertex;
 
-	private:
+	public:
 		std::map<MaterialIndex, Material*> _materials;
 		std::map<MeshIndex, MeshInterface*> _meshes;
 

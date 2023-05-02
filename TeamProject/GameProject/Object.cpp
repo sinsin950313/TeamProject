@@ -2,11 +2,16 @@
 #include "FileIOObject.h"
 #include "ModelMgr.h"
 #include "CollisionMgr.h"
-
+#define _DegreeToRadian(X) X*(XM_PI/180.0f)
 bool Object::Frame()
 {
 	Character::Frame();
 	return true;
+}
+
+bool Object::PreRender()
+{
+	return false;
 }
 
 bool Object::Render()
@@ -53,7 +58,11 @@ std::vector<std::wstring> Object::SplitPath(std::wstring fullPath)
 	return ret;
 }
 
-#define _DegreeToRadian(X) X*(XM_PI/180.0f)
+
+Object::Object()
+{
+}
+
 Object::Object(std::string szFullPath, Transform transform, XMFLOAT3 vAxis0, XMFLOAT3 vAxis1, XMFLOAT3 vAxis2, float fExtentX, float fExtentY, float fExtentZ, ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext) : Character()
 {
 	Character::SetDevice(pDevice, pDeviceContext);
@@ -80,7 +89,7 @@ Object::Object(std::string szFullPath, Transform transform, XMFLOAT3 vAxis0, XMF
 	int offset = 0;
 	m_pModel->Deserialize(scriptInfo.Pointer, scriptInfo.BufferSize, offset);
 	m_pModel->Init();
-
+	
 	/*m_ColliderBox.CreateOBBBox(fExtentX, fExtentY, fExtentZ, translation, vAxis0, vAxis1, vAxis2);
 
 	I_Collision.AddStaticObjectBox(&m_ColliderBox, this);*/

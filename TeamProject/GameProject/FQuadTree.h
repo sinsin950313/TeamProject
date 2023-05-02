@@ -10,6 +10,7 @@
 #include "CollisionMgr.h"
 #include "CameraTPS.h"
 #include "BaseObject.h"
+#include "Foliage.h"
 //-----------------------------
 
 class Camera;

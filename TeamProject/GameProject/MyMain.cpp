@@ -40,7 +40,6 @@ bool    MyMain::Frame()
     I_Scene.Frame();
     return true;
 }
-
 bool    MyMain::Render()
 {
     // Calculate Shadow Depth Map

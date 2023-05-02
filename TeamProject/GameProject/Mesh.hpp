@@ -130,7 +130,8 @@ namespace SSB
 	{
 		Build();
 		CheckSize();
-		InitialShader();
+		if(_vs == nullptr)
+			InitialShader();
 		CreateVertexBuffer();
 		CreateIndexBuffer();
 		CreateVertexLayout();

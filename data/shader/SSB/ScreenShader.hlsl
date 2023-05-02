@@ -204,10 +204,10 @@ float4 PS(PSInput input) : SV_TARGET0
 	{
 		return float4(0, 0, 0, 1);
 	}*/
-	if (IsBoundaryDepthNomral(input.TextureUV))
+	/*if (IsBoundaryDepthNomral(input.TextureUV))
 	{
 		return float4(0, 0, 0, 1);
-	}
+	}*/
 
 	// 선형 Fog 계산
 	float4 pos = PositionMap.Sample(Sampler, input.TextureUV);
