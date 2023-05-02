@@ -71,7 +71,8 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 	}
 	else if(szCinemaName.find(L"_End") != std::string::npos)
 	{
-		((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+		/*((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
+		m_pMainCamera->Frame();*/
 		m_pMainCamera->Frame();
 		float yaw, pitch, roll;
 		m_pMainCamera->GetCalcYawPitchRoll(yaw, pitch, roll);
