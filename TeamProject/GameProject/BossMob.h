@@ -16,6 +16,9 @@ namespace SSB
         TVector3 m_DashDirection;
 
     public:
+        BossMob();
+
+    public:
         float GetSkillCoolTime();
         float GetBattleRange();
         float GetSpotRange();

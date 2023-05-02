@@ -1371,7 +1371,6 @@ namespace SSB
 			for (auto elem : _blackboard->DamagedCharacters)
 			{
 				float damage = 70;
-				elem->Damage(damage);
 				//if (_blackboard->DamagedCharacters.find(elem) == _blackboard->DamagedCharacters.end())
 				{
 					float currentHp = elem->m_HealthPoint - damage;
@@ -1380,6 +1379,7 @@ namespace SSB
 					elem->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / elem->m_kHealthPointMax, 1.0f));
 					elem->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, elem->m_pInterDamage, 0.5f, 10.0f));
 				}
+				elem->Damage(damage);
 			}
 
 			ReserveNextTransferName(kPlayerIdle);

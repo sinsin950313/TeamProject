@@ -6,6 +6,9 @@ namespace SSB
 	{
 		return 8;
 	}
+	BossMob::BossMob() : Character(200)
+	{
+	}
 	float BossMob::GetBattleRange()
 	{
 		return m_BattleRange;
@@ -42,7 +45,6 @@ namespace SSB
 		//m_AttackBox.fExtent[2] = 1.5f;
 
 		m_Damage = 30;
-		m_HealthPoint = 200;
 
 		return false;
 	}
