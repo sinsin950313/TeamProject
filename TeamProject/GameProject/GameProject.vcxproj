@@ -165,6 +165,7 @@
     <ClInclude Include="EmitterData.h" />
     <ClInclude Include="FieldBoss.h" />
     <ClInclude Include="FieldBossStateService.h" />
+    <ClInclude Include="Foliage.h" />
     <ClInclude Include="InteractiveObject.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Light.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="Emitter.cpp" />
     <ClCompile Include="FieldBoss.cpp" />
     <ClCompile Include="FieldBossStateService.cpp" />
+    <ClCompile Include="Foliage.cpp" />
     <ClCompile Include="InteractiveObject.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Light.cpp" />

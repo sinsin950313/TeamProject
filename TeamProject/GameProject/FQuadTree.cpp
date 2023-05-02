@@ -744,6 +744,7 @@ namespace MAPLOAD
 		std::wstring szVSPath;
 		std::wstring szPSPath;
         std::vector<Cinema> CinemaList;
+        std::vector<InstanceData> InstanceList;
 		MeshMap* pMapMesh = new MeshMap();
 		pMapMesh->SetDevice(pd3dDevice, pContext);
         std::vector<std::pair<std::string, Transform>> spawnList;
@@ -885,6 +886,7 @@ namespace MAPLOAD
                         float fRadius;
                         UINT iSliceCount;
                         UINT iStackCount;
+                        UINT iInstanceCount;
 						if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" || specifyMode == "OBJECT_TRIGGER" || specifyMode == "OBJECT_SPAWN")
 						{
 							// length 값을 추출합니다.
@@ -916,6 +918,49 @@ namespace MAPLOAD
                             std::string stack_str = texturesStream.str().substr(stack_start, stack_end - stack_start);
                             std::istringstream stack_stream(stack_str);
                             stack_stream >> iStackCount;
+                        }
+                        else if (specifyMode == "OBJECT_FOLIAGE")
+                        {
+                            // InstanceCount 값을 추출합니다.
+                            size_t inst_start = texturesStream.str().find("m_FoliageList:") + strlen("m_FoliageList:");
+                            size_t inst_end = texturesStream.str().find(",", inst_start);
+                            std::string inst_str = texturesStream.str().substr(inst_start, inst_end - inst_start);
+                            std::istringstream inst_stream(inst_str);
+                            inst_stream >> iInstanceCount;
+                            for (int idx = 0; idx < iInstanceCount; idx++)
+                            {
+                                std::getline(is, str);
+                                std::stringstream texturesStream(str);
+                                std::string strName;
+                                std::getline(texturesStream, strName, ',');
+
+                                //pos값을추출
+                                size_t pos_start = texturesStream.str().find("pos:") + strlen("pos:");
+                                size_t pos_end = texturesStream.str().find(",", pos_start);
+                                std::string pos_str = texturesStream.str().substr(pos_start, pos_end - pos_start);
+                                std::istringstream pos_stream(pos_str);
+                                XMFLOAT3 position;
+                                pos_stream >> position.x >> position.y >> position.z;
+
+                                //rot
+                                size_t rot_start = texturesStream.str().find("rot:") + strlen("rot:");
+                                size_t rot_end = texturesStream.str().find(",", rot_start);
+                                std::string rot_str = texturesStream.str().substr(rot_start, rot_end - rot_start);
+                                std::istringstream rot_stream(rot_str);
+                                XMFLOAT3 rotation;
+                                rot_stream >> rotation.x >> rotation.y >> rotation.z;
+
+                                //scale
+                                size_t scale_start = texturesStream.str().find("scale:") + strlen("scale:");
+                                size_t scale_end = texturesStream.str().find(",", scale_start);
+                                std::string scale_str = texturesStream.str().substr(scale_start, scale_end - scale_start);
+                                std::istringstream scale_stream(scale_str);
+                                XMFLOAT3 scale;
+                                scale_stream >> scale.x >> scale.y >> scale.z;
+                                InstanceData inst;
+                                inst.matInstance = XMMatrixAffineTransformation(XMLoadFloat3(&scale), { 0,0,0,0 }, XMLoadFloat3(&rotation), XMLoadFloat3(&position));
+                                InstanceList.push_back(inst);
+                            }
                         }
 
                         if (specifyMode == "OBJECT_SIMPLE" || specifyMode == "OBJECT_COLLIDER" )
@@ -985,7 +1030,6 @@ namespace MAPLOAD
                         {
                             pSphereObject = new BaseObject();
 
-    
                             float phiStep = XM_PI / iStackCount;
                             float thetaStep = 2.0f * XM_PI / iSliceCount;
                             for (UINT i = 0; i <= iStackCount; i++)
@@ -1036,6 +1080,11 @@ namespace MAPLOAD
                             PathChanger(strName);
                             pSphereObject->Create(pd3dDevice, pContext, L"../../data/shader/MAP/SkyDomeShader.hlsl", mtw(strName));
                             pSphereObject->Init();
+                        }
+                        else if (specifyMode == "OBJECT_FOLIAGE")
+                        {
+                            Foliage* pFoliage = new Foliage(strName, &InstanceList, pd3dDevice, pContext);
+                            allObjectList.insert(pFoliage);
                         }
                         else
                         {

@@ -31,7 +31,7 @@ namespace SSB
 		if (minimumRequiredTime < g_fGameTimer - _blackboard->StateTImeStamp)
 		{
 			if (I_Input.GetKey(key) == KEY_PUSH && !(0 < m_pCharacter->GetRemainSkillCoolTime(skillStateName)))
-			{
+			{ 
 				ReserveNextTransferName(skillStateName);
 			}
 		}

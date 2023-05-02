@@ -323,3 +323,8 @@ struct Cinema
 		return is;
 	}
 };
+
+struct InstanceData
+{
+	XMMATRIX matInstance;
+};

@@ -50,7 +50,7 @@ namespace SSB
 	template<typename VertexType>
 	class Mesh : public MeshInterface
 	{
-	private:
+	public:
 		ID3D11InputLayout* _vertexLayout;
 		std::vector<VertexType> _vertexList;
 		ID3D11Buffer* _vertexBuffer = nullptr;
@@ -138,7 +138,7 @@ namespace SSB
 	};
 	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT>
 	{
-	private:
+	public:
 		MeshData _meshData;
 		ID3D11Buffer* _meshBuffer = nullptr;
 
