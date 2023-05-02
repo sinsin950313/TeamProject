@@ -86,6 +86,11 @@ void Character::Scale(float val)
 	m_vScale = TVector3(val, val, val);
 }
 
+Character::Character(float maxHealth) : m_kHealthPointMax(maxHealth)
+{
+	m_HealthPoint = m_kHealthPointMax;
+}
+
 bool	Character::Init()
 {
 	auto boundVolume = m_pModel->GetBoundingVolume();

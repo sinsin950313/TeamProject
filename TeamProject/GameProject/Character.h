@@ -39,6 +39,11 @@ public:
 	Interface* m_pInterGageHP;
 	Interface* m_pInterDamage;
 	Interface* m_pInterMinimapProfile;
+
+public:
+	Character(float maxHealth = 100);
+	virtual ~Character() {}
+
 public:
 	virtual bool	Init();
 	virtual bool	Frame();
@@ -141,7 +146,5 @@ public:
 	void SetPoundState(bool state);
 	bool IsPoundState();
 
-public:
-	virtual ~Character() {}
 };
 
