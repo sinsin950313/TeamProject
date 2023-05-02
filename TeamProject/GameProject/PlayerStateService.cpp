@@ -1370,7 +1370,7 @@ namespace SSB
 
 			for (auto elem : _blackboard->DamagedCharacters)
 			{
-				float damage = 70;
+				float damage = 80;
 				//if (_blackboard->DamagedCharacters.find(elem) == _blackboard->DamagedCharacters.end())
 				{
 					float currentHp = elem->m_HealthPoint - damage;

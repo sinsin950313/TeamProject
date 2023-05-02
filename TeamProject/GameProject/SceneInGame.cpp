@@ -990,8 +990,8 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerPierce, 1);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDash, 1);
 		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerRotate, 8);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 60);
-		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDrink, 30);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerUltimate, 40);
+		Player::GetInstance().Initialize_RegisterSkill(SSB::kPlayerDrink, 20);
 		Player::GetInstance().Init();
 	}
 
