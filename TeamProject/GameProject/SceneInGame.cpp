@@ -686,6 +686,7 @@ bool    SceneInGame::Render()
     m_pQuadTree->Render();
 	for (auto obj : m_pQuadTree->m_pAllInstanceObjectList)
 	{
+		obj->SetMatrix(nullptr, &m_pCameraCurrent->m_matView, &m_pCameraCurrent->m_matProj);
 		obj->Render();
 	}
 
