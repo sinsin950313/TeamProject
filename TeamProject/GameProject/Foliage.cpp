@@ -9,6 +9,35 @@ bool Foliage::Frame()
 	return true;
 }
 
+bool Foliage::PreRender()
+{
+	m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, &_toViewSpaceTransformBuffer);
+	m_pImmediateContext->VSSetConstantBuffers(1, 1, &_objectToWorldTransformBuffer);
+	for (auto material : m_pModel->_materials)
+	{
+		material.second->Render();
+	}
+	for (auto mesh : m_pModel->_meshes)
+	{
+		//m_pImmediateContext->VSSetConstantBuffers(4, 1, &static_cast<SSB::Mesh_Vertex_PCNT_Animatable*>(mesh.second)->_meshBuffer);
+		m_pImmediateContext->IASetInputLayout(static_cast<SSB::Mesh<SSB::Mesh_Vertex_PCNT_Animatable>*>(mesh.second)->_vertexLayout);
+		UINT stride = sizeof(SSB::Vertex_PCNT);
+		UINT offset = 0;
+		m_pImmediateContext->IASetVertexBuffers(0, 1, &static_cast<SSB::Mesh<SSB::Mesh_Vertex_PCNT_Animatable>*>(mesh.second)->_vertexBuffer, &stride, &offset);
+		stride = sizeof(InstanceData);
+		offset = 0;
+		m_pImmediateContext->IASetVertexBuffers(1, 1, &m_pInstanceBuffer, &stride, &offset);
+		m_pImmediateContext->IASetIndexBuffer(static_cast<SSB::Mesh<SSB::Mesh_Vertex_PCNT_Animatable>*>(mesh.second)->_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		m_pImmediateContext->VSSetShader(static_cast<SSB::Mesh<SSB::Mesh_Vertex_PCNT_Animatable>*>(mesh.second)->_vs->m_pVS, NULL, 0);
+
+		m_pImmediateContext->DrawIndexedInstanced(static_cast<SSB::Mesh<SSB::Mesh_Vertex_PCNT_Animatable>*>(mesh.second)->_indexList.size(), m_ListInstanceData.size(), 0, 0, 0);
+	}
+	/*m_pImmediateContext->VSSetConstantBuffers(4, 1, &m_pModel->_meshBuffer);*/
+	//m_pModel->Render();
+	return true;
+}
+
 bool Foliage::Render()
 {
 	m_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

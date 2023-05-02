@@ -3,11 +3,11 @@ sampler TextureSamplerColor : register(s0);
 
 struct PS_INPUT
 {
-	float4 projection : SV_POSITION;
-	float4 world : TEXCOORD3;
-	float4 normal : NORMAL0;
-	float4 color : COLOR0;
-	float2 tex : TEXCOORD0;
+	float4 p : SV_POSITION;
+	float4 w : TEXCOORD3;
+	float4 n : NORMAL0;
+	float4 c : COLOR0;
+	float2 t : TEXCOORD0;
 };
 
 struct PixelOutput
@@ -20,10 +20,8 @@ struct PixelOutput
 PixelOutput PS(PS_INPUT input)
 {
 	PixelOutput output = (PixelOutput)0;
-	output.Position = input.world;
-	output.Normal = input.normal;
-	output.Color = TextureColor.Sample(TextureSamplerColor, input.tex);
-	if (output.Color.w < 0.1 || output.Color.r < 0.1)
-		discard;
+	output.Position = input.w;
+	output.Normal = float4(input.n.xyz, 1);
+	output.Color = TextureColor.Sample(TextureSamplerColor, input.t);
 	return output;
 }

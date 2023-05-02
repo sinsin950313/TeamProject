@@ -10,11 +10,11 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
-	float4 projection : SV_POSITION;
-	float4 world : TEXCOORD3;
-	float4 normal : NORMAL0;
-	float4 color : COLOR0;
-	float2 tex : TEXCOORD0;
+	float4 p : SV_POSITION;
+	float4 w : TEXCOORD3;
+	float4 n : NORMAL0;
+	float4 c : COLOR0;
+	float2 t : TEXCOORD0;
 };
 
 cbuffer Camera : register(b0)
@@ -38,11 +38,11 @@ VS_OUTPUT VS(VS_INPUT input)
 	float4 vView = mul(vWorld, ViewMatrix);
 	float4 vProj = mul(vView, ProjectionMatrix);
 
-	output.projection = vProj;
-	output.world = vWorld;
-	output.normal = float4(normalize(mul(input.normal, input.worldInstance)).xyz, 1.0f);
-	output.tex = input.tex;
-	output.color = input.color;
+	output.p = vProj;
+	output.w = vWorld;
+	output.c = input.color;
+	output.n = mul(float4(input.normal.xyz, 0), input.worldInstance);
+	output.t = input.tex;
 
 	return output;
 }

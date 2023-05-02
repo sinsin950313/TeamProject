@@ -9,11 +9,6 @@ bool Object::Frame()
 	return true;
 }
 
-bool Object::PreRender()
-{
-	return false;
-}
-
 bool Object::Render()
 {
 	Character::Render();

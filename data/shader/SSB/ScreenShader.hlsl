@@ -186,14 +186,10 @@ bool IsBoundary(float2 uv)
 
 float4 PS(PSInput input) : SV_TARGET0
 {
-	/*if(IsBoundary(input.TextureUV))
+	if(IsBoundary(input.TextureUV))
 	{
 		return float4(0, 0, 0, 1);
-	}*/
-	/*if (IsBoundaryDepthNomral(input.TextureUV))
-	{
-		return float4(0, 0, 0, 1);
-	}*/
+	}
 
 	// 선형 Fog 계산
 	float4 pos = PositionMap.Sample(Sampler, input.TextureUV);
