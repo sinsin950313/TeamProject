@@ -101,6 +101,7 @@ public:
 	std::vector<std::pair<std::string, Transform>> m_EnemySpawnList;
 	std::map<std::wstring, T_BOX> m_TriggerList;
 	std::unordered_set<Object*> m_pAllObjectList;
+	std::unordered_set<Object*> m_pAllInstanceObjectList;
 	std::vector<FNode*> m_pLeafNodeList;
 	std::vector<FNode*> m_pDrawLeafNodeList;
 

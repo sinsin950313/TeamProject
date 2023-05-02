@@ -10,7 +10,6 @@ protected:
 
 public:
 	virtual bool Frame() override;
-	virtual bool PreRender() override;
 	virtual bool Render() override;
 public:
 	Object();
