@@ -26,12 +26,7 @@ namespace SSB
 		{
 			if (m_Select.OBBtoRay(&node->m_Box))
 			{
-				if (
-					node->m_Box.vMin.x > m_vPos.x ||
-					node->m_Box.vMax.x < m_vPos.x ||
-					node->m_Box.vMin.z > m_vPos.z ||
-					node->m_Box.vMax.z < m_vPos.z
-					)
+				if (node->m_Box.vMin.x > m_vPos.x || node->m_Box.vMax.x < m_vPos.x || node->m_Box.vMin.z > m_vPos.z || node->m_Box.vMax.z < m_vPos.z)
 					continue;
 				UINT index = 0;
 				UINT iNumFace = node->m_IndexList.size() / 3;
@@ -51,13 +46,12 @@ namespace SSB
 				}
 			}
 		}
-
 		return false;
 	}
 
 	float SpringArmCamera::ShotRay()
 	{
-		auto start_time = std::chrono::high_resolution_clock::now();
+		/*auto start_time = std::chrono::high_resolution_clock::now();*/
 		float distance = _kMaxDistance;
 		if (Player::GetInstance().IsUltimateSkill())
 		{
@@ -69,11 +63,11 @@ namespace SSB
 		{
 			ret = min(distance, TVector3::Distance(m_Select.m_vIntersection, m_vTarget));
 		}
-		auto end_time = std::chrono::high_resolution_clock::now();
+		/*auto end_time = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
 		OutputDebugStringW(L"Time1: ");
 		OutputDebugStringW(std::to_wstring(duration).c_str());
-		OutputDebugStringW(L"\n");
+		OutputDebugStringW(L"\n");*/
 		TVector3 center;
 		TVector3 cameraPosition;
 		{
@@ -122,11 +116,11 @@ namespace SSB
 				}
 			}
 		}
-		auto end_time2 = std::chrono::high_resolution_clock::now();
+		/*auto end_time2 = std::chrono::high_resolution_clock::now();
 		auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end_time2 - end_time).count();
 		OutputDebugStringW(L"Time2: ");
 		OutputDebugStringW(std::to_wstring(duration2).c_str());
-		OutputDebugStringW(L"\n");
+		OutputDebugStringW(L"\n");*/
 		return ret;
 	}
 	void SpringArmCamera::Initialize_SetMap(FQuadTree* map)

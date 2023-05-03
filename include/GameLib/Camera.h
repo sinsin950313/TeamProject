@@ -16,7 +16,7 @@ public:
 	// ¸â¹ö º¯¼ö
 	//--------------------------------------------------------------------------------------
 	TVector3			m_vModelCenter;
-	TMatrix			m_mModelLatRot;        // Last arcball rotation matrix for model 
+	TMatrix			m_mModelLastRot;        // Last arcball rotation matrix for model 
 	TMatrix			m_mModelRot;            // Rotation matrix of model
 	TMatrix			m_mCameraRotLast;
 public:
