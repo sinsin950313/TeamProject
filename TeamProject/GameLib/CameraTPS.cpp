@@ -64,18 +64,18 @@ bool CameraTPS::Frame()
 	// position to the cameras target, and cross it with the camera's Right vector
 	XMVECTOR up = XMVector3Normalize(XMVector3Cross(XMVector3Normalize(camPosition - m_vTarget), m_vRight));
 	XMStoreFloat3(&m_vUp, up);
-
 	XMStoreFloat3(&m_vPos, camPosition);
+
 	UpdateCameraShake();
-	
-	
 	UpdateCameraClosing();
+
 	m_matView = XMMatrixLookAtLH(m_vPos, m_vTarget, m_vUp);
 	m_vRight = -m_vRight;
 
 	m_vFrustum.CreateFrustum(&m_matView, &m_matProj);
 
 	{
+		
 		TQuaternion q;
 		D3DXQuaternionRotationYawPitchRoll(&q, m_vRotation.y, m_vRotation.x, m_vRotation.z);
 		D3DXMatrixAffineTransformation(&m_matWorld, 1, nullptr, &q, &m_vPos);
