@@ -48,6 +48,8 @@ E_SCENE SceneInGame::NextScene()
 void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 {
 	m_pQuadTree->m_CurrentCinema = m_pQuadTree->m_CinemaList.find(szCinemaName)->second;
+	if (szCinemaName.find(L"_Start") != std::string::npos)
+		m_vPlayerRotateCamera = Player::GetInstance().m_vRotation;
 	Player::GetInstance().m_pMainCamera = m_pCinemaCamera;
 	I_Effect.SetCamera(m_pCinemaCamera);
 	if(m_pBoss)
@@ -73,6 +75,7 @@ void SceneInGame::SetCinemaCamera(std::wstring szCinemaName)
 	{
 		/*((CameraTPS*)m_pMainCamera)->m_vFollowPos = &Player::GetInstance().m_vPos;
 		m_pMainCamera->Frame();*/
+		Player::GetInstance().m_vRotation = m_vPlayerRotateCamera;
 		m_pMainCamera->Frame();
 		float yaw, pitch, roll;
 		m_pMainCamera->GetCalcYawPitchRoll(yaw, pitch, roll);
@@ -430,6 +433,8 @@ bool    SceneInGame::Frame()
 				auto sound = I_Sound.Find(L"yasuo_sound_meet_boss2.mp3");
 				sound->VolumeSet(0.3f);
 				sound->Play(true);
+				m_pMainCamera->m_fCameraYawAngle += XM_PI;
+				Player::GetInstance().m_vRotation.y += XM_PI;
 				SetCinemaCamera(L"Cine_1_1_Start");
 				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_CinemaIntro_Start")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
