@@ -16,7 +16,7 @@ namespace SSB
 	{
 		return m_SpotRange;
 	}
-	FieldBoss::FieldBoss()
+	FieldBoss::FieldBoss() : Character(150)
 	{
 		for (int i = 0; i < 10; ++i)
 		{

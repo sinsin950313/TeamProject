@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "CollisionMgr.h"
 #include "SoundMgr.h"
+#include "MeshMap.h"
 
 namespace SSB
 {
@@ -354,15 +355,16 @@ namespace SSB
             float halfTransferTime = m_pCharacter->GetAirborneActiveTime() * 0.5f;
             float elapseTime = g_fGameTimer - _blackboard->StateTImeStamp;
             float height;
+			float baseHeight = m_pCharacter->m_pMap->GetHeight(m_pCharacter->m_vPos.x, m_pCharacter->m_vPos.z);
             if (elapseTime > halfTransferTime)
             {
                 // Going Down
-                height = _airborneHeight * (1.0f - (elapseTime - halfTransferTime) / halfTransferTime);
+                height = baseHeight + _airborneHeight * (1.0f - (elapseTime - halfTransferTime) / halfTransferTime);
             }
             else
             {
                 //Going Up
-                height = _airborneHeight * (elapseTime / halfTransferTime);
+                height = baseHeight + _airborneHeight * (elapseTime / halfTransferTime);
             }
             m_pCharacter->m_vPos.y = height;
         }
