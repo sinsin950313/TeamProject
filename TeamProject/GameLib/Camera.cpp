@@ -118,10 +118,34 @@ void	Camera::SetObjectView(TVector3 vMax, TVector3 vMin)
 
 void Camera::GetCalcYawPitchRoll(float& fYaw, float& fPitch, float& fRoll)
 {
-	TVector3 vDir(m_matView._13, m_matView._23, m_matView._33);
-	fYaw = XMConvertToDegrees(atan2f(vDir.z, vDir.x));
-	float fLength = sqrtf(vDir.x * vDir.x + vDir.z * vDir.z);
-	fPitch = XMConvertToDegrees(atan2f(-vDir.y, fLength));
+	//TVector3 vScale;
+	//TVector3 vPos;
+	//TQuaternion vRotation;
+	//D3DXMatrixDecompose(&vScale, &vRotation, &vPos, &m_matView);
+	///*TVector3 vDir(m_matView._13, m_matView._23, m_matView._33);*/
+	//fYaw = XMConvertToDegrees(atan2f(vRotation.z, vRotation.x));
+	//float fLength = sqrtf(vRotation.x * vRotation.x + vRotation.z * vRotation.z);
+	//fPitch = XMConvertToDegrees(atan2f(-vRotation.y, fLength));
+	//fRoll = 0.0f;
+	TVector3 vScale;
+	TVector3 vPos;
+	TQuaternion vRotation;
+	D3DXMatrixDecompose(&vScale, &vRotation, &vPos, &m_matView);
+
+	// 회전행렬에서 yaw, pitch, roll 값을 계산
+	// 회전행렬에서 각 축 벡터를 추출하여 각도를 계산할 수 있다.
+	TVector3 xAxis(m_matView._11, m_matView._12, m_matView._13);
+	TVector3 yAxis(m_matView._21, m_matView._22, m_matView._23);
+	TVector3 zAxis(m_matView._31, m_matView._32, m_matView._33);
+
+	// Yaw (y 축 기준 회전 각도)
+	fYaw = XMConvertToDegrees(atan2f(xAxis.z, xAxis.x));
+
+	// Pitch (x 축 기준 회전 각도)
+	fPitch = XMConvertToDegrees(atan2f(-yAxis.z, sqrtf(yAxis.x * yAxis.x + yAxis.y * yAxis.y)));
+
+	// Roll (z 축 기준 회전 각도)
+	//fRoll = XMConvertToDegrees(atan2f(zAxis.y, yAxis.y));
 	fRoll = 0.0f;
 }
 
