@@ -100,7 +100,7 @@ public:
 
     CameraCinema* m_pCinemaCamera = nullptr;
     Camera* m_pCameraCurrent = nullptr;
-
+    TVector3 m_vPlayerRotateCamera;
     void SetCinemaCamera(std::wstring szCinemaName);
     void SetMainCamera();
     void MoveCinemaCamera();
