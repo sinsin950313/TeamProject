@@ -12,7 +12,7 @@ namespace SSB
 		camPosition = XMVector3Normalize(camPosition);
 
 		m_Select.m_Ray.vOrigin = m_vTarget;
-		m_Select.m_Ray.vOrigin.y += 1;
+		/*m_Select.m_Ray.vOrigin.y += 1;*/
 		XMStoreFloat3(&m_Select.m_Ray.vDirection, camPosition);
 		m_Select.m_Ray.vDirection.Normalize();
 
