@@ -8,10 +8,10 @@ bool CameraTPS::Frame()
 	// Check that the camera doesn't go over the top or under the player
 	if (m_fCameraPitchAngle > 0.85f)
 		m_fCameraPitchAngle = 0.85f;
-	//if (m_fCameraPitchAngle < -0.85f)
-	//	m_fCameraPitchAngle = -0.85f;
-	if (m_fCameraPitchAngle < 0.0f)
-		m_fCameraPitchAngle = 0.0f;
+	if (m_fCameraPitchAngle < -0.85f)
+		m_fCameraPitchAngle = -0.85f;
+	/*if (m_fCameraPitchAngle < 0.0f)
+		m_fCameraPitchAngle = 0.0f;*/
 
 	// Third Person Camera
 	// Set the cameras target to be looking at the character.
@@ -19,13 +19,13 @@ bool CameraTPS::Frame()
 	if (m_vFollowPos)
 	{
 		m_vTarget = *m_vFollowPos;
-		//m_vTarget.y += 1.5f;
+		m_vTarget.y += 1.5f;
 	}
 	
 	// This line is because this lessons model was set to stand on the point (0,0,0) (my bad), and we
 		// don't want to just be looking at the models feet, so we move the camera's target vector up 5 units
 		//m_vTarget = XMVectorSetY(m_vTarget, XMVectorGetY(m_vTarget) + 5.0f);
-	m_vTarget.y; // += 5.0f
+	//m_vTarget.y; += 5.0f
 
 	//m_fCameraYawAngle;
 	//m_fCameraPitchAngle;
@@ -44,7 +44,7 @@ bool CameraTPS::Frame()
 	// to be "standing" on (0,0,0), instead of centered around it ;) Well target her head here though
 	//m_CharCamDist = 10.0f;
 	camPosition = (camPosition * m_CharCamDist) + m_vTarget;
-	camPosition = XMVectorSetY(camPosition, XMVectorGetY(camPosition) + 3.0f);
+	camPosition = XMVectorSetY(camPosition, XMVectorGetY(camPosition));// + 3.0f);
 
 	// We need to set our cameras forward and right vectors to lay
 	// in the worlds xz plane, since they are the vectors we will

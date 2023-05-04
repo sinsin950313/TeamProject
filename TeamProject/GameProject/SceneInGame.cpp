@@ -383,7 +383,6 @@ bool    SceneInGame::Frame()
 				SetCinemaCamera(L"Cine_2_End");
 				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame1_Cinema2_End")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
-				m_pQuadTree->m_CurrentCinema.CamMoveList[m_pQuadTree->m_CurrentCinema.CamMoveList.size() - 1].fYaw = XMConvertToDegrees(m_pMainCamera->m_fCameraYawAngle - XM_PI);
 			}
 			if (m_bIngame1_Cinema2_End && m_pQuadTree->m_fCamMoveCurrent <= m_pQuadTree->m_CurrentCinema.fDuration && m_iCurrentCineCount == 5)
 			{
@@ -420,11 +419,6 @@ bool    SceneInGame::Frame()
 			{
 				m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
 				Cinema cinema = m_pQuadTree->m_CinemaList.find(L"Cine_1_Start")->second;
-				m_pMainCamera->m_vRotation.x = XMConvertToRadians(cinema.CamMoveList[0].fPitch);
-				m_pMainCamera->m_vRotation.y = XMConvertToRadians(cinema.CamMoveList[0].fYaw - XM_PI);
-				m_pMainCamera->m_vRotation.z = XMConvertToRadians(cinema.CamMoveList[0].fRoll);
-				Player::GetInstance().m_vRotation = m_pMainCamera->m_vRotation;
-				m_pMainCamera->Frame();
 				auto sound = I_Sound.Find(L"yasuo_sound_meet_boss2.mp3");
 				sound->VolumeSet(0.3f);
 				sound->Play(true);
