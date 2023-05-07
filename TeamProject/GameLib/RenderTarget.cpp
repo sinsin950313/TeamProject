@@ -76,12 +76,12 @@ bool	RenderTarget::Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContex
 }
 #include "Input.h"
 #include "DXState.h"
-bool	RenderTarget::Begin(ID3D11DeviceContext* pContext)
+bool	RenderTarget::Begin(ID3D11DeviceContext* pContext, TColor color)
 {
 	ID3D11RenderTargetView* pNullRTV = NULL;
 	pContext->OMSetRenderTargets(1, &pNullRTV, NULL);
 	pContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-	const FLOAT color[] = { 0.5, 0.5, 0.5, 1 };
+	//const FLOAT color[] = { 0.5, 0.5, 0.5, 1 };
 	pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
 	pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	pContext->RSSetViewports(1, &m_Viewport);

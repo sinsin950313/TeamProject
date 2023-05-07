@@ -1,6 +1,6 @@
 #include "ConstantHeader.txt"
 Texture2D	g_ColorTex		: register(t9);
-
+Texture2D	g_BlurTex		: register(t11);
 struct VS_in
 {
 	float3 p : POSITION;
@@ -52,6 +52,8 @@ PS_OUT PS(VS_out input) : SV_Target
 {
 	PS_OUT vOut;
 	vOut.vColor = g_txTexA.Sample(g_SampleWrap, input.t);
+	float4 glow = g_BlurTex.Sample(g_SampleWrap, input.t);
+	vOut.vColor.rgb = saturate(vOut.vColor.rgb + (glow * 1.5).rgb);
 	vOut.vColor.rgb = vOut.vColor.rgb * input.c.rgb * input.c.a;
 	vOut.vColor.a = 1;
 
@@ -87,6 +89,8 @@ float4 COLOR_PS(VS_out input) : SV_Target
 float4 OPACITY_PS(VS_out input) : SV_Target
 {
 	float4 color = g_txTexA.Sample(g_SampleWrap, input.t);
+	float4 glow = g_BlurTex.Sample(g_SampleWrap, input.t);
+	color.rgb = saturate(color.rgb + (glow * 1.5).rgb);
 	return color * input.c;
 }
 

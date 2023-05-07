@@ -20,11 +20,11 @@ bool	Effect::Frame()
 		D3DXMatrixRotationYawPitchRoll(&matRot, m_vRot.y, m_vRot.x, m_vRot.z);
 	if(m_vPos != TVector3::Zero)
 		D3DXMatrixTranslation(&m_matTopWorld, m_vPos.x, m_vPos.y, m_vPos.z);
-	D3DXMatrixMultiply(&m_matTopWorld, &matRot, &m_matTopWorld);
 	if (m_vFollowPos)
 	{
 		D3DXMatrixTranslation(&m_matTopWorld, m_vFollowPos->x, m_vFollowPos->y, m_vFollowPos->z);
 	}
+	D3DXMatrixMultiply(&m_matTopWorld, &matRot, &m_matTopWorld);
 	auto iter = m_pEmitterList.begin();
 	while(iter != m_pEmitterList.end())
 	{

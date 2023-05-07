@@ -23,7 +23,7 @@ public:
 
 public:
 	bool	Create(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext, FLOAT fWidth = 1024.0f, FLOAT fHeight = 1024.0f);
-	bool	Begin(ID3D11DeviceContext* pContext);
+	bool	Begin(ID3D11DeviceContext* pContext, TColor color = TColor(0, 0, 0, 0));
 	void	End(ID3D11DeviceContext* pContext);
 	bool	Release();
 };

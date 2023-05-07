@@ -126,6 +126,8 @@ void SceneInGame::DataLoad()
 
     I_Model.SetDevice(m_pd3dDevice, m_pImmediateContext);
 
+	I_Sprite.SetDevice(m_pd3dDevice, m_pImmediateContext);
+
 	I_Sound.LoadDir(kTeamProjectSoundPath);
 	I_Sound.LoadAll(kTeamProjectSoundPath);
 
@@ -216,7 +218,10 @@ bool    SceneInGame::Frame()
 
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
-		I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
+		//I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
+		I_Effect.CreateEffect(L"../../data/effectdata/PlayerAura.EFT", &Player::GetInstance().m_vPos);
+		//I_Effect.CreateEffect(L"../../data/effectdata/PlayerHit.EFT", &Player::GetInstance().m_vPos, TVector3(0, 0.74, 0));
+		//I_Effect.CreateEffect(L"../../data/effectdata/Arrow.EFT", &Player::GetInstance().m_vPos, TVector3(0, RandomStep(0.0, 3.1415), 0));
 		//I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", Player::GetInstance().GetPosition());
 		//I_Effect.CreateEffect(L"../../data/effectdata/Portal.EFT", Player::GetInstance().GetPosition() + TVector3(0, 5, 0));
 		//I_Effect.CreateEffect(L"../../data/effectdata/ShockWave.EFT", Player::GetInstance().GetPosition() + TVector3(0, 0, 0));
@@ -498,6 +503,7 @@ bool    SceneInGame::Frame()
 					sound->Play(true);
 					m_pInterFade->m_pWorkList.push_back(new InterfaceFadeOut(2.0f));
 					m_pBoss->m_vPos = m_vBossSpawnPos;
+					m_pBoss->m_pAura->m_isDone = true;
 					m_pBoss->Frame();
 					Player::GetInstance().m_vPos = m_vBossSpawnPos;
 					Player::GetInstance().Frame();

@@ -1228,6 +1228,8 @@ namespace SSB
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
 				auto list = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);
+				if(list.size() > 0 && !Player::GetInstance().m_pAura)
+					Player::GetInstance().m_pAura = I_Effect.CreateEffect(L"../../data/effectdata/PlayerAura.EFT", &Player::GetInstance().m_vPos);
 				for (auto obj : list)
 				{
 					if (obj != m_pCharacter)
@@ -1338,6 +1340,8 @@ namespace SSB
 			sound->VolumeSet(0.2f);
 			sound->Play();
 			Player::GetInstance().m_pTrail->ResetTrail(&Player::GetInstance().m_matWorld);
+			Player::GetInstance().m_pAura->m_isDone = true;
+			Player::GetInstance().m_pAura = nullptr;
 		}
 
 		static float timer = 0.0f;

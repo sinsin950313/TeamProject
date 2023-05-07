@@ -2,12 +2,14 @@
 
 #include "Character.h"
 #include "Camera.h"
+#include "EffectMgr.h"
 namespace SSB
 {
 	class BossMob : public Character
 	{
     public:
         Camera* m_pMainCamera;
+        Effect* m_pAura;
     public:
         float m_BattleRange = 6;
         float m_SpotRange = 40;

@@ -122,6 +122,9 @@ Effect* EffectMgr::LoadEffect(std::wstring path)
 
 		std::getline(is, str);
 		brd->iBlendType = _ttoi64(str.c_str());
+
+		std::getline(is, str);
+		brd->isEmissive = _ttoi64(str.c_str());
 	};
 
 	auto LoadRenderSetData = [&](RenderSetData* rsd)
@@ -246,6 +249,7 @@ Effect* EffectMgr::CreateEffect(std::wstring path, TVector3 vPos, TVector3 vRot)
 	Effect* pEffect = LoadEffect(path);
 	pEffect->m_vPos = vPos;
 	pEffect->m_vRot = vRot;
+	pEffect->SetCamera(m_pCamera);
 
 	return pEffect;
 }

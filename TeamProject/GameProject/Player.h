@@ -4,6 +4,7 @@
 #include "TCollision.h"
 #include "TrailEffect.h"
 #include "DebugBox.h"
+#include "EffectMgr.h"
 
 struct VS_INSTANCING_BUFFER
 {
@@ -41,6 +42,8 @@ public:
     Shader* m_pModelPS[2];
     std::vector<TMatrix>     m_matInstancing;
     TVector4    m_vInstancingColor[12];
+
+    Effect* m_pAura = nullptr;
 
     ID3D11Buffer* m_pInstancingBuffer;
     VS_INSTANCING_BUFFER m_cbInstancingData;

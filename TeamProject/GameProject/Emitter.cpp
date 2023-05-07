@@ -119,11 +119,14 @@ Emitter* Emitter::CopyEmitter(Emitter* pEmitter)
 {
 	Emitter* newEmitter = new Emitter();
 
+	I_Sprite.Load(pEmitter->m_BasicRenderData.texPath, &newEmitter->m_pSprite);
+	/*
 	newEmitter->m_pSprite = new Sprite();
 	newEmitter->m_pSprite->Create(
 		m_pd3dDevice, m_pImmediateContext, L"../../data/shader/DefaultParticle.hlsl",
 		pEmitter->m_BasicRenderData.texPath, L"VS", L"PS");
 	newEmitter->m_pSprite->Init();
+	*/
 
 	newEmitter->Init(m_pd3dDevice, m_pImmediateContext);
 
@@ -156,6 +159,7 @@ void	Emitter::Reset()
 	m_fInitTime = GetRandRealNum(m_BasicData.fInitDelay, m_BasicData.fInitDelayDiff);
 	m_fLifeTime = 0.0f;
 	m_fLifeTimer = GetRandRealNum(m_BasicData.fLifeTime, m_BasicData.fLifeTimeDiff);
+	m_isDone = false;
 	auto iter = m_pParticleList.begin();
 	while (iter != m_pParticleList.end())
 	{
@@ -176,21 +180,25 @@ void	Emitter::SetCamera(Camera* pCamera)
 	}
 }
 
+
 void	Emitter::SpriteReload()
 {
+	I_Sprite.Load(m_BasicRenderData.texPath, &m_pSprite);
+	/*
 	if (m_pSprite)
 	{
 		m_pSprite->Release();
 		delete m_pSprite;
 		m_pSprite = nullptr;
 	}
-		m_pSprite = new Sprite();
-		std::wstring VSName = L"VS";
-		std::wstring PSName = L"PS";
-		m_pSprite->Create(m_pd3dDevice, m_pImmediateContext,
-			L"../../data/shader/DefaultParticle.hlsl", m_BasicRenderData.texPath, VSName, PSName);
+	m_pSprite = new Sprite();
+	std::wstring VSName = L"VS";
+	std::wstring PSName = L"PS";
+	m_pSprite->Create(m_pd3dDevice, m_pImmediateContext,
+		L"../../data/shader/DefaultParticle.hlsl", m_BasicRenderData.texPath, VSName, PSName);
 
-		m_pSprite->Init();
+	m_pSprite->Init();
+	*/
 }
 
 bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
@@ -198,6 +206,9 @@ bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 	m_pd3dDevice = pd3dDevice;
 	m_pImmediateContext = pContext;
 
+	if (!m_pSprite)
+		I_Sprite.Load(m_BasicRenderData.texPath, &m_pSprite);
+	/*
 	if (!m_pSprite)
 	{
 		m_pSprite = new Sprite();
@@ -208,6 +219,7 @@ bool	Emitter::Init(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext)
 
 		m_pSprite->Init();
 	}
+	*/
 
 	m_matParentTrans = TMatrix::Identity;
 	m_matParentRotation = TMatrix::Identity;
@@ -341,6 +353,8 @@ bool	Emitter::Render()
 			m_pImmediateContext->GSSetConstantBuffers(8, 1, &m_pInstancingBuffer);
 		}
 
+		m_pSprite->SetBlurData(m_BasicRenderData.isEmissive);
+
 		m_pImmediateContext->OMSetDepthStencilState(DXState::g_pDefaultDepthStencilAndNoWrite, 0xff);
 
 		m_pSprite->SetMatrix(nullptr, &m_pCamera->m_matView, &m_pCamera->m_matProj);
@@ -378,11 +392,13 @@ bool	Emitter::Release()
 		m_pInstancingBuffer = nullptr;
 	}
 
+	/*
 	if (m_pSprite)
 	{
 		m_pSprite->Release();
 		delete m_pSprite;
 		m_pSprite = nullptr;
 	}
+	*/
 	return true;
 }

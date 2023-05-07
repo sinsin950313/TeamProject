@@ -44,6 +44,7 @@ struct BasicRenderData
 	UINT iMaterial;
 	std::wstring texPath;
 	UINT iBlendType;
+	bool	isEmissive;
 };
 
 struct RenderSetData
@@ -52,7 +53,7 @@ struct RenderSetData
 	UINT iColorType;
 
 	TColor vFixColor;
-	
+
 	TColor vRandMinColor;
 	TColor vRandMaxColor;
 

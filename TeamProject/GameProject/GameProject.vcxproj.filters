@@ -210,6 +210,9 @@
     <ClInclude Include="Foliage.h">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteMgr.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyMain.cpp">
@@ -361,6 +364,9 @@
     </ClCompile>
     <ClCompile Include="Foliage.cpp">
       <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteMgr.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -70,6 +70,7 @@ namespace SSB
 		{
 			called = true;
 			mob->m_pMainCamera->CameraShake();
+			mob->m_pAura = I_Effect.CreateEffect(L"../../data/effectdata/BossAura.EFT", &mob->m_vPos);
 		}
 	}
 	float BossMobAngryState::GetTransferRequireTime()

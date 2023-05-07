@@ -205,6 +205,7 @@
     <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="SpringArmCamera.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteMgr.h" />
     <ClInclude Include="TestObj.h" />
     <ClInclude Include="TrailEffect.h" />
   </ItemGroup>
@@ -255,6 +256,7 @@
     <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="SpringArmCamera.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteMgr.cpp" />
     <ClCompile Include="TestObj.cpp" />
     <ClCompile Include="TrailEffect.cpp" />
   </ItemGroup>

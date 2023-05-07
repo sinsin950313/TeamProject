@@ -2,6 +2,7 @@
 
 #include "Character.h"
 #include <queue>
+#include "EffectMgr.h"
 
 namespace SSB
 {
@@ -11,6 +12,7 @@ namespace SSB
 		class Arrow : public Character
 		{
 		private:
+			Effect* m_pEffect = nullptr;
 			const float _kLiveTime = 3.0f;
 			float _startTimeStamp;
 			const float _damage = 20;

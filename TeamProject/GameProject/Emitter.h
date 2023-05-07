@@ -1,6 +1,6 @@
 #pragma once
 #include "Camera.h"
-#include "Sprite.h"
+#include "SpriteMgr.h"
 #include "EmitterData.h"
 
 class Particle;

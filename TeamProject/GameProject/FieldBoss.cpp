@@ -206,11 +206,15 @@ namespace SSB
 		auto crossVec = XMVector3Cross(forward, m_vDirection);
 		if (XMVectorGetY(crossVec) > 0)
 		{
-			D3DXMatrixRotationY(&rotYMatrix, acos(D3DXVec3Dot(&forward, &m_vDirection)));
+			float ry = acos(D3DXVec3Dot(&forward, &m_vDirection));
+			D3DXMatrixRotationY(&rotYMatrix, ry);
+			m_pEffect = I_Effect.CreateEffect(L"../../data/effectdata/Arrow.EFT", &m_vPos, TVector3(0, ry, 0));
 		}
 		else
 		{
-			D3DXMatrixRotationY(&rotYMatrix, -acos(D3DXVec3Dot(&forward, &m_vDirection)));
+			float ry = -acos(D3DXVec3Dot(&forward, &m_vDirection));
+			D3DXMatrixRotationY(&rotYMatrix, ry);
+			m_pEffect = I_Effect.CreateEffect(L"../../data/effectdata/Arrow.EFT", &m_vPos, TVector3(0, ry, 0));
 		}
 
 		float scale = 0.1f;
@@ -229,6 +233,7 @@ namespace SSB
 	}
 	void FieldBoss::Arrow::UnActive()
 	{
+		m_pEffect->m_isDone = true;
 	}
 	bool FieldBoss::Arrow::IsDead()
 	{
