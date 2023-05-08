@@ -9,7 +9,8 @@ namespace SSB
 	{
     public:
         Camera* m_pMainCamera;
-        Effect* m_pAura;
+        Effect* m_pPunchEffect;
+        Effect* m_pSkillEffect;
     public:
         float m_BattleRange = 6;
         float m_SpotRange = 40;

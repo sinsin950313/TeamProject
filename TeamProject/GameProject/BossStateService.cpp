@@ -70,7 +70,6 @@ namespace SSB
 		{
 			called = true;
 			mob->m_pMainCamera->CameraShake();
-			mob->m_pAura = I_Effect.CreateEffect(L"../../data/effectdata/BossAura.EFT", &mob->m_vPos);
 		}
 	}
 	float BossMobAngryState::GetTransferRequireTime()
@@ -295,6 +294,13 @@ namespace SSB
 	}
 	void BossMobAttack1State::Action()
 	{
+		if (!_blackboard->Initialized)
+		{
+			((BossMob*)m_pCharacter)->m_pPunchEffect =
+				I_Effect.CreateEffect(L"../../data/effectdata/BossPunch.EFT", TVector3(0, 0, 0));
+		}
+		if(((BossMob*)m_pCharacter)->m_pPunchEffect)
+			((BossMob*)m_pCharacter)->m_pPunchEffect->m_vParentPos = m_pCharacter->GetCurSocketPos("RightHandSocket");
 		// LookAt Target
 		float pivotTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < pivotTime)
@@ -425,6 +431,14 @@ namespace SSB
 	}
 	void BossMobAttack2State::Action()
 	{
+		if (!_blackboard->Initialized)
+		{
+			((BossMob*)m_pCharacter)->m_pPunchEffect =
+				I_Effect.CreateEffect(L"../../data/effectdata/BossPunch.EFT", TVector3(0, 0, 0));
+		}
+		if (((BossMob*)m_pCharacter)->m_pPunchEffect)
+			((BossMob*)m_pCharacter)->m_pPunchEffect->m_vParentPos = m_pCharacter->GetCurSocketPos("LeftHandSocket");
+
 		// LookAt Target
 		float pivotTime = m_pCharacter->m_pModel->_currentAnimation->_endFrame * 0.23;
 		if (m_pCharacter->m_pModel->_currentAnimation->m_fAnimTime < pivotTime)
@@ -551,7 +565,11 @@ namespace SSB
 			m_pCharacter->m_AttackBox.fExtent[0] = 3.0f;
 			m_pCharacter->m_AttackBox.fExtent[1] = 3.0f;
 			m_pCharacter->m_AttackBox.fExtent[2] = 3.0f;
+			((BossMob*)m_pCharacter)->m_pSkillEffect =
+				I_Effect.CreateEffect(L"../../data/effectdata/BossSkill.EFT", TVector3(0, 0, 0));
 		}
+		if (((BossMob*)m_pCharacter)->m_pSkillEffect)
+			((BossMob*)m_pCharacter)->m_pSkillEffect->m_vParentPos = m_pCharacter->GetCurSocketPos("RightHandSocket");
 
 		BossMob* mob = static_cast<BossMob*>(m_pCharacter);
 		mob->m_pMainCamera->CameraShake();

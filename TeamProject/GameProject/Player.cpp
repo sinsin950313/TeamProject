@@ -187,9 +187,9 @@ void Player::Damage(int damage)
 		if (!m_IsImmortal)
 		{
 			Character::Damage(damage);
-			I_Effect.CreateEffect(L"../../data/effectdata/PlayerHit.EFT", &Player::GetInstance().m_vPos, TVector3(0, 0.74, 0));
 		}
 	}
+	I_Effect.CreateEffect(L"../../data/effectdata/PlayerHit.EFT", &Player::GetInstance().m_vPos, TVector3(0, 0.74, 0));
 }
 
 bool Player::IsDash()

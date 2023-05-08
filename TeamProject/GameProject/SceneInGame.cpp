@@ -218,8 +218,9 @@ bool    SceneInGame::Frame()
 
 	if (I_Input.GetKey('P') == KEY_PUSH)
 	{
+		I_Effect.CreateEffect(L"../../data/effectdata/Heal.EFT", &Player::GetInstance().m_vPos);
 		//I_Effect.CreateEffect(L"../../data/effectdata/Tornado.EFT", &Player::GetInstance().m_vPos);
-		I_Effect.CreateEffect(L"../../data/effectdata/PlayerAura.EFT", &Player::GetInstance().m_vPos);
+		//I_Effect.CreateEffect(L"../../data/effectdata/PlayerAura.EFT", &Player::GetInstance().m_vPos);
 		//I_Effect.CreateEffect(L"../../data/effectdata/PlayerHit.EFT", &Player::GetInstance().m_vPos, TVector3(0, 0.74, 0));
 		//I_Effect.CreateEffect(L"../../data/effectdata/Arrow.EFT", &Player::GetInstance().m_vPos, TVector3(0, RandomStep(0.0, 3.1415), 0));
 		//I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", Player::GetInstance().GetPosition());
@@ -433,13 +434,18 @@ bool    SceneInGame::Frame()
 		{//Intro
 			if (!m_bIngame2_CinemaIntro_Start && m_iCurrentCineCount == 0)
 			{
+				Player& pPlayer = Player::GetInstance();
+				pPlayer.m_pInterSkillR->m_pWorkList.push_back(new InterfaceFadeClockwise(
+					pPlayer.GetSkillCoolTime(SSB::kPlayerUltimate), pPlayer.GetRemainSkillCoolTime(SSB::kPlayerUltimate)));
+				pPlayer.m_pInterSkillPassive->m_pWorkList.push_back(new InterfaceFadeClockwise(
+					pPlayer.GetSkillCoolTime(SSB::kPlayerDrink), pPlayer.GetRemainSkillCoolTime(SSB::kPlayerDrink)));
 				m_StateManagerMap.find(SSB::kBossMobStateManager)->second->RegisterCharacter(m_pBoss, SSB::kBossMobSpawn);
 				Cinema cinema = m_pQuadTree->m_CinemaList.find(L"Cine_1_Start")->second;
 				auto sound = I_Sound.Find(L"yasuo_sound_meet_boss2.mp3");
 				sound->VolumeSet(0.3f);
 				sound->Play(true);
 				m_pMainCamera->m_fCameraYawAngle += XM_PI;
-				Player::GetInstance().m_vRotation.y += XM_PI;
+				pPlayer.m_vRotation.y += XM_PI;
 				SetCinemaCamera(L"Cine_1_1_Start");
 				g_pWriter->SetText(WriteText(621, 673, m_ScenarioList.find(L"m_bIngame2_CinemaIntro_Start")->second, { 1,1,1,1 }, m_pQuadTree->m_CurrentCinema.fDuration));
 				m_pInterText->m_pWorkList.push_back(new InterfaceFadeInOut(m_pQuadTree->m_CurrentCinema.fDuration));
@@ -503,7 +509,6 @@ bool    SceneInGame::Frame()
 					sound->Play(true);
 					m_pInterFade->m_pWorkList.push_back(new InterfaceFadeOut(2.0f));
 					m_pBoss->m_vPos = m_vBossSpawnPos;
-					m_pBoss->m_pAura->m_isDone = true;
 					m_pBoss->Frame();
 					Player::GetInstance().m_vPos = m_vBossSpawnPos;
 					Player::GetInstance().Frame();
@@ -1027,6 +1032,7 @@ void    SceneInGame::CharacterLoad()
 		Player::GetInstance().SetMap(m_pQuadTree->m_pMap);
 		Player::GetInstance().m_pInterGageHP = m_pInter_PlayerHP;
 		Player::GetInstance().m_pInterMinimapProfile = m_pInter_Minimap_player;
+		Player::GetInstance().m_pInterSkillPassive = m_pInter_Passive;
 		Player::GetInstance().m_pInterSkillQ = m_pInter_Skill_Q;
 		Player::GetInstance().m_pInterSkillDash = m_pInter_Skill_W;
 		Player::GetInstance().m_pInterSkillE = m_pInter_Skill_E;
@@ -1174,7 +1180,8 @@ void    SceneInGame::UiLoad()
 	//m_pInter->m_pWorkList.push_back(new InterfaceClick(m_pInter->m_vScale.x));
 	
 	m_pInter_Passive = new Interface();
-	m_pInter_Passive->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/passive.dds");
+	m_pInter_Passive->Create(m_pd3dDevice, m_pImmediateContext, L"../../data/shader/Ui.txt", L"../../data/UI/passive.dds", L"VS", L"ANGLE_PS");
+	m_pInter_Passive->m_cbData.fTimer = 360.0f;
 	m_pInter_Passive->SetAttribute(TVector3(687, 788, 0));
 	m_pInter_Ingame->AddChild(m_pInter_Passive);
 

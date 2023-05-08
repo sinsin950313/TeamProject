@@ -25,6 +25,10 @@ bool	Effect::Frame()
 		D3DXMatrixTranslation(&m_matTopWorld, m_vFollowPos->x, m_vFollowPos->y, m_vFollowPos->z);
 	}
 	D3DXMatrixMultiply(&m_matTopWorld, &matRot, &m_matTopWorld);
+
+	TMatrix matParentTrans;
+	D3DXMatrixTranslation(&matParentTrans, m_vParentPos.x, m_vParentPos.y, m_vParentPos.z);
+
 	auto iter = m_pEmitterList.begin();
 	while(iter != m_pEmitterList.end())
 	{
@@ -37,6 +41,7 @@ bool	Effect::Frame()
 		}
 		else
 		{
+			pEmitter->m_matParentTrans = matParentTrans;
 			pEmitter->m_matTopWorld = &m_matTopWorld;
 			pEmitter->Frame();
 			iter++;

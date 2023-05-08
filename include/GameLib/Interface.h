@@ -524,6 +524,10 @@ public:
 	{
 		m_fCurrent = 0.0f;
 	}
+	InterfaceFadeClockwise(float fTime, float fRemain) : m_fTime(fTime)
+	{
+		m_fCurrent = fTime - fRemain;
+	}
 public:
 	float m_fTime;
 	float m_fCurrent;

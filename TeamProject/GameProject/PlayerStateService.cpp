@@ -288,8 +288,8 @@ namespace SSB
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						}
-						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -415,8 +415,8 @@ namespace SSB
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						}
-						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -542,8 +542,8 @@ namespace SSB
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						}
-						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -669,8 +669,8 @@ namespace SSB
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(m_pCharacter->m_Damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						}
-						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, m_pCharacter->m_Damage);
 					}
 				}
@@ -817,8 +817,8 @@ namespace SSB
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						}
-						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, damage);
 					}
 				}
@@ -1107,8 +1107,8 @@ namespace SSB
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						}
-						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 					}
@@ -1228,12 +1228,13 @@ namespace SSB
 			if (I_Collision.ChkPlayerAttackToNpcList(&m_pCharacter->m_AttackBox))
 			{
 				auto list = I_Collision.GetHitCharacterList(&m_pCharacter->m_AttackBox);
-				if(list.size() > 0 && !Player::GetInstance().m_pAura)
-					Player::GetInstance().m_pAura = I_Effect.CreateEffect(L"../../data/effectdata/PlayerAura.EFT", &Player::GetInstance().m_vPos);
+				bool successAttack = false;
+				
 				for (auto obj : list)
 				{
 					if (obj != m_pCharacter)
 					{
+						successAttack = true;
 						float damage = m_pCharacter->m_Damage * 2.0f;
 						if (_blackboard->DamagedCharacters.find(obj) == _blackboard->DamagedCharacters.end())
 						{
@@ -1255,12 +1256,14 @@ namespace SSB
 								currentHp = 0;
 							obj->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage(currentHp / obj->m_kHealthPointMax, 1.0f));
 							obj->m_pInterDamage->m_pWorkList.push_back(new InterfaceDamageFloating(damage, obj->m_pInterDamage, 0.5f, 10.0f));
+							I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						}
-						I_Effect.CreateEffect(L"../../data/effectdata/Hit.EFT", obj->m_vPos + TVector3(0, 1, 0), TVector3(0, RandomStep(0.0, XM_PI), 0));
 						Damage(_blackboard, obj, damage);
 						Player::GetInstance().UltimateSkillStacking(_blackboard->StateTImeStamp);
 					}
 				}
+				if (list.size() > 0 && !Player::GetInstance().m_pAura && successAttack)
+					Player::GetInstance().m_pAura = I_Effect.CreateEffect(L"../../data/effectdata/PlayerAura.EFT", &Player::GetInstance().m_vPos);
 			}
 		}
 	}
@@ -1476,6 +1479,7 @@ namespace SSB
 		{
 			if (!_blackboard->Damaged)
 			{
+				I_Effect.CreateEffect(L"../../data/effectdata/Heal.EFT", &m_pCharacter->m_vPos);
 				m_pCharacter->m_HealthPoint = min(m_pCharacter->m_HealthPoint + 30, m_pCharacter->m_kHealthPointMax);
 				m_pCharacter->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)m_pCharacter->m_HealthPoint / m_pCharacter->m_kHealthPointMax, 1.0f));
 			}
@@ -1491,6 +1495,7 @@ namespace SSB
 			sound->Play();
 			Player::GetInstance().ActiveSkill(kPlayerDrink);
 			_blackboard->HealthPoint = m_pCharacter->m_HealthPoint;
+			Player::GetInstance().m_pInterSkillPassive->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerDrink)));
 			m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 35;
 		}
 
