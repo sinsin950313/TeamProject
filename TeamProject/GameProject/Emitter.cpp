@@ -174,9 +174,10 @@ void	Emitter::Reset()
 void	Emitter::SetCamera(Camera* pCamera)
 {
 	m_pCamera = pCamera;
-	for (auto pChild : m_pChild)
+	for (auto pChild : m_pParticleList)
 	{
-		pChild->SetCamera(m_pCamera);
+		for(auto pEmitter : pChild->m_pChildEmitterList)
+			pEmitter->SetCamera(m_pCamera);
 	}
 }
 
