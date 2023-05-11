@@ -65,17 +65,16 @@ float4 Distortion(VS_out input) : SV_Target
 {
 	float4 vOut;
 	float4 color = g_txTexA.Sample(g_SampleWrap, input.t);
-	float2 fWeight = color.rg * 0.5f - 0.5;
-	fWeight = fWeight * 0.2;
+	float2 fWeight = color.rg * 0.04;
 
-	float2 xy; ((input.p.xy / 2048.0f) + 1) / 2;
+	float2 xy;
 	xy.x = input.p.x / 2048.0f;
 	xy.y = input.p.y / 2048.0f;
 
-	vOut = g_ColorTex.Sample(g_SampleWrap, xy + fWeight);
-	float alpha = (0.5 - (abs(input.t.x - 0.5))) + (0.5 - (abs(input.t.y - 0.5)));
-	vOut.a = alpha;
-	if (color.a <= 0.1)
+	float2 center = float2(0.5, 0.5);
+
+	vOut = g_ColorTex.Sample(g_SampleWrap, (xy + fWeight));
+	if (color.a < 0.05)
 		discard;
 
 	return vOut;
