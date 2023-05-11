@@ -1479,7 +1479,6 @@ namespace SSB
 		{
 			if (!_blackboard->Damaged)
 			{
-				I_Effect.CreateEffect(L"../../data/effectdata/Heal.EFT", &m_pCharacter->m_vPos);
 				m_pCharacter->m_HealthPoint = min(m_pCharacter->m_HealthPoint + 30, m_pCharacter->m_kHealthPointMax);
 				m_pCharacter->m_pInterGageHP->m_pWorkList.push_back(new InterfaceSetGage((float)m_pCharacter->m_HealthPoint / m_pCharacter->m_kHealthPointMax, 1.0f));
 			}
@@ -1497,6 +1496,7 @@ namespace SSB
 			_blackboard->HealthPoint = m_pCharacter->m_HealthPoint;
 			Player::GetInstance().m_pInterSkillPassive->m_pWorkList.push_back(new InterfaceFadeClockwise(Player::GetInstance().GetSkillCoolTime(kPlayerDrink)));
 			m_pCharacter->m_pModel->_currentAnimation->_framePerSecond = 35;
+			I_Effect.CreateEffect(L"../../data/effectdata/Heal.EFT", &m_pCharacter->m_vPos);
 		}
 
 		if (_blackboard->HealthPoint != m_pCharacter->m_HealthPoint)
