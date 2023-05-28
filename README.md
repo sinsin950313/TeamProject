@@ -47,3 +47,5 @@ DDD의 Service를 이용한 AI FSM
 ## 동영상
 
 ## 다운로드
+
+http://naver.me/5G5ug3Ri
