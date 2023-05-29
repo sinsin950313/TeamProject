@@ -55,6 +55,8 @@ Spring Camera
 
 ## 동영상
 
+https://www.youtube.com/watch?v=X2dgJuERe9M
+
 ## 다운로드
 
 http://naver.me/5G5ug3Ri
