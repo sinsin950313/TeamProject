@@ -8,6 +8,10 @@ Light & Shadow : 3D Object의 Light, Shadow 작업
 
 AI : FSM과 DDD의 Service를 활용하여 AI 제작
 
+Collision Process : 검출된 충돌반응을 이용하여 충돌 처리 수행
+
+Edge 검출 : Sobel Filter를 이용한 Edge 검출 및 외곽선 강조
+
 ## 세부사항
 ### Character
 ![image](https://user-images.githubusercontent.com/40855235/234498481-6722a660-c0b8-4689-9eab-9d5e8ada5911.png)
@@ -45,12 +49,18 @@ MRT를 이용한 Light & Shadow
 DDD의 Service를 이용한 AI FSM
 
 ### Collision Process
+![제목 없음](https://github.com/sinsin950313/TeamProject/assets/40855235/71bd46d1-7155-4b50-9d27-21030038f289)
 
 Collision 감지 이후 충돌 처리
+
+![제목 없음](https://github.com/sinsin950313/TeamProject/assets/40855235/8a083dc7-a956-4fff-987f-0c0c07b2c39c)
+![제목 없음](https://github.com/sinsin950313/TeamProject/assets/40855235/6c3dc8d7-70d6-4871-87a8-3f49dd26f12d)
+
 Spring Camera
 
 ### Edge 검출 및 외곽선
-
+![제목 없음](https://github.com/sinsin950313/TeamProject/assets/40855235/4724dc5e-f2df-464a-8c72-0f4eeaf86318)
+![제목 없음](https://github.com/sinsin950313/TeamProject/assets/40855235/f88e2b89-3aad-47b2-ada4-1dd0b2c99094)
 
 
 ## 동영상
