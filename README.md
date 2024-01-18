@@ -1,6 +1,24 @@
 # LolShinSouls
 ![캡처](https://user-images.githubusercontent.com/40855235/234498154-ffaa7cd6-9bbb-4f14-b423-c42b302dc000.PNG)
 
+## 개요
+- 장르
+  - 3D RPG
+- 제작 인원
+  - 3명
+- 제작 기간
+  - 2달
+- 개발 환경
+  - c++
+  - DirectX
+  - FMod
+- 주요 기술
+  - DirectX
+  - FBX
+  - Light & Shadow
+  - MRT
+  - Collision Process
+
 ## 역할
 Character : FBX IO 및 Project에 적합한 방식으로 편집하여 Porting
 
